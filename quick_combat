@@ -4,11 +4,17 @@ import sys
 import os
 from simplejson import loads,dumps
 from pprint import pprint
+from random import randrange
 
-def calcmonsterdata(monsters):
-        for monster in monsters:
-                thac0=20-((int(monster["hitdice"])+1)/2)
-                print thac0
+
+def calcmonsterdata(monster):
+        hd=int(monster["hitdice"])
+        thac0=20-((hd+1)/2)
+        monster["thac0"] = thac0
+        monster["hitpoints"] = 0
+        for I in range(1,hd+1):
+                monster["hitpoints"] += randrange(1,8,1)
+
 
 
 c='y'
@@ -49,8 +55,8 @@ while not 'n' in c.lower():
                 os.system('./mkmonster')
         if len(monsters) > 0:
                 print "Monsters loaded:"
+                calcmonsterdata(monsters[len(monsters)-1])
                 pprint(monsters)
                 print "Load another monster [y/n] ?"
                 c=raw_input()
 
-calcmonsterdata(monsters)
