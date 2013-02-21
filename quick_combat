@@ -1,0 +1,56 @@
+#!/usr/bin/python
+#First version limited automation
+import sys
+import os
+from simplejson import loads,dumps
+from pprint import pprint
+
+def calcmonsterdata(monsters):
+        for monster in monsters:
+                thac0=20-((int(monster["hitdice"])+1)/2)
+                print thac0
+
+
+c='y'
+characters=[]
+while not 'n' in c.lower():
+        print "Enter character name:"
+        cname=raw_input()
+        try:
+                characters.append(loads(open('character_sheets/%s.json' %cname).read()))
+        except Exception as e:
+                print "Error loading character %s - did you type it right ?" %cname
+                print e
+        if len(characters) > 0:
+                print
+                print
+                print "Characters loaded:"
+                pprint(characters)
+                print "Load another character [y/n] ?"
+                c=raw_input()
+
+monsters=[]
+c='y'
+while not 'n' in c.lower():
+        print "Monster details:"
+        print " Do you have a monster file saved ? [y/n]?"
+        i=raw_input()
+        if 'y' in i.lower():
+                cont=False
+                print "Enter monster name:"
+                monstername=raw_input() 
+                try:
+                        monsters.append(loads(open('monsters/%s.json' %monstername).read()))
+                except Exception as e:
+                        print "Error loading monster %s" %monstername
+                        print e
+        else:
+                print "Creating a new monster:"
+                os.system('./mkmonster')
+        if len(monsters) > 0:
+                print "Monsters loaded:"
+                pprint(monsters)
+                print "Load another monster [y/n] ?"
+                c=raw_input()
+
+calcmonsterdata(monsters)

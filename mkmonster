@@ -1,0 +1,23 @@
+#!/usr/bin/python
+#First version limited automation
+import sys
+import os
+from simplejson import loads,dumps
+
+save='n'
+while not 'y' in save.lower():
+        print "EZDM - quick monster maker"
+        print "Enter Monster name:" 
+        monstername=raw_input().replace(' ','_')
+        print "How many hit dice ?"
+        hitdice=raw_input()
+        print "Armor class ?"
+        armor_class=raw_input()
+
+        monster={"name":monstername,"hitdice":hitdice,"armor_class":armor_class}
+        print "Recorded monster data: %s" % monster
+        print "Save monster y/n ?"
+        save=raw_input()
+        if 'y' in save.lower():
+                open('monsters/%s.json' %monstername,'w').write(dumps(monster))
+                
