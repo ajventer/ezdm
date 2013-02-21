@@ -4,20 +4,36 @@ import sys
 import os
 from simplejson import loads,dumps
 
+def input_default(default,msg):
+	print "%s (%s)" %(msg,default) 
+	i=raw_input()
+	if i == '':
+		return default
+	else:
+		return i
+
 save='n'
 while not 'y' in save.lower():
-        print "EZDM - quick monster maker"
-        print "Enter Monster name:" 
-        monstername=raw_input().replace(' ','_')
-        print "How many hit dice ?"
-        hitdice=raw_input()
-        print "Armor class ?"
-        armor_class=raw_input()
-
-        monster={"name":monstername,"hitdice":hitdice,"armor_class":armor_class}
-        print "Recorded monster data: %s" % monster
-        print "Save monster y/n ?"
-        save=raw_input()
-        if 'y' in save.lower():
-                open('monsters/%s.json' %monstername,'w').write(dumps(monster))
+	print "EZDM - quick monster maker"
+	monster={}
+	monster['name']=input_default('',"Enter Monster name:" ).replace(' ','_')
+	if os.path.exists('monsters/%s.json' %monster['name']):
+		old=loads(open('monsters/%s.json' %monster['name'],'r').read())
+	else:
+		old={"name":'',"hitdice":'',"armor_class":'',
+			"str":'',"con":'',"dex":'',"int":'',"wis":'',"cha":'',
+			"weapon_mod_to_hit":'',"weapon_mod_dmg":'',"weapon_type":"melee","atacks_per_round":""}
+	monster["hitdice"]=input_default(old["hitdice"],"How many hit dice ?")
+	monster["armor_class"]=input_default(old["armor_class"],"Armor class ?")
+	monster["weapon_mod_to_hit"]=input_default(old["weapon_mod_to_hit"],"Enter weapon modifier to hit chance:")
+	monster["weapon_mod_dmg"]=input_default(old["weapon_mod_dmg"],"Enter weapon modifier to damage:")
+	monster["weapon_type"]=input_default(old["weapon_type"],'Enter monster weapon type: melee or misile')
+	monster["atacks_per_round"]=input_default(old["atacks_per_round"]","How many attacks does the monster get per round ?")
+	print "Ability scores:"
+	for ability in ["str","con","dex","int","wis","cha"]:
+		monster[ability]=input_default(old[ability],"	%s" %ability)
+	print "Recorded monster data: %s" % monster
+	save=input_default('y',"Save monster y/n ?")
+	if 'y' in save.lower():
+		open('monsters/%s.json' %monster['name'],'w').write(dumps(monster,indent=4))
                 

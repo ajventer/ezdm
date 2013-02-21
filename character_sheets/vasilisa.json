@@ -1,6 +1,24 @@
-{"name":"Vasilisa Wolvenkine",
-"ac":"2",
-"hp":"4",
-"level":"1",
-"thac0":"20"
+{
+    "dex": "14",
+    "cha": "11",
+    "surname": "Wolvenkin",
+    "name": "vasilisa",
+    "level": "1",
+    "int": "10",
+    "thac0": "20",
+    "hp": "6",
+    "weapon_mod_to_hit": "0",
+    "saving_throws": {
+        "breath": "17",
+        "pp": "15",
+        "spell": "17",
+        "rod": "16",
+        "ppd": "14"
+    },
+    "wis": "14",
+    "str": "17",
+    "weapon_type": "melee",
+    "atacks_per_round": "2",
+    "armor_class": "6",
+    "weapon_mod_dmg": "0"
 }

@@ -1,1 +1,15 @@
-{"armor_class": "8", "name": "kobold", "hitdice": "1"}
+{
+    "dex": "16",
+    "cha": "8",
+    "name": "kobold",
+    "int": "10",
+    "atacks_per_round":"1",
+    "weapon_mod_dmg": "1",
+    "con": "12",
+    "weapon_mod_to_hit": "0",
+    "wis": "6",
+    "str": "14",
+    "weapon_type": "melee",
+    "armor_class": "8",
+    "hitdice": "1"
+}
