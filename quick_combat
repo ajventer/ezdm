@@ -141,6 +141,7 @@ def do_attack(attackerindex,targetindex,attackertype):
 			atacker=monsters[attackerindex]
 			mindex=attackerindex
 			auto=autorollm
+			dauto=autorollc
 			defendertype="character"
 		else:
 			defender=monsters[targetindex]
@@ -148,6 +149,7 @@ def do_attack(attackerindex,targetindex,attackertype):
 			mindex=targetindex
 			atacker=characters[attackerindex]
 			auto=autorollc
+			dauto=autorollm
 			defendertype="monster"
 		monster=monsters[mindex]
 		character=characters[cindex]
@@ -182,7 +184,8 @@ def do_attack(attackerindex,targetindex,attackertype):
 			critfumble=roll -to_hit_mod == 1
 			if critfumble:
 				print "Critical fumble by %s !" %atacker['name']
-			if is_a_hit(roll,int(atacker['thac0']),int(defender['armor_class']),int(dmods['def']),crithit,critfumble):
+			if is_a_hit(roll,int(atacker['thac0']),int(defender['armor_class']),int(dmods['def']),crithit,critfumble) 
+			and not saving_throw(defender,dauto):
 				print "	The attack is successfull"
 				if is_casting(targetindex,defendertype):
 					interrupt_casting(targetindex,defendertype)
