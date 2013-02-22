@@ -15,6 +15,7 @@ def calcmonsterdata(monster):
                 21:10,22:10,23:9,24:9,25:8,26:8,27:7,28:7,29:6,30:6,31:5,32:5,33:4,34:4,35:3,36:3,37:2,38:2,39:1,40:1}[hd]
         monster["thac0"] = thac0
         monster["hp"] = rolldice(autorollm,hd,8) 
+        monster["max_hp"] = monster["hp"]   
 
 
 def savechar(idx):
@@ -27,7 +28,7 @@ def savechar(idx):
 def rolldice(auto=True,numdice=1,numsides=20,modifier=0):
         print
         if not auto:
-                while true:
+                while True:
                         print "Roll a %sd%s dice:"
                         try:
                                 return int(raw_input())
@@ -44,6 +45,22 @@ def rolldice(auto=True,numdice=1,numsides=20,modifier=0):
                 print "Total rolled: %s (modifier %s)" % (total,modifier)
                 print
                 return total
+                
+def saving_throw(character,auto):
+	if not character.has_key("saving_throws"):
+		return False
+	print "Attempt a saving throw now [y/n]?"
+	if 'y' in raw_input().lower():
+		print "Save against ? breath,pp,spell,rod or ppd ?"
+		throw=raw_input().lower()
+		if not character["saving_throws"].has_key(throw):
+			print "	Character cannot save against that"
+			return False
+		if rolldice(auto,1,20) >= int(character["saving_throws"][throw]):
+			print "Saving throw succeeded"
+			return True
+	else:
+		return False
 
 def modifiers(character):
 	ability_scores=loads(open('adnd2e/ability_scores.json','r').read())
@@ -51,15 +68,14 @@ def modifiers(character):
 	cstr=character["str"]
 	cdex=character["dex"]
 	cwis=character["wis"]
-	modifier["to_hit"]=int(character["weapon_mod_to_hit"])+int(ability_scores["str"][cstr]["hit"])
-	modifier["dmg"]=int(character["weapon_mod_dmg"])+int(ability_scores["str"][cstr]["dmg"])
-	if character["weapon_type"] == "misile":
-		modifier["dmg"] += int(ability_scores["dex"][cdex]["missile"])
+	modifier["hit"]=int(ability_scores["str"][cstr]["hit"])
+	modifier["mhit"]=int(ability_scores["dex"][cdex]["missile"])
+	modifier["dmg"]=int(ability_scores["str"][cstr]["dmg"])
 	modifier["def"]=int(ability_scores["dex"][cdex]["defense"])
 	modifier['mdef']=int(ability_scores["wis"][cwis]["magic_defence"])
 	return modifier
 
-def atack_mods(atacker):
+def atack_mods(atacker,weapon):
 	selected_mods={}
 	custom_mods={'Atacker on [h]igh ground':1,
 					'Defender [i]nvisible':-4,
@@ -67,7 +83,7 @@ def atack_mods(atacker):
 					'Defender [s]tunned or prone':999,
 					'Defender surpri[z]ed':+1,
 					'Rea[r] attack':+2}
-	if atacker["weapon_type"] == "misile":
+	if atacker["weapons"][str(weapon)]["type"] == "misile":
 		print "%s is using a misile weapon - please specify range [l]ong/[m]edium/[s]hort"
 		mrange=raw_input()
 		if 'l' in mrange:
@@ -140,16 +156,24 @@ def do_attack(attackerindex,targetindex,attackertype):
 		dmods=modifiers(defender)
 		
 		print "%s tries to attack %s" %(atacker['name'],defender['name'])
-		to_hit_mod=int(amods['to_hit'])
-		extra_mods=atack_mods(atacker)
-		for v in extra_mods.values():
-			to_hit_mod += int(v)
-		num_attacks=int(atacker["atacks_per_round"])
+		to_hit_mod=amods["hit"]
+		num_attacks=int(atacker["atacks_per_round"])*len(atacker["weapons"])
 		atack_number=0
 		def_alive=True
 		while atack_number < num_attacks and def_alive:
 			atack_number += 1
+			weapon=atack_number
+			extra_mods=atack_mods(atacker,weapon)
+			for v in extra_mods.values():
+				to_hit_mod += int(v)
+			if weapon > len(atacker["weapons"]):
+				weapon=1 #If you get a bonus attack, use the first weapon
 			print "Atack %s of %s" %(atack_number,num_attacks)
+			to_hit_mod += int(atacker["weapons"][str(weapon)]["to_hit"])
+			if atacker["weapons"][str(weapon)]["type"] == "misile":
+				to_hit_mod += int(amods["mhit"])
+			if (len(atacker["weapons"]) > 1) and (atacker["class"] != "ranger"):
+				to_hit_mod -= weapon*2 #-2 on first weapon, -4 on second 
 			roll=rolldice(auto,1,20,to_hit_mod)
 			crithit=roll - to_hit_mod == 20
 			if crithit: 
@@ -168,7 +192,8 @@ def do_attack(attackerindex,targetindex,attackertype):
 					hit_dice=int(atacker["hitdice"])
 				else:
 					hit_dice=int(atacker["level"])
-				damage=rolldice(auto,hit_dice,8)
+				dice=int(atacker["weapons"][str(weapon)]["dmg"])
+				damage=rolldice(auto,hit_dice,dice,int(amods["dmg"]))
 				print "Damage done %s" %damage
 				hp=int(defender['hp'])
 				hp -= damage
@@ -220,11 +245,19 @@ def do_cast(index,playertype):
 			else:
 				print "%s has finished the spell." %monsters[index]['name']
 				ability_scores=loads(open('adnd2e/ability_scores.json','r').read())
-				wis=int(monsters[index]["wis"])
-				failrate=int(ability_scores["wis"]["spell_failure"].split('%')[0])
+				wis=monsters[index]["wis"]
+				failrate=int(ability_scores["wis"][wis]["spell_failure"].split('%')[0])
 				roll=rolldice(autorollm,1,100)
 				if roll > failrate:
-					print "Spell succeeds"
+					print "Was the target a friend [y/n]?"
+					if 'n' in raw_input().lower():
+						for p in characters:
+							print "%s: %s" %(characters.index(p),p["name"])
+						print "Select target ?"
+						if saving_throw(characters[int(raw_input())],autorollc):
+							print "Spell avoided by saving throw"
+						else:
+							print "Saving throw did not succeed"
 				else:
 					print "Spell fails"
 		else:                        
@@ -237,11 +270,19 @@ def do_cast(index,playertype):
 				print "%s continous to cast %s rounds remaining" %(characters[index]['name'],characters[index]['casting'])
 			else:
 				print "%s has finished the spell. You should roll to determine success" %characters[index]['name']
-				wis=int(characters[index]["wis"])
-				failrate=int(ability_scores["wis"]["spell_failure"].split('%')[0])
+				wis=intcharacters[index]["wis"]
+				failrate=int(ability_scores["wis"][wis]["spell_failure"].split('%')[0])
 				roll=rolldice(autorollc,1,100)
 				if roll > failrate:
-					print "Spell succeeds"
+					print "Was the target a friend [y/n]?"
+					if 'n' in raw_input().lower():
+						for p in monsters:
+							print "%s: %s" %(characters.index(p),p["name"])
+						print "Select target ?"
+						if saving_throw(characters[int(raw_input())],autorollm):
+							print "Spell avoided by saving throw"
+						else:
+							print "Saving throw did not succeed"
 				else:
 					print "Spell fails"
 		else:                        
@@ -258,47 +299,68 @@ def interrupt_casting(index,playertype):
 
 
 def do_round(playerindex,playertype):
-        global monsters
-        global characters
-        if playertype == 'monster':
-                name=monsters[playerindex]["name"]
-        else:
-                name=characters[playerindex]["name"]
-        print "Player: %s - %s [F]lee,[A]ttack,[C]ast ?" %(name, playerindex)
-        if is_casting(playerindex,playertype):
-			print "Beware: player %s is still busy casting a spell - choose c to continue" %name
-        action=raw_input().lower()
-        if 'f' in action:
-                if is_casting(playerindex,playertype):
-                        interrupt_casting(playerindex,playertype)
-                print "%s tries to flee ! Is it successful [y/n] ?"  %name
-                if 'y' in raw_input():
-                        if playertype == 'monster':
-                                del monsters[playerindex]
-                        else:
-                                print "Saving character before fleeing"
-                                savechar(playerindex)
-                                del characters[playerindex]
-                        print "Got away !"
-        if 'c' in action:
-                do_cast(playerindex,playertype)
+	global monsters
+	global characters
+	if playertype == 'monster':
+		name=monsters[playerindex]["name"]
+	else:
+		name=characters[playerindex]["name"]
+	print "Player: %s - %s [F]lee,[A]ttack,[C]ast,[H]eal  ?" %(name, playerindex)
+	if is_casting(playerindex,playertype):
+		print "Beware: player %s is still busy casting a spell - choose c to continue" %name
+	action=raw_input().lower()
+	if 'h' in action:
+		print "Maximum heal amount ?"
+		heal=int(raw_input())
+		print "Who does %s heal ?" %name
+		if playertype != 'monster':
+			for c in characters:
+				print "%s: %s" %(characters.index(c),c["name"])
+			character=int(raw_input())
+			hp=int(characters[character]["hp"])
+			hp += rolldice(autorollc,1,heal)
+			if hp > int(characters[character]["max_hp"]):
+				hp = int(characters[character]["max_hp"])
+			characters[character]["hp"]=hp
+		else:
+			for c in monsters:
+				print "%s : %s" %(monsters.index(c),c["name"])
+			monster=int(raw_input())
+			hp=int(monsters[monster]["hp"])
+			hp += rolldice(autorollc,1,heal)
+			if hp > int(monsters[monster]["max_hp"]):
+				hp = int(monsters[monster]["max_hp"])
+			monsters[monster]["hp"]=hp
+		print "%s healed %s hit points" %(name,hp)
+	if 'f' in action:
+		if is_casting(playerindex,playertype):
+			interrupt_casting(playerindex,playertype)
+		print "%s tries to flee ! Is it successful [y/n] ?"  %name
+		if 'y' in raw_input():
+			if playertype == 'monster':
+				del monsters[playerindex]
+			else:
+				print "Saving character before fleeing"
+				savechar(playerindex)
+				del characters[playerindex]
+			print "Got away !"
+	if 'c' in action:
+		do_cast(playerindex,playertype)
 
-        if 'a' in action:
-                if is_casting(playerindex,playertype):
-                        interrupt_casting(playerindex,playertype)
-                print "Who does %s attack ?" %name
-                if playertype == 'monster':
-                        for c in characters:
-                                print "%s: %s" %(characters.index(c),c["name"])
-                                targetlist=characters
-
-                else:
-                        for c in monsters:
-                                print "%s : %s" %(monsters.index(c),c["name"])
-                                targetlist=monsters
-                targetindex=int(raw_input())
-                do_attack(playerindex,targetindex,playertype)
-
+	if 'a' in action:
+		if is_casting(playerindex,playertype):
+			interrupt_casting(playerindex,playertype)
+			print "Who does %s attack ?" %name
+			if playertype == 'monster':
+				for c in characters:
+					print "%s: %s" %(characters.index(c),c["name"])
+					targetlist=characters
+			else:
+				for c in monsters:
+					print "%s : %s" %(monsters.index(c),c["name"])
+					targetlist=monsters
+			targetindex=int(raw_input())
+			do_attack(playerindex,targetindex,playertype)
 
 print "######################"
 print "# EZDM: QuickCombat  #"
@@ -307,9 +369,9 @@ print "######################"
 
 c='y'
 print "Should computer roll dice for characters [y/n] ?"
-autorollc='y' in raw_input()
+autorollc='y' in raw_input().lower()
 print "Should computer roll dice for monsters [y/n] ?"
-autorollm='y' in raw_input()
+autorollm='y' in raw_input().lower()
 print "##Loading characters###"
 while not 'n' in c.lower():
         print "Enter character name:"
@@ -392,5 +454,5 @@ while not quit:
 				savechar(characters.index(player))
 		if len(characters) == 0:
 			quit=True
-
+print "Combat completed"
 			

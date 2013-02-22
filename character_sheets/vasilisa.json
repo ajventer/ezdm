@@ -6,8 +6,19 @@
     "level": "1",
     "int": "10",
     "thac0": "20",
-    "hp": "6",
-    "weapon_mod_to_hit": "0",
+    "hp": 6,
+    "weapons": {
+        "1": {
+            "dmg": "6",
+            "type": "melee",
+            "to_hit": "0"
+        },
+        "2": {
+            "dmg": "6",
+            "type": "melee",
+            "to_hit": "0"
+        }
+    },
     "saving_throws": {
         "breath": "17",
         "pp": "15",
@@ -17,8 +28,10 @@
     },
     "wis": "14",
     "str": "17",
-    "weapon_type": "melee",
-    "atacks_per_round": "2",
+    "parentclass": "warior",
+    "max_hp": "6",
+    "atacks_per_round": "1",
     "armor_class": "6",
-    "weapon_mod_dmg": "0"
+    "weapon_mod_dmg": "0",
+    "class": "ranger"
 }
