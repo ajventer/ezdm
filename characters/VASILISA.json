@@ -1,0 +1,30 @@
+{
+    "abilities": {
+        "dex": "14",
+        "cha": "11",
+        "int": "10",
+        "wis": "14",
+        "str": "17",
+        "con": "14"
+    },
+    "surname": "WOLVENKINE",
+    "name": "VASILISA",
+    "weapons": {
+        "1": {
+            "dmg": "4",
+            "type": "melee",
+            "to_hit": "0"
+        },
+        "0": {
+            "dmg": "4",
+            "type": "melee",
+            "to_hit": "0"
+        }
+    },
+    "parentclass": "warior",
+    "level/hitdice": "1",
+    "atacks_per_round": "1",
+    "armor_class": "6",
+    "class": "ranger",
+    "creature": "False"
+}

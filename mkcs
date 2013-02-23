@@ -15,7 +15,7 @@ while not 'y' in save.lower():
     if len(old) == 0:
         basedir=smart_input("What type of character sheet is this",default="monsters",validentries=["monsters","characters"])
         load=smart_input("Load defaults from existing sheet ?",validentries=["y","n"])
-        if load:
+        if load == "y":
             name=smart_input("%s first name "%(basedir),upper=True)
             filename="%s/%s.json" %(basedir,name)
             old=load_json(filename=filename)

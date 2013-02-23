@@ -1,7 +1,8 @@
 {
 "level/hitdice":"",
-"parentclass": "__[warior,wizard,rogue,priest]", 
-"class":"fighter", 
+"parentclass": "__[warior,wizard,rogue,priest]",
+"creature":"__[True,False]",
+"class":"__[fighter,bard,ranger,thief,druid]", 
 "atacks_per_round": "",
 "abilities":{"wis": "","dex": "", "cha": "", "str": "","con": "","int": ""},
 "__Uname": "", 
