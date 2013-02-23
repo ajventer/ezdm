@@ -1,0 +1,28 @@
+This is a simple set of commandline tools for dungeon managers.
+The current project only targets AD&D 2nd edition rules.
+
+This is not an RPG game, it's some helper tools for people DM-ing real
+games and designed to not get in the way of role-play and story-telling
+but simply help to do the maths during encounters and levelling.
+
+All game data, charts and character sheets are stored in json format. 
+There is a simple tool for creating and updating character sheets which
+uses a powerful templateing engine to manage them, when new keys are added
+to character sheets, simply add them to the template and load the sheets in with
+mkcs to ensure the key is in existing sheets.
+
+Template controls:
+Keys or values which start __? are controls.
+The __? parts are not stored in the output sheets, they only exist in the template
+to tell the engine how to use the key.
+Key controls:
+	__U - store the value of this key in upper-case
+	__L - store the value of this key in lower-case
+	__# - This is used to create subdictionary items with variable number of entries
+	      a __# key has a single dictionary in the template showing the subdictionary structure
+	      this subdictionary can use any template controls as well. The template engine will let
+              the user select how many subdictionaries to create, and populate these by using the subtemplate in the value
+Value controls:
+__[?,?]
+	Value must be selected from the options in the list between the []'s
+
