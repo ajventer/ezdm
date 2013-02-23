@@ -1,16 +1,16 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 #First version limited automation
 import sys
 import os
 from simplejson import loads,dumps
-from util import smart_input,load_json,json_from_template,list_chars,Character
+from util import smart_input,load_json,json_from_template,list_chars,Character,highlight
 
 
 
 save='n'
 old = {}
 while not 'y' in save.lower():
-    print "EZDM - quick monster maker"
+    highlight("EZDM - quick character sheet maker")
     template=load_json('adnd2e','template_cs')
     if len(old) == 0:
         basedir="characters"
@@ -22,8 +22,9 @@ while not 'y' in save.lower():
             
     character=Character(json_from_template(template,old),True)
     character.json["combat"]["max_hp"]=character.json["combat"]["hitpoints"]
+    highlight(character.firstname())
     character.pprint()
-    save=smart_input("Save this %s ?" %(basedir),default="n",validentries=["y","n"],lower=True)
+    save=smart_input("Save this %s ?" %(basedir.rstrip('s')),default="n",validentries=["y","n"],lower=True)
     if 'y' in save:
         character.save()
     else:

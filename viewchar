@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 from util import option,Character,load_json
 
 json=load_json('characters',option(1).upper())

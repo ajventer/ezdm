@@ -1,11 +1,13 @@
-#!/usr/bin/python
-from util import smart_input,Character,list_chars,load_json,threelines,highlight,rolldice
+#!/usr/bin/env python
+from util import smart_input,Character,list_chars,load_json,threelines,highlight,rolldice,dice_list
 characters=[]
 initiative=[]
-rounds=0
+rounds=1
+
+
 
 def turns():
-    turns=int(rounds/10)
+    return int(rounds/10)
     
 def roll_for_initiative():
     threelines()
@@ -14,7 +16,8 @@ def roll_for_initiative():
     highlight('Rolling for initiative')
     for char in characters:
         initroll=rolldice(char.autoroll,1,20)
-        init.append({initroll:characters.index(char)})
+        tup=(initroll,characters.index(char))
+        init.append(tuple(tup))
     return sorted(init)
         
 
@@ -23,41 +26,215 @@ def load_chars():
     #First load up characters
     more='y'
     highlight("EZDM: QuickCombat")
-
     while more=='y':
         exclude=[]
         for char in characters:
             if char.json['personal']['race'] not in ['creature','monster']:
                 exclude.append(char.json['personal']['name']['first'])
-
+        
         selected=smart_input('Select character to add to combat',validentries=list_chars(exclude))
+        print "Adding %s to combat" %selected
         auto=smart_input('User computer dice',validentries=['y','n']) == 'y'
         characters.append(Character(load_json('characters',selected),auto))
     
         threelines()
         loaded=''
         for char in characters:
-            loaded="%s %s" %(loaded,char.json['personal']['name']['first'])
+            loaded="%s %s" %(loaded,char.firstname())
         highlight("Characters in combat: %s" %loaded)
-        more=smart_input('Add more characters to combat',validentries=['y','n'])
+        if len(characters) >= 2:
+            more=smart_input('Add more characters to combat',validentries=['y','n'])
 
-def select_action(player_index):
-    print "%s (%s) goes next" %(characters[player_index].json['personal']['name']['first'],playerindex)
-    action=smart_input("What happens",validentries=["Attack","Flee",        
+def selectlist(excl=[]):
+    global characters
+    s=[]
+    for char in characters:
+        name=char.json['personal']['name']['first']
+        if name not in excl:
+            name="%s (%s)" %(name,characters.index(char))
+            s.append(name)
+    if len(s) == 0:
+        highlight('There are no more living targets')
+        for char in characters:
+            char.save()
+        sys.exit()
+    return s
 
-def do_round():
+def select_target(player_index,no_exclude=False):
+    exclude=[]
+    if not no_exclude:
+        exclude.append(characters[player_index].firstname())
+    selected=smart_input("Please select target",validentries=selectlist(exclude))
+    return int(selected.split('(')[1].rstrip(')'))
+
+def do_flee(player_index):
+    highlight("%s attempts to run away" %characters[player_index].firstname())
+    if smart_input("Does the flee attempt succeed ?",validentries=['y','n']) == 'y':
+        characters[player_index].save()
+        del characters[player_index]
+        
+def attack_mods(player_index):
+    selected_mods={}
+    custom_mods={'Atacker on high ground':1,'Defender invisible':-4,'Defender off-balance':2,'Defender stunned or prone':999,'Defender surprized':+1,'Rear attack':+2}
+    if characters[player_index].is_misile(characters[player_index].current_weapon()):
+        mrange = smart_input("Using a misile weapon - please specify range",validentries=['Long','Medium','Short'],lower=true)
+        if mrange == 'long':
+            selected_mods['[l]ong range missile']=-5
+        elif mrange == 'medium':
+            selected_mods['[m]edium range misile']=-2
+    more=True
+    while more:
+        highlight("%s is attacking: selecting attack modifiers" %characters[player_index].firstname())
+        print "Active combat modifiers %s" %selected_mods.keys()
+        print "Available modifiers:", 
+        print custom_mods.keys() 
+        action=smart_input("Attack modifiers",validentries=["Add","Remove","Create","Done"],lower=True)
+        if action == "done": more=False
+        elif action == "add":
+            mod_list=custom_mods.keys()
+            mod_list.append('None')
+            mod_to_add=smart_input("Mod to add",validentries=mod_list)
+            if mod_to_add <> 'None':
+                selected_mods[mod_to_add]=custom_mods[mod_to_add]
+        elif action == "remove":
+            mod_list=selected_mods.keys()
+            mod_list.append('None')
+            mod_to_add=smart_input("Mod to remove",validentries=mod_list)
+            if mod_to_add <> 'None':
+                del selected_mods[mod_to_add]
+        elif action == "create":
+            value=smart_input("Modifier value",integer=True)
+            selected_mods["DM Custom Mod (%s)" %str(value)]=value
+    attack_mod=0
+    for value in selected_mods.values():
+        attack_mod += value
+    return attack_mod
+
+def do_damage(player_index,target_index):
+    dmg_mod=characters[player_index].dmg_mod()
+    weapon=str(characters[player_index].current_weapon())
+    hit_dice=characters[player_index].hit_dice()
+    dmg=characters[player_index].dmg(weapon)
+    save=characters[player_index].json['combat']['weapons'][weapon]['save_against']
+    if save != "none":
+        if characters[target_index].saving_throw(save):
+            return True
+    damage=rolldice(characters[player_index].autoroll(),hit_dice,dmg,dmg_mod)
+    return characters[player_index].take_damage(damage)
+            
+def do_attack(player_index):
+    characters[player_index].reset_weapon()
+    target_index=select_target(player_index)
+    attack_number=1
+    target_alive=True
+    num_attacks=characters[player_index].num_attacks()
+    while attack_number <= num_attacks and target_alive:
+        highlight("%s is attacking %s !" %(characters[player_index].firstname(),characters[target_index].firstname()))
+        highlight("Attack %s of %s" %(attack_number,num_attacks),clear=False)
+        attack_number += 1        
+        mod=attack_mods(player_index) + characters[player_index].to_hit_mod()
+        attack_roll=characters[player_index].attack_roll(characters[target_index],mod)
+        highlight(attack_roll,clear=False)
+        if  attack_roll=="Critical Hit !":
+            num_attacks += 1 #Bonus attack on critical hit
+        if "hit" in attack_roll.lower():
+            if characters[target_index].is_casting():
+                characters[target_index].interrupt_cast('by successfull hit')
+            target_alive=do_damage(player_index,target_index)
+            if not target_alive:
+                del characters[target_index]
+        threelines()
+        characters[player_index].next_weapon()
+        print "Press enter to continue"
+        raw_input()
+
+def do_cast(player_index):
+    use_turns=smart_input("Spell time measured in",validentries=['Turns','Rounds'],lower=True)
+    num=smart_input("How many %s does it take" %use_turns,integer=True)
+    if use_turns == "turns":
+        num *= 10
+    target_index=select_target(player_index,True)
+    characters[player_index].start_casting(num,characters[target_index])
+   
+def do_spell_complete(player_index):
+    highlight('%s Has finished casting the spell !' %characters[player_index].firstname())
+    spell_actions=['Other (DM to handle)']
+    if not characters[player_index].spell_success():
+        return
+    if characters[player_index].spell_friendly_target():
+        spell_actions.append('Heal')
+    else:
+        throw=characters[player_index].spell_target.saving_throw('spell')
+        spell_actions.append('Damage')
+    action=smart_input('Spell action',validentries=spell_actions,lower=True)
+    if action == 'heal':
+        sides=smart_input('Healing dice sides',validentries=dice_list(),integer=True)
+        num=smart_input('Number of healing dice to roll',integer=True)
+        heal=rolldice(characters[player_index].autoroll(),num,sides)
+        characters[player_index].spell_target.heal(heal)
+    elif action == 'damage' and not throw:
+        sides=smart_input('Damage dice sides',validentries=dice_list(),integer=True)
+        num=smart_input('Number of damage dice to roll',integer=True)
+        damage=rolldice(characters[player_index].autoroll(),num,sides)
+        if not characters[player_index].spell_target.take_damage(damage):
+            target_index=characters.index(characters[player_index].spell_target)
+            del characters[target_index]
+    else:
+        highlight('DM to handle spell effect himself',clear=False)
+    characters[player_index].spell_complete()
+    
+
+def do_round(rounds):
     rounds += 1
-    highlight('Turn %s Round %s' %(turns(),rounds()) 
+    highlight('Turn %s Round %s' %(turns(),rounds)) 
     for upchar in initiative:
         player_index=upchar[1]
-        action=select_action(player_index)
-        
+        print "%s (%s) goes next" %(characters[player_index].firstname(),player_index)
+        actionlist=["Attack","Flee","Cast","Heal"]
+        if characters[player_index].is_casting():
+            highlight('Warning %s is casting a spell. %s turns left.' %(characters[player_index].firstname(),characters[player_index].cast_remaining),clear=False)
+            del actionlist[2]
+            actionlist.append('Continue casting spell')
+            actionlist.append('Interrupt spell and cast another')
+        action=smart_input("What happens",validentries=actionlist)        
+        if action == "Attack":
+            if characters[player_index].is_casting():
+               characters[player_index].interrupt_cast()     
+            do_attack(player_index)
+        elif action == "Flee":
+            if characters[player_index].is_casting():
+               characters[player_index].interrupt_cast()     
+            do_flee(player_index)
+        elif action == "Cast" or action == "Interrupt spell and cast another":
+            if characters[player_index].is_casting():
+               characters[player_index].interrupt_cast()                 
+            do_cast(player_index)
+        elif action == 'Continue casting spell':
+            if not characters[player_index].continue_casting():
+                do_spell_complete(player_index)
+        elif action == "Heal":
+            pass
+
+    
 #MAIN        
 load_chars()
 initiative=roll_for_initiative()
 threelines()
-highlight('Entering combat')
-initiative    
+more_combat='y'
+while more_combat=='y':
+    highlight('Entering combat')
+    do_round(rounds)
+    if len(characters) > 0:
+        highlight("End of round")
+        more_combat=smart_input("Fight another round",validentries=["y","n"])
+    else:
+        highlight("No more players left in combat")
+        more_combat='n'
+for char in characters:
+    char.save()
+highlight('Combat complete')
+    
+    
 
 
 
