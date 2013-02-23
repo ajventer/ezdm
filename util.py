@@ -5,10 +5,21 @@ import syslog
 import os
 from pwd import getpwnam
 from grp import getgrnam
-from simplejson import loads
+from simplejson import loads,dumps
 from glob import iglob
 from random import randrange
 from pprint import pprint
+
+def threelines():
+    print "\n\n\n"
+
+def highlight(out):
+    bar=''
+    for I in range(0,len(out) +4):
+        bar="%s#" %bar
+    print bar
+    print "# %s #" %out
+    print bar
 
 def inrange(key1,key2):
         if '-' in key2:
@@ -22,11 +33,11 @@ def inrange(key1,key2):
         else:
             return False
 
-def list_chars():
+def list_chars(exclude=[]):
     chars=[]
     for entry in iglob("characters/*.json"):
         chars.append(os.path.basename(entry).rstrip('.json'))
-    return chars
+    return list(set(chars) - set(exclude))
 
 def load_json(source=None,base=None,filename=None):
     if not filename:
@@ -43,6 +54,7 @@ def json_from_template(template={},old={},keypath=""):
                 rk.append(key[3:])
             else:
                 rk.append(key)
+        return rk
     
     mydict={}
     for key in old.keys():
@@ -231,16 +243,41 @@ class Character:
         
     def get_json(self):
         return self.json
-    
-    def update(self,json):
+
+    def save(self):
+        if 'temp' in self.json:
+            del self.json['temp']
+        open('%s/%s.json' %('characters',self.json["personal"]["name"]["first"].upper()),'w').write(dumps(self.json,indent=4))
+        
+    def update(self,json,save=True):
         self.json=json
+        if save:
+            self.save()
+            
+    def to_hit_mod(self):
+        ability_mods=load_json('adnd2e','ability_scores')
+        return int(ability_mods["str"][str(self.json['abilities']['str'])]['hit'])
+
+    def ppd_mod(self):
+        ability_mods=load_json('adnd2e','ability_scores')
+        return int(ability_mods["con"][str(self.json['abilities']['con'])]['ppd'])
+    
+    def dmg_mod(self):
+        ability_mods=load_json('adnd2e','ability_scores')
+        return int(ability_mods["str"][str(self.json['abilities']['str'])]['dmg'])
+    
+    def def_mod(self):
+        ability_mods=load_json('adnd2e','ability_scores')
+        return int(ability_mods["dex"][str(self.json['abilities']['dex'])]['defense'])
         
     def __get_saving_throws(self):
         key=self.json['class']['parent']
         sts=load_json("adnd2e","saving_throws")[key]
         for key2 in sts.keys():
             if inrange(self.json['combat']["level/hitdice"],key2):
-                return(sts[key2])
+                st=sts[key2]
+                st['ppd']=int(st['ppd']) + self.ppd_mod()
+                return(st)
 
     def pprint(self):
         print "Name: %s %s" %(self.json['personal']['name']['first'],self.json['personal']['name']['last'])
@@ -265,6 +302,13 @@ class Character:
             print "     Weapon: %s" %key
             for stat in self.json['combat']['weapons'][key]:
                 print "         %s: %s" %(stat,self.json['combat']['weapons'][key][stat])
+        print "Modifiers(first weapon):"
+        print "     Chance to hit: %s" %self.to_hit_mod()
+        print "     Damage: %s" %self.dmg_mod()
+        print "     Defense (modifies AC down): %s" %self.dmg_mod()
+        print "     PPD Save: %s" %self.ppd_mod()
+
+        
          
     def __get_thac0(self):
         if self.json['personal']['race'] == "creature":

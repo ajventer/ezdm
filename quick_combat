@@ -1,0 +1,63 @@
+#!/usr/bin/python
+from util import smart_input,Character,list_chars,load_json,threelines,highlight,rolldice
+characters=[]
+initiative=[]
+rounds=0
+
+def turns():
+    turns=int(rounds/10)
+    
+def roll_for_initiative():
+    threelines()
+    threelines()
+    init=[]
+    highlight('Rolling for initiative')
+    for char in characters:
+        initroll=rolldice(char.autoroll,1,20)
+        init.append({initroll:characters.index(char)})
+    return sorted(init)
+        
+
+
+def load_chars():
+    #First load up characters
+    more='y'
+    highlight("EZDM: QuickCombat")
+
+    while more=='y':
+        exclude=[]
+        for char in characters:
+            if char.json['personal']['race'] not in ['creature','monster']:
+                exclude.append(char.json['personal']['name']['first'])
+
+        selected=smart_input('Select character to add to combat',validentries=list_chars(exclude))
+        auto=smart_input('User computer dice',validentries=['y','n']) == 'y'
+        characters.append(Character(load_json('characters',selected),auto))
+    
+        threelines()
+        loaded=''
+        for char in characters:
+            loaded="%s %s" %(loaded,char.json['personal']['name']['first'])
+        highlight("Characters in combat: %s" %loaded)
+        more=smart_input('Add more characters to combat',validentries=['y','n'])
+
+def select_action(player_index):
+    print "%s (%s) goes next" %(characters[player_index].json['personal']['name']['first'],playerindex)
+    action=smart_input("What happens",validentries=["Attack","Flee",        
+
+def do_round():
+    rounds += 1
+    highlight('Turn %s Round %s' %(turns(),rounds()) 
+    for upchar in initiative:
+        player_index=upchar[1]
+        action=select_action(player_index)
+        
+#MAIN        
+load_chars()
+initiative=roll_for_initiative()
+threelines()
+highlight('Entering combat')
+initiative    
+
+
+

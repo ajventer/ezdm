@@ -3,8 +3,8 @@
 import sys
 import os
 from simplejson import loads,dumps
-from util import smart_input,load_json,json_from_template,list_chars
-from pprint import pprint
+from util import smart_input,load_json,json_from_template,list_chars,Character
+
 
 
 save='n'
@@ -14,18 +14,18 @@ while not 'y' in save.lower():
     template=load_json('adnd2e','template_cs')
     if len(old) == 0:
         basedir="characters"
-        load=smart_input("Load defaults from existing sheet ?",validentries=["y","n"])
+        load=smart_input("Load defaults from existing sheet",validentries=["y","n"],default='y')
         if load == "y":
             name=smart_input("%s first name "%(basedir),upper=True,validentries=list_chars())
             filename="%s/%s.json" %(basedir,name)
             old=load_json(filename=filename)
             
-    new=json_from_template(template,old)
-    new["combat"]["max_hp"]=new["combat"]["hitpoints"]
-    pprint(new)
+    character=Character(json_from_template(template,old),True)
+    character.json["combat"]["max_hp"]=character.json["combat"]["hitpoints"]
+    character.pprint()
     save=smart_input("Save this %s ?" %(basedir),default="n",validentries=["y","n"],lower=True)
     if 'y' in save:
-        open('%s/%s.json' %(basedir,new["personal"]["name"]["first"]),'w').write(dumps(new,indent=4))
+        character.save()
     else:
-        old=new
+        old=character.get_json()
                 
