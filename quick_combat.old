@@ -25,27 +25,7 @@ def savechar(idx):
         f.write(dumps(characters[idx],indent=4))
         f.close()
 
-def rolldice(auto=True,numdice=1,numsides=20,modifier=0):
-        print
-        if not auto:
-                while True:
-                        print "Roll a %sd%s dice:"
-                        try:
-                                return int(raw_input())
-                        except:
-                                print "Error you must enter a number"
-        else:
-                total=0
-                for I in range(1,numdice +1):
-                        roll=randrange(1,numsides,1)
-                        print "Rolled %s %s-sided dice: %s" %(I,numsides,roll)
-                        total=total+roll
-                
-                total+=modifier       
-                print "Total rolled: %s (modifier %s)" % (total,modifier)
-                print
-                return total
-                
+
 def saving_throw(character,auto):
 	if not character.has_key("saving_throws"):
 		return False
@@ -163,13 +143,13 @@ def do_attack(attackerindex,targetindex,attackertype):
 		atack_number=0
 		def_alive=True
 		while atack_number < num_attacks and def_alive:
-			atack_number += 1
 			weapon=atack_number
+			atack_number += 1
 			extra_mods=atack_mods(atacker,weapon)
 			for v in extra_mods.values():
 				to_hit_mod += int(v)
 			if weapon > len(atacker["weapons"]):
-				weapon=1 #If you get a bonus attack, use the first weapon
+				weapon=0 #If you get a bonus attack, use the first weapon
 			print "Atack %s of %s" %(atack_number,num_attacks)
 			to_hit_mod += int(atacker["weapons"][str(weapon)]["to_hit"])
 			if atacker["weapons"][str(weapon)]["type"] == "misile":
@@ -184,8 +164,7 @@ def do_attack(attackerindex,targetindex,attackertype):
 			critfumble=roll -to_hit_mod == 1
 			if critfumble:
 				print "Critical fumble by %s !" %atacker['name']
-			if is_a_hit(roll,int(atacker['thac0']),int(defender['armor_class']),int(dmods['def']),crithit,critfumble) 
-			and not saving_throw(defender,dauto):
+			if is_a_hit(roll,int(atacker['thac0']),int(defender['armor_class']),int(dmods['def']),crithit,critfumble) and not saving_throw(defender,dauto):
 				print "	The attack is successfull"
 				if is_casting(targetindex,defendertype):
 					interrupt_casting(targetindex,defendertype)
@@ -353,17 +332,17 @@ def do_round(playerindex,playertype):
 	if 'a' in action:
 		if is_casting(playerindex,playertype):
 			interrupt_casting(playerindex,playertype)
-			print "Who does %s attack ?" %name
-			if playertype == 'monster':
-				for c in characters:
-					print "%s: %s" %(characters.index(c),c["name"])
-					targetlist=characters
-			else:
-				for c in monsters:
-					print "%s : %s" %(monsters.index(c),c["name"])
-					targetlist=monsters
-			targetindex=int(raw_input())
-			do_attack(playerindex,targetindex,playertype)
+		print "Who does %s attack ?" %name
+		if playertype == 'monster':
+			for c in characters:
+				print "%s: %s" %(characters.index(c),c["name"])
+				targetlist=characters
+		else:
+			for c in monsters:
+				print "%s : %s" %(monsters.index(c),c["name"])
+				targetlist=monsters
+		targetindex=int(raw_input())
+		do_attack(playerindex,targetindex,playertype)
 
 print "######################"
 print "# EZDM: QuickCombat  #"

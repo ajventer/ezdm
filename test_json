@@ -1,20 +1,16 @@
 #!/usr/bin/python
 import simplejson
-from optparse import OptionParser
+from util import option,load_json
 import sys
+from pprint import pprint
 
-parser = OptionParser()
-parser.add_option("--file",dest="filename",default=None,help="file to test")
-(options, args) = parser.parse_args()
+if len(sys.argv) == 3:
+        pprint (load_json(option(1),option(2)))
+elif len(sys.argv) == 2:
+        pprint (load_json(filename=option(1)))
+else:
+        print "Usage: test_json <source> <base>"
+        print "       test_json <filename>"
 
-if not options.filename:
-        print "Error: no filename specified"
-        sys.exit(1)
-
-DATA=open(options.filename,'r').read()
-print "Raw data: %s" % DATA
-
-JDATA=simplejson.loads(DATA)
-print "JSON Data: %s" % JDATA
 
 

@@ -1,0 +1,11 @@
+{
+"level/hitdice":"",
+"parentclass": "__[warior,wizard,rogue,priest]", 
+"class":"fighter", 
+"atacks_per_round": "",
+"abilities":{"wis": "","dex": "", "cha": "", "str": "","con": "","int": ""},
+"__Uname": "", 
+"__Usurname":"",
+"__#weapons": {"dmg": "", "type": "__[melee,magic,misile]", "to_hit": ""}, 
+"armor_class": ""
+}

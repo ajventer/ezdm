@@ -1,0 +1,30 @@
+#!/usr/bin/python
+#First version limited automation
+import sys
+import os
+from simplejson import loads,dumps
+from util import smart_input,load_json,json_from_template
+from pprint import pprint
+
+
+save='n'
+old = {}
+while not 'y' in save.lower():
+    print "EZDM - quick monster maker"
+    template=load_json('adnd2e','template_cs')
+    if len(old) == 0:
+        basedir=smart_input("What type of character sheet is this",default="monsters",validentries=["monsters","characters"])
+        load=smart_input("Load defaults from existing sheet ?",validentries=["y","n"])
+        if load:
+            name=smart_input("%s first name "%(basedir),upper=True)
+            filename="%s/%s.json" %(basedir,name)
+            old=load_json(filename=filename)
+            
+    new=json_from_template(template,old)
+    pprint(new)
+    save=smart_input("Save this %s ?" %(basedir),default="n",validentries=["y","n"],lower=True)
+    if 'y' in save:
+        open('%s/%s.json' %(basedir,new["name"]),'w').write(dumps(new,indent=4))
+    else:
+        old=new
+                
