@@ -1,0 +1,6 @@
+#!/usr/bin/python
+from util import option,Character,load_json
+
+json=load_json('characters',option(1).upper())
+character=Character(json,True)
+character.pprint()

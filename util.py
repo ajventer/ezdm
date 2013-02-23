@@ -6,6 +6,27 @@ import os
 from pwd import getpwnam
 from grp import getgrnam
 from simplejson import loads
+from glob import iglob
+from random import randrange
+from pprint import pprint
+
+def inrange(key1,key2):
+        if '-' in key2:
+            minimum=int(key2.split('-')[0])
+            maximum=int(key2.split('-')[1])
+        else:
+            minimum=int(key2)
+            maximum=minimum
+        if int(key1) >= minimum and int(key1) <= maximum:
+            return True
+        else:
+            return False
+
+def list_chars():
+    chars=[]
+    for entry in iglob("characters/*.json"):
+        chars.append(os.path.basename(entry).rstrip('.json'))
+    return chars
 
 def load_json(source=None,base=None,filename=None):
     if not filename:
@@ -13,11 +34,26 @@ def load_json(source=None,base=None,filename=None):
     else:
         return loads(open(filename,'r').read())
 
-def json_from_template(template={},old={},keypath=""):
+
+def json_from_template(template={},old={},keypath=""):    
+    def realkeys(template):
+        rk=[]
+        for key in template.keys():
+            if key.startswith('__'):
+                rk.append(key[3:])
+            else:
+                rk.append(key)
+    
     mydict={}
-    for key in template.keys():
+    for key in old.keys():
+        if not key in realkeys(template):
+            mydict[key]=old[key]
+            
+    for key in sorted(template.keys()):
         upper=False
         lower=False
+        integer=False
+        decimal=False
         validentries=[]
         if key.startswith('__'):
             realkey=key[3:]
@@ -27,10 +63,15 @@ def json_from_template(template={},old={},keypath=""):
             showpath=realkey
         else:
             showpath="%s:%s" %(keypath,realkey)
+
         if key.startswith("__U"):
             upper=True
         if key.startswith("__L"):
             lower=True
+        if key.startswith("__I"):
+            integer=True
+        if key.startswith("__D"):
+            decimal=True            
                
         if str(template[key]).startswith("__["):
             validentries=str(template[key]).lstrip('__[').rstrip(']').split(',')
@@ -40,6 +81,7 @@ def json_from_template(template={},old={},keypath=""):
             else:
                 x=1
             numentries=smart_input("How many %s entries ?" %realkey,default=x,integer=True)
+            print numentries
             subdic={}
             for I in range(0,numentries):
                 try:
@@ -54,9 +96,9 @@ def json_from_template(template={},old={},keypath=""):
             else:
                 mydict[realkey]=json_from_template(template[key],{},realkey)
         elif realkey in old:
-            mydict[realkey]=smart_input(showpath,old[realkey],validentries=validentries,upper=upper,lower=lower)
+            mydict[realkey]=smart_input(showpath,old[realkey],validentries=validentries,upper=upper,lower=lower,decimal=decimal,integer=integer)
         else:
-            mydict[realkey]=smart_input(showpath,validentries=validentries,upper=upper,lower=lower)
+            mydict[realkey]=smart_input(showpath,validentries=validentries,upper=upper,lower=lower,decimal=decimal,integer=integer)
     return mydict
         
             
@@ -65,7 +107,7 @@ def rolldice(auto=True,numdice=1,numsides=20,modifier=0):
         print
         if not auto:
                 while True:
-                        print "Roll a %sd%s dice:"
+                        print "Roll a %sd%s dice:" %(numdice,numsides)
                         try:
                                 return int(raw_input())
                         except:
@@ -121,24 +163,22 @@ def smart_input(message='',default=None,integer=False,decimal=False,validentries
             user_input=default
         if integer:
             try:
-                user_input =int(user_input)
+                user_input = int(user_input)
             except Exception as E:
                 error='Error:  %s' %E
-        if decimal:
+        elif decimal:
             try:
                 user_input = float(user_input)
             except Exception as E:
                 error='Error:  %s' %E
-                
-        else:
-            if len(confirm) > 0:
-                
-                if smart_input(confirm.replace('%I',user_input),default='n',validentries=['y','n'],indent=indent,lower=True) == 'y':
-                    return user_input
-                else:
-                    error="Not confirmed - retrying"
-            else:
+
+        if len(confirm) > 0:
+            if smart_input(confirm.replace('%I',user_input),default='n',validentries=['y','n'],indent=indent,lower=True) == 'y':
                 return user_input
+            else:
+                error="Not confirmed - retrying"
+        else:
+            return user_input
  
 def strtodic(s):
     """ Turns strings in format k1:v1,k2:v2,k3:v3 into dictionaries """
@@ -175,3 +215,64 @@ def option(optionx,expect=None):
             print "util.option: invalid json format"
             value = None
     return value
+
+
+class Character:
+    json={}
+    autoroll=False
+    def __init__(self,json,autoroll=False):
+        self.json=json
+        self.json['combat']['thac0']=self.__get_thac0()
+        self.autoroll=autoroll
+        self.json['combat']['saving_throws']=self.__get_saving_throws()
+        if self.json["personal"]['race'] in ['creature','monster']:
+            self.json['combat']['hitpoints']=rolldice(self.autoroll,int(self.json['combat']["level/hitdice"]),8)
+            self.json['combat']["max_hp"]=self.json['combat']['hitpoints']
+        
+    def get_json(self):
+        return self.json
+    
+    def update(self,json):
+        self.json=json
+        
+    def __get_saving_throws(self):
+        key=self.json['class']['parent']
+        sts=load_json("adnd2e","saving_throws")[key]
+        for key2 in sts.keys():
+            if inrange(self.json['combat']["level/hitdice"],key2):
+                return(sts[key2])
+
+    def pprint(self):
+        print "Name: %s %s" %(self.json['personal']['name']['first'],self.json['personal']['name']['last'])
+        print "Alignment: %s-%s" %(self.json['personal']['alignment']['law'],self.json['personal']['alignment']['social'])
+        print "Race: %s" %self.json['personal']['race']
+        print "Class %s:%s" %(self.json['class']['parent'],self.json['class']['class'])
+        print "XP %s/%s" %(self.json['personal']['xp'],'TODO')
+        print "Combat stats:"
+        for key in self.json['combat']:
+            if key not in ['weapons','saving_throws']:
+                print "    %s: %s" %(key,self.json['combat'][key])
+        print "     Saving throws:"
+        for key in self.json['combat']['saving_throws']:
+            prettyname=load_json('adnd2e','saving_throws')['names'][key]
+            print "         %s: %s" %(prettyname,self.json['combat']['saving_throws'][key])
+            
+        print "Ability scores:"
+        for key in self.json['abilities']:
+            print "     %s: %s" %(key,self.json['abilities'][key])
+        print "Weapons:"
+        for key in self.json['combat']['weapons']:
+            print "     Weapon: %s" %key
+            for stat in self.json['combat']['weapons'][key]:
+                print "         %s: %s" %(stat,self.json['combat']['weapons'][key][stat])
+         
+    def __get_thac0(self):
+        if self.json['personal']['race'] == "creature":
+            key="creature"
+        else:
+            key=self.json['class']['parent']
+        thac0s=load_json("adnd2e","thac0")[key]
+        for key2 in thac0s.keys():
+            if inrange(self.json['combat']["level/hitdice"],key2):
+                return(thac0s[key2])
+

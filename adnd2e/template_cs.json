@@ -1,12 +1,23 @@
 {
-"level/hitdice":"",
-"parentclass": "__[warior,wizard,rogue,priest]",
-"creature":"__[True,False]",
-"class":"__[fighter,bard,ranger,thief,druid]", 
-"atacks_per_round": "",
-"abilities":{"wis": "","dex": "", "cha": "", "str": "","con": "","int": ""},
-"__Uname": "", 
-"__Usurname":"",
-"__#weapons": {"dmg": "", "type": "__[melee,magic,misile]", "to_hit": ""}, 
-"armor_class": ""
+"personal":{
+    "alignment":{"law":"__[chaotic,neutral,lawful]",
+                "social":"__[evil,good,neutral]"},
+    "name":{          
+        "__Ufirst": "", 
+        "__Ulast":""},
+    "race":"__[human,elf,dwarf,half-elf,halfling,monster,creature]",
+    "__Ixp":""
+},
+"combat":{
+    "__Ilevel/hitdice":"",
+    "__Ihitpoints":"",
+    "__Imax_hp":"",
+    "__Iatacks_per_round": "",
+    "__Iarmor_class": "",
+    "__#weapons": {"__Idmg": "", "type": "__[melee,magic,misile]", "__Ito_hit": ""}
+},
+"class":
+    {"parent": "__[warrior,wizard,rogue,priest]",
+    "class":"__[fighter,bard,ranger,thief,druid]"},
+"abilities":{"__Iwis": "","__Idex": "", "__Icha": "", "__Istr": "","__Icon": "","__Iint": ""}
 }
