@@ -1,6 +1,6 @@
 {
     "personal": {
-        "xp": 1603,
+        "xp": "1600",
         "race": "elf",
         "name": {
             "last": "WOLVENKINE",
@@ -49,7 +49,7 @@
             "ppd": 14
         },
         "max_hp": 6,
-        "level/hitdice": 1,
-        "hitpoints": 3
+        "level/hitdice": "1",
+        "hitpoints": 6
     }
 }

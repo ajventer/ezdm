@@ -40,6 +40,16 @@ class Character:
     
     def remove_from_combat(self):
         self.removed = True
+        
+    def xp_worth(self):
+        xpkey=self.json['combat']['level/hitdice']
+        xpvalues=load_json('adnd2e','creature_xp')
+        if str(xpkey) in xpvalues.keys():
+            xp=xpvalues[str(xpkey)]
+        elif int(xpkey) > 12:
+            xp=3000+((int(xpkey)-13)*1000)
+        return int(xp)
+            
     
     def set_index(self,index):
         self.index=index
@@ -166,9 +176,24 @@ class Character:
             self.weapon = 0
 
     def give_xp(self,xp):
-        self.json['personal']['xp'] += xp
+        current_xp=int(self.json['personal']['xp'])
+        new_xp=current_xp+int(xp)
+        self.json['personal']['xp'] = str(new_xp)
         highlight("%s now has %s XP" %(self.displayname(),self.json['personal']['xp']))
         self.save()
+        
+    def next_level(self):
+        parentclass=self.json['class']['parent']
+        childclass=self.json['class']['class']
+        nl=int(self.json['combat']['level/hitdice'])+1
+        xp_levels=load_json('adnd2e','xp_levels')[parentclass][str(nl)]
+        if 'all' in xp_levels:
+            next_xp=int(xp_levels['all'])
+        else:
+            next_xp=int(xp_levels[childclass])
+        return next_xp
+    
+        
       
     def is_misile(self,weaponidx):
         return self.json['combat']['weapons'][str(weaponidx)]['type'] == "misile"
@@ -205,16 +230,23 @@ class Character:
         
     def num_attacks(self):
         return self.num_weapons() *int(self.json['combat']['atacks_per_round'])
+    
+    def current_xp(self):
+        return int(self.json['personal']['xp'])
       
     def pprint(self):
         highlight("%s" %self.displayname())
+        print "Level: %s " %self.json['combat']['level/hitdice'],
+        print "XP %s/%s" %(self.current_xp(),self.next_level())
+        print "Class %s:%s" %(self.json['class']['parent'],self.json['class']['class'])
         print "Alignment: %s-%s" %(self.json['personal']['alignment']['law'],self.json['personal']['alignment']['social'])
         print "Race: %s" %self.json['personal']['race']
-        print "Class %s:%s" %(self.json['class']['parent'],self.json['class']['class'])
-        print "XP %s/%s" %(self.json['personal']['xp'],'TODO')
+
+        if self.is_monster():
+            print "XP Worth: %s" %self.xp_worth()
         print "Combat stats:"
         for key in self.json['combat']:
-            if key not in ['weapons','saving_throws']:
+            if key not in ['weapons','saving_throws','level/hitdice']:
                 print "    %s: %s" %(key,self.json['combat'][key])
         print "    Saving throws:"
         print "         ",

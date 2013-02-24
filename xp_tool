@@ -9,7 +9,15 @@ character=Character(load_json('characters',chars[selected]),True)
 highlight('EZDM - XP tool')
 highlight(character.displayname(),False)
 character.give_xp(smart_input('How much XP',integer=True))
-
+if character.current_xp() >= character.next_level():
+    highlight('Character has levelled up',False)
+    level=int(character.json['combat']['level/hitdice'])
+    level += 1
+    character.json['combat']['level/hitdice']=str(level)
+    highlight('%s is now level %s' %(character.displayname(),character.json['combat']['level/hitdice']),False)
+    
+    highlight('Remember to check what other stats go up in the paper sheet !',False)
+    character.save()
 
 
 

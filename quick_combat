@@ -128,8 +128,8 @@ def do_damage(player_index,target_index):
     if save != "none":
         if characters[target_index].saving_throw(save):
             return True
-    damage=rolldice(characters[player_index].autoroll(),hit_dice,dmg,dmg_mod)
-    return characters[player_index].take_damage(damage)
+    damage=rolldice(characters[player_index].autoroll(),1,dmg,dmg_mod)
+    return characters[target_index].take_damage(damage)
             
 def do_attack(player_index):
     characters[player_index].reset_weapon()
@@ -151,6 +151,9 @@ def do_attack(player_index):
                 characters[target_index].interrupt_cast('by successfull hit')
             target_alive=do_damage(player_index,target_index)
             if not target_alive:
+                for char in characters:
+                    if not char.is_monster():
+                        char.give_xp(characters[target_index].xp_worth())
                 characters[target_index].remove_from_combat()
         threelines()
         print "Press enter to continue"
@@ -241,7 +244,7 @@ while more_combat=='y':
     do_round(rounds)
     if len(in_combat()) > 1:
         highlight("End of round")
-        more_combat=smart_input("Fight another round",validentries=["y","n"])
+        more_combat=smart_input("Fight another round",validentries=["y","n"],default='y')
     else:
         highlight("Too few players left in combat")
         highlight("%s was last man standing" %in_combat()[0].displayname(),False)
