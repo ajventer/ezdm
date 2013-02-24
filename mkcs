@@ -3,8 +3,8 @@
 import sys
 import os
 from simplejson import loads,dumps
-from util import smart_input,load_json,json_from_template,list_chars,highlight
-from character import Character
+from util import smart_input,load_json,json_from_template,highlight
+from character import Character,list_chars
 
 
 

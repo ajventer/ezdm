@@ -1,0 +1,49 @@
+{
+    "personal": {
+        "xp": 150,
+        "race": "half-elf",
+        "name": {
+            "last": "TIGER",
+            "first": "RIVERSONG"
+        },
+        "alignment": {
+            "law": "neutral",
+            "social": "good"
+        }
+    },
+    "abilities": {
+        "dex": 12,
+        "cha": 17,
+        "int": 14,
+        "wis": 8,
+        "str": 9,
+        "con": 11
+    },
+    "class": {
+        "class": "bard",
+        "parent": "rogue"
+    },
+    "combat": {
+        "hitpoints": 6,
+        "atacks_per_round": 1,
+        "thac0": 20,
+        "weapons": {
+            "0": {
+                "save_against": "rod",
+                "to_hit": 20,
+                "type": "melee",
+                "dmg": "1d6"
+            }
+        },
+        "saving_throws": {
+            "breath": "16",
+            "pp": "12",
+            "spell": "15",
+            "rod": "14",
+            "ppd": 13
+        },
+        "max_hp": 6,
+        "level/hitdice": 2,
+        "armor_class": 5
+    }
+}
