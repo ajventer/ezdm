@@ -5,7 +5,7 @@ import sys
 
 PATH=os.path.dirname(sys.argv[0])
 
-actionlist={'View a character sheet':'viewchar','Create a new character sheet':'mkcs','Combat !':'quick_combat','Grant XP to character':'xp_tool'}
+actionlist={'View a character sheet':'viewchar','Create a new character sheet':'mkcs','Combat !':'quick_combat','Grant XP to character':'xp_tool','Roll dice':'dice_roller'}
 
 action=''
 while not action.lower() =='quit':
