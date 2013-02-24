@@ -1,0 +1,15 @@
+#!/usr/bin/env python
+from character import Character,list_chars
+from util import highlight,smart_input,load_json
+
+highlight('EZDM - XP tool')
+chars=list_chars(monsters=False)
+selected=smart_input('Character to give XP to',validentries=sorted(chars.keys()))
+character=Character(load_json('characters',chars[selected]),True)
+highlight('EZDM - XP tool')
+highlight(character.displayname(),False)
+character.give_xp(smart_input('How much XP',integer=True))
+
+
+
+

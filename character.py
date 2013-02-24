@@ -7,6 +7,19 @@ from glob import iglob
 from random import randrange
 from pprint import pprint
 
+def list_chars(exclude=[],monsters=True):
+    chars={}
+    
+    for entry in iglob("characters/*.json"):
+        cname=os.path.basename(entry).rstrip('.json')
+        char=Character(load_json('characters',cname),True)
+        if not cname in exclude:
+            if monsters:
+                chars[char.displayname()]=cname
+            elif not char.is_monster():
+                    chars[char.displayname()]=cname
+    return chars
+
 class Character:
     removed=False
     cast_remaining=0
@@ -152,6 +165,10 @@ class Character:
         if self.weapon > self.num_weapons() -1:
             self.weapon = 0
 
+    def give_xp(self,xp):
+        self.json['personal']['xp'] += xp
+        highlight("%s now has %s XP" %(self.displayname(),self.json['personal']['xp']))
+        self.save()
       
     def is_misile(self,weaponidx):
         return self.json['combat']['weapons'][str(weaponidx)]['type'] == "misile"

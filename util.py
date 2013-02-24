@@ -37,12 +37,6 @@ def inrange(key1,key2):
         else:
             return False
 
-def list_chars(exclude=[]):
-    chars=[]
-    for entry in iglob("characters/*.json"):
-        chars.append(os.path.basename(entry).rstrip('.json'))
-    return list(set(chars) - set(exclude))
-
 def load_json(source=None,base=None,filename=None):
     if not filename:
         return loads(open("%s/%s.json" %(source,base),'r').read())
