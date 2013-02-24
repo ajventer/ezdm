@@ -1,6 +1,6 @@
 {
     "personal": {
-        "xp": 150,
+        "xp": "150",
         "race": "half-elf",
         "name": {
             "last": "TIGER",
@@ -24,15 +24,15 @@
         "parent": "rogue"
     },
     "combat": {
-        "hitpoints": 6,
+        "armor_class": 5,
         "atacks_per_round": 1,
         "thac0": 20,
         "weapons": {
             "0": {
-                "save_against": "rod",
                 "to_hit": 20,
                 "type": "melee",
-                "dmg": "1d6"
+                "dmg": "6",
+                "save_against": "rod"
             }
         },
         "saving_throws": {
@@ -44,6 +44,6 @@
         },
         "max_hp": 6,
         "level/hitdice": 2,
-        "armor_class": 5
+        "hitpoints": 6
     }
 }

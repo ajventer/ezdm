@@ -1,4 +1,4 @@
-from util import smart_input,highlight,rolldice,load_json,inrange
+from util import smart_input,highlight,rolldice,load_json,inrange,say
 import sys
 import datetime
 import os
@@ -143,13 +143,13 @@ class Character:
     def saving_throw(self,against):
         prettyname=load_json('adnd2e','saving_throws')['names'][against]
         target=self.json['combat']['saving_throws'][against]
-        print "%s Tries to roll a saving throw against %s" %(self.displayname(),prettyname)
-        print "%s needs to roll %s" %(self.displayname(),target)
+        say ("%s Tries to roll a saving throw against %s" %(self.displayname(),prettyname))
+        say ("%s needs to roll %s" %(self.displayname(),target))
         if rolldice(self.auto,1,20) >= target:
-            print "Saved !"
+            say ("Saved !")
             return True
         else:
-            print "Did not save !"
+            say ("Did not save !")
             return False
         
     def dmg(self,weapon):
@@ -215,7 +215,7 @@ class Character:
         ability_scores=load_json('adnd2e','ability_scores')
         wis=str(self.json['abilities']['wis'])
         failrate=int(ability_scores["wis"][wis]["spell_failure"].split('%')[0])
-        print "Spell failure rate: %s percent" %failrate
+        say ("Spell failure rate: %s percent" %failrate)
         roll=rolldice(self.autoroll(),1,100)
         if roll > failrate:
             highlight('Spell succeeds !',clear=False)
@@ -235,42 +235,43 @@ class Character:
         return int(self.json['personal']['xp'])
       
     def pprint(self):
-        highlight("%s" %self.displayname())
-        print "Level: %s " %self.json['combat']['level/hitdice'],
-        print "XP %s/%s" %(self.current_xp(),self.next_level())
-        print "Class %s:%s" %(self.json['class']['parent'],self.json['class']['class'])
-        print "Alignment: %s-%s" %(self.json['personal']['alignment']['law'],self.json['personal']['alignment']['social'])
-        print "Race: %s" %self.json['personal']['race']
-
+        out =highlight(self.displayname(),sayit=False)
+        out.append("Level: %s " %self.json['combat']['level/hitdice'])
+        out.append( "XP %s/%s" %(self.current_xp(),self.next_level()))
+        out.append( "Class %s:%s" %(self.json['class']['parent'],self.json['class']['class']))
+        out.append( "Alignment: %s-%s" %(self.json['personal']['alignment']['law'],self.json['personal']['alignment']['social']))
+        out.append( "Race: %s" %self.json['personal']['race'])
         if self.is_monster():
-            print "XP Worth: %s" %self.xp_worth()
-        print "Combat stats:"
+            out.append( "XP Worth: %s" %self.xp_worth())
+        out.append( "Combat stats:")
         for key in self.json['combat']:
             if key not in ['weapons','saving_throws','level/hitdice']:
-                print "    %s: %s" %(key,self.json['combat'][key])
-        print "    Saving throws:"
-        print "         ",
+                out.append("    %s: %s" %(key,self.json['combat'][key]))
+        out.append( "    Saving throws:")
+        line='      '
         for key in self.json['combat']['saving_throws']:
             prettyname=load_json('adnd2e','saving_throws')['names'][key]
-            print "[%s: %s] " %(prettyname,self.json['combat']['saving_throws'][key]),
-        print
-        print "Ability scores:"
+            line="%s [%s: %s] " %(line,prettyname,self.json['combat']['saving_throws'][key])
+        out.append(line)
+        out.append( "Ability scores:")
+        
         for key in self.json['abilities']:
-            print "     %s: %s" %(key,self.json['abilities'][key])
-        print "Total attacks per round: %s" %self.num_attacks()
-        print "Weapons: %s" %self.num_weapons()
+            out.append( "   %s: %s" %(key,self.json['abilities'][key]))
+        out.append( "Total attacks per round: %s" %self.num_attacks())
+        out.append( "Weapons: %s" %self.num_weapons())
+        line='      '
         for key in self.json['combat']['weapons']:
-            print "     Weapon: %s" %key
-            print "         ",
+            out.append( "Weapon: %s" %key)
             for stat in self.json['combat']['weapons'][key]:
-                print "[%s: %s]" %(stat,self.json['combat']['weapons'][key][stat]),
-            print
-        print
-        print "Modifiers(first weapon):"
-        print "     Chance to hit: %s" %self.to_hit_mod()
-        print "     Damage: %s" %self.dmg_mod()
-        print "     Defense (modifies AC down): %s" %self.def_mod()
-        print "     PPD Save: %s" %self.ppd_mod()
+                line="%s[%s: %s]" %(line,stat,self.json['combat']['weapons'][key][stat])
+        out.append(line)
+        out.append( "Modifiers(first weapon):")
+        out.append( "Chance to hit: %s" %self.to_hit_mod())
+        out.append( "     Damage: %s" %self.dmg_mod())
+        out.append( "     Defense (modifies AC down): %s" %self.def_mod())
+        out.append( "     PPD Save: %s" %self.ppd_mod())
+        return(out)
+
 
     def displayname(self):
         out="%s %s" %(self.json['personal']['name']['first'],self.json['personal']['name']['last'])

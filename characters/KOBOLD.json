@@ -30,9 +30,9 @@
         "weapons": {
             "0": {
                 "save_against": "none",
-                "dmg": 8,
+                "to_hit": "",
                 "type": "melee",
-                "to_hit": ""
+                "dmg": 8
             }
         },
         "saving_throws": {
@@ -44,6 +44,6 @@
         },
         "max_hp": 7,
         "level/hitdice": 1,
-        "hitpoints": 0
+        "hitpoints": 7
     }
 }

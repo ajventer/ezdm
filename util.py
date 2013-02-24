@@ -11,16 +11,28 @@ def clearscr():
     
 def threelines():
     print "\n\n\n"
+    
+def say(arg):
+    if type(arg) == type([]):
+        for line in arg:
+            print line
+    else:
+        print arg    
 
-def highlight(out,clear=True):
+def highlight(out,clear=False,sayit=True):
     if clear:
         clearscr()
     bar=''
+    output=[]
     for I in range(0,len(out) +4):
         bar="%s#" %bar
-    print bar
-    print "# %s #" %out
-    print bar
+    output.append("%s" %bar)
+    output.append("# %s #" %(out))
+    output.append("%s" %(bar))
+    if sayit:
+        say(output)
+    else:
+        return output
     
 def dice_list():
     return ['4','6','8','10','100','12','20']
@@ -114,24 +126,19 @@ def json_from_template(template={},old={},keypath=""):
             
 
 def rolldice(auto=True,numdice=1,numsides=20,modifier=0):
-        print
+        output=[]
         if not auto:
-                while True:
-                        print "Roll a %sd%s dice:" %(numdice,numsides)
-                        try:
-                                return int(raw_input())
-                        except:
-                                print "Error you must enter a number"
+            return smart_input("Roll a %sd%s dice:" %(numdice,numsides),integer=True)
         else:
                 total=0
                 for I in range(1,numdice +1):
                         roll=randrange(1,numsides,1)
-                        print "Rolled %s %s-sided dice: %s" %(I,numsides,roll)
+                        output.append("Rolled %s %s-sided dice: %s" %(I,numsides,roll))
                         total=total+roll
                 
                 total+=modifier       
-                print "Total rolled: %s (modifier %s)" % (total,modifier)
-                print
+                output.append("Total rolled: %s (modifier %s)" % (total,modifier))
+                say(output)
                 return total
                 
 

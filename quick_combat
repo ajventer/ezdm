@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from util import smart_input,load_json,threelines,highlight,rolldice,dice_list,clearscr
+from util import smart_input,load_json,threelines,highlight,rolldice,dice_list,clearscr,say
 from character import Character,list_chars
 characters=[]
 initiative=[]
@@ -13,7 +13,7 @@ def roll_for_initiative():
     init=[]
     highlight('Rolling for initiative',False)
     for char in in_combat():
-        print char.displayname()
+        say(char.displayname())
         initroll=rolldice(char.autoroll,1,20)
         tup=(initroll,characters.index(char))
         init.append(tuple(tup))
@@ -44,7 +44,7 @@ def load_chars():
                 exclude.append(char.json['personal']['name']['first'])
         clist=list_chars(exclude)
         selected=smart_input('Select character to add to combat',validentries=clist.keys())
-        print "Adding %s to combat" %selected
+        say("Adding %s to combat" %selected)
         auto=smart_input('User computer dice',validentries=['y','n']) == 'y'
         characters.append(Character(load_json('characters',clist[selected]),auto))
         characters[-1].set_index(characters.index(characters[-1]))
@@ -94,9 +94,7 @@ def attack_mods(player_index):
     more=True
     while more:
         highlight("%s is attacking: selecting attack modifiers" %characters[player_index].displayname())
-        print "Active combat modifiers %s" %selected_mods.keys()
-        print "Available modifiers:", 
-        print custom_mods.keys() 
+        say(["Active combat modifiers %s" %selected_mods.keys(),"Available modifiers:",custom_mods.keys()]) 
         action=smart_input("Attack modifiers",validentries=["Add","Remove","Create","Done"],lower=True)
         if action == "done": more=False
         elif action == "add":
@@ -156,8 +154,7 @@ def do_attack(player_index):
                         char.give_xp(characters[target_index].xp_worth())
                 characters[target_index].remove_from_combat()
         threelines()
-        print "Press enter to continue"
-        raw_input()
+        smart_input('Press enter to Continue')
 
 def do_cast(player_index):
     use_turns=smart_input("Spell time measured in",validentries=['Turns','Rounds'],lower=True)
@@ -209,7 +206,7 @@ def do_round(rounds):
             break
         show_in_combat()
         player_index=upchar[1]
-        print "%s goes next" %(characters[player_index].displayname())
+        say("%s goes next" %(characters[player_index].displayname()))
         actionlist=["Attack","Flee","Cast","Heal"]
         if characters[player_index].is_casting():
             highlight('Warning %s is casting a spell. %s turns left.' %(characters[player_index].displayname(),characters[player_index].cast_remaining),clear=False)
