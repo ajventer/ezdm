@@ -261,7 +261,7 @@ class Character:
         self.json['combat']['hitpoints'] += amount
         if amount > self.json['combat']['max_hp']:
             self.json['combat']['hitpoints'] = self.json['combat']['max_hp']
-        highlight("%s receives healing. Hitpoints now %s" %(self.firstname,self.json['combat']['hitpoints']))
+        highlight("%s receives healing. Hitpoints now %s" %(self.firstname(),self.json['combat']['hitpoints']),clear=False)
         self.save()
         
     def take_damage(self,damage):
@@ -309,7 +309,7 @@ class Character:
         if 'temp' in self.json:
             del self.json['temp']
         open('%s/%s.json' %('characters',self.json["personal"]["name"]["first"].upper()),'w').write(dumps(self.json,indent=4))
-        highlight('%s status saved to disk' %self.firstname())
+        highlight('%s status saved to disk' %self.firstname(),clear=False)
         
     def update(self,json,save=True):
         self.json=json

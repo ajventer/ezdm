@@ -155,6 +155,12 @@ def do_cast(player_index):
         num *= 10
     target_index=select_target(player_index,True)
     characters[player_index].start_casting(num,characters[target_index])
+
+def heal_dice(auto=True):
+        sides=smart_input('Healing dice sides',validentries=dice_list(),integer=True)
+        num=smart_input('Number of healing dice to roll',integer=True)
+        return rolldice(auto,num,sides)
+
    
 def do_spell_complete(player_index):
     highlight('%s Has finished casting the spell !' %characters[player_index].firstname())
@@ -168,10 +174,7 @@ def do_spell_complete(player_index):
         spell_actions.append('Damage')
     action=smart_input('Spell action',validentries=spell_actions,lower=True)
     if action == 'heal':
-        sides=smart_input('Healing dice sides',validentries=dice_list(),integer=True)
-        num=smart_input('Number of healing dice to roll',integer=True)
-        heal=rolldice(characters[player_index].autoroll(),num,sides)
-        characters[player_index].spell_target.heal(heal)
+        characters[player_index].spell_target.heal(healdice(characters[player_index].autoroll()))
     elif action == 'damage' and not throw:
         sides=smart_input('Damage dice sides',validentries=dice_list(),integer=True)
         num=smart_input('Number of damage dice to roll',integer=True)
@@ -213,7 +216,7 @@ def do_round(rounds):
             if not characters[player_index].continue_casting():
                 do_spell_complete(player_index)
         elif action == "Heal":
-            pass
+            characters[player_index].heal(heal_dice(characters[player_index].autoroll()))
 
     
 #MAIN        
