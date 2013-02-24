@@ -140,12 +140,13 @@ class Character:
                 st=sts[key2]
                 st['ppd']=int(st['ppd']) + self.ppd_mod()
                 return(st)
+                
     def saving_throw(self,against):
         prettyname=load_json('adnd2e','saving_throws')['names'][against]
-        target=self.json['combat']['saving_throws'][against]
+        target=int(self.json['combat']['saving_throws'][against])
         say ("%s Tries to roll a saving throw against %s" %(self.displayname(),prettyname))
         say ("%s needs to roll %s" %(self.displayname(),target))
-        if rolldice(self.auto,1,20) >= target:
+        if int(rolldice(self.auto,1,20)) >= int(target):
             say ("Saved !")
             return True
         else:

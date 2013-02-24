@@ -24,15 +24,15 @@
         "parent": "rogue"
     },
     "combat": {
-        "armor_class": 5,
+        "hitpoints": 6,
         "atacks_per_round": 1,
         "thac0": 20,
         "weapons": {
             "0": {
-                "to_hit": 20,
-                "type": "melee",
+                "save_against": "rod",
                 "dmg": "6",
-                "save_against": "rod"
+                "type": "melee",
+                "to_hit": 20
             }
         },
         "saving_throws": {
@@ -44,6 +44,6 @@
         },
         "max_hp": 6,
         "level/hitdice": 2,
-        "hitpoints": 6
+        "armor_class": 5
     }
 }

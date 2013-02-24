@@ -5,30 +5,35 @@ from simplejson import loads,dumps
 from glob import iglob
 from random import randrange
 from pprint import pprint
+import easygui as eg
 
-def clearscr():
-    os.system('clear')
-    
-def threelines():
-    print "\n\n\n"
-    
+use_gui=True
+
+def gui_mode():
+    return use_gui
+
+def title():
+    return(os.path.basename(sys.argv[0]))
+
 def say(arg):
+    global use_gui
+    out=''
     if type(arg) == type([]):
         for line in arg:
+            out='%s\n%s' %(out,line)
             print line
     else:
-        print arg    
+        out=arg
+        print arg 
+    if use_gui:
+        eg.msgbox(out,title=title())
 
 def highlight(out,clear=False,sayit=True):
     if clear:
         clearscr()
     bar=''
     output=[]
-    for I in range(0,len(out) +4):
-        bar="%s#" %bar
-    output.append("%s" %bar)
     output.append("# %s #" %(out))
-    output.append("%s" %(bar))
     if sayit:
         say(output)
     else:
@@ -142,6 +147,14 @@ def rolldice(auto=True,numdice=1,numsides=20,modifier=0):
                 return total
                 
 
+def is_yesno(entries):
+    yesno=True
+    if len(entries) == 0:
+        return False
+    for item in entries:
+        if item.lower() not in ['y','n']:
+            yesno=False
+    return yesno
 
 def smart_input(message='',default=None,integer=False,decimal=False,validentries=[],indent=0,lower=False,upper=False,confirm=''):
     if len(validentries) == 1:
@@ -154,8 +167,7 @@ def smart_input(message='',default=None,integer=False,decimal=False,validentries
     istr=''
     while error <> '':
         if error <> '' and error <> "no input":
-            print "%s%s%s" %(istr,istr,error)
-            print "\n\n"
+            eg.exceptionbox("%s%s%s" %(istr,istr,error),title=title())
         error=''
         printmessage=message
         printmessage="%s%s" %(istr,printmessage)
@@ -165,7 +177,27 @@ def smart_input(message='',default=None,integer=False,decimal=False,validentries
             for entry in validentries:
                 print "%s%s (%s): %s" %(istr,istr,validentries.index(entry)+1,entry)       
         print "%s ?" %printmessage,
-        user_input=raw_input()     
+        if use_gui:
+            user_input=None
+            if is_yesno(validentries):
+                if eg.ynbox(printmessage,title=title()) == 1:
+                    user_input='y'
+                else:
+                    user_input='n'
+            elif len(validentries) == 1:
+                user_input=eg.boolbox(printmessage,title=title(),choices=validentries)
+            elif len(validentries) > 1:
+                while user_input == None:
+                    user_input=eg.choicebox(printmessage,title=title(),choices=validentries)
+            else:
+                if integer or decimal:
+                    while user_input == None:
+                        user_input=eg.integerbox(printmessage,title=title(),default=default)
+                else:
+                    while user_input == None:
+                        user_input=eg.enterbox(printmessage,title=title(),default=default)
+        else:
+            user_input=raw_input()     
         if len(validentries) > 0:
             try:
                 select=validentries[int(user_input) -1]
@@ -235,5 +267,8 @@ def option(optionx,expect=None):
             value = None
     return value
 
-
+if not option('--console'):
+    use_gui=True
+else:
+    use_gui=False
 

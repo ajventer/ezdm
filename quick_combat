@@ -1,9 +1,10 @@
 #!/usr/bin/env python
-from util import smart_input,load_json,threelines,highlight,rolldice,dice_list,clearscr,say
+from util import smart_input,load_json,highlight,rolldice,dice_list,say,gui_mode,title
 from character import Character,list_chars
+import easygui as eg
 characters=[]
 initiative=[]
-rounds=1
+rounds=0
 
 
 def turns():
@@ -45,11 +46,9 @@ def load_chars():
         clist=list_chars(exclude)
         selected=smart_input('Select character to add to combat',validentries=clist.keys())
         say("Adding %s to combat" %selected)
-        auto=smart_input('User computer dice',validentries=['y','n']) == 'y'
+        auto=smart_input('Use computer dice',validentries=['y','n']) == 'y'
         characters.append(Character(load_json('characters',clist[selected]),auto))
         characters[-1].set_index(characters.index(characters[-1]))
-        threelines()
-        clearscr()
         show_in_combat()
         if len(characters) >= 2:
             more=smart_input('Add more characters to combat',validentries=['y','n'])
@@ -73,7 +72,7 @@ def select_target(player_index,no_exclude=False):
     exclude=[]
     if not no_exclude:
         exclude.append(characters[player_index].displayname())
-    selected=smart_input("Please select target",validentries=selectlist(exclude))
+    selected=smart_input("%s is attacking: please select target" %characters[player_index].displayname(),validentries=selectlist(exclude))
     return int(selected.split('(')[1].rstrip(')'))
 
 def do_flee(player_index):
@@ -92,7 +91,7 @@ def attack_mods(player_index):
         elif mrange == 'medium':
             selected_mods['[m]edium range misile']=-2
     more=True
-    while more:
+    while more and not gui_mode:
         highlight("%s is attacking: selecting attack modifiers" %characters[player_index].displayname())
         say(["Active combat modifiers %s" %selected_mods.keys(),"Available modifiers:",custom_mods.keys()]) 
         action=smart_input("Attack modifiers",validentries=["Add","Remove","Create","Done"],lower=True)
@@ -112,6 +111,12 @@ def attack_mods(player_index):
         elif action == "create":
             value=smart_input("Modifier value",integer=True)
             selected_mods["DM Custom Mod (%s)" %str(value)]=value
+    if gui_mode:
+        selected=eg.multchoicebox("Select combat modifiers",title=title(),choices=custom_mods.keys())
+        if selected:
+            for selection in selected:
+                selected_mods[selection]=custom_mods[selection]
+        
     attack_mod=0
     for value in selected_mods.values():
         attack_mod += value
@@ -136,8 +141,8 @@ def do_attack(player_index):
     target_alive=True
     num_attacks=characters[player_index].num_attacks()
     while attack_number <= num_attacks and target_alive:
-        highlight("%s is attacking %s !" %(characters[player_index].displayname(),characters[target_index].displayname()))
-        highlight("Attack %s of %s" %(attack_number,num_attacks),clear=False)
+        who=highlight("%s is attacking %s !" %(characters[player_index].displayname(),characters[target_index].displayname()))
+        who="%s\n%s" %(who,highlight("Attack %s of %s" %(attack_number,num_attacks),clear=False))
         attack_number += 1        
         mod=attack_mods(player_index) + characters[player_index].to_hit_mod()
         attack_roll=characters[player_index].attack_roll(characters[target_index],mod)
@@ -153,8 +158,9 @@ def do_attack(player_index):
                     if not char.is_monster():
                         char.give_xp(characters[target_index].xp_worth())
                 characters[target_index].remove_from_combat()
-        threelines()
-        smart_input('Press enter to Continue')
+        if not gui_mode:
+            print 'Press enter to Continue'
+            raw_input()
 
 def do_cast(player_index):
     use_turns=smart_input("Spell time measured in",validentries=['Turns','Rounds'],lower=True)
@@ -197,23 +203,23 @@ def do_spell_complete(player_index):
     
 
 def do_round(rounds):
+    global rounds
     rounds += 1
     highlight('Turn %s Round %s' %(turns(),rounds),False) 
     initiative=roll_for_initiative()
-    threelines()
     for upchar in initiative:
         if len(in_combat()) < 2:     
             break
         show_in_combat()
         player_index=upchar[1]
-        say("%s goes next" %(characters[player_index].displayname()))
+        who=("%s goes next" %(characters[player_index].displayname()))
         actionlist=["Attack","Flee","Cast","Heal"]
         if characters[player_index].is_casting():
             highlight('Warning %s is casting a spell. %s turns left.' %(characters[player_index].displayname(),characters[player_index].cast_remaining),clear=False)
             del actionlist[2]
             actionlist.append('Continue casting spell')
             actionlist.append('Interrupt spell and cast another')
-        action=smart_input("What happens",validentries=actionlist)        
+        action=smart_input("%s:What happens" %who,validentries=actionlist)        
         if action == "Attack":
             if characters[player_index].is_casting():
                characters[player_index].interrupt_cast()     
