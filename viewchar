@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-from util import option,Character,load_json
+from util import option,load_json
+from character import Character
 
 json=load_json('characters',option(1).upper())
 character=Character(json,True)
