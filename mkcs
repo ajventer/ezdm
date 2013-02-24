@@ -23,7 +23,7 @@ while not 'y' in save.lower():
             
     character=Character(json_from_template(template,old),True)
     character.json["combat"]["max_hp"]=character.json["combat"]["hitpoints"]
-    highlight(character.firstname())
+    highlight(character.displayname())
     character.pprint()
     save=smart_input("Save this %s ?" %(basedir.rstrip('s')),default="n",validentries=["y","n"],lower=True)
     if 'y' in save:

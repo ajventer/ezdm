@@ -1,0 +1,18 @@
+#!/usr/bin/env python
+from util import smart_input,highlight
+import os
+import sys
+
+PATH=os.path.dirname(sys.argv[0])
+
+actionlist={'View a character sheet':'viewchar','Create a new character sheet':'mkcs','Combat !':'quick_combat'}
+
+action=''
+while not action.lower() =='quit':
+    highlight('Welcome to the EZDM console V1.0')
+    actions=sorted(actionlist.keys())
+    actions.append('Quit')
+    action=smart_input('Please select an activity',validentries=actions)
+    if action.lower() <> 'quit':
+        os.system(os.path.join(PATH,actionlist[action]))
+        raw_input()

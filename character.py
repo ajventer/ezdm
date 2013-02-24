@@ -8,19 +8,28 @@ from random import randrange
 from pprint import pprint
 
 class Character:
+    removed=False
     cast_remaining=0
     spell_target=None
     json={}
     auto=False
+    index=-1
     weapon=0
     def __init__(self,json,autoroll=False):
         self.json=json
+
         self.json['combat']['thac0']=self.__get_thac0()
         self.auto=autoroll
         self.json['combat']['saving_throws']=self.__get_saving_throws()
         if self.is_monster():
             self.json['combat']['hitpoints']=rolldice(self.auto,int(self.json['combat']["level/hitdice"]),8)
             self.json['combat']["max_hp"]=self.json['combat']['hitpoints']
+    
+    def remove_from_combat(self):
+        self.removed = True
+    
+    def set_index(self,index):
+        self.index=index
         
     def get_json(self):
         return self.json
@@ -29,7 +38,7 @@ class Character:
         self.json['combat']['hitpoints'] += amount
         if amount > self.json['combat']['max_hp']:
             self.json['combat']['hitpoints'] = self.json['combat']['max_hp']
-        highlight("%s receives healing. Hitpoints now %s" %(self.firstname(),self.json['combat']['hitpoints']),clear=False)
+        highlight("%s receives healing. Hitpoints now %s" %(self.displayname(),self.json['combat']['hitpoints']),clear=False)
         self.save()
         
     def take_damage(self,damage):
@@ -37,12 +46,12 @@ class Character:
             if not self.saving_throw('ppd'): #Roll saving throw against death
                 self.json['combat']['hitpoints'] = 0
                 self.save()
-                highlight("%s has died !" %self.firstname(),clear=False)
+                highlight("%s has died !" %self.displayname(),clear=False)
                 return False
         else:
             self.json['combat']['hitpoints'] -= damage
             self.save()
-            highlight("%s takes %s damage. %s hitpoints remaining" %(self.firstname(),damage,self.json['combat']['hitpoints']),clear=False)
+            highlight("%s takes %s damage. %s hitpoints remaining" %(self.displayname(),damage,self.json['combat']['hitpoints']),clear=False)
             return True
         
         
@@ -61,7 +70,7 @@ class Character:
         return self.cast_remaining > 0
         
     def interrupt_cast(self,by=''):
-        highlight('%s: spell casting interrupted %s !' %(self.firstname(),by),clear=False)
+        highlight('%s: spell casting interrupted %s !' %(self.displayname(),by),clear=False)
         self.spell_complete()
     
     def spell_complete(self):
@@ -77,7 +86,7 @@ class Character:
         if 'temp' in self.json:
             del self.json['temp']
         open('%s/%s.json' %('characters',self.json["personal"]["name"]["first"].upper()),'w').write(dumps(self.json,indent=4))
-        highlight('%s status saved to disk' %self.firstname(),clear=False)
+        highlight('%s status saved to disk' %self.displayname(),clear=False)
         
     def update(self,json,save=True):
         self.json=json
@@ -111,8 +120,8 @@ class Character:
     def saving_throw(self,against):
         prettyname=load_json('adnd2e','saving_throws')['names'][against]
         target=self.json['combat']['saving_throws'][against]
-        print "%s Tries to roll a saving throw against %s" %(self.firstname(),prettyname)
-        print "%s needs to roll %s" %(self.firstname(),target)
+        print "%s Tries to roll a saving throw against %s" %(self.displayname(),prettyname)
+        print "%s needs to roll %s" %(self.displayname(),target)
         if rolldice(self.auto,1,20) >= target:
             print "Saved !"
             return True
@@ -181,7 +190,7 @@ class Character:
         return self.num_weapons() *int(self.json['combat']['atacks_per_round'])
       
     def pprint(self):
-        print "Name: %s %s" %(self.json['personal']['name']['first'],self.json['personal']['name']['last'])
+        highlight("%s" %self.displayname())
         print "Alignment: %s-%s" %(self.json['personal']['alignment']['law'],self.json['personal']['alignment']['social'])
         print "Race: %s" %self.json['personal']['race']
         print "Class %s:%s" %(self.json['class']['parent'],self.json['class']['class'])
@@ -190,11 +199,12 @@ class Character:
         for key in self.json['combat']:
             if key not in ['weapons','saving_throws']:
                 print "    %s: %s" %(key,self.json['combat'][key])
-        print "     Saving throws:"
+        print "    Saving throws:"
+        print "         ",
         for key in self.json['combat']['saving_throws']:
             prettyname=load_json('adnd2e','saving_throws')['names'][key]
-            print "         %s: %s" %(prettyname,self.json['combat']['saving_throws'][key])
-            
+            print "[%s: %s] " %(prettyname,self.json['combat']['saving_throws'][key]),
+        print
         print "Ability scores:"
         for key in self.json['abilities']:
             print "     %s: %s" %(key,self.json['abilities'][key])
@@ -202,16 +212,23 @@ class Character:
         print "Weapons: %s" %self.num_weapons()
         for key in self.json['combat']['weapons']:
             print "     Weapon: %s" %key
+            print "         ",
             for stat in self.json['combat']['weapons'][key]:
-                print "         %s: %s" %(stat,self.json['combat']['weapons'][key][stat])
+                print "[%s: %s]" %(stat,self.json['combat']['weapons'][key][stat]),
+            print
+        print
         print "Modifiers(first weapon):"
         print "     Chance to hit: %s" %self.to_hit_mod()
         print "     Damage: %s" %self.dmg_mod()
         print "     Defense (modifies AC down): %s" %self.def_mod()
         print "     PPD Save: %s" %self.ppd_mod()
 
-    def firstname(self):
-        return self.json['personal']['name']['first']
+    def displayname(self):
+        out="%s %s" %(self.json['personal']['name']['first'],self.json['personal']['name']['last'])
+        if self.index > -1:
+            out="%s (%s)" %(out,self.index)
+        out="[%s]" %out
+        return out
          
     def __get_thac0(self):
         if self.json['personal']['race'] == "creature":

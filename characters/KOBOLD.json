@@ -24,15 +24,15 @@
         "parent": "warrior"
     },
     "combat": {
-        "armor_class": 8,
+        "hitpoints": 5,
         "atacks_per_round": 1,
         "thac0": 20,
         "weapons": {
             "0": {
-                "save_against": "none",
                 "dmg": 8,
                 "type": "melee",
-                "to_hit": ""
+                "to_hit": "",
+                "save_against": "none"
             }
         },
         "saving_throws": {
@@ -42,8 +42,8 @@
             "rod": "16",
             "ppd": 14
         },
-        "max_hp": 2,
+        "max_hp": 5,
         "level/hitdice": 1,
-        "hitpoints": 0
+        "armor_class": 8
     }
 }

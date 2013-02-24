@@ -24,20 +24,20 @@
         "parent": "warrior"
     },
     "combat": {
-        "hitpoints": 6,
+        "hitpoints": 3,
         "atacks_per_round": 1,
         "thac0": 20,
         "weapons": {
             "1": {
-                "dmg": 4,
-                "type": "melee",
                 "to_hit": "",
+                "type": "melee",
+                "dmg": 4,
                 "save_against": "none"
             },
             "0": {
-                "dmg": 4,
-                "type": "melee",
                 "to_hit": "",
+                "type": "melee",
+                "dmg": 4,
                 "save_against": "none"
             }
         },
