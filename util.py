@@ -5,6 +5,7 @@ from simplejson import loads,dumps
 from glob import iglob
 from random import randrange
 from pprint import pprint
+force_no_gui=False
 try:
     import easygui as eg
 except: 
