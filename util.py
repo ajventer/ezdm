@@ -5,7 +5,10 @@ from simplejson import loads,dumps
 from glob import iglob
 from random import randrange
 from pprint import pprint
-import easygui as eg
+try:
+    import easygui as eg
+except: 
+    force_no_gui=True
 
 use_gui=True
 
@@ -267,7 +270,7 @@ def option(optionx,expect=None):
             value = None
     return value
 
-if not option('--console'):
+if not option('--console') and not force_no_gui:
     use_gui=True
 else:
     use_gui=False
