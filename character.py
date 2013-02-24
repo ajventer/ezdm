@@ -148,6 +148,7 @@ class Character:
         return self.json['combat']['weapons'][str(weaponidx)]['type'] == "misile"
         
     def attack_roll(self,target,mod):
+        self.next_weapon() 
         roll=rolldice(self.autoroll(),1,20,mod)
         if roll - mod == 1:
             return "Critical Miss !"

@@ -145,7 +145,6 @@ def do_attack(player_index):
             if not target_alive:
                 del characters[target_index]
         threelines()
-        characters[player_index].next_weapon()
         print "Press enter to continue"
         raw_input()
 
@@ -176,21 +175,24 @@ def do_spell_complete(player_index):
     action=smart_input('Spell action',validentries=spell_actions,lower=True)
     if action == 'heal':
         characters[player_index].spell_target.heal(healdice(characters[player_index].autoroll()))
+        characters[player_index].spell_complete()
     elif action == 'damage' and not throw:
         sides=smart_input('Damage dice sides',validentries=dice_list(),integer=True)
         num=smart_input('Number of damage dice to roll',integer=True)
         damage=rolldice(characters[player_index].autoroll(),num,sides)
         if not characters[player_index].spell_target.take_damage(damage):
             target_index=characters.index(characters[player_index].spell_target)
+            characters[player_index].spell_complete()
             del characters[target_index]
     else:
         highlight('DM to handle spell effect himself',clear=False)
-    characters[player_index].spell_complete()
+        characters[player_index].spell_complete()
+    
     
 
 def do_round(rounds):
     rounds += 1
-    highlight('Turn %s Round %s' %(turns(),rounds)) 
+    highlight('Turn %s Round %s' %(turns(),rounds),False) 
     for upchar in initiative:
         player_index=upchar[1]
         print "%s (%s) goes next" %(characters[player_index].firstname(),player_index)
@@ -222,11 +224,11 @@ def do_round(rounds):
     
 #MAIN        
 load_chars()
-initiative=roll_for_initiative()
-threelines()
 more_combat='y'
 while more_combat=='y':
-    highlight('Entering combat')
+    initiative=roll_for_initiative()
+    threelines()
+    highlight('Entering combat',False)
     do_round(rounds)
     if len(characters) > 0:
         highlight("End of round")
