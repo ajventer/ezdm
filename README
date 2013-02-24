@@ -11,8 +11,7 @@ uses a powerful templateing engine to manage them, when new keys are added
 to character sheets, simply add them to the template and load the sheets in with
 mkcs to ensure the key is in existing sheets.
 
-TODO: Modify the tools to be able to function purely as CGI scripts for web-based usage.
-
+TODO: Some kind of refactor to let one use the programs graphically / over the web ?
 
 Template controls:
 Keys or values which start __? are controls.
