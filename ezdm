@@ -13,7 +13,11 @@ while not action.lower() =='quit':
     actions=sorted(actionlist.keys())
     actions.append('Quit')
     action=smart_input('Please select an activity',validentries=actions)
-    if action.lower() <> 'quit':
-        os.system(os.path.join(PATH,actionlist[action]))
+    if action.lower() <> 'quit':           
+        command=actionlist[action]
+        if not gui_mode():
+            command="%s --console" %command
+        print "Running %s" %command
+        os.system(os.path.join(PATH,command))
         if not gui_mode():
             raw_input()
