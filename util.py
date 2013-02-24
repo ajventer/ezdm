@@ -1,6 +1,6 @@
 import sys
 import datetime
-./mimport os
+import os
 from simplejson import loads,dumps
 from glob import iglob
 from random import randrange
