@@ -11,5 +11,5 @@ setup(name='EZDM',
       scripts=['dice_roller','mkcs','xp_tool','quick_combat','ezdm','viewchar'],
       packages=['ezdm.libs'],
       package_dir={'ezdm.libs':'ezdm.libs'},
-      package_data={'ezdm.libs':'adnd2e'},
+      package_data={'ezdm.libs':['adnd2e/*']},
      )
