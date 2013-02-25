@@ -20,8 +20,7 @@ if __name__=='__main__':
             if load == "y":
                 charlist=list_chars()
                 name=smart_input("%s first name "%(basedir),upper=True,validentries=charlist.keys())
-                filename="%s/%s.json" %(basedir,charlist[name])
-                old=load_json(filename=filename)
+                old=load_json(basedir,charlist[name])
             
         character=Character(json_from_template(template,old),True)
         character.json["combat"]["max_hp"]=character.json["combat"]["hitpoints"]
