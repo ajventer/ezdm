@@ -8,26 +8,27 @@ from character import Character,list_chars
 
 
 
-save='n'
-old = {}
-while not 'y' in save.lower():
-    highlight("EZDM character creator")
-    template=load_json('adnd2e','template_cs')
-    if len(old) == 0:
-        basedir="characters"
-        load=smart_input("Load defaults from existing sheet",validentries=["y","n"],default='y')
-        if load == "y":
-            charlist=list_chars()
-            name=smart_input("%s first name "%(basedir),upper=True,validentries=charlist.keys())
-            filename="%s/%s.json" %(basedir,charlist[name])
-            old=load_json(filename=filename)
+if __name__=='__main__': 
+    save='n'
+    old = {}
+    while not 'y' in save.lower():
+        highlight("EZDM character creator")
+        template=load_json('adnd2e','template_cs')
+        if len(old) == 0:
+            basedir="characters"
+            load=smart_input("Load defaults from existing sheet",validentries=["y","n"],default='y')
+            if load == "y":
+                charlist=list_chars()
+                name=smart_input("%s first name "%(basedir),upper=True,validentries=charlist.keys())
+                filename="%s/%s.json" %(basedir,charlist[name])
+                old=load_json(filename=filename)
             
-    character=Character(json_from_template(template,old),True)
-    character.json["combat"]["max_hp"]=character.json["combat"]["hitpoints"]
-    say(character.pprint())
-    save=smart_input("Save this %s ?" %(basedir.rstrip('s')),default="n",validentries=["y","n"],lower=True)
-    if 'y' in save:
-        character.save()
-    else:
-        old=character.get_json()
+        character=Character(json_from_template(template,old),True)
+        character.json["combat"]["max_hp"]=character.json["combat"]["hitpoints"]
+        say(character.pprint())
+        save=smart_input("Save this %s ?" %(basedir.rstrip('s')),default="n",validentries=["y","n"],lower=True)
+        if 'y' in save:
+            character.save()
+        else:
+            old=character.get_json()
                 

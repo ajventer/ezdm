@@ -3,21 +3,23 @@ from util import smart_input,highlight,gui_mode
 import os
 import sys
 
-PATH=os.path.dirname(sys.argv[0])
 
-actionlist={'View a character sheet':'viewchar','Create a new character sheet':'mkcs','Combat !':'quick_combat','Grant XP to character':'xp_tool','Roll dice':'dice_roller'}
+if __name__=='__main__': 
+    PATH=os.path.dirname(sys.argv[0])
 
-action=''
-while not action.lower() =='quit':
-    highlight('Welcome to the EZDM console V1.0')
-    actions=sorted(actionlist.keys())
-    actions.append('Quit')
-    action=smart_input('Please select an activity',validentries=actions)
-    if action.lower() <> 'quit':           
-        command=actionlist[action]
-        if not gui_mode():
-            command="%s --console" %command
-        print "Running %s" %command
-        os.system(os.path.join(PATH,command))
-        if not gui_mode():
-            raw_input()
+    actionlist={'View a character sheet':'viewchar','Create a new character sheet':'mkcs','Combat !':'quick_combat','Grant XP to character':'xp_tool','Roll dice':'dice_roller'}
+
+    action=''
+    while not action.lower() =='quit':
+        highlight('Welcome to the EZDM console V1.0')
+        actions=sorted(actionlist.keys())
+        actions.append('Quit')
+        action=smart_input('Please select an activity',validentries=actions)
+        if action.lower() <> 'quit':           
+            command=actionlist[action]
+            if not gui_mode():
+                command="%s --console" %command
+            print "Running %s" %command
+            os.system(os.path.join(PATH,command))
+            if not gui_mode():
+                raw_input()

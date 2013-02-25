@@ -205,7 +205,7 @@ def do_spell_complete(player_index):
     
     
 
-def do_round(rounds):
+def do_round():
     global rounds
     rounds += 1
     highlight('Turn %s Round %s' %(turns(),rounds),False) 
@@ -242,22 +242,22 @@ def do_round(rounds):
             characters[player_index].heal(heal_dice(characters[player_index].autoroll()))
 
     
-#MAIN        
-load_chars()
-more_combat='y'
-while more_combat=='y':
-    highlight('Entering combat',False)
-    do_round(rounds)
-    if len(in_combat()) > 1:
-        highlight("End of round")
-        more_combat=smart_input("Fight another round",validentries=["y","n"],default='y')
-    else:
-        highlight("Too few players left in combat")
-        highlight("%s was last man standing" %in_combat()[0].displayname(),False)
-        more_combat='n'
-for char in characters:
-    char.save()
-highlight('Combat complete',False)
+if __name__=='__main__':       
+    load_chars()
+    more_combat='y'
+    while more_combat=='y':
+        highlight('Entering combat',False)
+        do_round()
+        if len(in_combat()) > 1:
+            highlight("End of round")
+            more_combat=smart_input("Fight another round",validentries=["y","n"],default='y')
+        else:
+            highlight("Too few players left in combat")
+            highlight("%s was last man standing" %in_combat()[0].displayname(),False)
+            more_combat='n'
+    for char in characters:
+        char.save()
+    highlight('Combat complete',False)
     
     
 

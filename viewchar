@@ -2,10 +2,11 @@
 from util import option,load_json,smart_input,highlight,say
 from character import Character,list_chars
 
-highlight('EZDM - Character viewer')
-clist=list_chars()
-name=smart_input("Select Character to view",upper=True,validentries=clist.keys())
-json=load_json('characters',clist[name])
-character=Character(json,True)
-say(character.pprint())
+if __name__=='__main__': 
+    highlight('EZDM - Character viewer')
+    clist=list_chars()
+    name=smart_input("Select Character to view",upper=True,validentries=clist.keys())
+    json=load_json('characters',clist[name])
+    character=Character(json,True)
+    say(character.pprint())
 
