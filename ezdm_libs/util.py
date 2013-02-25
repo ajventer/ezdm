@@ -1,6 +1,7 @@
 import sys
 import datetime
 import os
+from ezdm_libs import get_sys_data
 from simplejson import loads,dumps
 from glob import iglob
 from random import randrange
@@ -12,6 +13,14 @@ except:
     force_no_gui=True
 
 use_gui=True
+
+def get_user_data(source):
+    _ROOT=os.path.expanduser('~')
+    _ROOT=os.path.join(_ROOT,'.ezdm')
+    datapath=os.path.join(_ROOT,source)
+    if not os.path.exists(datapath):
+        os.makedirs(datapath)
+    return  datapath
 
 def gui_mode():
     return use_gui
@@ -60,7 +69,12 @@ def inrange(key1,key2):
 
 def load_json(source=None,base=None,filename=None):
     if not filename:
-        return loads(open("%s/%s.json" %(source,base),'r').read())
+        path=get_sys_data(source)
+        if not path:
+            path=get_user_data(source)
+        f="%s.json" %base
+        path=os.path.join(path,f)
+        return loads(open(path,'r').read())
     else:
         return loads(open(filename,'r').read())
 
@@ -112,7 +126,6 @@ def json_from_template(template={},old={},keypath=""):
             else:
                 x=1
             numentries=smart_input("How many %s entries ?" %realkey,default=x,integer=True)
-            print numentries
             subdic={}
             for I in range(0,numentries):
                 try:
@@ -134,7 +147,7 @@ def json_from_template(template={},old={},keypath=""):
         
             
 
-def rolldice(auto=True,numdice=1,numsides=20,modifier=0):
+def rolldice(auto=True,numdice=1,numsides=20,modifier=0,quiet=False):
         output=[]
         if not auto:
             return smart_input("Roll a %sd%s dice:" %(numdice,numsides),integer=True)
@@ -147,7 +160,8 @@ def rolldice(auto=True,numdice=1,numsides=20,modifier=0):
                 
                 total+=modifier       
                 output.append("Total rolled: %s (modifier %s)" % (total,modifier))
-                say(output)
+                if not quiet:
+                    say(output)
                 return total
                 
 

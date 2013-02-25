@@ -1,6 +1,6 @@
 #!/usr/bin/env python
-from util import smart_input,load_json,highlight,rolldice,dice_list,say,gui_mode,title
-from character import Character,list_chars
+from ezdm_libs.util import smart_input,load_json,highlight,rolldice,dice_list,say,gui_mode,title
+from ezdm_libs.character import Character,list_chars
 try:
     import easygui as eg
 except:
@@ -50,7 +50,7 @@ def load_chars():
         selected=smart_input('Select character to add to combat',validentries=clist.keys())
         say("Adding %s to combat" %selected)
         auto=smart_input('Use computer dice',validentries=['y','n']) == 'y'
-        characters.append(Character(load_json('characters',clist[selected]),auto))
+        characters.append(Character(load_json('characters',clist[selected]),auto,QuietDice=False))
         characters[-1].set_index(characters.index(characters[-1]))
         show_in_combat()
         if len(characters) >= 2:
