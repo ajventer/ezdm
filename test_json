@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import simplejson
-from util import option,load_json
+from ezdm_libs.util import option,load_json
 import sys
 from pprint import pprint
 

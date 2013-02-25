@@ -1,4 +1,4 @@
-from util import smart_input,highlight,rolldice,load_json,inrange,say
+from util import smart_input,highlight,rolldice,load_json,inrange,say,get_user_data
 import sys
 import datetime
 import os
@@ -9,8 +9,7 @@ from pprint import pprint
 
 def list_chars(exclude=[],monsters=True):
     chars={}
-    
-    for entry in iglob("characters/*.json"):
+    for entry in iglob(os.path.join(get_user_data('characters'),"*.json")):
         cname=os.path.basename(entry).rstrip('.json')
         char=Character(load_json('characters',cname),True)
         if not cname in exclude:
@@ -18,6 +17,8 @@ def list_chars(exclude=[],monsters=True):
                 chars[char.displayname()]=cname
             elif not char.is_monster():
                     chars[char.displayname()]=cname
+    if len(chars) == 0:
+        say('Note: you have not created any characters yet')
     return chars
 
 class Character:
@@ -28,14 +29,14 @@ class Character:
     auto=False
     index=-1
     weapon=0
-    def __init__(self,json,autoroll=False):
+    def __init__(self,json,autoroll=False,QuietDice=True):
         self.json=json
 
         self.json['combat']['thac0']=self.__get_thac0()
         self.auto=autoroll
         self.json['combat']['saving_throws']=self.__get_saving_throws()
         if self.is_monster():
-            self.json['combat']['hitpoints']=rolldice(self.auto,int(self.json['combat']["level/hitdice"]),8)
+            self.json['combat']['hitpoints']=rolldice(self.auto,int(self.json['combat']["level/hitdice"]),8,quiet=QuietDice)
             self.json['combat']["max_hp"]=self.json['combat']['hitpoints']
     
     def remove_from_combat(self):
