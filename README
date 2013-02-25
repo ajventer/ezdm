@@ -1,7 +1,10 @@
 This is a simple set of tools for dungeon managers.
 The current project only targets AD&D 2nd edition rules.
 
-This branch always holds the last known stable build
+Branches: 
+        - Master is in flux - at any given moment, it may not build or run
+        - Stable is merged whenever master appears not to be broken
+        - All others are feature branches
 
 This is not an RPG game, it's some helper tools for people DM-ing real
 games and designed to not get in the way of role-play and story-telling
