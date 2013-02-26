@@ -2,7 +2,7 @@
 from ezdm_libs.util import smart_input,load_json,highlight,rolldice,dice_list,say,title
 from ezdm_libs.character import Character,list_chars
 from ezdm_libs import gui
-if gui:
+if gui():
     import easygui as eg
 
 characters=[]
@@ -116,7 +116,7 @@ def attack_mods(player_index):
             selected_mods["DM Custom Mod (%s)" %str(value)]=value
     if gui:
        #TODO - custom modifiers in GUI mode
-       selected=eg.multchoicebox("Select combat modifiers",title=title(),choices=custom_mods.keys())
+        selected=eg.multchoicebox("Select combat modifiers",title=title(),choices=custom_mods.keys())
         if selected:
             for selection in selected:
                 selected_mods[selection]=custom_mods[selection]

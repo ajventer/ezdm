@@ -6,7 +6,7 @@ from simplejson import loads,dumps
 from glob import iglob
 from random import randrange
 from pprint import pprint
-if gui:
+if gui():
     import easygui as eg
 
 
@@ -22,7 +22,6 @@ def title():
     return(os.path.basename(sys.argv[0]))
 
 def say(arg):
-    global use_gui
     out=''
     if type(arg) == type([]):
         for line in arg:
@@ -31,7 +30,7 @@ def say(arg):
     else:
         out=arg
         print arg 
-    if use_gui:
+    if gui():
         eg.msgbox(out,title=title())
 
 def highlight(out,clear=False,sayit=True):
@@ -188,7 +187,7 @@ def smart_input(message='',default=None,integer=False,decimal=False,validentries
             for entry in validentries:
                 print "%s%s (%s): %s" %(istr,istr,validentries.index(entry)+1,entry)       
         print "%s ?" %printmessage,
-        if use_gui:
+        if gui():
             user_input=None
             if is_yesno(validentries):
                 if eg.ynbox(printmessage,title=title()) == 1:
