@@ -1,3 +1,9 @@
+ezdm (0.0.1ubuntu1) quantal; urgency=low
+
+  * Several bugfixes
+
+ -- A.J. Venter <ajventer@gmail.com>  Tue, 26 Feb 2013 23:16:21 +0200
+
 ezdm (0.0.1) quantal; urgency=low
 
   * Initial release. ()

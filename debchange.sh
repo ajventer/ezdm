@@ -22,7 +22,7 @@ else
         CHANGEOPTS="$*"
 fi
 debchange $CHANGEOPTS
-
+debchange -r
 
 
 
