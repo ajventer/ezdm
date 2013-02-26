@@ -72,6 +72,11 @@ class Character:
                 self.save()
                 highlight("%s has died !" %self.displayname(),clear=False)
                 return False
+            else:
+                self.json['combat']['hitpoints'] = 1
+                self.save()
+                highlight("%s barely survives. %s hitpoints remaining" %(self.displayname(),self.json['combat']['hitpoints']),clear=False)
+                return True
         else:
             hp=int(self.json['combat']['hitpoints'])
             hp -= damage

@@ -162,7 +162,7 @@ def do_attack(player_index):
                     if not char.is_monster():
                         char.give_xp(characters[target_index].xp_worth())
                 characters[target_index].remove_from_combat()
-        if not gui_mode:
+        if not gui():
             print 'Press enter to Continue'
             raw_input()
 
@@ -216,6 +216,8 @@ def do_round():
             break
         show_in_combat()
         player_index=upchar[1]
+        if not characters[player_index] in in_combat():
+            continue #This happens if a character dies during a round - he still has initiative but isn't in the fight anymore         
         who=("%s goes next" %(characters[player_index].displayname()))
         actionlist=["Attack","Flee","Cast","Heal"]
         if characters[player_index].is_casting():
