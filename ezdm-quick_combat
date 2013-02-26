@@ -1,10 +1,10 @@
 #!/usr/bin/env python
-from ezdm_libs.util import smart_input,load_json,highlight,rolldice,dice_list,say,gui_mode,title
+from ezdm_libs.util import smart_input,load_json,highlight,rolldice,dice_list,say,title
 from ezdm_libs.character import Character,list_chars
-try:
+from ezdm_libs import gui
+if gui:
     import easygui as eg
-except:
-    pass
+
 characters=[]
 initiative=[]
 rounds=0
@@ -94,7 +94,7 @@ def attack_mods(player_index):
         elif mrange == 'medium':
             selected_mods['[m]edium range misile']=-2
     more=True
-    while more and not gui_mode:
+    while more:
         highlight("%s is attacking: selecting attack modifiers" %characters[player_index].displayname())
         say(["Active combat modifiers %s" %selected_mods.keys(),"Available modifiers:",custom_mods.keys()]) 
         action=smart_input("Attack modifiers",validentries=["Add","Remove","Create","Done"],lower=True)
@@ -114,8 +114,9 @@ def attack_mods(player_index):
         elif action == "create":
             value=smart_input("Modifier value",integer=True)
             selected_mods["DM Custom Mod (%s)" %str(value)]=value
-    if gui_mode:
-        selected=eg.multchoicebox("Select combat modifiers",title=title(),choices=custom_mods.keys())
+    if gui:
+       #TODO - custom modifiers in GUI mode
+       selected=eg.multchoicebox("Select combat modifiers",title=title(),choices=custom_mods.keys())
         if selected:
             for selection in selected:
                 selected_mods[selection]=custom_mods[selection]

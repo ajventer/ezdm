@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from util import rolldice,smart_input,dice_list,highlight
+from ezdm_libs.util import rolldice,smart_input,dice_list,highlight
 
 
 if __name__=='__main__': 

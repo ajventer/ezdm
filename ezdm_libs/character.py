@@ -73,7 +73,9 @@ class Character:
                 highlight("%s has died !" %self.displayname(),clear=False)
                 return False
         else:
-            self.json['combat']['hitpoints'] -= damage
+            hp=int(self.json['combat']['hitpoints'])
+            hp -= damage
+            self.json['combat']['hitpoints'] =hp
             self.save()
             highlight("%s takes %s damage. %s hitpoints remaining" %(self.displayname(),damage,self.json['combat']['hitpoints']),clear=False)
             return True
@@ -103,13 +105,11 @@ class Character:
         
     def spell_friendly_target(self):
         return self.is_monster() == self.spell_target.is_monster()
-
-        
            
     def save(self):
         if 'temp' in self.json:
             del self.json['temp']
-        open('%s/%s.json' %('characters',self.json["personal"]["name"]["first"].upper()),'w').write(dumps(self.json,indent=4))
+        open(os.path.join(get_user_data('characters'),"%s.json" %self.json["personal"]["name"]["first"].upper()),'w').write(dumps(self.json,indent=4))
         highlight('%s status saved to disk' %self.displayname(),clear=False)
         
     def update(self,json,save=True):

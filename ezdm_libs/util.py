@@ -1,18 +1,14 @@
 import sys
 import datetime
 import os
-from ezdm_libs import get_sys_data
+from ezdm_libs import get_sys_data,gui
 from simplejson import loads,dumps
 from glob import iglob
 from random import randrange
 from pprint import pprint
-force_no_gui=False
-try:
+if gui:
     import easygui as eg
-except: 
-    force_no_gui=True
 
-use_gui=True
 
 def get_user_data(source):
     _ROOT=os.path.expanduser('~')
@@ -21,9 +17,6 @@ def get_user_data(source):
     if not os.path.exists(datapath):
         os.makedirs(datapath)
     return  datapath
-
-def gui_mode():
-    return use_gui
 
 def title():
     return(os.path.basename(sys.argv[0]))
@@ -285,8 +278,4 @@ def option(optionx,expect=None):
             value = None
     return value
 
-if not option('--console') and not force_no_gui:
-    use_gui=True
-else:
-    use_gui=False
 

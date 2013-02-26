@@ -7,7 +7,7 @@ import sys
 if __name__=='__main__': 
     PATH=os.path.dirname(sys.argv[0])
 
-    actionlist={'View a character sheet':'viewchar','Create a new character sheet':'mkcs','Combat !':'quick_combat','Grant XP to character':'xp_tool','Roll dice':'dice_roller'}
+    actionlist={'View a character sheet':'ezdm-viewchar','Create a new character sheet':'ezdm-mkcs','Combat !':'ezdm-quick_combat','Grant XP to character':'ezdm-xp_tool','Roll dice':'ezdm-dice_roller'}
 
     action=''
     while not action.lower() =='quit':
