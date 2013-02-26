@@ -114,7 +114,7 @@ def attack_mods(player_index):
         elif action == "create":
             value=smart_input("Modifier value",integer=True)
             selected_mods["DM Custom Mod (%s)" %str(value)]=value
-    if gui:
+    if gui():
        #TODO - custom modifiers in GUI mode
         selected=eg.multchoicebox("Select combat modifiers",title=title(),choices=custom_mods.keys())
         if selected:
