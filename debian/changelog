@@ -1,3 +1,9 @@
+ezdm (0.0.1ubuntu2) quantal; urgency=low
+
+  * Fixed debian control file
+
+ -- A.J. Venter <ajventer@gmail.com>  Tue, 26 Feb 2013 23:28:16 +0200
+
 ezdm (0.0.1ubuntu1) quantal; urgency=low
 
   * Several bugfixes
