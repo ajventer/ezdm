@@ -15,6 +15,10 @@ all:
 
 source:
 		$(PYTHON) setup.py sdist $(COMPILE)
+		
+ppa: clean
+		debuild -S | fgrep signfile | fgrep .changes | cut -d' ' -f3 > .changes_file
+		cat .changes_file | sed "s#ezdm#../ezdm#g" | xargs dput ppa:ajventer/ezdm 
 
 install:
 		$(PYTHON) setup.py install --prefix=/${PREFIX} --root $(DESTDIR) $(COMPILE) --record .install.record --install-layout=deb
@@ -28,7 +32,7 @@ builddeb:
 		$(PYTHON) setup.py sdist $(COMPILE) --dist-dir=../ --prune
 		rename -f 's/$(PROJECT)-(.*)\.tar\.gz/$(PROJECT)_$$1\.orig\.tar\.gz/' ../*
 		# build the package
-		dpkg-buildpackage -i -I -rfakeroot
+		debuild 
 		
 installdeb: builddeb
 		dpkg -i ../ezdm_${VERSION}_all.deb

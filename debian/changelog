@@ -1,3 +1,9 @@
+ezdm (0.0.1ubuntu3) quantal; urgency=low
+
+  * Trying to get the format right
+
+ -- A.J. Venter <ajventer@gmail.com>  Tue, 26 Feb 2013 23:31:43 +0200
+
 ezdm (0.0.1ubuntu2) quantal; urgency=low
 
   * Fixed debian control file
