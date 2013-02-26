@@ -21,7 +21,7 @@ ppa: clean
 		cat .changes_file | sed "s#ezdm#../ezdm#g" | xargs dput ppa:ajventer/ezdm 
 
 install:
-		$(PYTHON) setup.py install --prefix=/${PREFIX} --root $(DESTDIR) $(COMPILE) --record .install.record --install-layout=deb
+		sudo $(PYTHON) setup.py install --prefix=/${PREFIX} --root $(DESTDIR) $(COMPILE) --record .install.record --install-layout=deb
 
 uninstall:
 		cat .install.record | sed s"#${PREFIX}#${DESTDIR}/${PREFIX}#g" | xargs rm -fv
@@ -35,7 +35,7 @@ builddeb:
 		debuild 
 		
 installdeb: builddeb
-		dpkg -i ../ezdm_${VERSION}_all.deb
+		sudo dpkg -i ../ezdm_${VERSION}_all.deb
 
 clean:
 		$(PYTHON) setup.py clean
