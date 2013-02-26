@@ -1,3 +1,9 @@
+ezdm (0.0.2) quantal; urgency=low
+
+  * master - stable build
+
+ -- A.J. Venter <ajventer@gmail.com>  Tue, 26 Feb 2013 23:56:16 +0200
+
 ezdm (0.0.1ubuntu3) quantal; urgency=low
 
   * Trying to get the format right
