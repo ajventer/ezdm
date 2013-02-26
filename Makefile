@@ -7,8 +7,10 @@ PREFIX=usr
 
 all:
 		@echo "make source - Create source package"
-		@echo "make install - Install on local system"
+		@echo "sudo make install - Install on local system"
+		@echo "sudo make uninstall - Uninstall on local system"
 		@echo "make builddeb - Generate a debian package"
+		@echo "sudo make installdeb - Generate a debian package and install it"
 		@echo "make clean - Get rid of scratch and byte files"
 
 source:
