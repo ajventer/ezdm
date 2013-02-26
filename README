@@ -1,6 +1,9 @@
 This is a simple set of tools for dungeon managers.
 The current project only targets AD&D 2nd edition rules.
 
+If you're looking for a prebuilt debian package, I maintain an EZDM PPA
+at: https://launchpad.net/~ajventer/+archive/ezdm/
+
 Branches: 
         - Master is in flux - at any given moment, it may not build or run
         - Stable is merged whenever master appears not to be broken

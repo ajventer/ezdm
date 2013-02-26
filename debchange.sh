@@ -21,7 +21,9 @@ if test $# -eq 0; then
 else
         CHANGEOPTS="$*"
 fi
-debchange $CHANGEOPTS
+BRANCH=`git branch | fgrep '*' | awk '{print $2}'`
+echo $BRANCH
+debchange $BRANCH - $CHANGEOPTS
 debchange -r
 
 
