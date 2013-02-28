@@ -1,0 +1,7 @@
+#!/bin/bash
+ln -sf /usr/games/ezdm* /usr/bin
+for I in /usr/lib/python2.7/dist-packages/ezdm_libs/*.py; do
+        python -m compileall $I
+done
+
+

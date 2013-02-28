@@ -1,0 +1,2 @@
+#!/usr/bin/
+rm -f /usr/lib/python2.7/dist-packages/ezdm_libs/*.pyc
