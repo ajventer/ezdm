@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=EZDM
+GenericName=Easy Dungeon Master
+Comment=A tookit for AD&D Dungeon Master
+TryExec=/usr/games/games/ezdm --console
+Exec=/usr/games/ezdm --console
+Categories=Game;RolePlaying;
+Icon=/usr/share/icons/hicolor/128x128/ezdm-console.png
+Terminal=True

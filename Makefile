@@ -22,6 +22,8 @@ ppa: clean
 
 install:
 		$(PYTHON) setup.py install --prefix=/${PREFIX} --root $(DESTDIR) --install-scripts=/${PREFIX}/games/ --no-compile --force --record .install.record --install-layout=deb
+		install -g root -o root -m 0666 -T /usr/share/applications ezdm.desktop ezdm-console.desktop
+		install -g root -o root -m 0666 -T /usr/share/icons/hicolor/128x128 ezdm.desktop ezdm-console.desktop
 
 uninstall:
 		cat .install.record | sed s"#${PREFIX}#${DESTDIR}/${PREFIX}#g" | xargs rm -fv
