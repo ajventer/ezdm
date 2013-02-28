@@ -15,9 +15,8 @@ export DEBFULLNAME
 export DEBEMAIL
 cd $PROJECTDIR
 if test $# -eq 0; then
-        echo "No options or text given !"
-        echo "I take the same options as debchange"
-        exit 1
+        #If user did not give options - take text from last commit message
+        CHANGEOPTS=`git log | grep -vi "^author:" | grep -vi "^commit"  | grep -vi "^date:" | grep -vi "^$" | head -n 1`
 else
         CHANGEOPTS="$*"
 fi

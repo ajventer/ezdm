@@ -1,8 +1,8 @@
-PYTHON=`which python`
+PYTHON=/usr/bin/python
 DESTDIR=/
 BUILDIR=$(CURDIR)/debian/ezdm
 PROJECT=ezdm
-VERSION=0.0.1
+VERSION=`head -n 1 debian/changelog | cut -d'(' -f2 | cut -d')' -f1`
 PREFIX=usr
 
 all:
@@ -21,7 +21,7 @@ ppa: clean
 		cat .changes_file | sed "s#ezdm#../ezdm#g" | xargs dput ppa:ajventer/ezdm 
 
 install:
-		sudo $(PYTHON) setup.py install --prefix=/${PREFIX} --root $(DESTDIR) $(COMPILE) --record .install.record --install-layout=deb
+		$(PYTHON) setup.py install --prefix=/${PREFIX} --root $(DESTDIR) $(COMPILE) --record .install.record --install-layout=deb
 
 uninstall:
 		cat .install.record | sed s"#${PREFIX}#${DESTDIR}/${PREFIX}#g" | xargs rm -fv
@@ -40,4 +40,5 @@ installdeb: builddeb
 clean:
 		$(PYTHON) setup.py clean
 		rm -rf build/ MANIFEST
+		rm -fr debian/ezdm
 		find . -name '*.pyc' -delete

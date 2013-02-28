@@ -1,3 +1,9 @@
+ezdm (0.0.2ubuntu1) quantal; urgency=low
+
+  * master - Sudo only for the bits that need it
+
+ -- A.J. Venter <ajventer@gmail.com>  Wed, 27 Feb 2013 10:37:38 +0200
+
 ezdm (0.0.2) quantal; urgency=low
 
   * master - stable build
