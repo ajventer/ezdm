@@ -1,3 +1,9 @@
+ezdm (0.0.4) quantal; urgency=low
+
+  * master - 0.0.4 Ensure pyc files are created in postinst
+
+ -- A.J. Venter <ajventer@gmail.com>  Thu, 28 Feb 2013 14:41:56 +0200
+
 ezdm (0.0.3) quantal; urgency=low
 
   * master - Proper package layout

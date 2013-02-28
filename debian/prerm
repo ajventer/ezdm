@@ -1,2 +1,4 @@
-#!/usr/bin/
+#!/bin/bash -x
 rm -f /usr/lib/python2.7/dist-packages/ezdm_libs/*.pyc
+
+#DEBHELPER#
