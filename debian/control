@@ -2,7 +2,7 @@ Source: ezdm
 Section: games
 Priority: optional
 Maintainer: A.J. Venter <ajventer@gmail.com>
-Build-Depends: debhelper (>= 9.2), python-support (>= 1.0.15), python-simplejson (>= 2.6.1), python (>=2.7)
+Build-Depends: debhelper (>= 9.2), python-support (>= 1.0.15), python-simplejson (>= 2.6.1), python (>=2.7), desktop-file-utils
 XS-Python-Version: >= 2.7
 Standards-Version: 3.9.3.0
 
