@@ -9,7 +9,7 @@ Standards-Version: 3.9.3.0
 Package: ezdm
 Architecture: all
 Homepage: https://github.com/ajventer/ezdm
-XB-Python-Version: ${python:Versi
+XB-Python-Version: ${python:Versions}
 Depends: ${misc:Depends},${python:Depends},python ( >=2.7)
 Suggests: python-easygui 
 Description: Simple interactive helper tools for DM-ing an 

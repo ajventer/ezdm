@@ -14,12 +14,9 @@ source $CFGFILE
 export DEBFULLNAME
 export DEBEMAIL
 cd $PROJECTDIR
-if test $# -eq 0; then
         #If user did not give options - take text from last commit message
-        CHANGEOPTS=`git log | grep -vi "^author:" | grep -vi "^commit"  | grep -vi "^date:" | grep -vi "^$" | head -n 1`
-else
-        CHANGEOPTS="$*"
-fi
+CHANGEOPTS=`git log | grep -vi "^author:" | grep -vi "^commit"  | grep -vi "^date:" | grep -vi "^$" | head -n 1`
+CHANGEOPTS="$* $CHANGEOPTS "
 BRANCH=`git branch | fgrep '*' | awk '{print $2}'`
 echo $BRANCH
 debchange $BRANCH - $CHANGEOPTS

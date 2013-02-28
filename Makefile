@@ -21,7 +21,7 @@ ppa: clean
 		cat .changes_file | sed "s#ezdm#../ezdm#g" | xargs dput ppa:ajventer/ezdm 
 
 install:
-		$(PYTHON) setup.py install --prefix=/${PREFIX} --root $(DESTDIR) $(COMPILE) --install-lib=/${PREFIX}/share/games/lib/${PROJECT} --install-scripts=/${PREFIX}/share/games/${PROJECT}/bin --install-data=/${PREFIX}/share/games/lib/${PROJECT}/data --no-compile --force --record .install.record --install-layout=deb
+		$(PYTHON) setup.py install --prefix=/${PREFIX} --root $(DESTDIR) --install-scripts=/${PREFIX}/games/ --no-compile --force --record .install.record --install-layout=deb
 
 uninstall:
 		cat .install.record | sed s"#${PREFIX}#${DESTDIR}/${PREFIX}#g" | xargs rm -fv
