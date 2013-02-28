@@ -17,22 +17,22 @@ source:
 		$(PYTHON) setup.py sdist $(COMPILE)
 		
 ppa: clean
-		debuild -S | fgrep signfile | fgrep .changes | cut -d' ' -f3 > .changes_file
+		debuild -SI | fgrep signfile | fgrep .changes | cut -d' ' -f3 > .changes_file
 		cat .changes_file | sed "s#ezdm#../ezdm#g" | xargs dput ppa:ajventer/ezdm 
 
 install:
-		$(PYTHON) setup.py install --prefix=/${PREFIX} --root $(DESTDIR) $(COMPILE) --record .install.record --install-layout=deb
+		$(PYTHON) setup.py install --prefix=/${PREFIX} --root $(DESTDIR) $(COMPILE) --install-lib=/${PREFIX}/share/games/lib/${PROJECT} --install-scripts=/${PREFIX}/share/games/${PROJECT}/bin --install-data=/${PREFIX}/share/games/lib/${PROJECT}/data --no-compile --force --record .install.record --install-layout=deb
 
 uninstall:
 		cat .install.record | sed s"#${PREFIX}#${DESTDIR}/${PREFIX}#g" | xargs rm -fv
 
-builddeb:
+builddeb: clean
 		# build the source package in the parent directory
 		# then rename it to project_version.orig.tar.gz
 		$(PYTHON) setup.py sdist $(COMPILE) --dist-dir=../ --prune
 		rename -f 's/$(PROJECT)-(.*)\.tar\.gz/$(PROJECT)_$$1\.orig\.tar\.gz/' ../*
 		# build the package
-		debuild 
+		debuild -I
 		
 installdeb: builddeb
 		sudo dpkg -i ../ezdm_${VERSION}_all.deb
