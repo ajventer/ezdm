@@ -1,3 +1,9 @@
+ezdm (0.0.5ubuntu1) quantal; urgency=low
+
+  * master - Improved desktop file handling
+
+ -- A.J. Venter <ajventer@gmail.com>  Thu, 28 Feb 2013 23:43:21 +0200
+
 ezdm (0.0.5) quantal; urgency=low
 
   * Non-maintainer upload.
