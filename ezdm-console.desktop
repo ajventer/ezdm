@@ -2,7 +2,7 @@
 Type=Application
 Name=EZDM-Console
 GenericName=Easy Dungeon Master (Console version)
-Comment=A tookit for AD&D Dungeon Master
+Comment=A tookit for ADnD Dungeon Master
 TryExec=/usr/games/ezdm --console
 Exec=/usr/games/ezdm --console
 Categories=Game;RolePlaying;

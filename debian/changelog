@@ -1,3 +1,9 @@
+ezdm (0.0.5ubuntu2) quantal; urgency=low
+
+  * master - Fixed tryexec path
+
+ -- A.J. Venter <ajventer@gmail.com>  Fri, 01 Mar 2013 01:15:23 +0200
+
 ezdm (0.0.5ubuntu1) quantal; urgency=low
 
   * master - Improved desktop file handling

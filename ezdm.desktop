@@ -2,7 +2,7 @@
 Type=Application
 Name=EZDM
 GenericName=Easy Dungeon Master
-Comment=A tookit for AD&D Dungeon Master
+Comment=A tookit for ADnD Dungeon Master
 TryExec=/usr/games/ezdm
 Exec=/usr/games/ezdm
 Categories=Game;RolePlaying;
