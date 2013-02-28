@@ -17,7 +17,7 @@ source:
 		$(PYTHON) setup.py sdist $(COMPILE)
 		
 ppa: clean
-		debuild -SI | fgrep signfile | fgrep .changes | cut -d' ' -f3 > .changes_file
+		debuild -S -I | fgrep signfile | fgrep .changes | cut -d' ' -f3 > .changes_file
 		cat .changes_file | sed "s#ezdm#../ezdm#g" | xargs dput ppa:ajventer/ezdm 
 
 install:
