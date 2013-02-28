@@ -1,3 +1,9 @@
+ezdm (0.0.4ubuntu1) quantal; urgency=low
+
+  * master - Added debhelper tokens
+
+ -- A.J. Venter <ajventer@gmail.com>  Thu, 28 Feb 2013 14:48:33 +0200
+
 ezdm (0.0.4) quantal; urgency=low
 
   * master - 0.0.4 Ensure pyc files are created in postinst
