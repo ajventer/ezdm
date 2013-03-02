@@ -16,7 +16,7 @@ all:
 		@echo "make check - run pylint on all the code"
 		
 check:
-		if which pylint ; then  ${PYLINT} -r n -i n -f colorized -E ezdm ; ${PYLINT} -E -r n -i n -f colorized ezdm-* ${PYLINT} -E -r n -i n -f colorized ezdm_libs/* ; fi
+		if which pylint ; then  ./check_code.py ${PYLINT} ; fi
 				
 
 source:
@@ -26,7 +26,7 @@ ppa: clean
 		debuild -S -I | fgrep signfile | fgrep .changes | cut -d' ' -f3 > .changes_file
 		cat .changes_file | sed "s#ezdm#../ezdm#g" | xargs dput ppa:ajventer/ezdm 
 
-install:
+install: check
 		$(PYTHON) setup.py install --prefix=/${PREFIX} --root $(DESTDIR) --install-scripts=/${PREFIX}/games/ --no-compile --force --record .install.record --install-layout=deb
 		mkdir -p ${DESTDIR}/${PREFIX}/share/applications
 		mkdir -p ${DESTDIR}/${PREFIX}/share/icons/hicolor/128x128/

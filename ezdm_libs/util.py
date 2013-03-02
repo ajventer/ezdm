@@ -9,6 +9,9 @@ from pprint import pprint
 if gui():
     import easygui as eg
 
+def clearscr():
+    for X in range(0,100):
+        print
 
 def get_user_data(source):
     _ROOT=os.path.expanduser('~')

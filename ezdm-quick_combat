@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 from ezdm_libs.util import smart_input,load_json,highlight,rolldice,dice_list,say,title
 from ezdm_libs.character import Character,list_chars
+import sys
 from ezdm_libs import gui
 if gui():
     import easygui as eg
@@ -88,7 +89,7 @@ def attack_mods(player_index):
     selected_mods={}
     custom_mods={'Atacker on high ground':1,'Defender invisible':-4,'Defender off-balance':2,'Defender stunned or prone':999,'Defender surprized':+1,'Rear attack':+2}
     if characters[player_index].is_misile(characters[player_index].current_weapon()):
-        mrange = smart_input("Using a misile weapon - please specify range",validentries=['Long','Medium','Short'],lower=true)
+        mrange = smart_input("Using a misile weapon - please specify range",validentries=['Long','Medium','Short'],lower=True)
         if mrange == 'long':
             selected_mods['[l]ong range missile']=-5
         elif mrange == 'medium':
@@ -192,7 +193,7 @@ def do_spell_complete(player_index):
         spell_actions.append('Damage')
     action=smart_input('Spell action',validentries=spell_actions,lower=True)
     if action == 'heal':
-        characters[player_index].spell_target.heal(healdice(characters[player_index].autoroll()))
+        characters[player_index].spell_target.heal(heal_dice(characters[player_index].autoroll()))
     elif action == 'damage' and not throw:
         sides=smart_input('Damage dice sides',validentries=dice_list(),integer=True)
         num=smart_input('Number of damage dice to roll',integer=True)

@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
 from distutils.core import setup
+import check_code.py 
+
 
 setup(name='EZDM',
       version='1.0',
@@ -9,7 +11,7 @@ setup(name='EZDM',
       license='GPLv3',
       author_email='ajventer@gmail.com',
       url='https://github.com/ajventer/ezdm',
-      scripts=['ezdm-mkcs','ezdm-xp_tool','ezdm-quick_combat','ezdm','ezdm-viewchar','ezdm-dice_roller'],
+      scripts=SCRIPTS,
       packages=['ezdm_libs'],
       package_dir={'ezdm_libs':'ezdm_libs'},
       package_data={'ezdm_libs':['adnd2e/*']},
