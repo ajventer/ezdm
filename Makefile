@@ -4,6 +4,8 @@ BUILDIR=$(CURDIR)/debian/ezdm
 PROJECT=ezdm
 VERSION=`head -n 1 debian/changelog | cut -d'(' -f2 | cut -d')' -f1`
 PREFIX=usr
+PYLINT=`which pylint`
+
 
 all:
 		@echo "make source - Create source package"
@@ -12,10 +14,15 @@ all:
 		@echo "make builddeb - Generate a debian package"
 		@echo "sudo make installdeb - Generate a debian package and install it"
 		@echo "make clean - Get rid of scratch and byte files"
+		@echo "make check - run pylint on the code"
+		
+check:
+		if which pylint ; then  ${PYLINT} -r n -i n -f colorized -E ezdm ; ${PYLINT} -E -r n -i n -f colorized ezdm-* ${PYLINT} -E -r n -i n -f colorized ezdm_libs/* ; fi
+		
 
 source:
 		$(PYTHON) setup.py sdist $(COMPILE)
-		
+
 ppa: clean
 		debuild -S -I | fgrep signfile | fgrep .changes | cut -d' ' -f3 > .changes_file
 		cat .changes_file | sed "s#ezdm#../ezdm#g" | xargs dput ppa:ajventer/ezdm 

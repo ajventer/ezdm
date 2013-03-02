@@ -48,16 +48,16 @@ def dice_list():
     return ['4','6','8','10','100','12','20']
 
 def inrange(key1,key2):
-        if '-' in key2:
-            minimum=int(key2.split('-')[0])
-            maximum=int(key2.split('-')[1])
-        else:
-            minimum=int(key2)
-            maximum=minimum
-        if int(key1) >= minimum and int(key1) <= maximum:
-            return True
-        else:
-            return False
+    if '-' in key2:
+        minimum=int(key2.split('-')[0])
+        maximum=int(key2.split('-')[1])
+    else:
+        minimum=int(key2)
+        maximum=minimum
+    if int(key1) >= minimum and int(key1) <= maximum:
+        return True
+    else:
+        return False
 
 def load_json(source=None,base=None,filename=None):
     if not filename:
