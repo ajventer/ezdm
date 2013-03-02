@@ -19,9 +19,8 @@ CHANGEOPTS=`git log | grep -vi "^author:" | grep -vi "^commit"  | grep -vi "^dat
 CHANGEOPTS="$* $CHANGEOPTS"
 BRANCH=`git branch | fgrep '*' | awk '{print $2}'`
 CHANGEOPTS="$CHANGEOPTS -U $BRANCH"
-echo $BRANCH
-echo debchange $BRANCH - $CHANGEOPTS
-echo debchange -r
+debchange $BRANCH - $CHANGEOPTS
+debchange -r
 
 
 
