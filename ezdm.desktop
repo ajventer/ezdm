@@ -1,10 +1,21 @@
 [Desktop Entry]
-Type=Application
-Name=EZDM
-GenericName=Easy Dungeon Master
-Comment=A tookit for ADnD Dungeon Master
-TryExec=/usr/games/ezdm
-Exec=/usr/games/ezdm
 Categories=Game;RolePlaying;
+Comment[en_US]=A tookit for ADnD Dungeon Master
+Comment=A tookit for ADnD Dungeon Master
+Exec=/usr/games/ezdm
+GenericName[en_US]=Easy Dungeon Master
+GenericName=Easy Dungeon Master
 Icon=/usr/share/icons/hicolor/128x128/ezdm.png
+MimeType=
+Name[en_US]=EZDM
+Name=EZDM
+Path=
+StartupNotify=true
 Terminal=false
+TerminalOptions=
+TryExec=/usr/games/ezdm
+Type=Application
+X-DBUS-ServiceName=
+X-DBUS-StartupType=
+X-KDE-SubstituteUID=false
+X-KDE-Username=
