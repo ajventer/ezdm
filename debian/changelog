@@ -1,3 +1,9 @@
+ezdm (0.0.6master2) quantal; urgency=low
+
+  * stable - Update debchange helper script stable
+
+ -- A.J. Venter <ajventer@gmail.com>  Sat, 02 Mar 2013 12:41:56 +0200
+
 ezdm (0.0.6master1) quantal; urgency=low
 
   * master - Desktop menus finally working
