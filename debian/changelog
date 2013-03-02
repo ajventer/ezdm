@@ -1,8 +1,9 @@
-ezdm (0.0.6ubuntu1stable1) UNRELEASED; urgency=low
+ezdm (0.0.6ubuntu1stable2) quantal; urgency=low
 
   * Still working on debchange.sh
+  * Debchange finally doing what I want
 
- -- A.J. Venter <silentcoder@ravenriley>  Sat, 02 Mar 2013 12:51:53 +0200
+ -- A.J. Venter <ajventer@gmail.com>  Sat, 02 Mar 2013 12:53:25 +0200
 
 ezdm (0.0.6ubuntu1) quantal; urgency=low
 
