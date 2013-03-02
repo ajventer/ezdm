@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from distutils.core import setup
-import check_code.py 
+from check_code import script_list
 
 
 setup(name='EZDM',
@@ -11,7 +11,7 @@ setup(name='EZDM',
       license='GPLv3',
       author_email='ajventer@gmail.com',
       url='https://github.com/ajventer/ezdm',
-      scripts=SCRIPTS,
+      scripts=script_list(),
       packages=['ezdm_libs'],
       package_dir={'ezdm_libs':'ezdm_libs'},
       package_data={'ezdm_libs':['adnd2e/*']},
