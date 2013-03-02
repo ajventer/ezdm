@@ -16,9 +16,8 @@ export DEBEMAIL
 cd $PROJECTDIR
 #If user did not give options - take text from last commit message
 BRANCH=`git branch | fgrep '*' | awk '{print $2}'`
-CHANGEOPTS=" --local $BRANCH"
 MESSAGE=`git log | grep -vi "^author:" | grep -vi "^commit"  | grep -vi "^date:" | grep -vi "^$" | head -n 1`
-CHANGEOPTS="$CHANGEOPTS $MESSAGE"
+CHANGEOPTS="$CHANGEOPTS $BRANCH $MESSAGE"
 debchange $CHANGEOPTS
 debchange -r
 
