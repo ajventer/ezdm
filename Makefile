@@ -12,6 +12,10 @@ all:
 		@echo "make builddeb - Generate a debian package"
 		@echo "sudo make installdeb - Generate a debian package and install it"
 		@echo "make clean - Get rid of scratch and byte files"
+		
+check:
+		if which pylint ; then  ${PYLINT} -r n -i n -f colorized -E ezdm ; ${PYLINT} -E -r n -i n -f colorized ezdm-* ${PYLINT} -E -r n -i n -f colorized ezdm_libs/* ; fi
+				
 
 source:
 		$(PYTHON) setup.py sdist $(COMPILE)
