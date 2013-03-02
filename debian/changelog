@@ -1,9 +1,8 @@
-ezdm (0.0.6ubuntu1stable2) quantal; urgency=low
+ezdm (0.0.6ubuntu2) quantal; urgency=low
 
-  * Still working on debchange.sh
-  * Debchange finally doing what I want
+  * stable Undo
 
- -- A.J. Venter <ajventer@gmail.com>  Sat, 02 Mar 2013 12:53:25 +0200
+ -- A.J. Venter <ajventer@gmail.com>  Sat, 02 Mar 2013 13:05:57 +0200
 
 ezdm (0.0.6ubuntu1) quantal; urgency=low
 
