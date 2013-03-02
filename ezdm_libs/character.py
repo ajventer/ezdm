@@ -44,7 +44,7 @@ class Character:
         
     def xp_worth(self):
         xpkey=self.json['combat']['level/hitdice']
-        xpvalues=load_json('adnd2e','creature_xp')
+        xpvalues=load_json('adnd2e','creature_xp') or {}
         if str(xpkey) in xpvalues.keys():
             xp=xpvalues[str(xpkey)]
         elif int(xpkey) > 12:

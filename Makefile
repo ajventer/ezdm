@@ -6,7 +6,6 @@ VERSION=`head -n 1 debian/changelog | cut -d'(' -f2 | cut -d')' -f1`
 PREFIX=usr
 PYLINT=`which pylint`
 
-
 all:
 		@echo "make source - Create source package"
 		@echo "sudo make install - Install on local system"
@@ -14,11 +13,11 @@ all:
 		@echo "make builddeb - Generate a debian package"
 		@echo "sudo make installdeb - Generate a debian package and install it"
 		@echo "make clean - Get rid of scratch and byte files"
-		@echo "make check - run pylint on the code"
+		@echo "make check - run pylint on all the code"
 		
 check:
-		if which pylint ; then  ${PYLINT} -r n -i n -f colorized -E ezdm ; ${PYLINT} -E -r n -i n -f colorized ezdm-* ${PYLINT} -E -r n -i n -f colorized ezdm_libs/* ; fi
-		
+		if which pylint ; then  ./check_code.py ${PYLINT} ; fi
+				
 
 source:
 		$(PYTHON) setup.py sdist $(COMPILE)
@@ -27,7 +26,7 @@ ppa: clean
 		debuild -S -I | fgrep signfile | fgrep .changes | cut -d' ' -f3 > .changes_file
 		cat .changes_file | sed "s#ezdm#../ezdm#g" | xargs dput ppa:ajventer/ezdm 
 
-install:
+install: check
 		$(PYTHON) setup.py install --prefix=/${PREFIX} --root $(DESTDIR) --install-scripts=/${PREFIX}/games/ --no-compile --force --record .install.record --install-layout=deb
 		mkdir -p ${DESTDIR}/${PREFIX}/share/applications
 		mkdir -p ${DESTDIR}/${PREFIX}/share/icons/hicolor/128x128/
