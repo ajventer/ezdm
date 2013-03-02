@@ -5,6 +5,9 @@ from glob import glob
 
 SCRIPTS=['ezdm-mkcs','ezdm-xp_tool','ezdm-quick_combat','ezdm','ezdm-viewchar','ezdm-dice_roller']
 
+def script_list():
+    return SCRIPTS
+
 def check_list(LIST):
     for SCRIPT in LIST:
         print "Checking %s " % (SCRIPT)

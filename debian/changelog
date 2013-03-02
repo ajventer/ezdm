@@ -1,3 +1,9 @@
+ezdm (0.0.6) quantal; urgency=low
+
+  * master - Code-checking
+
+ -- A.J. Venter <ajventer@gmail.com>  Sat, 02 Mar 2013 11:47:30 +0200
+
 ezdm (0.0.5ubuntu2) quantal; urgency=low
 
   * master - Fixed tryexec path
