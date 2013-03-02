@@ -22,7 +22,7 @@ check:
 source:
 		$(PYTHON) setup.py sdist $(COMPILE)
 		
-ppa: clean
+ppa: check clean
 		debuild -S -I | fgrep signfile | fgrep .changes | cut -d' ' -f3 > .changes_file
 		cat .changes_file | sed "s#ezdm#../ezdm#g" | xargs dput ppa:ajventer/ezdm 
 
