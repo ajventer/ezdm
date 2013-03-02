@@ -1,10 +1,20 @@
 [Desktop Entry]
-Type=Application
-Name=EZDM-Console
-GenericName=Easy Dungeon Master (Console version)
-Comment=A tookit for ADnD Dungeon Master
-TryExec=/usr/games/ezdm --console
-Exec=/usr/games/ezdm --console
 Categories=Game;RolePlaying;
+Comment[en_US]=EZDM Console Version
+Comment=EZDM Console Version
+Exec=/usr/games/ezdm --console
+GenericName[en_US]=EZDM Console Version
+GenericName=EZDM Console Version
 Icon=/usr/share/icons/hicolor/128x128/ezdm-console.png
+MimeType=
+Name[en_US]=EZDM-Console
+Name=EZDM-Console
+Path=
+StartupNotify=true
 Terminal=true
+TerminalOptions=
+Type=Application
+X-DBUS-ServiceName=
+X-DBUS-StartupType=none
+X-KDE-SubstituteUID=false
+X-KDE-Username=
