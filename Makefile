@@ -4,6 +4,7 @@ BUILDIR=$(CURDIR)/debian/ezdm
 PROJECT=ezdm
 VERSION=`head -n 1 debian/changelog | cut -d'(' -f2 | cut -d')' -f1`
 PREFIX=usr
+PYLINT=`which pylint`
 
 all:
 		@echo "make source - Create source package"
