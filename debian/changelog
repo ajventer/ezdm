@@ -1,4 +1,10 @@
-ezdm (0.0.6master1) quantal; urgency=low
+ezdm (0.0.6ubuntu2) quantal; urgency=low
+
+  * stable Undo
+
+ -- A.J. Venter <ajventer@gmail.com>  Sat, 02 Mar 2013 13:05:57 +0200
+
+ezdm (0.0.6ubuntu1) quantal; urgency=low
 
   * master - Desktop menus finally working
 
