@@ -111,11 +111,17 @@ def json_from_template(template={},old={},keypath=""):
         if key.startswith("__I"):
             integer=True
         if key.startswith("__D"):
-            decimal=True            
+            decimal=True      
+
                
         if str(template[key]).startswith("__["):
             validentries=str(template[key]).lstrip('__[').rstrip(']').split(',')
-        if key.startswith("__#"):
+        if key.startswith("__X"):
+            if realkey in old:
+                del old[realkey]
+            if realkey in mydict:
+                del mydict[realkey]
+        elif key.startswith("__#"):
             if realkey in old:
                 x=len(old[realkey])
             else:

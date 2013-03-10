@@ -236,7 +236,15 @@ class Character:
         return len(self.json['combat']['weapons'])
         
     def num_attacks(self):
-        return self.num_weapons() *int(self.json['combat']['atacks_per_round'])
+        atr=load_json('adnd2e','various')['various']['attacks_per_round']
+        parentclass=self.json['class']['parent']
+        if not parentclass in atr:
+            ATR=1
+        else:
+            for key in atr[parentclass].keys():
+                if inrange(self.json['combat']['level/hitdice'],key):
+                   ATR=int(atr[parentclass][key])
+        return self.num_weapons() *int(ATR)
     
     def current_xp(self):
         return int(self.json['personal']['xp'])
