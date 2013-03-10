@@ -18,6 +18,6 @@
 },
 "class":
     {"parent": "__[warrior,wizard,rogue,priest]",
-    "class":"__[fighter,bard,ranger,thief,druid]"},
+    "class":"__[fighter,bard,ranger,thief,druid,mage,illusionist,cleric]"},
 "abilities":{"__Iwis": "","__Idex": "", "__Icha": "", "__Istr": "","__Icon": "","__Iint": ""}
 }
