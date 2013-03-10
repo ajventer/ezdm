@@ -285,6 +285,54 @@ class Character:
         out.append( "     Damage: %s" %self.dmg_mod())
         out.append( "     Defense (modifies AC down): %s" %self.def_mod())
         out.append( "     PPD Save: %s" %self.ppd_mod())
+        
+        out.append('Abilities:')
+        various=load_json('adnd2e','various')
+        abilities=various['abilities']
+
+        subclass=self.json['class']['class']
+        parentclass=self.json['class']['parent']
+        level=self.json['combat']['level/hitdice']
+        for ability in abilities.keys():
+            base=0
+            if subclass in abilities[ability]:
+                for key in abilities[ability][subclass].keys():
+                    if inrange(level,key):
+                        base=int(abilities[ability][subclass][key])
+                        continue
+            elif parentclass in abilities[ability]:
+                for key in abilities[ability][parentclass].keys():
+                    if inrange(level,key):
+                        base=int(abilities[ability][parentclass][key])
+                        continue
+            if base > 0:
+                race=self.json['personal']['race']
+                if race in abilities[ability]:
+                    base += int(abilities[ability][race])
+            if base > 0:
+                out.append('    %s:%s percent' %(ability,base))
+        out.append('Spell capability:')
+        spell_progression=various["spell progression"]
+        checkclass=None
+        if subclass in spell_progression:
+            checkclass=subclass
+        elif parentclass in spell_progression:
+            checkclass=parentclass
+        if checkclass:
+            for key in spell_progression[checkclass].keys():
+                if inrange(level,key):
+                    out.append('   Casting Level: %s' %(spell_progression[checkclass][key]["casting_level"]))
+                    if ["priest spells"] in spell_progression[checkclass][key]:
+                        line='   Priest spells:'
+                        for spell_level in sorted(spell_progression[checkclass][key]["priest spells"].keys()):
+                            line=line+' level %s - number %s ' %(spell_level,spell_progression[checkclass][key]["priest spells"][spell_level])
+                        out.append(line)
+                    if ["wizard spells"] in spell_progression[checkclass][key]:
+                        line='   Wizard spells:'
+                        for spell_level in sorted(spell_progression[checkclass][key]["wizard spells"].keys()):
+                            line=line+' level %s - number %s ' %(spell_level,spell_progression[checkclass][key]["wizard spells"][spell_level])
+                        out.append(line)
+                    
         return(out)
 
 
