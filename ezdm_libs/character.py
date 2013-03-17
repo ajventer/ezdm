@@ -111,8 +111,10 @@ class Character:
     def spell_friendly_target(self):
         return self.is_monster() == self.spell_target.is_monster()
     
-    def filename():
-        return "%s_%s.json" %(self.json["personal"]["name"]["first"].upper().self.json["personal"]["name"]["last"].upper())
+    def filename(self):
+        firstname=self.json["personal"]["name"]["first"].upper()
+        lastname=self.json["personal"]["name"]["last"].upper()
+        return "%s_%s.json" %(firstname,lastname)
     
     def save(self):
         if 'temp' in self.json:

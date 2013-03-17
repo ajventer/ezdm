@@ -100,10 +100,7 @@ def template_conditional(mydct={}):
                     out[key]=smart_input(key,conditionals[conditional][key])
         return out
 
-
-def json_from_template(template={},old={},keypath=""):    
-
-    def realkeys(template):
+def realkeys(template):
         rk=[]
         for key in template.keys():
             if key.startswith('__'):
@@ -112,6 +109,9 @@ def json_from_template(template={},old={},keypath=""):
                 rk.append(key)
         return rk
     
+
+def json_from_template(template={},old={},keypath=""):    
+
     mydict={}
     for key in old.keys():
         if not key in realkeys(template):
