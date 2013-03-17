@@ -75,6 +75,23 @@ def load_json(source=None,base=None,filename=None):
 
 
 def json_from_template(template={},old={},keypath=""):    
+
+    def template_conditional(mydict={}):
+        conditionals=load_json('adnd2e','template_conditional')
+        for conditional in conditionals.keys():
+            condition,test=conditional.split["="]
+            m=mydict
+            lastkey=''
+            for key in condition.split('.'):
+                if key in m:
+                    lastkey=key
+                    if type(m[key]) == type({}):
+                        m=m[key]
+            if m[lastkey] == test:
+                for key in conditionals[conditional].keys():
+                    mydict[key]=smart_input(key,conditionals[conditional][key])
+        return mydict
+
     def realkeys(template):
         rk=[]
         for key in template.keys():
@@ -144,6 +161,10 @@ def json_from_template(template={},old={},keypath=""):
             mydict[realkey]=smart_input(showpath,old[realkey],validentries=validentries,upper=upper,lower=lower,decimal=decimal,integer=integer)
         else:
             mydict[realkey]=smart_input(showpath,validentries=validentries,upper=upper,lower=lower,decimal=decimal,integer=integer)
+    
+        
+        
+    mydict=template_conditional(mydict)
     return mydict
         
             

@@ -1,8 +1,8 @@
-ezdm (0.0.6ubuntu4) UNRELEASED; urgency=low
+ezdm (0.0.6ubuntu4) quantal; urgency=low
 
-  * master Ability charts coming along
+  * master Syntax error fixed
 
- -- A.J. Venter <ajventer@gmail.com>  Sun, 17 Mar 2013 12:45:03 +0200
+ -- A.J. Venter <ajventer@gmail.com>  Sun, 17 Mar 2013 12:45:19 +0200
 
 ezdm (0.0.6ubuntu3) quantal; urgency=low
 
