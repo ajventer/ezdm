@@ -1,3 +1,9 @@
+ezdm (0.0.7) quantal; urgency=low
+
+  * master Character sheet editor
+
+ -- A.J. Venter <ajventer@gmail.com>  Sun, 17 Mar 2013 19:19:32 +0200
+
 ezdm (0.0.6ubuntu5) quantal; urgency=low
 
   * master Conditional template entries

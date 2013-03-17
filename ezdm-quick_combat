@@ -232,7 +232,6 @@ def do_round():
                 say("%s succeeded with %s" %(char.displayname(),ability))
             else:
                 say("%s failed at %s" %(char.displayname(),ability))
-                pr
         elif action == "Flee":
             if characters[player_index].is_casting():
                characters[player_index].interrupt_cast()     

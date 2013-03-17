@@ -29,6 +29,8 @@ viewchar - A viewer for ezdm character sheets
 xp_tool - A tool for giving characters experience that will help manage the process when they level up
 test_json - A developer focussed mini-tool just used to rapidly verify the validity of a json file.
 quick-combat - A tool to manage combat scenarios
+editcs - A character sheet editor
+manualheal - An easy tool for healing characters who have been wounded
 
 Quick-combat is the crown jewel of the EZDM kit. QuickCombat will let you load up any number of characters
 from your existing sheets, and will then guide the process of combat among them under your control.
