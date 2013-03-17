@@ -110,11 +110,14 @@ class Character:
         
     def spell_friendly_target(self):
         return self.is_monster() == self.spell_target.is_monster()
-           
+    
+    def filename():
+        return "%s_%s.json" %(self.json["personal"]["name"]["first"].upper().self.json["personal"]["name"]["last"].upper())
+    
     def save(self):
         if 'temp' in self.json:
             del self.json['temp']
-        open(os.path.join(get_user_data('characters'),"%s.json" %self.json["personal"]["name"]["first"].upper()),'w').write(dumps(self.json,indent=4))
+        open(os.path.join(get_user_data('characters'),self.filename()),'w').write(dumps(self.json,indent=4))
         highlight('%s status saved to disk' %self.displayname(),clear=False)
         
     def update(self,json,save=True):
@@ -248,6 +251,46 @@ class Character:
     
     def current_xp(self):
         return int(self.json['personal']['xp'])
+    
+    def tryability(self,ability):
+        target_roll=int(self.conditionals()[ability])
+        roll=rolldice(self.autoroll(),1,100)
+        if roll >= target_roll:
+            return True
+        else:
+            return False
+        
+    def conditionals(self):
+        subclass=self.json['class']['class']
+        parentclass=self.json['class']['parent']
+        level=self.json['combat']['level/hitdice']        
+        various=load_json('adnd2e','various')
+        abilities=various['abilities']
+        if not 'conditionals' in self.json:
+            self.json['conditionals'] = {}
+        conditionals={}    
+        for conditional in self.json['conditionals'].keys():
+            conditionals[conditional] = self.json['conditionals'][conditional]
+        for ability in abilities.keys():
+            base=0
+            if ability in conditionals:
+                base=int(conditionals[ability])               
+            if subclass in abilities[ability]:
+                for key in abilities[ability][subclass].keys():
+                    if inrange(level,key):
+                        base += int(abilities[ability][subclass][key])
+                        continue
+            elif parentclass in abilities[ability]:
+                for key in abilities[ability][parentclass].keys():
+                    if inrange(level,key):
+                        base += int(abilities[ability][parentclass][key])
+                        continue
+            if base > 0:
+                race=self.json['personal']['race']
+                if race in abilities[ability]:
+                    base += int(abilities[ability][race])
+                conditionals[ability] = base  
+        return conditionals
       
     def pprint(self):
         out =highlight(self.displayname(),sayit=False)
@@ -293,24 +336,10 @@ class Character:
         subclass=self.json['class']['class']
         parentclass=self.json['class']['parent']
         level=self.json['combat']['level/hitdice']
-        for ability in abilities.keys():
-            base=0
-            if subclass in abilities[ability]:
-                for key in abilities[ability][subclass].keys():
-                    if inrange(level,key):
-                        base=int(abilities[ability][subclass][key])
-                        continue
-            elif parentclass in abilities[ability]:
-                for key in abilities[ability][parentclass].keys():
-                    if inrange(level,key):
-                        base=int(abilities[ability][parentclass][key])
-                        continue
-            if base > 0:
-                race=self.json['personal']['race']
-                if race in abilities[ability]:
-                    base += int(abilities[ability][race])
-            if base > 0:
-                out.append('    %s:%s percent' %(ability,base))
+    
+        conditionals=self.conditionals()
+        for con in conditionals.keys():
+            out.append('    %s:%s percent' %(con,conditionals[con]))
         out.append('Spell capability:')
         spell_progression=various["spell progression"]
         checkclass=None

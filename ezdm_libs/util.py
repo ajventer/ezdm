@@ -12,6 +12,11 @@ if gui():
 def clearscr():
     for X in range(0,100):
         print
+        
+def heal_dice(auto=True):
+        sides=smart_input('Healing dice sides',validentries=dice_list(),integer=True)
+        num=smart_input('Number of healing dice to roll',integer=True)
+        return rolldice(auto,num,sides)        
 
 def get_user_data(source):
     _ROOT=os.path.expanduser('~')
@@ -73,14 +78,13 @@ def load_json(source=None,base=None,filename=None):
     else:
         return loads(open(filename,'r').read())
 
-
-def json_from_template(template={},old={},keypath=""):    
-
-    def template_conditional(mydict={}):
-        conditionals=load_json('adnd2e','template_conditional')
+def template_conditional(mydct={}):
+        md=mydct
+        out={}
+        conditionals=load_json('adnd2e','template_conditional') or {}
         for conditional in conditionals.keys():
-            condition,test=conditional.split["="]
-            m=mydict
+            condition,test=conditional.split("=")
+            m=md
             lastkey=''
             for key in condition.split('.'):
                 if key in m:
@@ -89,8 +93,15 @@ def json_from_template(template={},old={},keypath=""):
                         m=m[key]
             if m[lastkey] == test:
                 for key in conditionals[conditional].keys():
-                    mydict[key]=smart_input(key,conditionals[conditional][key])
-        return mydict
+                    if "conditionals" in m and key in m["conditionals"]:
+                        default=m["conditionals"][key]
+                    else :
+                        default=conditionals[conditional][key]
+                    out[key]=smart_input(key,conditionals[conditional][key])
+        return out
+
+
+def json_from_template(template={},old={},keypath=""):    
 
     def realkeys(template):
         rk=[]
@@ -163,8 +174,8 @@ def json_from_template(template={},old={},keypath=""):
             mydict[realkey]=smart_input(showpath,validentries=validentries,upper=upper,lower=lower,decimal=decimal,integer=integer)
     
         
-        
-    mydict=template_conditional(mydict)
+    if keypath == "":    
+        mydict["conditionals"]=template_conditional(mydict)
     return mydict
         
             

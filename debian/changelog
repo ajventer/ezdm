@@ -1,3 +1,9 @@
+ezdm (0.0.6ubuntu5) quantal; urgency=low
+
+  * master Conditional template entries
+
+ -- A.J. Venter <ajventer@gmail.com>  Sun, 17 Mar 2013 13:27:35 +0200
+
 ezdm (0.0.6ubuntu4) quantal; urgency=low
 
   * master Syntax error fixed
