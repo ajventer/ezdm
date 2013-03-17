@@ -1,3 +1,15 @@
+ezdm (0.0.6ubuntu4) UNRELEASED; urgency=low
+
+  * master Ability charts coming along
+
+ -- A.J. Venter <ajventer@gmail.com>  Sun, 17 Mar 2013 12:45:03 +0200
+
+ezdm (0.0.6ubuntu3) quantal; urgency=low
+
+  * master Ability charts coming along
+
+ -- A.J. Venter <ajventer@gmail.com>  Sun, 10 Mar 2013 15:24:00 +0200
+
 ezdm (0.0.6ubuntu2) quantal; urgency=low
 
   * stable Undo

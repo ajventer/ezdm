@@ -322,12 +322,12 @@ class Character:
             for key in spell_progression[checkclass].keys():
                 if inrange(level,key):
                     out.append('   Casting Level: %s' %(spell_progression[checkclass][key]["casting_level"]))
-                    if ["priest spells"] in spell_progression[checkclass][key]:
+                    if "priest spells" in spell_progression[checkclass][key]:
                         line='   Priest spells:'
                         for spell_level in sorted(spell_progression[checkclass][key]["priest spells"].keys()):
                             line=line+' level %s - number %s ' %(spell_level,spell_progression[checkclass][key]["priest spells"][spell_level])
                         out.append(line)
-                    if ["wizard spells"] in spell_progression[checkclass][key]:
+                    if "wizard spells" in spell_progression[checkclass][key]:
                         line='   Wizard spells:'
                         for spell_level in sorted(spell_progression[checkclass][key]["wizard spells"].keys()):
                             line=line+' level %s - number %s ' %(spell_level,spell_progression[checkclass][key]["wizard spells"][spell_level])
