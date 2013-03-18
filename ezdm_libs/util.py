@@ -78,6 +78,20 @@ def load_json(source=None,base=None,filename=None):
     else:
         return loads(open(filename,'r').read())
 
+def template_control(key,value)
+    control={"upper":False,"lower":False,"integer":False,"decimal":False,"validentries":[]}
+    if key.startswith("__U"):
+        control["upper"]=True
+    if key.startswith("__L"):
+        control["lower"]=True
+    if key.startswith("__I"):
+        control["integer"]=True
+    if key.startswith("__D"):
+        control["decimal"]=True     
+    if str(value).startswith("__["):
+        control["validentries"]=str(value).lstrip('__[').rstrip(']').split(',')   
+    return control
+
 def template_conditional(mydct={},conditionals={}):
         md=mydct
         out={}
@@ -92,31 +106,18 @@ def template_conditional(mydct={},conditionals={}):
                         m=m[key]
             if m[lastkey] == test:
                 for key in conditionals[conditional].keys():
-                    upper=False
-                    lower=False
-                    integer=False
-                    decimal=False
-                    validentries=[]
+
                     if key.startswith('__'):
                         realkey=key[3:]
                     else:
                         realkey=key
-
-                    if key.startswith("__U"):
-                        upper=True
-                    if key.startswith("__L"):
-                        lower=True
-                    if key.startswith("__I"):
-                        integer=True
-                    if key.startswith("__D"):
-                        decimal=True     
-                    if str(conditionals[conditional]).startswith("__["):
-                        validentries=str(conditionals[conditional]).lstrip('__[').rstrip(']').split(',')                        
+                    control=template_control(key,conditionals[conditional][key]
+                     
                     if "conditionals" in m and key in m["conditionals"]:
                         default=m["conditionals"][key]
                     else :
                         default=conditionals[conditional][key]
-                    out[key]=smart_input(key,conditionals[conditional][key],validentries=validentries,upper=upper,lower=lower,integer=integer,decimal=decimal)
+                    out[key]=smart_input(key,conditionals[conditional][key],validentries=control["validentries"],upper=control["upper"],lower=control["lower"],integer=control["integer"],decimal=control["decimal"])
         return out
 
 def realkeys(template):
@@ -136,11 +137,7 @@ def json_from_template(template={},old={},keypath="",conditional={}):
             mydict[key]=old[key]
             
     for key in sorted(template.keys()):
-        upper=False
-        lower=False
-        integer=False
-        decimal=False
-        validentries=[]
+
         if key.startswith('__'):
             realkey=key[3:]
         else:
@@ -149,19 +146,7 @@ def json_from_template(template={},old={},keypath="",conditional={}):
             showpath=realkey
         else:
             showpath="%s:%s" %(keypath,realkey)
-
-        if key.startswith("__U"):
-            upper=True
-        if key.startswith("__L"):
-            lower=True
-        if key.startswith("__I"):
-            integer=True
-        if key.startswith("__D"):
-            decimal=True      
-
-               
-        if str(template[key]).startswith("__["):
-            validentries=str(template[key]).lstrip('__[').rstrip(']').split(',')
+        control=template_control(key,template[key])
         if key.startswith("__X"):
             if realkey in old:
                 del old[realkey]
@@ -187,9 +172,9 @@ def json_from_template(template={},old={},keypath="",conditional={}):
             else:
                 mydict[realkey]=json_from_template(template[key],{},realkey)
         elif realkey in old:
-            mydict[realkey]=smart_input(showpath,old[realkey],validentries=validentries,upper=upper,lower=lower,decimal=decimal,integer=integer)
+            mydict[realkey]=smart_input(showpath,old[realkey],validentries=control["validentries"],upper=control["upper"],lower=control["lower"],integer=control["integer"],decimal=control["decimal"])
         else:
-            mydict[realkey]=smart_input(showpath,validentries=validentries,upper=upper,lower=lower,decimal=decimal,integer=integer)
+            mydict[realkey]=smart_input(showpath,validentries=control["validentries"],upper=control["upper"],lower=control["lower"],integer=control["integer"],decimal=control["decimal"])
     
         
     if keypath == "":    
