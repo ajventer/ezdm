@@ -1,0 +1,18 @@
+{"core":{
+    "name":"",
+    "type":"__[weapon,armor,other]",
+    "specialfx":""
+},
+"conditional":{
+    "type=weapon":{
+        "__Idmg": "", 
+        "weapon_type": "__[melee,magic,misile]", 
+        "__Ito_hit": "",
+        "save_against":"__[ppd,rod,pp,breath,spell,none]"
+    },
+    "type=armor":{
+        "ac":0
+    }    
+
+}
+}
