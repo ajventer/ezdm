@@ -117,7 +117,7 @@ def template_conditional(mydct={},conditionals={}):
                         default=m["conditionals"][key]
                     else :
                         default=conditionals[conditional][key]
-                    out[key]=smart_input(realkey,conditionals[conditional][key],validentries=control["validentries"],upper=control["upper"],lower=control["lower"],integer=control["integer"],decimal=control["decimal"])
+                    out[realkey]=smart_input(realkey,conditionals[conditional][key],validentries=control["validentries"],upper=control["upper"],lower=control["lower"],integer=control["integer"],decimal=control["decimal"])
         return out
 
 def realkeys(template):

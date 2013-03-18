@@ -6,6 +6,7 @@ from simplejson import loads,dumps
 from glob import iglob
 from random import randrange
 from pprint import pprint
+from item import Item
 
 def list_chars(exclude=[],monsters=True):
     chars={}
@@ -29,9 +30,12 @@ class Character:
     auto=False
     index=-1
     weapon=0
+    weapons=[]
+    armor=[]
     def __init__(self,json,autoroll=False,QuietDice=True):
         self.json=json
-
+        self.weapons=self.load_weapons()
+        self.armor=self.load_armor()
         self.json['combat']['thac0']=self.__get_thac0()
         self.auto=autoroll
         self.json['combat']['saving_throws']=self.__get_saving_throws()
@@ -129,7 +133,12 @@ class Character:
             
     def to_hit_mod(self):
         ability_mods=load_json('adnd2e','ability_scores')
-        return int(ability_mods["str"][str(self.json['abilities']['str'])]['hit'])
+        base=int(ability_mods["str"][str(self.json['abilities']['str'])]['hit'])
+        if len(self.weapons) > 0:
+            bonus=int(self.weapons[self.weapon]["conditionals"]["to_hit"])
+        else:
+            bonus=0
+        return base+bonus
 
     def ppd_mod(self):
         ability_mods=load_json('adnd2e','ability_scores')
@@ -218,7 +227,7 @@ class Character:
         elif roll - mod == 20:
             return "Critical Hit !"
         else:
-            if roll >= self.__get_thac0() - (int(target.json['combat']['armor_class']) - target.def_mod()):
+            if roll >= self.__get_thac0() - target.armor_class() - int(target.def_mod()):
                 return "Hit !"
             else:
                 return "Miss !"
@@ -236,9 +245,35 @@ class Character:
             highlight('Spell fails !',clear=False)
             self.spell_complete()
             return False
-
+    
+    def load_weapons(self):
+        weap=[]
+        if not "inventory" in self.json or not "equiped" in self.json["inventory"]:
+            return []
+        for item in self.json['inventory']['equiped']:
+            i=Item(load_json(get_user_data('items'),item))
+            if i.json['type'] == 'weapon':
+                weap.append(i)
+        return weap
+        
+    def armor_class(self):
+        AC=10
+        for item in self.armor:
+            AC -= int(item["conditionals"]["ac"])
+        return AC
+    
+    def load_armor(self):
+        arm=[]
+        if not "inventory" in self.json or not "equiped" in self.json["inventory"]:
+            return []
+        for item in self.json['inventory']['equiped']:
+            i=Item(load_json(get_user_data('items'),item))
+            if i.json['type'] == 'armor':
+                arm.append(i)
+        return arm
+        
     def num_weapons(self): 
-        return len(self.json['combat']['weapons'])
+        return len(self.weapons)
         
     def num_attacks(self):
         atr=load_json('adnd2e','various')['various']['attacks_per_round']
@@ -304,8 +339,9 @@ class Character:
         if self.is_monster():
             out.append( "XP Worth: %s" %self.xp_worth())
         out.append( "Combat stats:")
+        out.append("    Armor class: %s" %self.armor_class())
         for key in self.json['combat']:
-            if key not in ['weapons','saving_throws','level/hitdice']:
+            if key not in ['saving_throws','level/hitdice']:
                 out.append("    %s: %s" %(key,self.json['combat'][key]))
         out.append( "    Saving throws:")
         line='      '
@@ -320,10 +356,6 @@ class Character:
         out.append( "Total attacks per round: %s" %self.num_attacks())
         out.append( "Weapons: %s" %self.num_weapons())
         line='      '
-        for key in self.json['combat']['weapons']:
-            out.append( "Weapon: %s" %key)
-            for stat in self.json['combat']['weapons'][key]:
-                line="%s[%s: %s]" %(line,stat,self.json['combat']['weapons'][key][stat])
         out.append(line)
         out.append( "Modifiers(first weapon):")
         out.append( "Chance to hit: %s" %self.to_hit_mod())

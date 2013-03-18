@@ -14,7 +14,7 @@
     "__Ihitpoints":"",
     "__Imax_hp":"",
     "__Xatacks_per_round": "",
-    "__Iarmor_class": "",
+    "__Xarmor_class": "",
     "__Xweapons": {"__Idmg": "", "type": "__[melee,magic,misile]", "__Ito_hit": "","save_against":"__[ppd,rod,pp,breath,spell,none]"}
 },
 "class":

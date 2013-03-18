@@ -1,6 +1,7 @@
 from util import load_json
 from glob import iglob,glob
-from util import get_user_data
+from util import get_user_data,highlight
+from simplejson import dumps
 import sys
 import os
 
@@ -17,41 +18,44 @@ def list_items(itemtype='all'):
         
 class ItemEvents:
     json={}
-    def __init__(self,name)
-        self.json=load_json('items',name)
+    def __init__(self,json):
+        self.json=json
         
-    def OnEquip(character={}):
+    def OnEquip(self,character={}):
         return character
     
-    def OnDrop(character={}):
+    def OnDrop(self,character={}):
         return character
     
-    def OnPickUp(character={}):
+    def OnPickUp(self,character={}):
         return character
         
-    def OnUse(character={},target={})
+    def OnUse(self,character={},target={}):
         return {"character":character,"target":target}
         
-    
-
 class Item:
     json={}
     events=None
-    
-    def __init__(self,name):
-        self.json=load_json('items',name)
-        sys.path.appened(get_user_data('items'))
-        eventfile=os.path.join(get_user_data('items'),"name.py")
+    def __init__(self,json):
+        self.json=json
+        sys.path.append(get_user_data('items'))
+        eventfile=os.path.join(get_user_data('items'),self.filename('.py'))
+        module=self.filename(None)
         if os.path.exists(eventfile):
-            from name import Events
-            events=Events()
+            from module import Events
+            events=Events(self.json)
         else:
-            events=ItemEvents()
+            events=ItemEvents(self.json)
             
-    def filename(self):
-        return "%s.json" % self.json['name'].replace(' ','_')
+    def filename(self,extension="json"):
+        if extension:
+            return "%s.%s" % (self.json['name'].replace(' ','_'),extension)
+        else:
+            return "%s" % (self.json['name'].replace(' ','_'))
     
+  
     def save(self):
+        print self.filename()
         open(os.path.join(get_user_data('items'),self.filename()),'w').write(dumps(self.json,indent=4))
         highlight('%s status saved to disk' %self.displayname(),clear=False)
     

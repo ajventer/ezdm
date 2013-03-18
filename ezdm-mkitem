@@ -15,13 +15,16 @@ if __name__=='__main__':
         highlight("EZDM item creator")
         template=load_json('adnd2e','template_item')
         if len(old) == 0:
-            basedir="weapon"
-            load=smart_input("Load defaults from existing item",validentries=["y","n"],default='y')
+            basedir="items"
+            itemlist=list_items()
+            if len(itemlist) >0:
+                load=smart_input("Load defaults from existing item",validentries=["y","n"],default='y')
+            else:
+                load='n'
+
             if load == "y":
-                itemlist=list_items()
                 name=smart_input("%s "%(basedir),upper=True,validentries=itemlist.keys())
                 old=load_json(basedir,itemlist[name])
-        
         item=Item(json_from_template(template=template['core'],old=old,conditional=template['conditional']))    
         say(item.json)
         save=smart_input("Save this %s ?" %(basedir.rstrip('s')),default="n",validentries=["y","n"],lower=True)
