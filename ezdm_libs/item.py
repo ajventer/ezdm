@@ -1,6 +1,8 @@
 from util import load_json
-from glob import iglob
+from glob import iglob,glob
 from util import get_user_data
+import sys
+import os
 
 def list_items(itemtype='all'):
     items={}
@@ -13,14 +15,39 @@ def list_items(itemtype='all'):
             items[item.displayname()] = cname
     return items
         
+class ItemEvents:
+    json={}
+    def __init__(self,name)
+        self.json=load_json('items',name)
+        
+    def OnEquip(character={}):
+        return character
     
+    def OnDrop(character={}):
+        return character
+    
+    def OnPickUp(character={}):
+        return character
+        
+    def OnUse(character={},target={})
+        return {"character":character,"target":target}
+        
     
 
 class Item:
     json={}
+    events=None
+    
     def __init__(self,name):
         self.json=load_json('items',name)
-    
+        sys.path.appened(get_user_data('items'))
+        eventfile=os.path.join(get_user_data('items'),"name.py")
+        if os.path.exists(eventfile):
+            from name import Events
+            events=Events()
+        else:
+            events=ItemEvents()
+            
     def filename(self):
         return "%s.json" % self.json['name'].replace(' ','_')
     
@@ -34,9 +61,6 @@ class Item:
     def itemtype(self):
         return self.json['type']
     
-    def specialfx(self):
-        #This will ultimately execute python in the field, with abilities to modify the in-memory copy of the character's json data
-        pass
 
 
     
