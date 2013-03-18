@@ -1,7 +1,6 @@
 {"core":{
     "name":"",
-    "type":"__[weapon,armor,other]",
-    "specialfx":""
+    "type":"__[weapon,armor,other]"
 },
 "conditional":{
     "type=weapon":{

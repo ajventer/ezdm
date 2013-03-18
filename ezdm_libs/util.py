@@ -78,7 +78,7 @@ def load_json(source=None,base=None,filename=None):
     else:
         return loads(open(filename,'r').read())
 
-def template_control(key,value)
+def template_control(key,value):
     control={"upper":False,"lower":False,"integer":False,"decimal":False,"validentries":[]}
     if key.startswith("__U"):
         control["upper"]=True
@@ -111,13 +111,13 @@ def template_conditional(mydct={},conditionals={}):
                         realkey=key[3:]
                     else:
                         realkey=key
-                    control=template_control(key,conditionals[conditional][key]
+                    control=template_control(key,conditionals[conditional][key])
                      
                     if "conditionals" in m and key in m["conditionals"]:
                         default=m["conditionals"][key]
                     else :
                         default=conditionals[conditional][key]
-                    out[key]=smart_input(key,conditionals[conditional][key],validentries=control["validentries"],upper=control["upper"],lower=control["lower"],integer=control["integer"],decimal=control["decimal"])
+                    out[key]=smart_input(realkey,conditionals[conditional][key],validentries=control["validentries"],upper=control["upper"],lower=control["lower"],integer=control["integer"],decimal=control["decimal"])
         return out
 
 def realkeys(template):
