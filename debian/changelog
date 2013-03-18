@@ -1,5 +1,6 @@
 ezdm (0.0.7ubuntu1) quantal; urgency=low
 
+  * master Added inventory to template
   * master Delete old weapons entries to make room for new inventory
     system
 

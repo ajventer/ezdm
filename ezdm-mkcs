@@ -22,7 +22,7 @@ if __name__=='__main__':
                 name=smart_input("%s first name "%(basedir),upper=True,validentries=charlist.keys())
                 old=load_json(basedir,charlist[name])
             
-        character=Character(json_from_template(template,old),True)
+        character=Character(json_from_template(template=template['core'],old=old,conditional=template['conditional']),True)
         character.json["combat"]["max_hp"]=character.json["combat"]["hitpoints"]
         say(character.pprint())
         save=smart_input("Save this %s ?" %(basedir.rstrip('s')),default="n",validentries=["y","n"],lower=True)

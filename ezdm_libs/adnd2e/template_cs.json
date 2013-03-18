@@ -1,4 +1,5 @@
 {
+"core":{
 "personal":{
     "alignment":{"law":"__[chaotic,neutral,lawful]",
                 "social":"__[evil,good,neutral]"},
@@ -21,4 +22,16 @@
     "class":"__[fighter,bard,ranger,thief,druid,mage,illusionist,cleric]"},
 "abilities":{"__Iwis": "","__Idex": "", "__Icha": "", "__Istr": "","__Icon": "","__Iint": ""},
 "inventory":{"equiped":[],"pack":[]}
+},
+"conditional":{
+"class.parent=rogue":{
+        "pick pockets":15,
+        "open locks": 10,
+        "find/remove traps":5,
+        "move silently":10,
+        "detect noise":15,
+        "climb walls":60,
+        "read languages":0
+    }
+}
 }

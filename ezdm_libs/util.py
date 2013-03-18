@@ -78,10 +78,9 @@ def load_json(source=None,base=None,filename=None):
     else:
         return loads(open(filename,'r').read())
 
-def template_conditional(mydct={}):
+def template_conditional(mydct={},conditionals={}):
         md=mydct
         out={}
-        conditionals=load_json('adnd2e','template_conditional') or {}
         for conditional in conditionals.keys():
             condition,test=conditional.split("=")
             m=md
@@ -93,11 +92,31 @@ def template_conditional(mydct={}):
                         m=m[key]
             if m[lastkey] == test:
                 for key in conditionals[conditional].keys():
+                    upper=False
+                    lower=False
+                    integer=False
+                    decimal=False
+                    validentries=[]
+                    if key.startswith('__'):
+                        realkey=key[3:]
+                    else:
+                        realkey=key
+
+                    if key.startswith("__U"):
+                        upper=True
+                    if key.startswith("__L"):
+                        lower=True
+                    if key.startswith("__I"):
+                        integer=True
+                    if key.startswith("__D"):
+                        decimal=True     
+                    if str(conditionals[conditional]).startswith("__["):
+                        validentries=str(conditionals[conditional]).lstrip('__[').rstrip(']').split(',')                        
                     if "conditionals" in m and key in m["conditionals"]:
                         default=m["conditionals"][key]
                     else :
                         default=conditionals[conditional][key]
-                    out[key]=smart_input(key,conditionals[conditional][key])
+                    out[key]=smart_input(key,conditionals[conditional][key],validentries=validentries,upper=upper,lower=lower,integer=integer,decimal=decimal)
         return out
 
 def realkeys(template):
@@ -110,8 +129,7 @@ def realkeys(template):
         return rk
     
 
-def json_from_template(template={},old={},keypath=""):    
-
+def json_from_template(template={},old={},keypath="",conditional={}):    
     mydict={}
     for key in old.keys():
         if not key in realkeys(template):
@@ -175,7 +193,7 @@ def json_from_template(template={},old={},keypath=""):
     
         
     if keypath == "":    
-        mydict["conditionals"]=template_conditional(mydict)
+        mydict["conditionals"]=template_conditional(mydict,conditional)
     return mydict
         
             
