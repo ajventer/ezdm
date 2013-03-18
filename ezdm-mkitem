@@ -23,7 +23,7 @@ if __name__=='__main__':
                 load='n'
 
             if load == "y":
-                name=smart_input("%s "%(basedir),upper=True,validentries=itemlist.keys())
+                name=smart_input("%s "%(basedir),upper=False,validentries=itemlist.keys())
                 old=load_json(basedir,itemlist[name])
         item=Item(json_from_template(template=template['core'],old=old,conditional=template['conditional']))    
         say(item.json)

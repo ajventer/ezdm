@@ -1,3 +1,9 @@
+ezdm (0.0.7ubuntu2) quantal; urgency=low
+
+  * master Inventory system working, now to write the tools to use it
+
+ -- A.J. Venter <ajventer@gmail.com>  Mon, 18 Mar 2013 22:49:24 +0200
+
 ezdm (0.0.7ubuntu1) quantal; urgency=low
 
   * master Added inventory to template
