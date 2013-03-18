@@ -1,3 +1,10 @@
+ezdm (0.0.7ubuntu1) quantal; urgency=low
+
+  * master Delete old weapons entries to make room for new inventory
+    system
+
+ -- A.J. Venter <ajventer@gmail.com>  Mon, 18 Mar 2013 06:24:07 +0200
+
 ezdm (0.0.7) quantal; urgency=low
 
   * master Character sheet editor
