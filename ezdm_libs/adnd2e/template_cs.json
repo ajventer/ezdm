@@ -14,7 +14,7 @@
     "__Imax_hp":"",
     "__Xatacks_per_round": "",
     "__Iarmor_class": "",
-    "__#weapons": {"__Idmg": "", "type": "__[melee,magic,misile]", "__Ito_hit": "","save_against":"__[ppd,rod,pp,breath,spell,none]"}
+    "__Xweapons": {"__Idmg": "", "type": "__[melee,magic,misile]", "__Ito_hit": "","save_against":"__[ppd,rod,pp,breath,spell,none]"}
 },
 "class":
     {"parent": "__[warrior,wizard,rogue,priest]",
