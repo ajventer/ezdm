@@ -135,7 +135,7 @@ class Character:
         ability_mods=load_json('adnd2e','ability_scores')
         base=int(ability_mods["str"][str(self.json['abilities']['str'])]['hit'])
         if len(self.weapons) > 0:
-            bonus=int(self.weapons[self.weapon]["conditionals"]["to_hit"])
+            bonus=int(self.weapons[self.weapon].json["conditionals"]["to_hit"])
         else:
             bonus=0
         return base+bonus
@@ -220,6 +220,9 @@ class Character:
         return self.json['combat']['weapons'][str(weaponidx)]['type'] == "misile"
         
     def attack_roll(self,target,mod):
+        #on_use=self.weapons[self.weapon].events.OnUse(self.json,target.json)
+        #self.json=on_use['character']
+        #target.json=on_use['target']
         self.next_weapon() 
         roll=rolldice(self.autoroll(),1,20,mod)
         if roll - mod == 1:
@@ -255,18 +258,53 @@ class Character:
             if i.json['type'] == 'weapon':
                 weap.append(i)
         return weap
+
+    def acquire_item(self,item):
+        #self.json=item.events.OnPickup(self.json)
+        self.json['inventory']['pack'].append(item.filename(extension=None))
+        
+    def equip_item(self,itemname):
+        item=Item(load_json('items',itemname))
+        #self.json=item.events.OnEquip(self.json)
+        index=self.json['inventory']['pack'].index(itemname)
+        del self.json['inventory']['pack'][index]
+        self.json['inventory']['equiped'].append(itemname)
+
+    def unequip_item(self,itemname):
+        item=Item(load_json('items',itemname))
+        #self.json=item.events.OnUnEquip(self.json)
+        index=self.json['inventory']['equiped'].index(itemname)
+        del self.json['inventory']['equiped'][index]
+        self.json['inventory']['pack'].append(itemname)
+        
+    def drop_item(self,itemname):
+        item=Item(load_json('items',itemname))
+        #self.json=item.events.OnDrop(self.json)
+
+        index=self.json['inventory']['pack'].index(itemname)
+        del self.json['inventory']['pack'][index]
+        
+    def list_inventory(self,sections=['pack','equiped']):
+        result=[]
+        for section in sections:
+                if type(self.json['inventory'][section]) != type([]):
+                    self.json['inventory'][section] = []
+                result = list(set(result+self.json['inventory'][section]))
+        return result
+        
+        
         
     def armor_class(self):
         AC=10
         for item in self.armor:
-            AC -= int(item["conditionals"]["ac"])
+            AC -= int(item.json["conditionals"]["ac"])
         return AC
     
     def load_armor(self):
         arm=[]
         if not "inventory" in self.json or not "equiped" in self.json["inventory"]:
             return []
-        for item in self.json['inventory']['equiped']:
+        for item in self.list_inventory(['equiped']):
             i=Item(load_json(get_user_data('items'),item))
             if i.json['type'] == 'armor':
                 arm.append(i)

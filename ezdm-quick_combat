@@ -146,7 +146,8 @@ def do_attack(player_index):
     target_alive=True
     num_attacks=characters[player_index].num_attacks()
     while attack_number <= num_attacks and target_alive:
-        who=highlight("%s is attacking %s with %s!" %(characters[player_index].displayname(),characters[target_index].displayname(),characters[target_index].weapons()[characters[target_index].weapon]))
+        weapon=characters[player_index].weapons[characters[player_index].weapon].displayname()
+        who=highlight("%s is attacking %s with %s!" %(characters[player_index].displayname(),characters[target_index].displayname(),weapon))
         who="%s\n%s" %(who,highlight("Attack %s of %s" %(attack_number,num_attacks),clear=False))
         attack_number += 1        
         mod=attack_mods(player_index) + characters[player_index].to_hit_mod()

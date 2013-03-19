@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 from os import system,path
-from sys import argv
+from sys import argv,exit
 from glob import glob
 
-SCRIPTS=['ezdm-mkcs','ezdm-xp_tool','ezdm-quick_combat','ezdm','ezdm-viewchar','ezdm-dice_roller','ezdm-tryability','ezdm-editcs','ezdm-manualheal']
+SCRIPTS=['ezdm-mkcs','ezdm-xp_tool','ezdm-quick_combat','ezdm','ezdm-viewchar','ezdm-dice_roller','ezdm-tryability','ezdm-editcs','ezdm-manualheal','ezdm-mkitem','ezdm-inventory']
 
 def script_list():
     return SCRIPTS
@@ -28,7 +28,7 @@ if __name__=='__main__':
     OPTS=" -E -r n -i n -f colorized "
     if len(argv) == 0:
         print "Usage check_code.py <path to pylint>"
-        sys.exit(1)
+        exit(1)
     CMD=argv[1]
     check_list(LIBS,True)
     check_list(SCRIPTS)

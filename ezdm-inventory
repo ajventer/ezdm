@@ -1,0 +1,71 @@
+#!/usr/bin/env python
+
+from ezdm_libs.util import option,load_json,smart_input,highlight,say,clearscr,gui
+from ezdm_libs.character import Character,list_chars
+from ezdm_libs.item import list_items,Item
+import sys
+import os
+
+def view_inventory(character):
+    
+    output=[character.displayname(),'Items in pack:']
+        
+    for entry in character.list_inventory(['pack']):
+        item=Item(load_json('items',entry))
+        output.append('    %s' %item.displayname())
+    output.append('')
+    output.append('Items equiped:')
+    for entry in character.list_inventory(['equiped']):
+        item=Item(load_json('items',entry))
+        output.append('    %s' %item.displayname())
+    return output
+
+def select_item():
+    itemlist=list_items()
+    selection=smart_input("Select Item",validentries=itemlist.keys())
+    return itemlist[selection]
+    
+def select_from_inventory(character,section=['pack','equiped']):
+    itemlist={}
+    for i in character.list_inventory([section]):
+        item=Item(load_json('items',i))
+        itemlist[item.displayname()]=i
+    selected=smart_input('Select Item',validentries=itemlist.keys())
+    return itemlist[selected]
+        
+
+if __name__=='__main__': 
+    PATH = os.path.dirname(sys.argv[0])
+    highlight('EZDM - Inventory Manager')
+    clist=list_chars()
+    if len(clist) == 0:
+        sys.exit()
+    name=smart_input("Select Character",upper=True,validentries=clist.keys()) 
+    print name   
+    json=load_json('characters',clist[name])
+    character=Character(json,True) 
+
+    action=""
+    while action.upper() != "QUIT":
+        clearscr()
+        say(view_inventory(character))
+        actions=["Add item","Drop Item","Equip Item","Unequip Item","Create new item","Quit"]
+        action=smart_input('Action',validentries=actions,upper=True)
+        if action.upper() == "CREATE NEW ITEM":
+            command="ezdm-mkitem"
+            if not gui():
+                command = command + ' --console'
+            command=os.path.join(PATH,command)  
+            os.system(command)
+        if action.upper() == 'ADD ITEM':
+            item=Item(load_json('items',select_item()))
+            character.acquire_item(item)
+        if action.upper() == 'EQUIP ITEM':
+            character.equip_item(select_from_inventory(character,'pack'))
+        if action.upper() == 'UNEQUIP ITEM':
+            character.unequip_item(select_from_inventory(character,'equiped'))
+        if action.upper() == 'DROP ITEM':
+            character.drop_item(select_from_inventory(character,'pack'))
+            
+    character.save()
+        

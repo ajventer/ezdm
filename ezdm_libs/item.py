@@ -8,12 +8,11 @@ import os
 def list_items(itemtype='all'):
     items={}
     for entry in iglob(os.path.join(get_user_data('items'),"*.json")):
-        cname=os.path.basename(entry).rstrip('.json')
-        item=Item(load_json('items',cname))
+        item=Item(load_json(filename=entry))
         if itemtype == 'all':
-            items[item.displayname()] = cname
+            items[item.displayname()] = item.filename(extension=None)
         elif item.itemtype() == itemtype:
-            items[item.displayname()] = cname
+            items[item.displayname()] = item.filename(extension=None)
     return items
         
 class ItemEvents:
@@ -23,6 +22,10 @@ class ItemEvents:
         
     def OnEquip(self,character={}):
         return character
+
+    def OnUnEquip(self,character={}):
+        return character
+
     
     def OnDrop(self,character={}):
         return character
@@ -46,6 +49,7 @@ class Item:
             events=Events(self.json)
         else:
             events=ItemEvents(self.json)
+
             
     def filename(self,extension="json"):
         if extension:
