@@ -1,3 +1,9 @@
+ezdm (0.0.8ubuntu1) quantal; urgency=low
+
+  * master More accurate rules
+
+ -- A.J. Venter <ajventer@gmail.com>  Wed, 20 Mar 2013 00:48:01 +0200
+
 ezdm (0.0.8) quantal; urgency=low
 
   * master Fully function item management

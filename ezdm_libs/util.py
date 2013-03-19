@@ -42,7 +42,7 @@ def say(arg):
         eg.msgbox(out,title=title())
 
 def highlight(out,clear=False,sayit=True):
-    if clear and not web():
+    if clear:
         clearscr()
     bar=''
     output=[]

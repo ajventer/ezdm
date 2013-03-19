@@ -162,7 +162,7 @@ class Character:
                 return(st)
                 
     def saving_throw(self,against):
-        saving=load_json('adnd2e','saving_throws')
+        saving=load_json('adnd2e','saving_throws') or {}
         prettyname=saving['names'][against]
         race=self.json['personal']['race']
         con=int(self.json['abilities']['con'])
