@@ -42,7 +42,7 @@ def say(arg):
         eg.msgbox(out,title=title())
 
 def highlight(out,clear=False,sayit=True):
-    if clear:
+    if clear and not web():
         clearscr()
     bar=''
     output=[]
@@ -210,7 +210,7 @@ def is_yesno(entries):
             yesno=False
     return yesno
 
-def smart_input(message='',default=None,integer=False,decimal=False,validentries=[],indent=0,lower=False,upper=False,confirm=''):
+def smart_input(message='',default=None,integer=False,decimal=False,validentries=[],indent=0,lower=False,upper=False,confirm=''):      
     if len(validentries) == 1:
         return validentries[0]
     print

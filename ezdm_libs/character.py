@@ -162,11 +162,20 @@ class Character:
                 return(st)
                 
     def saving_throw(self,against):
-        prettyname=load_json('adnd2e','saving_throws')['names'][against]
+        saving=load_json('adnd2e','saving_throws')
+        prettyname=saving['names'][against]
+        race=self.json['personal']['race']
+        con=int(self.json['abilities']['con'])
+        mod=0
+        if race in saving.keys():
+            for key in saving[race].keys():
+                if inrange(con,key):
+                    mod=int(saving[race][key])
+                    continue
         target=int(self.json['combat']['saving_throws'][against])
         say ("%s Tries to roll a saving throw against %s" %(self.displayname(),prettyname))
         say ("%s needs to roll %s" %(self.displayname(),target))
-        if int(rolldice(self.auto,1,20)) >= int(target):
+        if int(rolldice(self.auto,1,20,mod)) >= int(target):
             say ("Saved !")
             return True
         else:
@@ -349,7 +358,8 @@ class Character:
         for ability in abilities.keys():
             base=0
             if ability in conditionals:
-                base=int(conditionals[ability])               
+                if type(conditionals[ability]) == type('') and len(conditionals[ability]) >0:
+                    base=int(conditionals[ability])               
             if subclass in abilities[ability]:
                 for key in abilities[ability][subclass].keys():
                     if inrange(level,key):
@@ -365,6 +375,22 @@ class Character:
                 if race in abilities[ability]:
                     base += int(abilities[ability][race])
                 conditionals[ability] = base  
+        for key in conditionals:
+            race=self.json['personal']['race']
+            racial_bonos=0
+            if "racial_bonus" in various['abilities'][key] and race in various['abilities'][key]["racial_bonus"]: 
+                racial_bonus=int(various['abilities'][key]["racial_bonus"][race])
+            dex=self.json['abilities']['dex']
+            dex_bonus=0
+            if "dexterity bonus" in various['abilities'][key]:
+                for d in various['abilities'][key]["dexterity bonus"]:
+                    if inrange(dex,d):
+                        dex_bonus=int(various['abilities'][key]["dexterity bonus"][d])
+                        continue
+            if type(conditionals[key]) == type('') and len(conditionals[key]) == 0:
+                conditionals[key]=0
+            if int(conditionals[key]) > 0:
+                conditionals[key] = int(conditionals[key]) + dex_bonus + racial_bonus
         return conditionals
       
     def pprint(self):
@@ -401,7 +427,9 @@ class Character:
         out.append( "     Defense (modifies AC down): %s" %self.def_mod())
         out.append( "     PPD Save: %s" %self.ppd_mod())
         
-        out.append('Abilities:')
+        conditionals=self.conditionals()
+        if len(conditionals) > 0:
+            out.append('Thief Abilities:')
         various=load_json('adnd2e','various')
         abilities=various['abilities']
 
@@ -409,7 +437,7 @@ class Character:
         parentclass=self.json['class']['parent']
         level=self.json['combat']['level/hitdice']
     
-        conditionals=self.conditionals()
+        
         for con in conditionals.keys():
             out.append('    %s:%s percent' %(con,conditionals[con]))
         out.append('Spell capability:')
