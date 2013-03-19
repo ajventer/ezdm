@@ -88,7 +88,7 @@ def do_flee(player_index):
 def attack_mods(player_index):
     selected_mods={}
     custom_mods={'Atacker on high ground':1,'Defender invisible':-4,'Defender off-balance':2,'Defender stunned or prone':999,'Defender surprized':+1,'Rear attack':+2}
-    if characters[player_index].is_misile(characters[player_index].current_weapon()):
+    if characters[player_index].is_misile():
         mrange = smart_input("Using a misile weapon - please specify range",validentries=['Long','Medium','Short'],lower=True)
         if mrange == 'long':
             selected_mods['[l]ong range missile']=-5
@@ -129,10 +129,10 @@ def attack_mods(player_index):
 
 def do_damage(player_index,target_index):
     dmg_mod=characters[player_index].dmg_mod()
-    weapon=str(characters[player_index].current_weapon())
+    weapon=characters[player_index].current_weapon()
     hit_dice=characters[player_index].hit_dice()
     dmg=characters[player_index].dmg(weapon)
-    save=characters[player_index].json['combat']['weapons'][weapon]['save_against']
+    save=characters[player_index].weapons[weapon].json['conditionals']['save_against']
     if save != "none":
         if characters[target_index].saving_throw(save):
             return True
@@ -216,7 +216,7 @@ def do_round():
         if not characters[player_index] in in_combat():
             continue #This happens if a character dies during a round - he still has initiative but isn't in the fight anymore         
         who=("%s goes next" %(characters[player_index].displayname()))
-        actionlist=["Attack","Flee","Cast","Heal","Other ability","Manual edit"]
+        actionlist=["Attack","Flee","Cast","Heal","Other ability"]
         if characters[player_index].is_casting():
             highlight('Warning %s is casting a spell. %s turns left.' %(characters[player_index].displayname(),characters[player_index].cast_remaining),clear=False)
             del actionlist[2]
@@ -228,11 +228,14 @@ def do_round():
                characters[player_index].interrupt_cast()     
             do_attack(player_index)
         elif action == "Other ability":
-            ability=smart_input("Ability being tried",validentries=char.conditionals().keys())
+            if len(characters[player_index].conditionals()) == 0:
+                print "%s has no special abilities" %characters[player_index].displayname()
+                continue
+            ability=smart_input("Ability being tried",validentries=characters[player_index].conditionals().keys())
             if characters[player_index].tryability(ability):
-                say("%s succeeded with %s" %(char.displayname(),ability))
+                say("%s succeeded with %s" %(characters[player_index].displayname(),ability))
             else:
-                say("%s failed at %s" %(char.displayname(),ability))
+                say("%s failed at %s" %(characters[player_index].displayname(),ability))
         elif action == "Flee":
             if characters[player_index].is_casting():
                characters[player_index].interrupt_cast()     

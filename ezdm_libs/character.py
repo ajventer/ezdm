@@ -174,7 +174,7 @@ class Character:
             return False
         
     def dmg(self,weapon):
-        return int(self.json['combat']['weapons'][str(weapon)]['dmg'])
+        return int(self.weapons[weapon].json['conditionals']['dmg'])
     
     def hit_dice(self):
         if self.is_monster():
@@ -216,8 +216,8 @@ class Character:
     
         
       
-    def is_misile(self,weaponidx):
-        return self.json['combat']['weapons'][str(weaponidx)]['type'] == "misile"
+    def is_misile(self):
+        return self.weapons[self.weapon].json['conditionals']['weapon_type'] == "misile"
         
     def attack_roll(self,target,mod):
         #on_use=self.weapons[self.weapon].events.OnUse(self.json,target.json)
