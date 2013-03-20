@@ -1,3 +1,10 @@
+ezdm (0.0.8ubuntu2) quantal; urgency=low
+
+  * master Fixed money exchange rate
+  * master Added proper money support
+
+ -- A.J. Venter <ajventer@gmail.com>  Wed, 20 Mar 2013 19:21:38 +0200
+
 ezdm (0.0.8ubuntu1) quantal; urgency=low
 
   * master More accurate rules
