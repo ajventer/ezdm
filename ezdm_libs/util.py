@@ -10,8 +10,8 @@ if gui():
     import easygui as eg
 
 def price_in_copper(gold,silver,copper):
-    s=gold*100 + silver
-    c=s*100+copper
+    s=gold*10 + silver
+    c=s*10+copper
     return c
 
 def convert_money(copper):

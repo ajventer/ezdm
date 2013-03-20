@@ -1,12 +1,15 @@
 {"core":{
     "name":"",
     "type":"__[weapon,armor,other]",
+    "weight": 0,
+    "size":"__[small,medium,large]",
     "price":{"gold":0,"silver":0,"copper":0}
 },
 "conditional":{
     "type=weapon":{
         "__Idmg": "", 
         "weapon_type": "__[melee,magic,misile]", 
+        "damage_type": "__[slice,hack,stab]",
         "__Ito_hit": "",
         "save_against":"__[ppd,rod,pp,breath,spell,none]"
     },
