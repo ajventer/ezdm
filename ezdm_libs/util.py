@@ -10,6 +10,7 @@ if gui():
     import easygui as eg
 if web():
     import cgi
+    
 
 def formheader(border=0):
     print "<form method=post>"
@@ -19,11 +20,18 @@ def formfooter():
     print '<tr><td colspan=2 align=center,valign=center><input type=submit name="submit"></td></tr></table>'
     print "</form>"
     
+def hide(name,value):
+    print '<input type=hidden name="%s" value="%s">' %(name,value)
+    
+def dicthide(dic={}):
+    for key in dic.keys():
+        hide(key,dic[key])
+        
 def webinput(description,name,default=''):
     print '<tr><td align=center valign=center><b>%s</b></td>' %(description)
     print "<td align=center valign=center>"
     if type(default) == type(''):
-        print '<input type=text name="%s"></td></tr>'%name
+        print '<input type=text name="%s" value="%s"></td></tr>'%(name,default)
     if type(default) == type([]):
         print '<select name="%s">' %name
         for item in default:

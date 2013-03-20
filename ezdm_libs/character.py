@@ -63,9 +63,12 @@ class Character:
         return self.json
         
     def heal(self,amount):
-        self.json['combat']['hitpoints'] += amount
-        if amount > self.json['combat']['max_hp']:
-            self.json['combat']['hitpoints'] = self.json['combat']['max_hp']
+        hp=int(self.json['combat']['hitpoints'])
+        hp += amount
+        if hp > int(self.json['combat']['max_hp']):
+            self.json['combat']['hitpoints'] = int(self.json['combat']['max_hp'])
+        else:
+            self.json['combat']['hitpoints'] = hp
         highlight("%s receives healing. Hitpoints now %s" %(self.displayname(),self.json['combat']['hitpoints']),clear=False)
         self.save()
         

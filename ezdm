@@ -7,7 +7,7 @@ import sys
 def main(ACTIONLIST):
     ACTION = ''
     while not ACTION.lower() =='quit':
-        highlight('Welcome to the EZDM console')
+        highlight('Welcome to EZDM')
         ACTIONS = sorted(ACTIONLIST.keys())
         ACTIONS.append('Quit')
         ACTION = smart_input('Please select an activity', validentries=ACTIONS)
@@ -21,7 +21,7 @@ def main(ACTIONLIST):
                 raw_input()
 
 def webmain(ACTIONLIST):
-    cgiheader('Welcome to the EZDM web',False)
+    cgiheader('Welcome to EZDM',False)
     data=parsecgi()
     for key in ACTIONLIST.keys():
         print '<a href="%s.cgi">%s</a><br>' %(ACTIONLIST[key],key)
