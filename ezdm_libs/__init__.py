@@ -5,7 +5,7 @@ _gui=True
 __web=False
 
 
-if '--web' in sys.argv or '.cgi' in sys.argv[0]:
+if '--web' in sys.argv or sys.argv[0].endswith('.cgi'):
     __gui=False
     __web=True
  

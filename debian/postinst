@@ -1,8 +1,11 @@
 #!/bin/bash -x
 ln -sf /usr/games/ezdm* /usr/bin
+ln -sf /usr/games/*.ezdm /usr/bin
 cd /usr/games
 for I in ezdm* ; do
-	ln -sf $I ${I}.cgi
+	if ! echo $I | fgrep cgi >/dev/null ; then
+		ln -sf $I ${I}.cgi
+	fi
 done
 for I in /usr/lib/python2.7/dist-packages/ezdm_libs/*.py; do
         python -m compileall $I
