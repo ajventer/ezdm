@@ -1,6 +1,7 @@
 {"core":{
     "name":"",
-    "type":"__[weapon,armor,other]"
+    "type":"__[weapon,armor,other]",
+    "price":{"gold":0,"silver":0,"copper":0}
 },
 "conditional":{
     "type=weapon":{

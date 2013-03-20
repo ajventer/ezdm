@@ -1,4 +1,4 @@
-from util import smart_input,highlight,rolldice,load_json,inrange,say,get_user_data
+from util import smart_input,highlight,rolldice,load_json,inrange,say,get_user_data,price_in_copper,convert_money
 import sys
 import datetime
 import os
@@ -296,11 +296,43 @@ class Character:
     def list_inventory(self,sections=['pack','equiped']):
         result=[]
         for section in sections:
-                if type(self.json['inventory'][section]) != type([]):
+                if type(self.json['inventory'][section]) != type([]) and type(self.json['inventory'][section]) != type({}):
                     self.json['inventory'][section] = []
-                result = list(set(result+self.json['inventory'][section]))
+                result = list(result+self.json['inventory'][section])
         return result
+    
+    def list_money(self):
+        return "Gold: %s, Silver: %s, Copper: %s" %(self.json['inventory']['money']['gold'],self.json['inventory']['money']['silver'],self.json['inventory']['money']['copper'])
+    
+    
+    def spend_money(self,gold=0,silver=0,copper=0):
+        ihave=price_in_copper(int(self.json['inventory']['money']['gold'] or '0'),int(self.json['inventory']['money']['silver'] or '0'),int(self.json['inventory']['money']['copper'] or '0'))
+        price=price_in_copper(gold,silver,copper)
+        remains=ihave-price
+        if remains < 0:
+            return False
+        else:
+            self.json['inventory']['money']=convert_money(remains)
+            self.save()
+            return True
         
+    def buy_item(self,item):
+        if not 'price' in item.json.keys():
+            price={"gold":0,"silver":0,"copper":0}
+        else:
+            price=item.json['price']
+        if self.spend_money(int(price['gold']),int(price['silver']),int(price['copper'])):
+            self.acquire_item(item)
+            return True
+        else:
+            return False
+        
+    def gain_money(self,gold=0,silver=0,copper=0):
+        total_gained=price_in_copper(gold,silver,copper)
+        my_total=price_in_copper(int(self.json['inventory']['money']['gold'] or '0'),int(self.json['inventory']['money']['silver'] or '0'),int(self.json['inventory']['money']['copper'] or '0'))
+        my_total += total_gained
+        self.json['inventory']['money'] = convert_money(my_total)
+        self.save()
         
         
     def armor_class(self):

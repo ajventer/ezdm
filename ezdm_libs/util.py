@@ -9,6 +9,22 @@ from pprint import pprint
 if gui():
     import easygui as eg
 
+def price_in_copper(gold,silver,copper):
+    s=gold*100 + silver
+    c=s*100+copper
+    return c
+
+def convert_money(copper):
+    money={"gold":0,"silver":0,"copper":copper}
+    while money['copper'] > 10:
+        money['silver'] += 1
+        money['copper'] -= 10
+    while money['silver'] > 10:
+        money['gold'] += 1
+        money['silver'] -= 10
+    return money
+        
+
 def clearscr():
     for X in range(0,100):
         print

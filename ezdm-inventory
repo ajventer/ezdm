@@ -18,6 +18,9 @@ def view_inventory(character):
     for entry in character.list_inventory(['equiped']):
         item=Item(load_json('items',entry))
         output.append('    %s' %item.displayname())
+    output.append('')
+    output.append('Money:')
+    output.append(character.list_money())
     return output
 
 def select_item():
@@ -32,6 +35,13 @@ def select_from_inventory(character,section=['pack','equiped']):
         itemlist[item.displayname()]=i
     selected=smart_input('Select Item',validentries=itemlist.keys())
     return itemlist[selected]
+
+def ask_money(action='add'):            
+    gold=smart_input("Gold to %s" %action,default=0,integer=True)
+    silver=smart_input("Silver to %s" %action,default=0,integer=True)
+    copper=smart_input("Copper to %s" %action,default=0,integer=True)
+    return {"gold":gold,"silver":silver,"copper":copper}
+
         
 
 if __name__=='__main__': 
@@ -44,12 +54,16 @@ if __name__=='__main__':
     print name   
     json=load_json('characters',clist[name])
     character=Character(json,True) 
-
+    MESSAGE=""
     action=""
     while action.upper() != "QUIT":
         clearscr()
+        if len(MESSAGE) >0:
+            highlight(MESSAGE,sayit=True)
+            say(['',''])
+            MESSAGE=''
         say(view_inventory(character))
-        actions=["Add item","Drop Item","Equip Item","Unequip Item","Create new item","Quit"]
+        actions=["Add item","Drop Item","Equip Item","Unequip Item","Create new item","Add money","Remove Money","Buy Item","Quit"]
         action=smart_input('Action',validentries=actions,upper=True)
         if action.upper() == "CREATE NEW ITEM":
             command="ezdm-mkitem"
@@ -57,6 +71,17 @@ if __name__=='__main__':
                 command = command + ' --console'
             command=os.path.join(PATH,command)  
             os.system(command)
+        if action.upper() == "ADD MONEY":
+            money=ask_money()
+            character.gain_money(money['gold'],money['silver'],money['copper'])
+        if action.upper() == "REMOVE MONEY":
+            money=ask_money('remove')
+            if not character.spend_money(money['gold'],money['silver'],money['copper']):
+                MESSAGE='Error: %s does not have enough money for that' %character.displayname()
+        if action.upper() == "BUY ITEM":
+            item=Item(load_json('items',select_item()))
+            if not character.buy_item(item):
+                MESSAGE='Error: %s cannot afford %s' %(character.displayname(),item.displayname())
         if action.upper() == 'ADD ITEM':
             item=Item(load_json('items',select_item()))
             character.acquire_item(item)
