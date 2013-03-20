@@ -1,3 +1,9 @@
+ezdm (0.0.8ubuntu3) quantal; urgency=low
+
+  * master Fixed upward money convertor
+
+ -- A.J. Venter <ajventer@gmail.com>  Wed, 20 Mar 2013 20:21:20 +0200
+
 ezdm (0.0.8ubuntu2) quantal; urgency=low
 
   * master Fixed money exchange rate

@@ -2,10 +2,14 @@ import os
 import sys
 
 _gui=True
+__web=False
 
 
-
-if '--console' in sys.argv:
+if '--web' in sys.argv or '.cgi' in sys.argv[0]:
+    __gui=False
+    __web=True
+ 
+elif '--console' in sys.argv:
     _gui=False
     _web=False
 else:
@@ -16,6 +20,9 @@ else:
         
 def gui():
     return _gui
+
+def web():
+    return __web
 
 _ROOT = os.path.abspath(os.path.dirname(__file__))
 def get_sys_data(path):

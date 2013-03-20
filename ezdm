@@ -1,18 +1,13 @@
 #!/usr/bin/env python
 """Main EZDM console"""
-from ezdm_libs.util import smart_input, highlight, gui
+from ezdm_libs.util import smart_input, highlight, gui, web,cgiheader,cgifooter,parsecgi,formheader,formfooter,webinput
 import os
 import sys
 
-
-if __name__ == '__main__': 
-    PATH = os.path.dirname(sys.argv[0])
-
-    ACTIONLIST = {'View a character sheet':'ezdm-viewchar', 'Create a new character sheet':'ezdm-mkcs', 'Combat !':'ezdm-quick_combat', 'Grant XP to character':'ezdm-xp_tool', 'Roll dice':'ezdm-dice_roller',"Heal character":"ezdm-manualheal","Try ability":"ezdm-tryability","Edit character sheet":"ezdm-editcs","Manage character inventory":"ezdm-inventory"}
-
+def main(ACTIONLIST):
     ACTION = ''
     while not ACTION.lower() =='quit':
-        highlight('Welcome to the EZDM console V1.0')
+        highlight('Welcome to the EZDM console')
         ACTIONS = sorted(ACTIONLIST.keys())
         ACTIONS.append('Quit')
         ACTION = smart_input('Please select an activity', validentries=ACTIONS)
@@ -24,3 +19,20 @@ if __name__ == '__main__':
             os.system(os.path.join(PATH, COMMAND))
             if not gui():
                 raw_input()
+
+def webmain(ACTIONLIST):
+    cgiheader('Welcome to the EZDM web',False)
+    data=parsecgi()
+    for key in ACTIONLIST.keys():
+        print '<a href="%s.cgi">%s</a><br>' %(ACTIONLIST[key],key)
+    cgifooter(False)
+
+if __name__ == '__main__': 
+    PATH = os.path.dirname(sys.argv[0])
+
+    ACTIONLIST = {'View a character sheet':'ezdm-viewchar', 'Create a new character sheet':'ezdm-mkcs', 'Combat !':'ezdm-quick_combat', 'Grant XP to character':'ezdm-xp_tool', 'Roll dice':'ezdm-dice_roller',"Heal character":"ezdm-manualheal","Try ability":"ezdm-tryability","Edit character sheet":"ezdm-editcs","Manage character inventory":"ezdm-inventory"}
+
+    if not web():
+        main(ACTIONLIST)
+    else:
+        webmain(ACTIONLIST)

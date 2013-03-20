@@ -1,13 +1,79 @@
 import sys
 import datetime
 import os
-from ezdm_libs import get_sys_data,gui
+from ezdm_libs import get_sys_data,gui,web
 from simplejson import loads,dumps
 from glob import iglob
 from random import randrange
 from pprint import pprint
 if gui():
     import easygui as eg
+if web():
+    import cgi
+
+def formheader(border=0):
+    print "<form method=post>"
+    print "<table border=%s>" %border
+    
+def formfooter():
+    print '<tr><td colspan=2 align=center,valign=center><input type=submit name="submit"></td></tr></table>'
+    print "</form>"
+    
+def webinput(description,name,default=''):
+    print '<tr><td align=center valign=center><b>%s</b></td>' %(description)
+    print "<td align=center valign=center>"
+    if type(default) == type(''):
+        print '<input type=text name="%s"></td></tr>'%name
+    if type(default) == type([]):
+        print '<select name="%s">' %name
+        for item in default:
+            print '<option>%s</option>' %item
+        print '</select></td></tr>'
+        
+def dictinput(dic={},parent=None):
+    for key in dic.keys():
+        if not parent:
+            name=key
+        else:
+            name="%s:%s" %(parent,key)
+        if type(dic[key]) <> type({}):
+            webinput(name,name,dic[key])
+        else:
+            dictinput(dic[key])
+    
+def cgiheader(title='',linkback=True):
+    if len(title) == 0:
+        t = title()
+    else:
+        t = title
+    print "Content-type: text/html"
+    print
+    print "<html><head><title>%s</title></head><body>" %t
+    print "<table width=100%><tr><td align=center bgcolor=lightgray><b>"
+    print t
+    print "</b>"
+    if linkback:
+        print "</td><td width=50 align=right>"
+        print "<a href=ezdm.cgi><b>Home</b></a>"
+        print "</td></tr><tr><td align=left>"
+    else:
+        print "</td></tr><tr><td>"
+
+    
+def cgifooter(linkback=True):
+    if linkback:
+        print "</td><td width=50 align=right valign=bottom>"
+        print "<a href=ezdm.cgi><b>Home</b></a>"
+    print "</td></tr></table>"
+    print "</body></html>"    
+    
+def parsecgi():
+    data={}
+    form = cgi.FieldStorage()
+    for key in form.keys():
+        data[key]=form.getvalue(key)
+    return data
+    
 
 def price_in_copper(gold,silver,copper):
     s=gold*10 + silver
@@ -46,6 +112,12 @@ def title():
     return(os.path.basename(sys.argv[0]))
 
 def say(arg):
+    if web():
+        if type(arg) == type(''):
+            arg=[arg]
+        for line in arg:
+            print "%s<br>" %line
+    return
     out=''
     if type(arg) == type([]):
         for line in arg:
@@ -62,7 +134,10 @@ def highlight(out,clear=False,sayit=True):
         clearscr()
     bar=''
     output=[]
-    output.append("# %s #" %(out))
+    if not web:
+        output.append("# %s #" %(out))
+    else:
+        output.append("<center><b> %s </b></center>" %(out))
     if sayit:
         say(output)
     else:
