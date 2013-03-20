@@ -1,3 +1,15 @@
+ezdm (0.0.8ubuntu4) quantal; urgency=low
+
+  * master Fixed manualheal bug
+
+ -- A.J. Venter <ajventer@gmail.com>  Wed, 20 Mar 2013 23:52:53 +0200
+
+ezdm (0.0.8ubuntu3) quantal; urgency=low
+
+  * master Fixed manualheal bug
+
+ -- A.J. Venter <ajventer@gmail.com>  Wed, 20 Mar 2013 23:51:00 +0200
+
 ezdm (0.0.8ubuntu2) quantal; urgency=low
 
   * master Fixed money exchange rate
