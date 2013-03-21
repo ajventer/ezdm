@@ -1,12 +1,20 @@
 #!/usr/bin/env python
-from os import system,path
+from os import system,path,symlink
 from sys import argv,exit
 from glob import glob
 
-SCRIPTS=['ezdm-mkcs','ezdm-xp_tool','ezdm-quick_combat','ezdm','ezdm-viewchar','ezdm-dice_roller','ezdm-tryability','ezdm-editcs','ezdm-manualheal','ezdm-mkitem','ezdm-inventory','cgi-server.ezdm']
+SCRIPTS=['ezdm-mkcs','ezdm-xp_tool','ezdm-quick_combat','ezdm','ezdm-viewchar','ezdm-dice_roller','ezdm-tryability','ezdm-editcs','ezdm-manualheal','ezdm-mkitem','ezdm-inventory','cgi-server.ezdm','ezdm-cs.cgi']
 
 def script_list():
     return SCRIPTS
+
+def link():
+    for script in SCRIPTS:
+        if not script ==  'cgi-server.ezdm' and not script == 'ezdm-cs.cgi':
+            try:
+                symlink(script,"%s.cgi" %script)
+            except Exception as E:
+                print E
 
 def check_list(LIST,try_import=False):
     for SCRIPT in LIST:
@@ -32,6 +40,7 @@ if __name__=='__main__':
     CMD=argv[1]
     check_list(LIBS,True)
     check_list(SCRIPTS)
+    link()
     
     
 

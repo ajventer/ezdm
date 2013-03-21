@@ -27,13 +27,17 @@ def dicthide(dic={}):
     for key in dic.keys():
         hide(key,dic[key])
         
-def webinput(description,name,default=''):
-    print '<tr><td align=center valign=center><b>%s</b></td>' %(description)
+def webinput(description,name,default='',selected=''):
+    print '<tr><td align=left valign=center><b>%s</b></td>' %(description)
     print "<td align=center valign=center>"
     if type(default) == type(''):
         print '<input type=text name="%s" value="%s"></td></tr>'%(name,default)
     if type(default) == type([]):
-        print '<select name="%s">' %name
+        if not selected in default:
+            print '<select name="%s">' %name
+        else:
+            print '<select name="%s" selected="%s">' %(name,selected)
+            print '<option>%s</option>' %selected
         for item in default:
             print '<option>%s</option>' %item
         print '</select></td></tr>'
@@ -203,7 +207,7 @@ def template_conditional(mydct={},conditionals={}):
                     lastkey=key
                     if type(m[key]) == type({}):
                         m=m[key]
-            if m[lastkey] == test:
+            if lastkey in m and m [lastkey] == test:
                 for key in conditionals[conditional].keys():
 
                     if key.startswith('__'):
@@ -216,7 +220,16 @@ def template_conditional(mydct={},conditionals={}):
                         default=m["conditionals"][key]
                     else :
                         default=conditionals[conditional][key]
-                    out[realkey]=smart_input(realkey,conditionals[conditional][key],validentries=control["validentries"],upper=control["upper"],lower=control["lower"],integer=control["integer"],decimal=control["decimal"])
+                    if not web():
+                        out[realkey]=smart_input(realkey,conditionals[conditional][key],validentries=control["validentries"],upper=control["upper"],lower=control["lower"],integer=control["integer"],decimal=control["decimal"])
+                    else:
+                        default=str(default)
+                        if len(control['validentries']) == 0:
+                            webinput(realkey,realkey,default)
+                        else:
+                            webinput(realkey,realkey,control['validentries'],default)
+#                        print default
+
         return out
 
 def realkeys(template):
@@ -227,57 +240,121 @@ def realkeys(template):
             else:
                 rk.append(key)
         return rk
+
+def samekeys(sw,dic):
+    result={}
+    for key in sorted(dic.keys()):
+        if key.startswith(sw):
+            result[key]=dic[key]
+    return result
     
-
-def json_from_template(template={},old={},keypath="",conditional={}):    
-    mydict={}
-    for key in old.keys():
-        if not key in realkeys(template):
-            mydict[key]=old[key]
+def recurse_colons(keys,old,parent):
+    if not '::' in keys:
+        valuestring="%s::%s" %(parent,keys)
+        s='"%s":"%s",' %(keys,old[valuestring])
+        return s
+    
+    firstkey=keys.split('::')[0]
+    parentkey="%s::%s" %(parent,firstkey)
+    t=''
+    for sk in samekeys(parentkey,old):
+        otherkeys='::'.join(sk.split(parentkey)[1:]).lstrip('::')
+        t = '%s %s' %(t,recurse_colons(otherkeys,old,parentkey))
+    t='"%s": {%s},' %(firstkey,t)
+    return t
+           
             
-    for key in sorted(template.keys()):
 
+def validate_json(template={},old={}): 
+    done=[]
+    result={}
+    for key in sorted(old.keys()):
+        if '::' in key:   
+            firstkey=key.split('::')[0]
+            if firstkey in done:
+                continue
+            done.append(firstkey)
+            s=''
+            same=samekeys(firstkey,old)
+            for sk in same.keys():
+                otherkeys='::'.join(sk.split('::')[1:])
+                s="%s %s" %(s,recurse_colons(otherkeys,old,firstkey))
+            s=s.rstrip(',')
+            s="{%s}" %s
+            s=s.rstrip(',').replace(',}','}')
+            result[firstkey]=loads(s)
+        else:
+            s=old[key].replace("'",'"')
+            result[key]=loads(s)
+            
+    return result
+                
+
+def json_from_template(template={},old={},parent="",conditional={}):    
+    mydict={}
+    if parent=="":
+        for key in old.keys():
+            if not key in realkeys(template):
+                mydict[key]=old[key]
+        if web():
+            for key in mydict.keys():
+                hide(key,mydict[key])
+
+        
+    for key in sorted(template.keys()):
         if key.startswith('__'):
             realkey=key[3:]
         else:
             realkey=key
-        if keypath == "":
-            showpath=realkey
+        
+        if parent=="":
+            mypath=realkey
         else:
-            showpath="%s:%s" %(keypath,realkey)
+            mypath = "%s::%s" %(parent,realkey)
+
         control=template_control(key,template[key])
         if key.startswith("__X"):
             if realkey in old:
                 del old[realkey]
             if realkey in mydict:
                 del mydict[realkey]
-        elif key.startswith("__#"):
             if realkey in old:
                 x=len(old[realkey])
             else:
                 x=1
-            numentries=smart_input("How many %s entries ?" %realkey,default=x,integer=True)
-            subdic={}
-            for I in range(0,numentries):
-                try:
-                    oldx=old[realkey][str(I)]
-                except KeyError:
-                    oldx={}
-                subdic[str(I)]=json_from_template(template[key],oldx,"%s:%s" %(realkey,I))
-            mydict[realkey]=subdic
-        elif type(template[key]) == type({}):
+        elif key.startswith('__Y'):
             if realkey in old:
-                mydict[realkey]=json_from_template(template[key],old[realkey],realkey)
+                mydict[realkey] = old[realkey]
             else:
-                mydict[realkey]=json_from_template(template[key],{},realkey)
-        elif realkey in old:
-            mydict[realkey]=smart_input(showpath,old[realkey],validentries=control["validentries"],upper=control["upper"],lower=control["lower"],integer=control["integer"],decimal=control["decimal"])
-        else:
-            mydict[realkey]=smart_input(showpath,validentries=control["validentries"],upper=control["upper"],lower=control["lower"],integer=control["integer"],decimal=control["decimal"])
-    
+                mydict[realkey] = template[key]
+            #hide(realkey,mydict[realkey])
         
-    if keypath == "":    
-        mydict["conditionals"]=template_conditional(mydict,conditional)
+        elif type(template[key]) == type({}):
+                
+            if realkey in old:
+                mydict[realkey]=json_from_template(template[key],old[realkey],parent=mypath)
+            else:
+                mydict[realkey]=json_from_template(template[key],{},parent=mypath)
+        elif realkey in old:
+            if not web():
+                mydict[realkey]=smart_input(mypath,old[realkey],validentries=control["validentries"],upper=control["upper"],lower=control["lower"],integer=control["integer"],decimal=control["decimal"])
+            else:
+                default=str(old[realkey])
+                if len(control['validentries']) == 0:
+                    webinput(mypath,mypath,default)
+                else:
+                    webinput(mypath,mypath,control['validentries'],default)
+        else:
+            if not web():
+                mydict[realkey]=smart_input(mypath,validentries=control["validentries"],upper=control["upper"],lower=control["lower"],integer=control["integer"],decimal=control["decimal"])
+            else:
+                if len(control['validentries']) == 0:
+                    default=template[key]
+                else:
+                    default=control['validentries']
+                webinput(mypath,mypath,default)
+    if parent == "":    
+       if not web(): mydict["conditionals"]=template_conditional(mydict,conditional)
     return mydict
         
             

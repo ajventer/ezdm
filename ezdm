@@ -23,6 +23,11 @@ def main(ACTIONLIST):
 def webmain(ACTIONLIST):
     cgiheader('Welcome to EZDM',False)
     data=parsecgi()
+    del ACTIONLIST["Edit character sheet"]
+    del ACTIONLIST['Create a new character sheet']
+    del ACTIONLIST['Combat !']
+    ACTIONLIST['Character Sheet']='ezdm-cs'
+    
     for key in ACTIONLIST.keys():
         print '<a href="%s.cgi">%s</a><br>' %(ACTIONLIST[key],key)
     cgifooter(False)

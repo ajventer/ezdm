@@ -5,7 +5,7 @@ import CGIHTTPServer
 import cgitb; cgitb.enable()  ## This line enables CGI error reporting
 
 
-print "Please point your web-browser at http://localhost:8000" 
+print "Please point your web-browser at http://localhost:8000/ezdm.cgi" 
 server = BaseHTTPServer.HTTPServer
 handler = CGIHTTPServer.CGIHTTPRequestHandler
 server_address = ("", 8000)
