@@ -3,12 +3,11 @@
 import sys
 import os
 from simplejson import loads,dumps
-from ezdm_libs.util import smart_input,load_json,json_from_template,highlight,say
+from ezdm_libs.util import clearscr,smart_input,load_json,json_from_template,highlight,say,cgiheader,cgifooter,parsecgi,formheader,formfooter,webinput,dictinput,hide,template_conditional,validate_json
 from ezdm_libs.item import Item,list_items
+from ezdm_libs import web,gui
 
-
-
-if __name__=='__main__': 
+def main():
     save='n'
     old = {}
     while not 'y' in save.lower():
@@ -32,4 +31,24 @@ if __name__=='__main__':
             item.save()
         else:
             old=item.json
-                
+
+def getdata():
+    items=list_items().keys()
+    items.append('New')
+    formheader(border=3)
+    webinput('Use defaults from item:','item',items)
+    formfooter()
+
+def webmain():
+    cgiheader('EZDM Item Creator')
+    data=parsecgi()
+    if not 'submit' in data:
+        getdata()
+    cgifooter()
+    
+
+if __name__=='__main__': 
+    if web():
+        webmain()
+    else:
+        main()

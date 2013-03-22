@@ -17,14 +17,17 @@ def getdata():
 def cond(data):
     highlight('Entries specific to a given class')
     formheader(border=3) 
-    del data['submit']
+    if 'submit' in data:
+        del data['submit']
     hide('next',data['character'])
-    del data['character']
+    if 'character' in data:
+        del data['character']
     template=load_json('adnd2e','template_cs')
     result=validate_json(template,data)
     
     json_from_template(template=template['core'],old=result,conditional=template['conditional'])
-    template_conditional(result,template['conditional'])
+
+    result=template_conditional(result,template['conditional'])
     formfooter()
     
 
@@ -52,6 +55,8 @@ if __name__=='__main__':
         del data['submit']
         cname=data['next']
         del data['next']
+        template=load_json('adnd2e','template_cs')
+        data=validate_json(template,data)
         if cname <> 'New':
             c=Character(load_json('characters',list_chars()[cname]),True)
         else:

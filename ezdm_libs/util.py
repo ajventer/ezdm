@@ -12,9 +12,11 @@ if web():
     import cgi
     
 
-def formheader(border=0):
+def formheader(border=5,title=None):
     print "<form method=post>"
     print "<table border=%s>" %border
+    if title:
+        print "<tr><td colspan=2 bgcolor=darkgray>%s</td></tr>" %title
     
 def formfooter():
     print '<tr><td colspan=2 align=center,valign=center><input type=submit name="submit"></td></tr></table>'
@@ -28,7 +30,7 @@ def dicthide(dic={}):
         hide(key,dic[key])
         
 def webinput(description,name,default='',selected=''):
-    print '<tr><td align=left valign=center><b>%s</b></td>' %(description)
+    print '<tr><td bgcolor=lightgray align=left valign=center><b>%s</b></td>' %(description)
     print "<td align=center valign=center>"
     if type(default) == type(''):
         print '<input type=text name="%s" value="%s"></td></tr>'%(name,default)
@@ -61,11 +63,11 @@ def cgiheader(title='',linkback=True):
     print "Content-type: text/html"
     print
     print "<html><head><title>%s</title></head><body>" %t
-    print "<table width=100%><tr><td align=center bgcolor=lightgray><b>"
+    print "<table width=100% border=0 cellpadding=0 cellspacing=0><tr><td align=center bgcolor=lightblue><b>"
     print t
     print "</b>"
     if linkback:
-        print "</td><td width=50 align=right>"
+        print "</td><td width=50 align=right bgcolor=lightblue>"
         print "<a href=ezdm.cgi><b>Home</b></a>"
         print "</td></tr><tr><td align=left>"
     else:
@@ -74,7 +76,7 @@ def cgiheader(title='',linkback=True):
     
 def cgifooter(linkback=True):
     if linkback:
-        print "</td><td width=50 align=right valign=bottom>"
+        print "</td><td width=50 align=right bgcolor=lightblue valign=bottom>"
         print "<a href=ezdm.cgi><b>Home</b></a>"
     print "</td></tr></table>"
     print "</body></html>"    
@@ -149,7 +151,9 @@ def highlight(out,clear=False,sayit=True):
     if not web:
         output.append("# %s #" %(out))
     else:
-        output.append("<center><b> %s </b></center>" %(out))
+        output.append('<center><table border=10 cellpadding=0 cellspacing=0><tr><td align=center valign=center bgcolor=darkgray>')
+        output.append("<b> %s </b>" %(out))
+        output.append('</td></tr></table></center>')
     if sayit:
         say(output)
     else:

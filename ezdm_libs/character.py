@@ -306,6 +306,7 @@ class Character:
     
     def list_money(self):
         return "Gold: %s, Silver: %s, Copper: %s" %(self.json['inventory']['money']['gold'],self.json['inventory']['money']['silver'],self.json['inventory']['money']['copper'])
+
     
     
     def spend_money(self,gold=0,silver=0,copper=0):
@@ -485,7 +486,8 @@ class Character:
         if checkclass:
             for key in spell_progression[checkclass].keys():
                 if inrange(level,key):
-                    out.append('   Casting Level: %s' %(spell_progression[checkclass][key]["casting_level"]))
+                    if "casting_level" in spell_progression[checkclass][key]:
+                        out.append('   Casting Level: %s' %(spell_progression[checkclass][key]["casting_level"]))
                     if "priest spells" in spell_progression[checkclass][key]:
                         line='   Priest spells:'
                         for spell_level in sorted(spell_progression[checkclass][key]["priest spells"].keys()):
