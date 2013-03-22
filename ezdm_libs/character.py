@@ -41,7 +41,7 @@ class Character:
         self.json['combat']['saving_throws']=self.__get_saving_throws()
         if self.is_monster():
             self.json['combat']['hitpoints']=rolldice(self.auto,int(self.json['combat']["level/hitdice"]),8,quiet=QuietDice)
-            self.json['combat']["max_hp"]=self.json['combat']['hitpoints']
+            self.json['combat']["max_hp"]=8*int(self.json['combat']["level/hitdice"])
     
     def remove_from_combat(self):
         self.removed = True
@@ -372,10 +372,13 @@ class Character:
     def current_xp(self):
         return int(self.json['personal']['xp'])
     
-    def tryability(self,ability):
+    def tryability(self,ability,modifier=0):
+        say('%s is trying to %s' %(self.displayname(),ability))
         target_roll=int(self.conditionals()[ability])
+        target_roll += int(modifier)
+        say ('%s must roll %s or lower to succeed' %(self.displayname(),target_roll))
         roll=rolldice(self.autoroll(),1,100)
-        if roll >= target_roll:
+        if roll <= target_roll:
             return True
         else:
             return False

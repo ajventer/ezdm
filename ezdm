@@ -26,7 +26,7 @@ def webmain(ACTIONLIST):
     del ACTIONLIST["Edit character sheet"]
     del ACTIONLIST['Create a new character sheet']
     del ACTIONLIST['Combat !']
-    ACTIONLIST['Character Sheet']='ezdm-cs'
+    ACTIONLIST['Create/Edit Character Sheet']='ezdm-cs'
     
     for key in ACTIONLIST.keys():
         print '<a href="%s.cgi">%s</a><br>' %(ACTIONLIST[key],key)
@@ -35,7 +35,7 @@ def webmain(ACTIONLIST):
 if __name__ == '__main__': 
     PATH = os.path.dirname(sys.argv[0])
 
-    ACTIONLIST = {'View a character sheet':'ezdm-viewchar', 'Create a new character sheet':'ezdm-mkcs', 'Combat !':'ezdm-quick_combat', 'Grant XP to character':'ezdm-xp_tool', 'Roll dice':'ezdm-dice_roller',"Heal character":"ezdm-manualheal","Try ability":"ezdm-tryability","Edit character sheet":"ezdm-editcs","Manage character inventory":"ezdm-inventory","Create Item":"ezdm-mkitem"}
+    ACTIONLIST = {'View a character sheet':'ezdm-viewchar', 'Create a new character sheet':'ezdm-mkcs', 'Combat !':'ezdm-quick_combat', 'Grant XP to character':'ezdm-xp_tool', 'Roll dice':'ezdm-dice_roller',"Heal character":"ezdm-manualheal","Try ability":"ezdm-tryability","Edit character sheet":"ezdm-editcs","Manage character inventory":"ezdm-inventory","Create/Edit Item":"ezdm-mkitem"}
 
     if not web():
         main(ACTIONLIST)

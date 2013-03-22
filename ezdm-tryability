@@ -28,6 +28,7 @@ def getability(data):
     hide('character',data['character'])
     c=Character(load_json('characters',list_chars()[data['character']]),True)
     webinput('Ability','ability',c.conditionals().keys())
+    webinput('Custom modifier','modifier','0')
     formfooter()
 
 
@@ -40,7 +41,7 @@ def webmain():
         getability(data)
     else:
         c=Character(load_json('characters',list_chars()[data['character']]),True)
-        if c.tryability(data['ability']):
+        if c.tryability(data['ability'],int(data['modifier'])):
             highlight("%s succeeded with %s" %(c.displayname(),data['ability']))
         else:
             highlight("%s failed at %s" %(c.displayname(),data['ability']))

@@ -8,7 +8,7 @@ from ezdm_libs.character import Character,list_chars
 
 def getdata():
     characters=list_chars().keys()
-    characters.append('New')
+    characters.insert(0,'New')
     formheader(border=3)
     webinput('Character:','character',characters)
     formfooter()
@@ -25,7 +25,7 @@ def cond(data):
     template=load_json('adnd2e','template_cs')
     result=validate_json(template,data)
     
-    json_from_template(template=template['core'],old=result,conditional=template['conditional'])
+    json_from_template(template=template['core'],old=result)
 
     result=template_conditional(result,template['conditional'])
     formfooter()
@@ -57,10 +57,7 @@ if __name__=='__main__':
         del data['next']
         template=load_json('adnd2e','template_cs')
         data=validate_json(template,data)
-        if cname <> 'New':
-            c=Character(load_json('characters',list_chars()[cname]),True)
-        else:
-            c=Character(data,True)
+        c=Character(data,True)
         c.save()
         say(c.pprint())
 

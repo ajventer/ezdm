@@ -227,6 +227,7 @@ def template_conditional(mydct={},conditionals={}):
                     if not web():
                         out[realkey]=smart_input(realkey,conditionals[conditional][key],validentries=control["validentries"],upper=control["upper"],lower=control["lower"],integer=control["integer"],decimal=control["decimal"])
                     else:
+                        realkey="conditionals::%s" %realkey
                         default=str(default)
                         if len(control['validentries']) == 0:
                             webinput(realkey,realkey,default)
@@ -253,10 +254,12 @@ def samekeys(sw,dic):
     return result
     
 def recurse_colons(keys,old,parent):
-    if not '::' in keys:
+    if not '::' in keys and len(keys) >0:       
         valuestring="%s::%s" %(parent,keys)
         s='"%s":"%s",' %(keys,old[valuestring])
         return s
+    if len(keys) == 0:
+        return ''
     
     firstkey=keys.split('::')[0]
     parentkey="%s::%s" %(parent,firstkey)
@@ -282,14 +285,18 @@ def validate_json(template={},old={}):
             same=samekeys(firstkey,old)
             for sk in same.keys():
                 otherkeys='::'.join(sk.split('::')[1:])
-                s="%s %s" %(s,recurse_colons(otherkeys,old,firstkey))
+                ns=recurse_colons(otherkeys,old,firstkey) 
+                if len(ns) > 0:
+                    s="%s %s" %(s,ns)
             s=s.rstrip(',')
             s="{%s}" %s
             s=s.rstrip(',').replace(',}','}')
             result[firstkey]=loads(s)
         else:
-            s=old[key].replace("'",'"')
-            result[key]=loads(s)
+            if not '{' in old[key]:
+                result[key]=old[key]
+            else:
+                result[key] = loads(old[key].replace("'",'"'))
             
     return result
                 
@@ -353,7 +360,7 @@ def json_from_template(template={},old={},parent="",conditional={}):
                 mydict[realkey]=smart_input(mypath,validentries=control["validentries"],upper=control["upper"],lower=control["lower"],integer=control["integer"],decimal=control["decimal"])
             else:
                 if len(control['validentries']) == 0:
-                    default=template[key]
+                    default=str(template[key])
                 else:
                     default=control['validentries']
                 webinput(mypath,mypath,default)
