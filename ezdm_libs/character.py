@@ -62,28 +62,20 @@ class Character:
     def get_json(self):
         return self.json
         
-<<<<<<< HEAD
-    def heal(self,amount):
-=======
+
     def heal(self,amount,wsgi=False):
->>>>>>> web
         hp=int(self.json['combat']['hitpoints'])
         hp += amount
         if hp > int(self.json['combat']['max_hp']):
             self.json['combat']['hitpoints'] = int(self.json['combat']['max_hp'])
         else:
             self.json['combat']['hitpoints'] = hp
-<<<<<<< HEAD
-        highlight("%s receives healing. Hitpoints now %s" %(self.displayname(),self.json['combat']['hitpoints']),clear=False)
-        self.save()
-=======
         if not wsgi:
             highlight("%s receives healing. Hitpoints now %s" %(self.displayname(),self.json['combat']['hitpoints']),clear=False)
             self.save()
         else:
             self.save()
             return highlight("%s receives healing. Hitpoints now %s" %(self.displayname(),self.json['combat']['hitpoints']),clear=False,sayit=False)
->>>>>>> web
         
     def take_damage(self,damage,wsgi=False):
         out=[]
