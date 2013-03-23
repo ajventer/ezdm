@@ -3,7 +3,7 @@ from os import system,path,symlink
 from sys import argv,exit
 from glob import glob
 
-SCRIPTS=['ezdm-cs.cgi','ezdm-xp_tool.cgi','ezdm-quick_combat.cgi','ezdm.cgi','ezdm-viewchar.cgi','ezdm-dice_roller.cgi','ezdm-tryability.cgi','ezdm-manualheal.cgi','ezdm-mkitem.cgi','ezdm-inventory','cgi-server.ezdm','ezdm-cs.cgi','combat-server.ezdm']
+SCRIPTS=['ezdm-cs.cgi','ezdm-xp_tool.cgi','ezdm.cgi','ezdm-viewchar.cgi','ezdm-dice_roller.cgi','ezdm-tryability.cgi','ezdm-manualheal.cgi','ezdm-mkitem.cgi','ezdm-inventory.cgi','cgi-server.ezdm','ezdm-cs.cgi','combat-server.ezdm']
 
 def script_list():
     return SCRIPTS

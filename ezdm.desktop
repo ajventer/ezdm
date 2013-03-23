@@ -1,10 +1,10 @@
 [Desktop Entry]
 Categories=Game;RolePlaying;
-Comment[en_US]=EZDM Web Version
-Comment=EZDM Web Version
+Comment[en_US]=Easy Dungeon Master Tools
+Comment=Easy Dungeon Master Tools
 Exec=/usr/games/cgi-server.ezdm
-GenericName[en_US]=EZDM Web Version
-GenericName=EZDM Web Version
+GenericName[en_US]=EZDM
+GenericName=EZDM
 Icon=/usr/share/icons/hicolor/128x128/ezdm.png
 MimeType=
 Name[en_US]=EZDM-Web
