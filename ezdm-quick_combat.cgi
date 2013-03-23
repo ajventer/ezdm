@@ -218,7 +218,7 @@ def do_round():
         who=("%s goes next" %(characters[player_index].displayname()))
         actionlist=["Attack","Flee","Cast","Heal","Other ability"]
         if characters[player_index].is_casting():
-            highlight('Warning %s is casting a spell. %s turns left.' %(characters[player_index].displayname(),characters[player_index].cast_remaining),clear=False)
+            highlight('Warning %s is casting a spell. %s rounds left.' %(characters[player_index].displayname(),characters[player_index].cast_remaining),clear=False)
             del actionlist[2]
             actionlist.append('Continue casting spell')
             actionlist.append('Interrupt spell and cast another')

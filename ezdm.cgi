@@ -30,6 +30,9 @@ def webmain(ACTIONLIST):
     
     for key in ACTIONLIST.keys():
         print '<a href="%s.cgi">%s</a><br>' %(ACTIONLIST[key],key)
+    host=os.environ['HTTP_REFERER'].split('://')[1].split(':')[0]
+    
+    print '<a href="http://%s:8001">Combat !</a><br>' %host
     cgifooter(False)
 
 if __name__ == '__main__': 

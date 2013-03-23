@@ -3,9 +3,15 @@
 import BaseHTTPServer
 import CGIHTTPServer
 import cgitb; cgitb.enable()  ## This line enables CGI error reporting
+import os
+import sys
 
+
+PATH=os.path.dirname(sys.argv[0])
+os.system('%s >/dev/null 2>&1 &' %os.path.join(PATH,'combat-server.ezdm'))
 
 print "Please point your web-browser at http://localhost:8000/ezdm.cgi" 
+print "Press Ctrl-C to quit"
 server = BaseHTTPServer.HTTPServer
 handler = CGIHTTPServer.CGIHTTPRequestHandler
 server_address = ("", 8000)

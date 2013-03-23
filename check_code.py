@@ -3,18 +3,11 @@ from os import system,path,symlink
 from sys import argv,exit
 from glob import glob
 
-SCRIPTS=['ezdm-mkcs','ezdm-xp_tool','ezdm-quick_combat','ezdm','ezdm-viewchar','ezdm-dice_roller','ezdm-tryability','ezdm-editcs','ezdm-manualheal','ezdm-mkitem','ezdm-inventory','cgi-server.ezdm','ezdm-cs.cgi']
+SCRIPTS=['ezdm-cs.cgi','ezdm-xp_tool.cgi','ezdm-quick_combat.cgi','ezdm.cgi','ezdm-viewchar.cgi','ezdm-dice_roller.cgi','ezdm-tryability.cgi','ezdm-manualheal.cgi','ezdm-mkitem.cgi','ezdm-inventory','cgi-server.ezdm','ezdm-cs.cgi','combat-server.ezdm']
 
 def script_list():
     return SCRIPTS
 
-def link():
-    for script in SCRIPTS:
-        if not script ==  'cgi-server.ezdm' and not script == 'ezdm-cs.cgi':
-            try:
-                symlink(script,"%s.cgi" %script)
-            except Exception as E:
-                print E
 
 def check_list(LIST,try_import=False):
     for SCRIPT in LIST:

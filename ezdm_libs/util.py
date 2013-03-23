@@ -12,75 +12,118 @@ if web():
     import cgi
     
 
-def formheader(border=5,title=None):
-    print "<form method=post>"
-    print "<table border=%s>" %border
+def formheader(border=5,title=None,wsgi=False,action=''):
+    out=["<form method=post"]
+    if len(action) > 0:
+        out.append('action="%s"' %action)
+    out.append("><table border=%s>" %border)
     if title:
-        print "<tr><td colspan=2 bgcolor=darkgray>%s</td></tr>" %title
-    
-def formfooter():
-    print '<tr><td colspan=2 align=center,valign=center><input type=submit name="submit"></td></tr></table>'
-    print "</form>"
-    
-def hide(name,value):
-    print '<input type=hidden name="%s" value="%s">' %(name,value)
-    
-def dicthide(dic={}):
-    for key in dic.keys():
-        hide(key,dic[key])
+        out.append("<tr><td colspan=2 bgcolor=darkgray>%s</td></tr>" %title)
+    if wsgi:
+        return '\n'.join(out)
+    else:
+        print '\n'.join(out)
         
-def webinput(description,name,default='',selected=''):
-    print '<tr><td bgcolor=lightgray align=left valign=center><b>%s</b></td>' %(description)
-    print "<td align=center valign=center>"
+def select_char(characters,wsgi=False,):
+    out=[]
+    out.append(webinput('Character:','character',characters,wsgi=True))
+  #  out.append(webinput('Use computer dice ?','autodice',['Yes','No'],wsgi=True))
+    out.append(hide('autodice','Yes',wsgi=True))
+    if wsgi:
+        return '\n'.join(out)
+    else:
+        print '\n'.join(out)
+    
+            
+    
+def formfooter(wsgi=False):
+    out='<tr><td colspan=2 align=center,valign=center><input type=submit name="submit"></td></tr></table></form>'
+    if wsgi:
+        return out
+    else:
+        print out
+    
+def hide(name,value,wsgi=False):
+    out='<input type=hidden name="%s" value="%s">' %(name,value)
+    if wsgi:
+        return out
+    else:
+        print out
+    
+def dicthide(dic={},wsgi=False):
+    out=[]
+    for key in dic.keys():
+        out.append(hide(key,dic[key],wsgi=True))
+    if wsgi:
+        return '\n'.join(out)
+    else:
+        print '\n'.join(out)
+        
+def webinput(description,name,default='',selected='',wsgi=False):
+    out=['<tr><td bgcolor=lightgray align=left valign=center><b>%s</b></td>' %(description)]
+    out.append( "<td align=center valign=center>")
     if type(default) == type(''):
-        print '<input type=text name="%s" value="%s"></td></tr>'%(name,default)
+        out.append('<input type=text name="%s" value="%s"></td></tr>'%(name,default))
     if type(default) == type([]):
         if not selected in default:
-            print '<select name="%s">' %name
+            out.append('<select name="%s">' %name)
         else:
-            print '<select name="%s" selected="%s">' %(name,selected)
-            print '<option>%s</option>' %selected
+            out.append( '<select name="%s" selected="%s">' %(name,selected))
+            out.append( '<option>%s</option>' %selected)
         for item in default:
-            print '<option>%s</option>' %item
-        print '</select></td></tr>'
+            out.append('<option>%s</option>' %item)
+        out.append('</select></td></tr>')
+    if wsgi:
+        return '\n'.join(out)
+    else:
+        print '\n'.join(out)
         
-def dictinput(dic={},parent=None):
+def dictinput(dic={},parent=None,wsgi=False):
+    out=[]
     for key in dic.keys():
         if not parent:
             name=key
         else:
-            name="%s:%s" %(parent,key)
+            name="%s::%s" %(parent,key)
         if type(dic[key]) <> type({}):
-            webinput(name,name,dic[key])
+            out.append(webinput(name,name,dic[key]),wsgi=True)
         else:
-            dictinput(dic[key])
-    
-def cgiheader(title='',linkback=True):
+            out.append(dictinput(dic[key],wsgi=True))
+    if wsgi:
+        return '\n'.join(out)
+    else:
+        print '\n'.join(out)
+            
+def cgiheader(title='',linkback=True,wsgi=False):
     if len(title) == 0:
-        t = title()
+        t = sys.argv[0]
     else:
         t = title
-    print "Content-type: text/html"
-    print
-    print "<html><head><title>%s</title></head><body>" %t
-    print "<table width=100% border=0 cellpadding=0 cellspacing=0><tr><td align=center bgcolor=lightblue><b>"
-    print t
-    print "</b>"
+    out=[]
+    if not wsgi:
+        out.append("Content-type: text/html")
+        out.append('')
+    out += ["<html><head><title>%s</title></head><body>" %t,"<table width=100% border=0 cellpadding=0 cellspacing=0><tr><td align=center bgcolor=lightblue><b>",t,"</b>"]
     if linkback:
-        print "</td><td width=50 align=right bgcolor=lightblue>"
-        print "<a href=ezdm.cgi><b>Home</b></a>"
-        print "</td></tr><tr><td align=left>"
+        out.append("</td><td width=50 align=right bgcolor=lightblue><a href=ezdm.cgi><b>Home</b></a></td></tr><tr><td align=left>")
     else:
-        print "</td></tr><tr><td>"
+        out.append("</td></tr><tr><td>")
+    if wsgi:
+        return '\n'.join(out)
+    else:
+        print '\n'.join(out)    
 
     
-def cgifooter(linkback=True):
+def cgifooter(linkback=True,wsgi=False):
+    out=[]
     if linkback:
-        print "</td><td width=50 align=right bgcolor=lightblue valign=bottom>"
-        print "<a href=ezdm.cgi><b>Home</b></a>"
-    print "</td></tr></table>"
-    print "</body></html>"    
-    
+        out.append("</td><td width=50 align=right bgcolor=lightblue valign=bottom><a href=ezdm.cgi><b>Home</b></a>")
+    out.append("</td></tr></table></body></html>")
+    if wsgi:
+        return '\n'.join(out)
+    else:
+        print '\n'.join(out)    
+            
 def parsecgi():
     data={}
     form = cgi.FieldStorage()
@@ -125,12 +168,18 @@ def get_user_data(source):
 def title():
     return(os.path.basename(sys.argv[0]))
 
-def say(arg):
+def say(arg,wsgi=False):
+    if wsgi:
+        if type(arg) == type(''):
+            arg=[arg]
+        return '<br>'.join(arg)
+    
     if web():
         if type(arg) == type(''):
             arg=[arg]
         for line in arg:
             print "%s<br>" %line
+                            
     return
     out=''
     if type(arg) == type([]):
@@ -370,7 +419,7 @@ def json_from_template(template={},old={},parent="",conditional={}):
         
             
 
-def rolldice(auto=True,numdice=1,numsides=20,modifier=0,quiet=False):
+def rolldice(auto=True,numdice=1,numsides=20,modifier=0,quiet=False,wsgi=False):
         output=[]
         if not auto:
             return smart_input("Roll a %sd%s dice:" %(numdice,numsides),integer=True)
@@ -385,6 +434,8 @@ def rolldice(auto=True,numdice=1,numsides=20,modifier=0,quiet=False):
                 output.append("Total rolled: %s (modifier %s)" % (total,modifier))
                 if not quiet:
                     say(output)
+                if wsgi:
+                    return (total,'<br>'.join(output))
                 return total
                 
 

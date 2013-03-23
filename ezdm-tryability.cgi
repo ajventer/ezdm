@@ -3,7 +3,7 @@
 import sys
 import os
 from simplejson import loads,dumps
-from ezdm_libs.util import smart_input,load_json,json_from_template,highlight,say,rolldice,web,cgiheader,cgifooter,parsecgi,formheader,formfooter,webinput,dictinput,hide
+from ezdm_libs.util import select_char,smart_input,load_json,json_from_template,highlight,say,rolldice,web,cgiheader,cgifooter,parsecgi,formheader,formfooter,webinput,dictinput,hide
 from ezdm_libs.character import Character,list_chars
 
 def main():
@@ -20,13 +20,15 @@ def main():
 
 def getdata():
     formheader(border=3)
-    webinput('Character trying','character',list_chars().keys())
+    select_char(list_chars().keys())
     formfooter()
 
 def getability(data):
     formheader(border=3)
     hide('character',data['character'])
-    c=Character(load_json('characters',list_chars()[data['character']]),True)
+    hide('autodice',data['autodice'])
+    auto=data['autodice'] == True
+    c=Character(load_json('characters',list_chars()[data['character']]),auto)
     webinput('Ability','ability',c.conditionals().keys())
     webinput('Custom modifier','modifier','0')
     formfooter()
