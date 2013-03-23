@@ -3,7 +3,8 @@
 import sys
 import os
 from simplejson import loads,dumps
-from ezdm_libs.util import select_char,smart_input,load_json,json_from_template,highlight,say,rolldice,web,cgiheader,cgifooter,parsecgi,formheader,formfooter,webinput,dictinput,hide
+from ezdm_libs.util import select_char,smart_input,load_json,json_from_template,highlight,say,rolldice,web,cgiheader,cgifooter,parsecgi,formheader,formfooter,webinput,dictinput
+from ezdm_libs.util import cgihide as hide
 from ezdm_libs.character import Character,list_chars
 
 def main():

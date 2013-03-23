@@ -28,7 +28,7 @@ def select_char(characters,wsgi=False,):
     out=[]
     out.append(webinput('Character:','character',characters,wsgi=True))
   #  out.append(webinput('Use computer dice ?','autodice',['Yes','No'],wsgi=True))
-    out.append(hide('autodice','Yes',wsgi=True))
+    out.append(cgihide('autodice','Yes',wsgi=True))
     if wsgi:
         return '\n'.join(out)
     else:
@@ -43,7 +43,7 @@ def formfooter(wsgi=False):
     else:
         print out
     
-def hide(name,value,wsgi=False):
+def cgihide(name,value,wsgi=False):
     out='<input type=hidden name="%s" value="%s">' %(name,value)
     if wsgi:
         return out
@@ -53,15 +53,17 @@ def hide(name,value,wsgi=False):
 def dicthide(dic={},wsgi=False):
     out=[]
     for key in dic.keys():
-        out.append(hide(key,dic[key],wsgi=True))
+        out.append(cgihide(key,dic[key],wsgi=True))
     if wsgi:
         return '\n'.join(out)
     else:
         print '\n'.join(out)
         
-def webinput(description,name,default='',selected='',wsgi=False):
+def webinput(description,name,default='',selected='',wsgi=False,hide=False):
     out=['<tr><td bgcolor=lightgray align=left valign=center><b>%s</b></td>' %(description)]
     out.append( "<td align=center valign=center>")
+    if type(default) == type({}):
+        dictinput(default,wsgi=wsgi,parent=selected,hide=hide)
     if type(default) == type(''):
         out.append('<input type=text name="%s" value="%s"></td></tr>'%(name,default))
     if type(default) == type([]):
@@ -78,7 +80,7 @@ def webinput(description,name,default='',selected='',wsgi=False):
     else:
         print '\n'.join(out)
         
-def dictinput(dic={},parent=None,wsgi=False):
+def dictinput(dic={},parent=None,wsgi=False,hide=False):
     out=[]
     for key in dic.keys():
         if not parent:
@@ -86,9 +88,13 @@ def dictinput(dic={},parent=None,wsgi=False):
         else:
             name="%s::%s" %(parent,key)
         if type(dic[key]) <> type({}):
-            out.append(webinput(name,name,dic[key]),wsgi=True)
+            if not hide:
+                out.append(webinput(name,name,dic[key],wsgi=True))
+            else:
+                out.append(cgihide(name,dic[key],wsgi=True))
+                out.append('<tr><td bgcolor=lightgray align=left valign=center>%s</td><td align=center valign=center>%s</td></tr>'%(name,dic[key]))
         else:
-            out.append(dictinput(dic[key],wsgi=True))
+            out.append(dictinput(dic[key],parent=name,hide=hide,wsgi=True))
     if wsgi:
         return '\n'.join(out)
     else:
@@ -358,7 +364,7 @@ def json_from_template(template={},old={},parent="",conditional={}):
                 mydict[key]=old[key]
         if web():
             for key in mydict.keys():
-                hide(key,mydict[key])
+                cgihide(key,mydict[key])
 
         
     for key in sorted(template.keys()):
@@ -385,9 +391,10 @@ def json_from_template(template={},old={},parent="",conditional={}):
         elif key.startswith('__Y'):
             if realkey in old:
                 mydict[realkey] = old[realkey]
+                webinput(mypath,mypath,old[realkey],selected=realkey,hide=True)
             else:
                 mydict[realkey] = template[key]
-            #hide(realkey,mydict[realkey])
+                webinput(mypath,mypath,template[key],selected=realkey,hide=True)
         
         elif type(template[key]) == type({}):
                 

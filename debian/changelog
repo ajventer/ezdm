@@ -1,3 +1,9 @@
+ezdm (0.1.0ubuntu1) quantal; urgency=low
+
+  * web Pure web interface
+
+ -- A.J. Venter <ajventer@gmail.com>  Sat, 23 Mar 2013 14:19:20 +0200
+
 ezdm (0.1.0) quantal; urgency=low
 
   * web Install websymlinks automagically - at least in debian

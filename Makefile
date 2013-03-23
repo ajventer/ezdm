@@ -34,7 +34,6 @@ install: check
 		install -g root -o root -m 0666 ezdm.png ${DESTDIR}/${PREFIX}/share/icons/hicolor/128x128/ezdm.png
 		update-desktop-database ${DESTDIR}/${PREFIX}/share/applications
 
-
 uninstall:
 		cat .install.record | sed s"#${PREFIX}#${DESTDIR}/${PREFIX}#g" | xargs rm -fv
 

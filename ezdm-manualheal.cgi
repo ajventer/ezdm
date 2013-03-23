@@ -2,7 +2,8 @@
 
 import sys
 import os
-from ezdm_libs.util import smart_input,load_json,json_from_template,highlight,say,rolldice,heal_dice,web,cgiheader,cgifooter,parsecgi,formheader,formfooter,webinput,dictinput,hide,dice_list,dicthide
+from ezdm_libs.util import smart_input,load_json,json_from_template,highlight,say,rolldice,heal_dice,web,cgiheader,cgifooter,parsecgi,formheader,formfooter,webinput,dictinput,dice_list,dicthide
+from ezdm_libs.util import cgihide as hide
 from ezdm_libs.character import Character,list_chars
 
 def main():

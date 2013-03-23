@@ -243,12 +243,16 @@ class Character:
         if self.weapon > self.num_weapons() -1:
             self.weapon = 0
 
-    def give_xp(self,xp):
+    def give_xp(self,xp,wsgi=False):
         current_xp=int(self.json['personal']['xp'])
         new_xp=current_xp+int(xp)
         self.json['personal']['xp'] = str(new_xp)
-        highlight("%s now has %s XP" %(self.displayname(),self.json['personal']['xp']))
+        out=highlight("%s now has %s XP" %(self.displayname(),self.json['personal']['xp']),sayit=False)
         self.save()
+        if not wsgi:
+            say(out)
+        else:
+            return out
         
     def next_level(self):
         parentclass=self.json['class']['parent']
@@ -271,16 +275,16 @@ class Character:
         #self.json=on_use['character']
         #target.json=on_use['target']
         self.next_weapon() 
-        roll=rolldice(self.autoroll(),1,20,mod)
-        if roll - mod == 1:
-            return "Critical Miss !"
-        elif roll - mod == 20:
-            return "Critical Hit !"
+        roll=rolldice(self.autoroll(),1,20,mod,wsgi=True)
+        if roll[0] - mod == 1:
+                return ("Critical Miss !",roll[1])
+        elif roll[0] - mod == 20:
+            return ("Critical Hit !",roll[1])
         else:
-            if roll >= self.__get_thac0() - target.armor_class() - int(target.def_mod()):
-                return "Hit !"
+            if roll[0] >= self.__get_thac0() - target.armor_class() - int(target.def_mod()):
+                return ("Hit !",roll[1])
             else:
-                return "Miss !"
+                return ("Miss !",roll[1])
     
     def spell_success(self,wsgi=False):
         ability_scores=load_json('adnd2e','ability_scores')
@@ -309,6 +313,10 @@ class Character:
         weap=[]
         if not "inventory" in self.json or not "equiped" in self.json["inventory"]:
             return []
+        if type(self.json['inventory']['equiped']) <> type([]):
+            self.json['inventory']['equiped']=[]
+        if type(self.json['inventory']['pack']) <> type([]):
+            self.json['inventory']['pack']=[]
         for item in self.json['inventory']['equiped']:
             i=Item(load_json(get_user_data('items'),item))
             if i.json['type'] == 'weapon':
