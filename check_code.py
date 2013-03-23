@@ -33,7 +33,7 @@ if __name__=='__main__':
     CMD=argv[1]
     check_list(LIBS,True)
     check_list(SCRIPTS)
-    link()
+
     
     
 
