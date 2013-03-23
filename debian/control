@@ -10,8 +10,7 @@ Package: ezdm
 Architecture: all
 Homepage: https://github.com/ajventer/ezdm
 XB-Python-Version: ${python:Versions}
-Depends: ${misc:Depends},${python:Depends},python ( >=2.7)
-Suggests: python-easygui 
+Depends: ${misc:Depends},${python:Depends},python ( >=2.7),python-bottle
 Description: Simple interactive helper tools for DM-ing an 
  AD&D second edition game  This is a simple set of tools for 
  dungeon managers. The current project only targets AD&D 2nd edition rules. 

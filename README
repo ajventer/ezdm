@@ -1,4 +1,4 @@
-This is a simple set of tools for dungeon managers.
+This is a simple set of tools for dungeon managers with a simple browser-based interface
 The current project only targets AD&D 2nd edition rules.
 
 If you're looking for a prebuilt debian package, I maintain an EZDM PPA
@@ -9,7 +9,7 @@ Branches:
         - Stable is merged whenever master appears not to be broken
         - All others are feature branches
 
-This is not an RPG game, it's some helper tools for people DM-ing real
+This is not an RPG game, it's some helper tools for people DM-ing table-top
 games and designed to not get in the way of role-play and story-telling
 but simply help to do the maths during encounters and levelling.
 Dice rolling can be done by the computer or the tools can be set for
@@ -21,19 +21,8 @@ uses a powerful templateing engine to manage them, when new keys are added
 to character sheets, simply add them to the template and load the sheets in with
 mkcs to ensure the key is in existing sheets.
 
-Tools available:
-ezdm - A simple menu for accessing the other tools.
-dice_roller - A quick tool for rolling DnD style dice
-mkcs - Make Character Sheet - a nice wizard for making character sheets using the template engine
-viewchar - A viewer for ezdm character sheets
-xp_tool - A tool for giving characters experience that will help manage the process when they level up
-test_json - A developer focussed mini-tool just used to rapidly verify the validity of a json file.
-quick-combat - A tool to manage combat scenarios
-editcs - A character sheet editor
-manualheal - An easy tool for healing characters who have been wounded
-tryability - Automatically attempt to roll a character ability
 
-Quick-combat is the crown jewel of the EZDM kit. QuickCombat will let you load up any number of characters
+Combat is the crown jewel of the EZDM kit. Combat will let you load up any number of characters
 from your existing sheets, and will then guide the process of combat among them under your control.
 As the DM you decide who the NPCs attack, you tell the story represented by the information that quickcombat
 presents to you. QuickCombat ensures the right sized dice are rolled at the right time, the right saving throws
@@ -44,9 +33,6 @@ enables you without getting in your way.
 That is the core design goal of the entire EZDM suite - to enable your storytelling while making it easier to follow the rules
 and doing the math for you, but without EVER getting in your way.
 I wrote EZDM to help with DM-ing my own campaigns - but I hope it may be useful to others, hence it is published here on github.
-
-The EZDM kit will default to using a simple dialog based GUI which requires easygui. To disable easygui just run ezdm --console
-Personally, I prefer the console interface, but the GUI version is there for those who want it.
 
 
 

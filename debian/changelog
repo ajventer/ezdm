@@ -1,14 +1,20 @@
-ezdm (0.0.8ubuntu4) quantal; urgency=low
+ezdm (0.1.0ubuntu1) quantal; urgency=low
 
-  * master Fixed manualheal bug
+  * web Pure web interface
 
- -- A.J. Venter <ajventer@gmail.com>  Wed, 20 Mar 2013 23:52:53 +0200
+ -- A.J. Venter <ajventer@gmail.com>  Sat, 23 Mar 2013 14:19:20 +0200
+
+ezdm (0.1.0) quantal; urgency=low
+
+  * web Install websymlinks automagically - at least in debian
+
+ -- A.J. Venter <ajventer@gmail.com>  Wed, 20 Mar 2013 22:16:08 +0200
 
 ezdm (0.0.8ubuntu3) quantal; urgency=low
 
-  * master Fixed manualheal bug
+  * master Fixed upward money convertor
 
- -- A.J. Venter <ajventer@gmail.com>  Wed, 20 Mar 2013 23:51:00 +0200
+ -- A.J. Venter <ajventer@gmail.com>  Wed, 20 Mar 2013 20:21:20 +0200
 
 ezdm (0.0.8ubuntu2) quantal; urgency=low
 

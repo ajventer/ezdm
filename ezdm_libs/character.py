@@ -62,35 +62,63 @@ class Character:
     def get_json(self):
         return self.json
         
+<<<<<<< HEAD
     def heal(self,amount):
+=======
+    def heal(self,amount,wsgi=False):
+>>>>>>> web
         hp=int(self.json['combat']['hitpoints'])
         hp += amount
         if hp > int(self.json['combat']['max_hp']):
             self.json['combat']['hitpoints'] = int(self.json['combat']['max_hp'])
         else:
             self.json['combat']['hitpoints'] = hp
+<<<<<<< HEAD
         highlight("%s receives healing. Hitpoints now %s" %(self.displayname(),self.json['combat']['hitpoints']),clear=False)
         self.save()
+=======
+        if not wsgi:
+            highlight("%s receives healing. Hitpoints now %s" %(self.displayname(),self.json['combat']['hitpoints']),clear=False)
+            self.save()
+        else:
+            self.save()
+            return highlight("%s receives healing. Hitpoints now %s" %(self.displayname(),self.json['combat']['hitpoints']),clear=False,sayit=False)
+>>>>>>> web
         
-    def take_damage(self,damage):
+    def take_damage(self,damage,wsgi=False):
+        out=[]
         if damage >= int(self.json['combat']['hitpoints']):
-            if not self.saving_throw('ppd'): #Roll saving throw against death
+            st=self.saving_throw('ppd',wsgi=True)
+            out = st[1]
+            if not st[0]: #Roll saving throw against death
                 self.json['combat']['hitpoints'] = 0
                 self.save()
-                highlight("%s has died !" %self.displayname(),clear=False)
-                return False
+                out += highlight("%s has died !" %self.displayname(),clear=False,sayit=False)
+                if not wsgi:
+                    say(out)
+                    return False
+                else:
+                    return (False,out)
             else:
                 self.json['combat']['hitpoints'] = 1
                 self.save()
-                highlight("%s barely survives. %s hitpoints remaining" %(self.displayname(),self.json['combat']['hitpoints']),clear=False)
-                return True
+                out += highlight("%s barely survives. %s hitpoints remaining" %(self.displayname(),self.json['combat']['hitpoints']),clear=False,sayit=False)
+                if not wsgi:
+                    say(out)
+                    return True
+                else:
+                    return (True,out)
         else:
             hp=int(self.json['combat']['hitpoints'])
             hp -= damage
             self.json['combat']['hitpoints'] =hp
             self.save()
-            highlight("%s takes %s damage. %s hitpoints remaining" %(self.displayname(),damage,self.json['combat']['hitpoints']),clear=False)
-            return True
+            out += highlight("%s takes %s damage. %s hitpoints remaining" %(self.displayname(),damage,self.json['combat']['hitpoints']),clear=False,sayit=False)
+            if not wsgi:
+                say (out)
+                return True
+            else:
+                return (True,out)
         
         
     def is_monster(self):
@@ -107,9 +135,12 @@ class Character:
     def is_casting(self):
         return self.cast_remaining > 0
         
-    def interrupt_cast(self,by=''):
-        highlight('%s: spell casting interrupted %s !' %(self.displayname(),by),clear=False)
+    def interrupt_cast(self,by='',wsgi=False):
         self.spell_complete()
+        if not wsgi:
+            highlight('%s: spell casting interrupted %s !' %(self.displayname(),by),clear=False)
+        else:
+            return highlight('%s: spell casting interrupted %s !' %(self.displayname(),by),clear=False,sayit=False)
     
     def spell_complete(self):
         self.cast_remaining = 0
@@ -164,7 +195,7 @@ class Character:
                 st['ppd']=int(st['ppd']) + self.ppd_mod()
                 return(st)
                 
-    def saving_throw(self,against):
+    def saving_throw(self,against,wsgi=False):
         saving=load_json('adnd2e','saving_throws') or {}
         prettyname=saving['names'][against]
         race=self.json['personal']['race']
@@ -176,14 +207,27 @@ class Character:
                     mod=int(saving[race][key])
                     continue
         target=int(self.json['combat']['saving_throws'][against])
-        say ("%s Tries to roll a saving throw against %s" %(self.displayname(),prettyname))
-        say ("%s needs to roll %s" %(self.displayname(),target))
-        if int(rolldice(self.auto,1,20,mod)) >= int(target):
-            say ("Saved !")
-            return True
+        if not wsgi:
+            say ("%s Tries to roll a saving throw against %s" %(self.displayname(),prettyname))
+            say ("%s needs to roll %s" %(self.displayname(),target))
         else:
-            say ("Did not save !")
-            return False
+            out=["%s Tries to roll a saving throw against %s" %(self.displayname(),prettyname),"%s needs to roll %s" %(self.displayname(),target)]
+        roll=rolldice(self.auto,1,20,mod,wsgi=True)
+        out.append(roll[1])
+        if roll[0] >= int(target):
+            if not wsgi:
+                say ("Saved !")
+                return True
+            else:
+                out.append('Saved !')
+                return (True,out)
+        else:
+            if not wsgi:
+                say ("Did not save !")
+                return False
+            else:
+                out.append("Did not save !")
+                return (False,out)
         
     def dmg(self,weapon):
         return int(self.weapons[weapon].json['conditionals']['dmg'])
@@ -208,12 +252,16 @@ class Character:
         if self.weapon > self.num_weapons() -1:
             self.weapon = 0
 
-    def give_xp(self,xp):
+    def give_xp(self,xp,wsgi=False):
         current_xp=int(self.json['personal']['xp'])
         new_xp=current_xp+int(xp)
         self.json['personal']['xp'] = str(new_xp)
-        highlight("%s now has %s XP" %(self.displayname(),self.json['personal']['xp']))
+        out=highlight("%s now has %s XP" %(self.displayname(),self.json['personal']['xp']),sayit=False)
         self.save()
+        if not wsgi:
+            say(out)
+        else:
+            return out
         
     def next_level(self):
         parentclass=self.json['class']['parent']
@@ -236,35 +284,48 @@ class Character:
         #self.json=on_use['character']
         #target.json=on_use['target']
         self.next_weapon() 
-        roll=rolldice(self.autoroll(),1,20,mod)
-        if roll - mod == 1:
-            return "Critical Miss !"
-        elif roll - mod == 20:
-            return "Critical Hit !"
+        roll=rolldice(self.autoroll(),1,20,mod,wsgi=True)
+        if roll[0] - mod == 1:
+                return ("Critical Miss !",roll[1])
+        elif roll[0] - mod == 20:
+            return ("Critical Hit !",roll[1])
         else:
-            if roll >= self.__get_thac0() - target.armor_class() - int(target.def_mod()):
-                return "Hit !"
+            if roll[0] >= self.__get_thac0() - target.armor_class() - int(target.def_mod()):
+                return ("Hit !",roll[1])
             else:
-                return "Miss !"
+                return ("Miss !",roll[1])
     
-    def spell_success(self):
+    def spell_success(self,wsgi=False):
         ability_scores=load_json('adnd2e','ability_scores')
         wis=str(self.json['abilities']['wis'])
         failrate=int(ability_scores["wis"][wis]["spell_failure"].split('%')[0])
-        say ("Spell failure rate: %s percent" %failrate)
-        roll=rolldice(self.autoroll(),1,100)
-        if roll > failrate:
-            highlight('Spell succeeds !',clear=False)
-            return True
+        out=["Spell failure rate: %s percent" %failrate]
+        roll=rolldice(self.autoroll(),1,100,wsgi=True)
+        out.append(roll[1])
+        if roll[0] > failrate:
+            out += highlight('Spell succeeds !',clear=False,sayit=False)
+            if not wsgi:
+                say (out)
+                return True
+            else:
+                return (True,out)
         else:
-            highlight('Spell fails !',clear=False)
+            out += highlight('Spell fails !',clear=False,sayit=False)
             self.spell_complete()
-            return False
+            if not wsgi:
+                say (out)
+                return False
+            else:
+                return(False,['<br'.join(out)])
     
     def load_weapons(self):
         weap=[]
         if not "inventory" in self.json or not "equiped" in self.json["inventory"]:
             return []
+        if type(self.json['inventory']['equiped']) <> type([]):
+            self.json['inventory']['equiped']=[]
+        if type(self.json['inventory']['pack']) <> type([]):
+            self.json['inventory']['pack']=[]
         for item in self.json['inventory']['equiped']:
             i=Item(load_json(get_user_data('items'),item))
             if i.json['type'] == 'weapon':
@@ -306,6 +367,7 @@ class Character:
     
     def list_money(self):
         return "Gold: %s, Silver: %s, Copper: %s" %(self.json['inventory']['money']['gold'],self.json['inventory']['money']['silver'],self.json['inventory']['money']['copper'])
+
     
     
     def spend_money(self,gold=0,silver=0,copper=0):
@@ -371,13 +433,26 @@ class Character:
     def current_xp(self):
         return int(self.json['personal']['xp'])
     
-    def tryability(self,ability):
+    def tryability(self,ability,modifier=0,wsgi=False):
+        out=['%s is trying to %s' %(self.displayname(),ability)]
         target_roll=int(self.conditionals()[ability])
-        roll=rolldice(self.autoroll(),1,100)
-        if roll >= target_roll:
-            return True
+        target_roll += int(modifier)
+        out.append('%s must roll %s or lower to succeed' %(self.displayname(),target_roll))
+        roll=rolldice(self.autoroll(),1,100,wsgi=True)
+        out.append(roll[1])
+        if roll[0] <= target_roll:
+            if not wsgi:
+                say(out)
+                return True
+            else:
+                return (True,out)
         else:
-            return False
+            if not wsgi:
+                say(out)
+                return False
+            else:
+                return (False,out)
+
         
     def conditionals(self):
         subclass=self.json['class']['class']
@@ -485,7 +560,8 @@ class Character:
         if checkclass:
             for key in spell_progression[checkclass].keys():
                 if inrange(level,key):
-                    out.append('   Casting Level: %s' %(spell_progression[checkclass][key]["casting_level"]))
+                    if "casting_level" in spell_progression[checkclass][key]:
+                        out.append('   Casting Level: %s' %(spell_progression[checkclass][key]["casting_level"]))
                     if "priest spells" in spell_progression[checkclass][key]:
                         line='   Priest spells:'
                         for spell_level in sorted(spell_progression[checkclass][key]["priest spells"].keys()):

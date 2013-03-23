@@ -4,6 +4,7 @@ from distutils.core import setup
 from check_code import script_list
 
 
+
 setup(name='EZDM',
       version='1.0',
       description='Simple tools for helping dungeon masters with ADN&D games',

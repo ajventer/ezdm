@@ -1,13 +1,142 @@
 import sys
 import datetime
 import os
-from ezdm_libs import get_sys_data,gui
+from ezdm_libs import get_sys_data,gui,web
 from simplejson import loads,dumps
 from glob import iglob
 from random import randrange
 from pprint import pprint
 if gui():
     import easygui as eg
+if web():
+    import cgi
+    
+
+def formheader(border=5,title=None,wsgi=False,action=''):
+    out=["<form method=post"]
+    if len(action) > 0:
+        out.append('action="%s"' %action)
+    out.append("><table border=%s>" %border)
+    if title:
+        out.append("<tr><td colspan=2 bgcolor=darkgray>%s</td></tr>" %title)
+    if wsgi:
+        return '\n'.join(out)
+    else:
+        print '\n'.join(out)
+        
+def select_char(characters,wsgi=False,):
+    out=[]
+    out.append(webinput('Character:','character',characters,wsgi=True))
+  #  out.append(webinput('Use computer dice ?','autodice',['Yes','No'],wsgi=True))
+    out.append(cgihide('autodice','Yes',wsgi=True))
+    if wsgi:
+        return '\n'.join(out)
+    else:
+        print '\n'.join(out)
+    
+            
+    
+def formfooter(wsgi=False):
+    out='<tr><td colspan=2 align=center,valign=center><input type=submit name="submit"></td></tr></table></form>'
+    if wsgi:
+        return out
+    else:
+        print out
+    
+def cgihide(name,value,wsgi=False):
+    out='<input type=hidden name="%s" value="%s">' %(name,value)
+    if wsgi:
+        return out
+    else:
+        print out
+    
+def dicthide(dic={},wsgi=False):
+    out=[]
+    for key in dic.keys():
+        out.append(cgihide(key,dic[key],wsgi=True))
+    if wsgi:
+        return '\n'.join(out)
+    else:
+        print '\n'.join(out)
+        
+def webinput(description,name,default='',selected='',wsgi=False,hide=False):
+    out=['<tr><td bgcolor=lightgray align=left valign=center><b>%s</b></td>' %(description)]
+    out.append( "<td align=center valign=center>")
+    if type(default) == type({}):
+        dictinput(default,wsgi=wsgi,parent=selected,hide=hide)
+    if type(default) == type(''):
+        out.append('<input type=text name="%s" value="%s"></td></tr>'%(name,default))
+    if type(default) == type([]):
+        if not selected in default:
+            out.append('<select name="%s">' %name)
+        else:
+            out.append( '<select name="%s" selected="%s">' %(name,selected))
+            out.append( '<option>%s</option>' %selected)
+        for item in default:
+            out.append('<option>%s</option>' %item)
+        out.append('</select></td></tr>')
+    if wsgi:
+        return '\n'.join(out)
+    else:
+        print '\n'.join(out)
+        
+def dictinput(dic={},parent=None,wsgi=False,hide=False):
+    out=[]
+    for key in dic.keys():
+        if not parent:
+            name=key
+        else:
+            name="%s::%s" %(parent,key)
+        if type(dic[key]) <> type({}):
+            if not hide:
+                out.append(webinput(name,name,dic[key],wsgi=True))
+            else:
+                out.append(cgihide(name,dic[key],wsgi=True))
+                out.append('<tr><td bgcolor=lightgray align=left valign=center>%s</td><td align=center valign=center>%s</td></tr>'%(name,dic[key]))
+        else:
+            out.append(dictinput(dic[key],parent=name,hide=hide,wsgi=True))
+    if wsgi:
+        return '\n'.join(out)
+    else:
+        print '\n'.join(out)
+            
+def cgiheader(title='',linkback=True,wsgi=False):
+    if len(title) == 0:
+        t = sys.argv[0]
+    else:
+        t = title
+    out=[]
+    if not wsgi:
+        out.append("Content-type: text/html")
+        out.append('')
+    out += ["<html><head><title>%s</title></head><body>" %t,"<table width=100% border=0 cellpadding=0 cellspacing=0><tr><td align=center bgcolor=lightblue><b>",t,"</b>"]
+    if linkback:
+        out.append("</td><td width=50 align=right bgcolor=lightblue><a href=ezdm.cgi><b>Home</b></a></td></tr><tr><td align=left>")
+    else:
+        out.append("</td></tr><tr><td>")
+    if wsgi:
+        return '\n'.join(out)
+    else:
+        print '\n'.join(out)    
+
+    
+def cgifooter(linkback=True,wsgi=False):
+    out=[]
+    if linkback:
+        out.append("</td><td width=50 align=right bgcolor=lightblue valign=bottom><a href=ezdm.cgi><b>Home</b></a>")
+    out.append("</td></tr></table></body></html>")
+    if wsgi:
+        return '\n'.join(out)
+    else:
+        print '\n'.join(out)    
+            
+def parsecgi():
+    data={}
+    form = cgi.FieldStorage()
+    for key in form.keys():
+        data[key]=form.getvalue(key)
+    return data
+    
 
 def price_in_copper(gold,silver,copper):
     s=gold*10 + silver
@@ -45,7 +174,19 @@ def get_user_data(source):
 def title():
     return(os.path.basename(sys.argv[0]))
 
-def say(arg):
+def say(arg,wsgi=False):
+    if wsgi:
+        if type(arg) == type(''):
+            arg=[arg]
+        return '<br>'.join(arg)
+    
+    if web():
+        if type(arg) == type(''):
+            arg=[arg]
+        for line in arg:
+            print "%s<br>" %line
+                            
+    return
     out=''
     if type(arg) == type([]):
         for line in arg:
@@ -62,7 +203,12 @@ def highlight(out,clear=False,sayit=True):
         clearscr()
     bar=''
     output=[]
-    output.append("# %s #" %(out))
+    if not web:
+        output.append("# %s #" %(out))
+    else:
+        output.append('<center><table border=10 cellpadding=0 cellspacing=0><tr><td align=center valign=center bgcolor=darkgray>')
+        output.append("<b> %s </b>" %(out))
+        output.append('</td></tr></table></center>')
     if sayit:
         say(output)
     else:
@@ -120,7 +266,7 @@ def template_conditional(mydct={},conditionals={}):
                     lastkey=key
                     if type(m[key]) == type({}):
                         m=m[key]
-            if m[lastkey] == test:
+            if lastkey in m and m [lastkey] == test:
                 for key in conditionals[conditional].keys():
 
                     if key.startswith('__'):
@@ -133,7 +279,17 @@ def template_conditional(mydct={},conditionals={}):
                         default=m["conditionals"][key]
                     else :
                         default=conditionals[conditional][key]
-                    out[realkey]=smart_input(realkey,conditionals[conditional][key],validentries=control["validentries"],upper=control["upper"],lower=control["lower"],integer=control["integer"],decimal=control["decimal"])
+                    if not web():
+                        out[realkey]=smart_input(realkey,conditionals[conditional][key],validentries=control["validentries"],upper=control["upper"],lower=control["lower"],integer=control["integer"],decimal=control["decimal"])
+                    else:
+                        realkey="conditionals::%s" %realkey
+                        default=str(default)
+                        if len(control['validentries']) == 0:
+                            webinput(realkey,realkey,default)
+                        else:
+                            webinput(realkey,realkey,control['validentries'],default)
+#                        print default
+
         return out
 
 def realkeys(template):
@@ -144,62 +300,133 @@ def realkeys(template):
             else:
                 rk.append(key)
         return rk
+
+def samekeys(sw,dic):
+    result={}
+    for key in sorted(dic.keys()):
+        if key.startswith(sw):
+            result[key]=dic[key]
+    return result
     
-
-def json_from_template(template={},old={},keypath="",conditional={}):    
-    mydict={}
-    for key in old.keys():
-        if not key in realkeys(template):
-            mydict[key]=old[key]
+def recurse_colons(keys,old,parent):
+    if not '::' in keys and len(keys) >0:       
+        valuestring="%s::%s" %(parent,keys)
+        s='"%s":"%s",' %(keys,old[valuestring])
+        return s
+    if len(keys) == 0:
+        return ''
+    
+    firstkey=keys.split('::')[0]
+    parentkey="%s::%s" %(parent,firstkey)
+    t=''
+    for sk in samekeys(parentkey,old):
+        otherkeys='::'.join(sk.split(parentkey)[1:]).lstrip('::')
+        t = '%s %s' %(t,recurse_colons(otherkeys,old,parentkey))
+    t='"%s": {%s},' %(firstkey,t)
+    return t
+           
             
-    for key in sorted(template.keys()):
 
+def validate_json(template={},old={}): 
+    done=[]
+    result={}
+    for key in sorted(old.keys()):
+        if '::' in key:   
+            firstkey=key.split('::')[0]
+            if firstkey in done:
+                continue
+            done.append(firstkey)
+            s=''
+            same=samekeys(firstkey,old)
+            for sk in same.keys():
+                otherkeys='::'.join(sk.split('::')[1:])
+                ns=recurse_colons(otherkeys,old,firstkey) 
+                if len(ns) > 0:
+                    s="%s %s" %(s,ns)
+            s=s.rstrip(',')
+            s="{%s}" %s
+            s=s.rstrip(',').replace(',}','}')
+            result[firstkey]=loads(s)
+        else:
+            if not '{' in old[key]:
+                result[key]=old[key]
+            else:
+                result[key] = loads(old[key].replace("'",'"'))
+            
+    return result
+                
+
+def json_from_template(template={},old={},parent="",conditional={}):    
+    mydict={}
+    if parent=="":
+        for key in old.keys():
+            if not key in realkeys(template):
+                mydict[key]=old[key]
+        if web():
+            for key in mydict.keys():
+                cgihide(key,mydict[key])
+
+        
+    for key in sorted(template.keys()):
         if key.startswith('__'):
             realkey=key[3:]
         else:
             realkey=key
-        if keypath == "":
-            showpath=realkey
+        
+        if parent=="":
+            mypath=realkey
         else:
-            showpath="%s:%s" %(keypath,realkey)
+            mypath = "%s::%s" %(parent,realkey)
+
         control=template_control(key,template[key])
         if key.startswith("__X"):
             if realkey in old:
                 del old[realkey]
             if realkey in mydict:
                 del mydict[realkey]
-        elif key.startswith("__#"):
             if realkey in old:
                 x=len(old[realkey])
             else:
                 x=1
-            numentries=smart_input("How many %s entries ?" %realkey,default=x,integer=True)
-            subdic={}
-            for I in range(0,numentries):
-                try:
-                    oldx=old[realkey][str(I)]
-                except KeyError:
-                    oldx={}
-                subdic[str(I)]=json_from_template(template[key],oldx,"%s:%s" %(realkey,I))
-            mydict[realkey]=subdic
-        elif type(template[key]) == type({}):
+        elif key.startswith('__Y'):
             if realkey in old:
-                mydict[realkey]=json_from_template(template[key],old[realkey],realkey)
+                mydict[realkey] = old[realkey]
+                webinput(mypath,mypath,old[realkey],selected=realkey,hide=True)
             else:
-                mydict[realkey]=json_from_template(template[key],{},realkey)
-        elif realkey in old:
-            mydict[realkey]=smart_input(showpath,old[realkey],validentries=control["validentries"],upper=control["upper"],lower=control["lower"],integer=control["integer"],decimal=control["decimal"])
-        else:
-            mydict[realkey]=smart_input(showpath,validentries=control["validentries"],upper=control["upper"],lower=control["lower"],integer=control["integer"],decimal=control["decimal"])
-    
+                mydict[realkey] = template[key]
+                webinput(mypath,mypath,template[key],selected=realkey,hide=True)
         
-    if keypath == "":    
-        mydict["conditionals"]=template_conditional(mydict,conditional)
+        elif type(template[key]) == type({}):
+                
+            if realkey in old:
+                mydict[realkey]=json_from_template(template[key],old[realkey],parent=mypath)
+            else:
+                mydict[realkey]=json_from_template(template[key],{},parent=mypath)
+        elif realkey in old:
+            if not web():
+                mydict[realkey]=smart_input(mypath,old[realkey],validentries=control["validentries"],upper=control["upper"],lower=control["lower"],integer=control["integer"],decimal=control["decimal"])
+            else:
+                default=str(old[realkey])
+                if len(control['validentries']) == 0:
+                    webinput(mypath,mypath,default)
+                else:
+                    webinput(mypath,mypath,control['validentries'],default)
+        else:
+            if not web():
+                mydict[realkey]=smart_input(mypath,validentries=control["validentries"],upper=control["upper"],lower=control["lower"],integer=control["integer"],decimal=control["decimal"])
+            else:
+                if len(control['validentries']) == 0:
+                    default=str(template[key])
+                else:
+                    default=control['validentries']
+                webinput(mypath,mypath,default)
+    if parent == "":    
+       if not web(): mydict["conditionals"]=template_conditional(mydict,conditional)
     return mydict
         
             
 
-def rolldice(auto=True,numdice=1,numsides=20,modifier=0,quiet=False):
+def rolldice(auto=True,numdice=1,numsides=20,modifier=0,quiet=False,wsgi=False):
         output=[]
         if not auto:
             return smart_input("Roll a %sd%s dice:" %(numdice,numsides),integer=True)
@@ -214,6 +441,8 @@ def rolldice(auto=True,numdice=1,numsides=20,modifier=0,quiet=False):
                 output.append("Total rolled: %s (modifier %s)" % (total,modifier))
                 if not quiet:
                     say(output)
+                if wsgi:
+                    return (total,'<br>'.join(output))
                 return total
                 
 
