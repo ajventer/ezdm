@@ -1,0 +1,10 @@
+{
+    "price": {
+        "copper": "0",
+        "silver": "5",
+        "gold": "0"
+    },
+    "type": "other",
+    "name": "Winter Blanket",
+    "conditionals": {}
+}

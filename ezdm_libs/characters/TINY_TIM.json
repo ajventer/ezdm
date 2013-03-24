@@ -1,0 +1,55 @@
+{
+    "abilities": {
+        "dex": 12,
+        "cha": 10,
+        "int": 11,
+        "wis": 12,
+        "str": 17,
+        "con": 14
+    },
+    "combat": {
+        "level/hitdice": "5",
+        "thac0": 16,
+        "hitpoints": 23,
+        "max_hp": "38",
+        "saving_throws": {
+            "breath": "13",
+            "pp": "12",
+            "spell": "14",
+            "rod": "13",
+            "ppd": 11
+        }
+    },
+    "personal": {
+        "xp": "25705",
+        "race": "dwarf",
+        "name": {
+            "last": "TIM",
+            "first": "TINY"
+        },
+        "alignment": {
+            "law": "neutral",
+            "social": "good"
+        }
+    },
+    "inventory": {
+        "equiped": [
+            "battle-axe_+1",
+            "Chain_Mail"
+        ],
+        "money": {
+            "copper": 2,
+            "silver": 2,
+            "gold": 5
+        },
+        "pack": [
+            "Healing_Potion",
+            "Scroll_of_Magic_Missile"
+        ]
+    },
+    "class": {
+        "class": "fighter",
+        "parent": "warrior"
+    },
+    "conditionals": {}
+}

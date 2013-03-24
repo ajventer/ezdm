@@ -1,0 +1,48 @@
+{
+    "personal": {
+        "xp": "5460",
+        "race": "half-elf",
+        "name": {
+            "last": "ROGUE",
+            "first": "BARDIC"
+        },
+        "alignment": {
+            "law": "neutral",
+            "social": "good"
+        }
+    },
+    "abilities": {
+        "dex": "12",
+        "cha": "17",
+        "int": "14",
+        "wis": "8",
+        "str": "9",
+        "con": "11"
+    },
+    "class": {
+        "class": "bard",
+        "parent": "rogue"
+    },
+    "combat": {
+        "level/hitdice": "4",
+        "thac0": 18,
+        "hitpoints": "17",
+        "saving_throws": {
+            "breath": "16",
+            "pp": "12",
+            "spell": "15",
+            "rod": "14",
+            "ppd": 13
+        },
+        "max_hp": "16"
+    },
+    "conditionals": {
+        "read languages": "90",
+        "find/remove traps": "5",
+        "pick pockets": "15",
+        "detect noise": "15",
+        "move silently": "10",
+        "open locks": "10",
+        "climb walls": "60"
+    }
+}

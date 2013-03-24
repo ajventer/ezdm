@@ -1,0 +1,18 @@
+{
+    "name": "Long Bow +1",
+    "weight": "2",
+    "price": {
+        "copper": "0",
+        "silver": "0",
+        "gold": "1"
+    },
+    "conditionals": {
+        "weapon_type": "misile",
+        "to_hit": "1",
+        "dmg": "8",
+        "damage_type": "stab",
+        "save_against": "none"
+    },
+    "type": "weapon",
+    "size": "large"
+}

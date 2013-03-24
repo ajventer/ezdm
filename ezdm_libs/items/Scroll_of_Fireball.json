@@ -1,0 +1,10 @@
+{
+    "price": {
+        "copper": "0",
+        "silver": "50",
+        "gold": "5"
+    },
+    "type": "other",
+    "name": "Scroll of Fireball",
+    "conditionals": {}
+}

@@ -231,11 +231,13 @@ def inrange(key1,key2):
 
 def load_json(source=None,base=None,filename=None):
     if not filename:
-        path=get_sys_data(source)
-        if not path:
-            path=get_user_data(source)
+        syspath=get_sys_data(source)
+        userpath=get_user_data(source)
         f="%s.json" %base
-        path=os.path.join(path,f)
+        if os.path.exists(os.path.join(syspath,f)):
+            path=os.path.join(syspath,f)
+        if os.path.exists(os.path.join(userpath,f)):
+            path=os.path.join(userpath,f) #User data overwrites system data if the same file exists in both
         return loads(open(path,'r').read())
     else:
         return loads(open(filename,'r').read())

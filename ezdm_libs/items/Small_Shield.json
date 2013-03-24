@@ -1,0 +1,7 @@
+{
+    "type": "armor",
+    "name": "Small Shield",
+    "conditionals": {
+        "ac": "1"
+    }
+}

@@ -1,0 +1,10 @@
+{
+    "type": "weapon",
+    "name": "staff +1",
+    "conditionals": {
+        "weapon_type": "melee",
+        "save_against": "none",
+        "to_hit": 1,
+        "dmg": 8
+    }
+}

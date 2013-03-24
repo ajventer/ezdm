@@ -1,0 +1,10 @@
+{
+    "price": {
+        "copper": "",
+        "silver": "50",
+        "gold": "5"
+    },
+    "type": "other",
+    "name": "Scroll of Identification",
+    "conditionals": {}
+}

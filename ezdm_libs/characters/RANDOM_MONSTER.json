@@ -1,0 +1,51 @@
+{
+    "abilities": {
+        "dex": "16",
+        "cha": "5",
+        "int": "10",
+        "wis": "8",
+        "str": "17",
+        "con": "15"
+    },
+    "combat": {
+        "level/hitdice": "5",
+        "thac0": 16,
+        "hitpoints": 20,
+        "max_hp": 23,
+        "saving_throws": {
+            "breath": "13",
+            "pp": "12",
+            "spell": "14",
+            "rod": "13",
+            "ppd": 11
+        }
+    },
+    "personal": {
+        "xp": "1",
+        "race": "monster",
+        "name": {
+            "last": "MONSTER",
+            "first": "RANDOM"
+        },
+        "alignment": {
+            "law": "chaotic",
+            "social": "evil"
+        }
+    },
+    "inventory": {
+        "equiped": [
+            "Long_Bow_+1"
+        ],
+        "money": {
+            "copper": "0",
+            "silver": "0",
+            "gold": "0"
+        },
+        "pack": []
+    },
+    "class": {
+        "class": "fighter",
+        "parent": "warrior"
+    },
+    "conditionals": {}
+}

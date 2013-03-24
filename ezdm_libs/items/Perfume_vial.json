@@ -1,0 +1,10 @@
+{
+    "price": {
+        "copper": "0",
+        "silver": "0",
+        "gold": "5"
+    },
+    "type": "other",
+    "name": "Perfume vial",
+    "conditionals": {}
+}

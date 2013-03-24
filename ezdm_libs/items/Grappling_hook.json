@@ -1,0 +1,13 @@
+{
+    "name": "Grappling hook",
+    "weight": "0",
+    "price": {
+        "copper": "0",
+        "silver": "8",
+        "gold": "0"
+    },
+    "conditionals": "{}",
+    "type": "other",
+    "cond_sheet": "yes",
+    "size": "small"
+}
