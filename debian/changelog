@@ -1,3 +1,9 @@
+ezdm (0.1.0ubuntu4) quantal; urgency=low
+
+  * master Sample data added
+
+ -- A.J. Venter <ajventer@gmail.com>  Sun, 24 Mar 2013 19:14:17 +0200
+
 ezdm (0.1.0ubuntu3) quantal; urgency=low
 
   * master Improved menus
