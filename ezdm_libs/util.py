@@ -3,7 +3,7 @@ import datetime
 import os
 from ezdm_libs import get_sys_data,gui,web
 from simplejson import loads,dumps
-from glob import iglob
+from glob import iglob,glob
 from random import randrange
 from pprint import pprint
 if gui():
@@ -228,6 +228,56 @@ def inrange(key1,key2):
             return True
         else:
             return False
+
+def get_set_icon(source='',base=''):
+    json=load_json(source,base)
+    print  "<table border=3><tr><td bgcolor=lightgray>Character Icon</td></tr>"
+    if 'icon' in json and len(json['icon']) >0:
+        uri='/ezdm-iconview.cgi?icon=%s' %json['icon']
+        sys.stderr.write('Icon URI: %s \n' %uri )
+        print '<tr><td><img src=%s width=100,height=100></td></tr>' %(uri)
+    else:
+        print "<tr><td>No icon configured</td></tr>"
+    print "<tr><td bgcolor=lightgray>Select an icon</td></tr><tr><td>"
+    print '<form method=post action="ezdm_seticon.cgi">'
+    cgihide('source',source)
+    cgihide('base',base)
+    icons = glob(os.path.join(get_user_data('icons'),"*.*"))
+    icons += glob(os.path.join(get_sys_data('icons'),"*.*"))
+    icons= list(set(icons))
+    for icon in sorted(icons):
+        sys.stderr.write(icon)
+        uri='/ezdm-iconview.cgi?icon=%s' %os.path.basename(icon)
+        print '<input type=radio name=selected value="%s">' %os.path.basename(icon)
+        print '<img width=50 src="%s"><br>%s<br>' %(uri,os.path.basename(icon))
+    print '<input type=submit></form>'
+    print "</td></tr>"
+    print "<tr><td bgcolor=lightgray>Adding new icons:</td></tr><tr><td>"
+    print '<tr><td width=100>To add your own<br>icons copy them into<br> <b>"%s"</b></td></tr>' %get_user_data('icons')
+    print "</table>"
+ 
+
+def serve_image(icon):
+    imagetype=icon.split('.')[-1]
+    sys.stderr.write("Content-type: image/%s\n" %imagetype)
+    sys.stderr.write("Serving %s\n" %load_icon(icon))
+    print "Content-type: image/%s\n" %imagetype
+    print file(r"%s" %load_icon(icon), "rb").read()
+
+
+def load_icon(icon='blank.png'):
+    syspath=get_sys_data('icons')
+    userpath=get_user_data('icons')
+    path=''
+    if os.path.exists(os.path.join(syspath,icon)):
+        path=os.path.join(syspath,icon)
+    if os.path.exists(os.path.join(userpath,icon)):
+        path=os.path.join(userpath,icon) #User data overwrites system data if the same file exists in both
+    if path=='':
+        path=os.path.join(syspath,'blank.png')
+    return path
+    
+        
 
 def load_json(source=None,base=None,filename=None):
     if not filename:

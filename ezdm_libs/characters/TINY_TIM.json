@@ -1,4 +1,5 @@
 {
+   "icon":"dwarf.png",
     "abilities": {
         "dex": 12,
         "cha": 10,

@@ -1,5 +1,6 @@
 {
 "core":{
+"icon":"",
 "personal":{
     "alignment":{"law":"__[chaotic,neutral,lawful]",
                 "social":"__[evil,good,neutral]"},

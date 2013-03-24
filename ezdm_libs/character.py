@@ -1,4 +1,4 @@
-from util import smart_input,highlight,rolldice,load_json,inrange,say,get_user_data,price_in_copper,convert_money
+from util import smart_input,highlight,rolldice,load_json,inrange,say,get_user_data,price_in_copper,convert_money,get_set_icon
 import sys
 import datetime
 import os
@@ -145,10 +145,13 @@ class Character:
     def spell_friendly_target(self):
         return self.is_monster() == self.spell_target.is_monster()
     
-    def filename(self):
+    def basename(self):
         firstname=self.json["personal"]["name"]["first"].upper()
         lastname=self.json["personal"]["name"]["last"].upper()
-        return "%s_%s.json" %(firstname,lastname)
+        return "%s_%s" %(firstname,lastname)
+            
+    def filename(self):
+        return "%s.json" %(self.basename())
     
     def save(self):
         if 'temp' in self.json:
@@ -588,3 +591,10 @@ class Character:
         for key2 in thac0s.keys():
             if inrange(self.json['combat']["level/hitdice"],key2):
                 return int(thac0s[key2])
+                
+    def viewchar(self):
+        print "<table width=100% cellpadding=20 border=0><tr><td>"
+        say(self.pprint())
+        print "</td><td valign=top>"
+        get_set_icon('characters',self.basename())
+        print "</td></tr></table>"

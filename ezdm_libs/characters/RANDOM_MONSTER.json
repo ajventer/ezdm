@@ -10,15 +10,15 @@
     "combat": {
         "level/hitdice": "5",
         "thac0": 16,
-        "hitpoints": 20,
-        "max_hp": 23,
+        "hitpoints": 22,
         "saving_throws": {
             "breath": "13",
             "pp": "12",
             "spell": "14",
             "rod": "13",
             "ppd": 11
-        }
+        },
+        "max_hp": 22
     },
     "personal": {
         "xp": "1",
@@ -43,6 +43,7 @@
         },
         "pack": []
     },
+    "icon": "rat.png",
     "class": {
         "class": "fighter",
         "parent": "warrior"

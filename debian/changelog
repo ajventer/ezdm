@@ -1,3 +1,10 @@
+ezdm (0.1.0ubuntu3) quantal; urgency=low
+
+  * master Improved menus
+  * master Greatly improved server process management
+
+ -- A.J. Venter <ajventer@gmail.com>  Sun, 24 Mar 2013 13:38:21 +0200
+
 ezdm (0.1.0ubuntu2) quantal; urgency=low
 
   * master System-sample-data support

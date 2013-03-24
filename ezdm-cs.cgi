@@ -60,9 +60,7 @@ if __name__=='__main__':
         data=validate_json(template,data)
         c=Character(data,True)
         c.save()
-        say(c.pprint())
-
-        
+        c.viewchar()
     cgifooter()
         
     
