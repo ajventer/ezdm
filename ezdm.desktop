@@ -1,20 +1,12 @@
 [Desktop Entry]
 Categories=Game;RolePlaying;
-Comment[en_US]=Easy Dungeon Master Tools
 Comment=Easy Dungeon Master Tools
 Exec=/usr/games/cgi-server.ezdm
-GenericName[en_US]=EZDM
 GenericName=EZDM
 Icon=/usr/share/icons/hicolor/128x128/ezdm.png
-MimeType=
-Name[en_US]=EZDM-Web
-Name=EZDM-Web
+Name=EZDM
 Path=
 StartupNotify=true
 Terminal=true
 TerminalOptions=
 Type=Application
-X-DBUS-ServiceName=
-X-DBUS-StartupType=none
-X-KDE-SubstituteUID=false
-X-KDE-Username=
