@@ -60,8 +60,8 @@ def dicthide(dic={},wsgi=False):
         print '\n'.join(out)
         
 def webinput(description,name,default='',selected='',wsgi=False,hide=False):
-    out=['<tr><td bgcolor=lightgray align=left valign=center><b>%s</b></td>' %(description)]
-    out.append( "<td align=center valign=center>")
+    out=['<tr><td bgcolor=lightgray align=left valign=top><b>%s</b></td>' %(description)]
+    out.append( "<td align=left valign=top>")
     if type(default) == type({}):
         dictinput(default,wsgi=wsgi,parent=selected,hide=hide)
     if type(default) == type(''):

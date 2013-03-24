@@ -37,10 +37,12 @@ def getdata():
     items=list_items().keys()
     items.insert(0,'New')
     formheader(border=3)
+
     webinput('Use defaults from item:','item',items)
     formfooter()
     
 def itemsheet(data):
+    data['item'] = data['item'].lstrip('"').rstrip('"')
     formheader(border=3)
     hide('basic_sheet','yes')
     hide('item',data['item'])

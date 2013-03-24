@@ -53,6 +53,13 @@ class Item:
         else:
             events=ItemEvents(self.json)
 
+    def get_icon(self):
+        if not 'icon' in self.json:
+            return None
+        if len(self.json['icon']) == 0:
+            return None
+        else:
+            return self.json['icon']
             
     def filename(self,extension="json"):
         if extension:

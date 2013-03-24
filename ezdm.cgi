@@ -50,7 +50,7 @@ window.location.port=8001
     if 'about' in data:
         print "<br><br>"
         print "<b>EZDM - (c) 2013 A.J. Venter <ajventer@gmail.com</b><br>"
-        print "Sample images from <a href=http://opengameart.org>OpenGameArt</a>. See the ATTRIBUTION file in %s for author details" %get_sys_data('icons')
+        print 'Sample images from <a target="_blank" href=http://opengameart.org>OpenGameArt</a>. See the ATTRIBUTION file in %s for author details' %get_sys_data('icons')
         print "<br><BR>"
         print '''
         

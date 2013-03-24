@@ -5,6 +5,7 @@ from ezdm_libs.util import cgihide as hide
 from ezdm_libs.character import Character,list_chars
 from ezdm_libs.item import list_items,Item
 from ezdm_libs import web,gui
+import urllib
 import sys
 import os
 
@@ -114,13 +115,25 @@ def get_character():
     webinput('Character:','character',list_chars().keys())
     formfooter()
 
+def webitem(name):
+    item=Item(load_json('items',name))
+    print '<a href=/ezdm-mkitem.cgi?submit=submit&item="%s">' %urllib.quote_plus(item.displayname())
+    print item.displayname()
+    if item.get_icon():
+        uri='/ezdm-iconview.cgi?icon=%s' %item.get_icon()
+        print "<img border=0 src=%s width=20>" %uri
+    print "</a><br>"
+
+
 def web_inventory(data,c):
     highlight('%s Current inventory' %c.displayname())
     print "<table border=5 width=80%><tr><td bgcolor=lightgray align=center>Pack</td><td bgcolor=lightgray>Equiped</td></tr>"
-    print "<tr><td align=left>"
-    say(c.list_inventory(['pack']))
-    print "</td><td align=left>"
-    say(c.list_inventory(['equiped']))    
+    print "<tr><td align=left valign=top>"
+    for name in c.list_inventory(['pack']):
+        webitem(name)
+    print "</td><td align=left valign=top>" 
+    for name in c.list_inventory(['equiped']):
+        webitem(name)
     print "</td></tr>"
     print "<tr><td colspan=2 align=center bgcolor=lightgray>Money</td></tr>"
     print "<tr><td colspan=2>%s</td></tr>" %c.list_money() 
