@@ -1,13 +1,16 @@
 from util import load_json
-from glob import iglob,glob
+from glob import glob
 from util import get_user_data,highlight
 from simplejson import dumps
 import sys
 import os
+from ezdm_libs import get_sys_data
 
 def list_items(itemtype='all'):
     items={}
-    for entry in iglob(os.path.join(get_user_data('items'),"*.json")):
+    itemfiles=glob(os.path.join(get_user_data('items'),"*.json"))    
+    itemfiles+=glob(os.path.join(get_sys_data('items'),"*.json"))
+    for entry in set(itemfiles):
         item=Item(load_json(filename=entry))
         if itemtype == 'all':
             items[item.displayname()] = item.filename(extension=None)

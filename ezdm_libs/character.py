@@ -3,14 +3,18 @@ import sys
 import datetime
 import os
 from simplejson import loads,dumps
-from glob import iglob
+from glob import glob
 from random import randrange
 from pprint import pprint
 from item import Item
+from ezdm_libs import get_sys_data
 
 def list_chars(exclude=[],monsters=True):
     chars={}
-    for entry in iglob(os.path.join(get_user_data('characters'),"*.json")):
+    charfiles = glob(os.path.join(get_user_data('characters'),"*.json"))
+    charfiles += glob(os.path.join(get_sys_data('characters'),"*.json"))
+
+    for entry in set(charfiles):
         cname=os.path.basename(entry).rstrip('.json')
         char=Character(load_json('characters',cname),True)
         if not cname in exclude:
@@ -319,7 +323,7 @@ class Character:
         if type(self.json['inventory']['pack']) <> type([]):
             self.json['inventory']['pack']=[]
         for item in self.json['inventory']['equiped']:
-            i=Item(load_json(get_user_data('items'),item))
+            i=Item(load_json('items',item))
             if i.json['type'] == 'weapon':
                 weap.append(i)
         return weap
@@ -403,7 +407,7 @@ class Character:
         if not "inventory" in self.json or not "equiped" in self.json["inventory"]:
             return []
         for item in self.list_inventory(['equiped']):
-            i=Item(load_json(get_user_data('items'),item))
+            i=Item(load_json('items',item))
             if i.json['type'] == 'armor':
                 arm.append(i)
         return arm

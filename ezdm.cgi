@@ -23,6 +23,16 @@ def main(ACTIONLIST):
 def webmain(ACTIONLIST):
     cgiheader('Welcome to EZDM',False)
     data=parsecgi()
+    if 'combat' in data:
+        print '''
+<script type="text/javascript">
+<!--
+
+window.location.port=8001
+//-->
+</script>        
+        '''
+        
     del ACTIONLIST["Edit character sheet"]
     del ACTIONLIST['Create a new character sheet']
     del ACTIONLIST['Combat !']
@@ -30,9 +40,7 @@ def webmain(ACTIONLIST):
     
     for key in ACTIONLIST.keys():
         print '<a href="%s.cgi">%s</a><br>' %(ACTIONLIST[key],key)
-    host=os.environ['HTTP_REFERER'].split('://')[1].split(':')[0]
-    
-    print '<a href="http://%s:8001">Combat !</a><br>' %host
+    print '<a target="_blank"  href="?combat=yes" >Combat !</a><br>'
     cgifooter(False)
 
 if __name__ == '__main__': 

@@ -234,6 +234,7 @@ def load_json(source=None,base=None,filename=None):
         syspath=get_sys_data(source)
         userpath=get_user_data(source)
         f="%s.json" %base
+        path=''
         if os.path.exists(os.path.join(syspath,f)):
             path=os.path.join(syspath,f)
         if os.path.exists(os.path.join(userpath,f)):

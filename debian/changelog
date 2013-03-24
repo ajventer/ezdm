@@ -1,3 +1,9 @@
+ezdm (0.1.0ubuntu2) quantal; urgency=low
+
+  * master System-sample-data support
+
+ -- A.J. Venter <ajventer@gmail.com>  Sun, 24 Mar 2013 12:21:22 +0200
+
 ezdm (0.1.0ubuntu1) quantal; urgency=low
 
   * web Pure web interface
