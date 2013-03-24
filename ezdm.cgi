@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 """Main EZDM console"""
 from ezdm_libs.util import smart_input, highlight, gui, web,cgiheader,cgifooter,parsecgi,formheader,formfooter,webinput
+from ezdm_libs import get_sys_data
 import os
 import sys
 
@@ -48,6 +49,9 @@ window.location.port=8001
     
     if 'about' in data:
         print "<br><br>"
+        print "<b>EZDM - (c) 2013 A.J. Venter <ajventer@gmail.com</b><br>"
+        print "Sample images from <a href=http://opengameart.org>OpenGameArt</a>. See the ATTRIBUTION file in %s for author details" %get_sys_data('icons')
+        print "<br><BR>"
         print '''
         
         

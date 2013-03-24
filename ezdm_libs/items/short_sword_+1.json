@@ -1,10 +1,17 @@
 {
-    "type": "weapon",
     "name": "short sword +1",
+    "weight": "0",
     "conditionals": {
         "weapon_type": "melee",
-        "save_against": "none",
-        "to_hit": 1,
-        "dmg": 6
-    }
+        "damage_type": "slice",
+        "save_against": "none"
+    },
+    "price": {
+        "copper": "0",
+        "silver": "0",
+        "gold": "0"
+    },
+    "icon": "sword.png",
+    "type": "weapon",
+    "size": "small"
 }

@@ -78,6 +78,7 @@ def save_item(data):
     result=validate_json(template,data)   
     item=Item(result)
     item.save()
+    item.viewitem()
  
         
 

@@ -1,4 +1,4 @@
-from util import load_json
+from util import load_json,get_set_icon
 from glob import glob
 from util import get_user_data,highlight
 from simplejson import dumps
@@ -60,6 +60,29 @@ class Item:
         else:
             return "%s" % (self.json['name'].replace(' ','_'))
     
+    def pprint(self,json,parent=None):
+        out=[]
+        for key in sorted(json.keys()):
+            if not parent:
+                name=key
+            else:
+                name="%s::%s" %(parent,key)
+            if type(json[key]) <> type({}):
+                out.append('<tr><td bgcolor=darkgray valign=top align=left>%s</td><td valign=top align=left>%s</td></tr>' %(name,json[key]))
+            else:
+                out += self.pprint(json[key],key)
+        return out
+                
+            
+    
+    def viewitem(self):
+        print "<table border=0 width=100%><tr><td valign=top>"
+        print "<table width=100% border=2>"
+        print '\n'.join(self.pprint(self.json))
+        print "</table>"        
+        print "</td><td valign=top>"
+        get_set_icon('items',self.filename(None))
+        print "</td></tr></table>"
   
     def save(self):
         print self.filename()
