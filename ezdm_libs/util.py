@@ -228,6 +228,14 @@ def inrange(key1,key2):
             return True
         else:
             return False
+            
+def list_icons():
+    i=[]
+    icons = glob(os.path.join(get_user_data('icons'),"*.*"))
+    icons += glob(os.path.join(get_sys_data('icons'),"*.*"))
+    for icon in list(set(icons)):
+        i.append(os.path.basename(icon))
+    return i
 
 def get_set_icon(source='',base=''):
     json=load_json(source,base)
@@ -242,12 +250,9 @@ def get_set_icon(source='',base=''):
     print '<form method=post action="ezdm_seticon.cgi">'
     cgihide('source',source)
     cgihide('base',base)
-    icons = glob(os.path.join(get_user_data('icons'),"*.*"))
-    icons += glob(os.path.join(get_sys_data('icons'),"*.*"))
-    icons= list(set(icons))
-    for icon in sorted(icons):
+    for icon in sorted(list_icons):
         sys.stderr.write(icon)
-        uri='/ezdm-iconview.cgi?icon=%s' %os.path.basename(icon)
+        uri='/ezdm-iconview.cgi?icon=%s' %icon
         print '<input type=radio name=selected value="%s">' %os.path.basename(icon)
         print '<img width=50 src="%s"><br>%s<br>' %(uri,os.path.basename(icon))
     print '<input type=submit></form>'
