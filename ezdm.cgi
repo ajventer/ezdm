@@ -844,7 +844,7 @@ $Date: 2013/02/28 17:09:28 $
 if __name__ == '__main__': 
     PATH = os.path.dirname(sys.argv[0])
 
-    ACTIONLIST = {'View a character sheet':'ezdm-viewchar', 'Create a new character sheet':'ezdm-mkcs', 'Combat !':'ezdm-quick_combat', 'Grant XP to character':'ezdm-xp_tool', 'Roll dice':'ezdm-dice_roller',"Heal character":"ezdm-manualheal","Try ability":"ezdm-tryability","Edit character sheet":"ezdm-editcs","Manage character inventory":"ezdm-inventory","Create/Edit Item":"ezdm-mkitem"}
+    ACTIONLIST = {'Map Editor':'ezdm-maps','View a character sheet':'ezdm-viewchar', 'Create a new character sheet':'ezdm-mkcs', 'Combat !':'ezdm-quick_combat', 'Grant XP to character':'ezdm-xp_tool', 'Roll dice':'ezdm-dice_roller',"Heal character":"ezdm-manualheal","Try ability":"ezdm-tryability","Edit character sheet":"ezdm-editcs","Manage character inventory":"ezdm-inventory","Create/Edit Item":"ezdm-mkitem"}
 
     if not web():
         main(ACTIONLIST)
