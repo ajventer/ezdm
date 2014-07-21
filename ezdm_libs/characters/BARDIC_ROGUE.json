@@ -1,4 +1,25 @@
 {
+    "abilities": {
+        "dex": "12",
+        "cha": "17",
+        "int": "14",
+        "wis": "8",
+        "str": "9",
+        "con": "11"
+    },
+    "combat": {
+        "level/hitdice": "4",
+        "thac0": 18,
+        "hitpoints": "17",
+        "max_hp": "16",
+        "saving_throws": {
+            "breath": "16",
+            "pp": "12",
+            "spell": "15",
+            "rod": "14",
+            "ppd": 13
+        }
+    },
     "personal": {
         "xp": "5460",
         "race": "half-elf",
@@ -11,33 +32,24 @@
             "social": "good"
         }
     },
-    "abilities": {
-        "dex": "12",
-        "cha": "17",
-        "int": "14",
-        "wis": "8",
-        "str": "9",
-        "con": "11"
+    "inventory": {
+        "equiped": [
+            "staff_+1"
+        ],
+        "money": {
+            "copper": "0",
+            "silver": "0",
+            "gold": "0"
+        },
+        "pack": []
     },
+    "icon": "rat.png",
     "class": {
         "class": "bard",
         "parent": "rogue"
     },
-    "combat": {
-        "level/hitdice": "4",
-        "thac0": 18,
-        "hitpoints": "17",
-        "saving_throws": {
-            "breath": "16",
-            "pp": "12",
-            "spell": "15",
-            "rod": "14",
-            "ppd": 13
-        },
-        "max_hp": "16"
-    },
     "conditionals": {
-        "read languages": "90",
+        "read languages": "0",
         "find/remove traps": "5",
         "pick pockets": "15",
         "detect noise": "15",

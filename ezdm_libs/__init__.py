@@ -1,25 +1,25 @@
 import os
 import sys
 
-_gui=True
+__gui=True
 __web=False
 
-
-if '--web' in sys.argv or sys.argv[0].endswith('.cgi'):
+print sys.argv[0]
+if '--web' in sys.argv or sys.argv[0].endswith('.cgi') or sys.argv[0].endswith('.ezdm'):
     __gui=False
     __web=True
  
 elif '--console' in sys.argv:
-    _gui=False
-    _web=False
+    __gui=False
+    __web=False
 else:
     try:
         import easygui as eg
     except:
-        _gui=False
+        __gui=False
         
 def gui():
-    return _gui
+    return __gui
 
 def web():
     return __web

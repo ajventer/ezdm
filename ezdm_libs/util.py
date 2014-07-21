@@ -11,6 +11,8 @@ if gui():
 if web():
     import cgi
     
+def attack_mods():
+    return loads(open(os.path.join(get_user_data('adnd2e'),"attack_mods.json")).read())
 
 def formheader(border=5,title=None,wsgi=False,action=''):
     out=["<form method=post"]
@@ -250,7 +252,7 @@ def get_set_icon(source='',base=''):
     print '<form method=post action="ezdm_seticon.cgi">'
     cgihide('source',source)
     cgihide('base',base)
-    for icon in sorted(list_icons):
+    for icon in sorted(list_icons()):
         sys.stderr.write(icon)
         uri='/ezdm-iconview.cgi?icon=%s' %icon
         print '<input type=radio name=selected value="%s">' %os.path.basename(icon)

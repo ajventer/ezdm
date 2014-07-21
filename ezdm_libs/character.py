@@ -11,8 +11,8 @@ from ezdm_libs import get_sys_data
 
 def list_chars(exclude=[],monsters=True):
     chars={}
-    charfiles = glob(os.path.join(get_user_data('characters'),"*.json"))
-    charfiles += glob(os.path.join(get_sys_data('characters'),"*.json"))
+    charfiles = glob(os.path.join(get_sys_data('characters'),"*.json"))
+    charfiles += glob(os.path.join(get_user_data('characters'),"*.json"))
 
     for entry in set(charfiles):
         cname=os.path.basename(entry).rstrip('.json')
@@ -168,7 +168,7 @@ class Character:
         ability_mods=load_json('adnd2e','ability_scores')
         base=int(ability_mods["str"][str(self.json['abilities']['str'])]['hit'])
         if len(self.weapons) > 0:
-            bonus=int(self.weapons[self.weapon].json["conditionals"]["to_hit"])
+            bonus=int(self.weapons[self.weapon].json.get("conditionals", {"tohit":0}).get('tohit', 0))
         else:
             bonus=0
         return base+bonus
@@ -276,7 +276,12 @@ class Character:
         
       
     def is_misile(self):
-        return self.weapons[self.weapon].json['conditionals']['weapon_type'] == "misile"
+        try:
+            return self.weapons[self.weapon].json['conditionals']['weapon_type'] == "misile"
+        except IndexError:
+            #This could happen if a character has no weapons equiped
+            return False
+
         
     def attack_roll(self,target,mod):
         #on_use=self.weapons[self.weapon].events.OnUse(self.json,target.json)
