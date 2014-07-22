@@ -1,6 +1,24 @@
 from jinja2 import Template
 from util import readfile, find_files
 
+class json_input:
+    def __init__(self, template, defaults=None):
+        self._template = template
+        self._defaults = defaults or {}
+        self._data = self._parsetemplate(self._template, self._defaults)
+
+    def _realkey(self, keyname):
+        if keyname.startswith('__'):
+            return keyname[3:]
+        else:
+            return keyname
+
+    def parsetemplate(self, template, defaults):
+        data = {}
+        for key in template:
+            if isinstance(key, dict):
+                data[realkey(key)] = self.parsetemplate(template.get(key), defaults.get(key))
+
 
 class Session:
     def __init__(self):

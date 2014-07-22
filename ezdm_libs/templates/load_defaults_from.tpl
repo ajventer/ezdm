@@ -1,12 +1,13 @@
+<center>
 <form action="{{action}}" method=post>
-<table border=1 width=100%>
+<table border=1>
     <tr>
         <td bgcolor=lightgray colspan=2>
             <center>{{name}}s</center>
         </td>
     </tr>
     <td>
-        Load default values for {{name}} from
+        Load default values from
     </td>
     <td>
         <select name="{{keyname}}">
@@ -16,10 +17,10 @@
         </select>
     </td>
 </tr>
-<td>
-    <td>
-        <input type=submit value="Continue">
+    <td colspan=2>
+        <center><input type=submit value="Continue"></center>
     </td>
 </tr>
 </table>
 </form>
+</center>
