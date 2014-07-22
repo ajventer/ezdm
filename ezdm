@@ -1,12 +1,22 @@
 #!/usr/bin/env python
 from bottle import route, run, request
-from ezdm_libs.frontend import Page
 
+sessions = {}
 
 
 @route('/', method='get')
-def main_page():
-    return Page().render()
+@route('/<action>', method='get')
+def main_page(action=None):
+    global sessions
+    action = action or 'HOME'
+    try:
+        exec 'from ezdm_libs.ezdm_%s import %s as ActionSession' % (action.lower(), action.upper())
+    except:
+        from ezdm_libs.frontend import Session as ActionSession
+    if not action in sessions:
+        sessions[action] = ActionSession()
+    print sessions
+    return sessions[action].render(request)
 
 
 if __name__ == '__main__':
