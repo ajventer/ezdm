@@ -1,143 +1,41 @@
 import sys
 import datetime
 import os
-from ezdm_libs import get_sys_data,gui,web
-from simplejson import loads,dumps
-from glob import iglob,glob
+from ezdm_libs import get_sys_data, get_user_data
+from simplejson import loads, dumps
+from glob import iglob, glob
 from random import randrange
 from pprint import pprint
-if gui():
-    import easygui as eg
-if web():
-    import cgi
+
+
+def find_files(source, needle=None, basename=False):
+    matches =  glob(os.path.join(get_user_data(source), needle))
+    matches += glob(os.path.join(get_sys_data(source), needle))
+    if basename:
+        matches = [os.path.basename(match) for match in matches]
+    return list(set(matches))
+
+
+def readfile(source, name, json=False):
+    filenames = find_files(source, name)
+    if filenames:
+        filename = filenames[0]
+    if not json:
+        return open(filename,'r').read()
+    return loads(open(filename,'r').read())
+
+
+def smart_input(*args):
+    print "Smart_input: %s%s" %( args, kwargs)
+    pass
+
+def say(*args):
+    print "Say: %s%s" %( args, kwargs)
+
     
 def attack_mods():
     return loads(open(os.path.join(get_user_data('adnd2e'),"attack_mods.json")).read())
 
-def formheader(border=5,title=None,wsgi=False,action=''):
-    out=["<form method=post"]
-    if len(action) > 0:
-        out.append('action="%s"' %action)
-    out.append("><table border=%s>" %border)
-    if title:
-        out.append("<tr><td colspan=2 bgcolor=darkgray>%s</td></tr>" %title)
-    if wsgi:
-        return '\n'.join(out)
-    else:
-        print '\n'.join(out)
-        
-def select_char(characters,wsgi=False,):
-    out=[]
-    out.append(webinput('Character:','character',characters,wsgi=True))
-  #  out.append(webinput('Use computer dice ?','autodice',['Yes','No'],wsgi=True))
-    out.append(cgihide('autodice','Yes',wsgi=True))
-    if wsgi:
-        return '\n'.join(out)
-    else:
-        print '\n'.join(out)
-    
-            
-    
-def formfooter(wsgi=False):
-    out='<tr><td colspan=2 align=center,valign=center><input type=submit name="submit"></td></tr></table></form>'
-    if wsgi:
-        return out
-    else:
-        print out
-    
-def cgihide(name,value,wsgi=False):
-    out='<input type=hidden name="%s" value="%s">' %(name,value)
-    if wsgi:
-        return out
-    else:
-        print out
-    
-def dicthide(dic={},wsgi=False):
-    out=[]
-    for key in dic.keys():
-        out.append(cgihide(key,dic[key],wsgi=True))
-    if wsgi:
-        return '\n'.join(out)
-    else:
-        print '\n'.join(out)
-        
-def webinput(description,name,default='',selected='',wsgi=False,hide=False):
-    out=['<tr><td bgcolor=lightgray align=left valign=top><b>%s</b></td>' %(description)]
-    out.append( "<td align=left valign=top>")
-    if type(default) == type({}):
-        dictinput(default,wsgi=wsgi,parent=selected,hide=hide)
-    if type(default) == type(''):
-        out.append('<input type=text name="%s" value="%s"></td></tr>'%(name,default))
-    if type(default) == type([]):
-        if not selected in default:
-            out.append('<select name="%s">' %name)
-        else:
-            out.append( '<select name="%s" selected="%s">' %(name,selected))
-            out.append( '<option>%s</option>' %selected)
-        for item in default:
-            out.append('<option>%s</option>' %item)
-        out.append('</select></td></tr>')
-    if wsgi:
-        return '\n'.join(out)
-    else:
-        print '\n'.join(out)
-        
-def dictinput(dic={},parent=None,wsgi=False,hide=False):
-    out=[]
-    for key in dic.keys():
-        if not parent:
-            name=key
-        else:
-            name="%s::%s" %(parent,key)
-        if type(dic[key]) <> type({}):
-            if not hide:
-                out.append(webinput(name,name,dic[key],wsgi=True))
-            else:
-                out.append(cgihide(name,dic[key],wsgi=True))
-                out.append('<tr><td bgcolor=lightgray align=left valign=center>%s</td><td align=center valign=center>%s</td></tr>'%(name,dic[key]))
-        else:
-            out.append(dictinput(dic[key],parent=name,hide=hide,wsgi=True))
-    if wsgi:
-        return '\n'.join(out)
-    else:
-        print '\n'.join(out)
-            
-def cgiheader(title='',linkback=True,wsgi=False):
-    if len(title) == 0:
-        t = sys.argv[0]
-    else:
-        t = title
-    out=[]
-    if not wsgi:
-        out.append("Content-type: text/html")
-        out.append('')
-    out += ["<html><head><title>%s</title></head><body>" %t,"<table width=100% border=0 cellpadding=0 cellspacing=0><tr><td align=center bgcolor=lightblue><b>",t,"</b>"]
-    if linkback:
-        out.append("</td><td width=50 align=right bgcolor=lightblue><a href=ezdm.cgi><b>Home</b></a></td></tr><tr><td align=left>")
-    else:
-        out.append("</td></tr><tr><td>")
-    if wsgi:
-        return '\n'.join(out)
-    else:
-        print '\n'.join(out)    
-
-    
-def cgifooter(linkback=True,wsgi=False):
-    out=[]
-    if linkback:
-        out.append("</td><td width=50 align=right bgcolor=lightblue valign=bottom><a href=ezdm.cgi><b>Home</b></a>")
-    out.append("</td></tr></table></body></html>")
-    if wsgi:
-        return '\n'.join(out)
-    else:
-        print '\n'.join(out)    
-            
-def parsecgi():
-    data={}
-    form = cgi.FieldStorage()
-    for key in form.keys():
-        data[key]=form.getvalue(key)
-    return data
     
 
 def price_in_copper(gold,silver,copper):
@@ -156,49 +54,13 @@ def convert_money(copper):
     return money
         
 
-def clearscr():
-    for X in range(0,100):
-        print
         
 def heal_dice(auto=True):
         sides=smart_input('Healing dice sides',validentries=dice_list(),integer=True)
         num=smart_input('Number of healing dice to roll',integer=True)
         return rolldice(auto,num,sides)        
 
-def get_user_data(source):
-    _ROOT=os.path.expanduser('~')
-    _ROOT=os.path.join(_ROOT,'.ezdm')
-    datapath=os.path.join(_ROOT,source)
-    if not os.path.exists(datapath):
-        os.makedirs(datapath)
-    return  datapath
 
-def title():
-    return(os.path.basename(sys.argv[0]))
-
-def say(arg,wsgi=False):
-    if wsgi:
-        if type(arg) == type(''):
-            arg=[arg]
-        return '<br>'.join(arg)
-    
-    if web():
-        if type(arg) == type(''):
-            arg=[arg]
-        for line in arg:
-            print "%s<br>" %line
-                            
-    return
-    out=''
-    if type(arg) == type([]):
-        for line in arg:
-            out='%s\n%s' %(out,line)
-            print line
-    else:
-        out=arg
-        print arg 
-    if gui():
-        eg.msgbox(out,title=title())
 
 def highlight(out,clear=False,sayit=True):
     if clear:
