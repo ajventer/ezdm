@@ -48,11 +48,13 @@ def load_icon(icon='blank.png'):
         path=os.path.join(syspath,'blank.png')
     return path
 
-def find_files(source, needle=None, basename=False):
+def find_files(source, needle=None, basename=False, strip=''):
     matches =  glob(os.path.join(get_user_data(source), needle))
     matches += glob(os.path.join(get_sys_data(source), needle))
     if basename:
         matches = [os.path.basename(match) for match in matches]
+    if strip:
+        matches = [match.replace(strip,'') for match in matches]
     return list(set(matches))
 
 

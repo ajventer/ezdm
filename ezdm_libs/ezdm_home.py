@@ -1,9 +1,10 @@
-from frontend import Session
+from frontend import Session, Page
 
 
 class HOME(Session):
     def render(self, requestdata):
+        page = Page()
         if requestdata:
             self.destroy()
-        self.page.add('COPYING.tpl', {})
-        return self.page.render()
+        page.add('COPYING.tpl', {})
+        return page.render()

@@ -4,19 +4,38 @@ from bottle import route, run, request
 sessions = {}
 
 
-@route('/', method='get')
-@route('/<action>', method='get')
-def main_page(action=None):
+def posthandler(action=None):
+    global sessions
+    if not action in sessions:
+        return 'Error - this should never happen ! <a href="/">Return to home page</a>'
+    print sessions[action]
+    print sessions[action].render(request.POST)
+    return sessions[action].render(request.POST)
+
+
+def gethandler(action=None):
     global sessions
     action = action or 'HOME'
     try:
         exec 'from ezdm_libs.ezdm_%s import %s as ActionSession' % (action.lower(), action.upper())
-    except:
+    except Exception as e:
+        print "Failed to load %s: %s\nLoading default session" % (action, e)
         from ezdm_libs.frontend import Session as ActionSession
     if not action in sessions:
         sessions[action] = ActionSession()
     print sessions
-    return sessions[action].render(request)
+    return sessions[action].render(None)
+
+
+@route('/', method='get')
+@route('/<action>', method='get')
+@route('/<action>', method='post')
+def main_page(action=None):
+    print request
+    if request.POST:
+        return posthandler(action)
+    else:
+        return gethandler(action)
 
 
 if __name__ == '__main__':
