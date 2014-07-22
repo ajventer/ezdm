@@ -7,6 +7,15 @@ from glob import iglob, glob
 from random import randrange
 from pprint import pprint
 
+def flatten(init, lkey=''):
+    ret = {}
+    for rkey,val in init.items():
+        key = lkey+rkey
+        if isinstance(val, dict):
+            ret.update(flatten(val, key+'/'))
+        else:
+            ret[key] = val
+    return ret
 
 def readkey(key, json, default=None):
     if not json or not isinstance(json, dict):
@@ -24,15 +33,17 @@ def readkey(key, json, default=None):
             return json[k]
         else:
             ks = '/'.join(keylist[keylist.index(k) + 1:])
-            return json_readkey(ks, json[k])
+            return json_readkey(ks, json[k], default)
 
 
 def writekey(key, value, json):
     parse = 'json'
     for k in key.strip('/').split('/'):
         k = k.replace('/', '')
-        parse = '%s[%s]' % (parse, k)
-    parse = '%s = %s' % (parse, value)
+        new_parse = '%s["%s"]' % (parse, k)
+        exec 'if not "%s" in %s: %s = {}' % (k, parse, new_parse)
+        parse = new_parse
+    parse = '%s = value' % (parse)
     exec parse
 
 
