@@ -7,6 +7,32 @@ from glob import iglob, glob
 from random import randrange
 from pprint import pprint
 
+def json_editor(tpldict, name, action):
+    return {'header': {'name': name, 'action':action}, 'formdata': tpldict}
+
+def template_dict(template, defaults=None):
+    tpl = flatten(template)
+    dfl = defaults and flatten(defaults) or {}
+    ret = {}
+    for key in tpl:
+        inputtype = 'text'
+        options = []
+        value=''
+        if '__' in key:
+            for k in key.split('/'):
+                if k.startswith('__X'):
+                    break
+                if k.startswith('__Y'):
+                    inputtype = 'hidden'
+        if isinstance(tpl[key], str) and tpl[key].startswith('__['):
+            inputtype = 'select'
+            options = tpl[key].replace('__[','').replace(']','').split(',')
+        if realkey(key) in dfl:
+            value = dfl(realkey(key))
+        ret[realkey(key)] = {'name': realkey(key), 'value': value, 'inputtype': inputtype, 'options': options}
+    return ret
+
+
 def flatten(init, lkey=''):
     ret = {}
     for rkey,val in init.items():
@@ -16,6 +42,15 @@ def flatten(init, lkey=''):
         else:
             ret[key] = val
     return ret
+
+def realkey(key):
+    ret = []
+    for k in key.split('/'):
+        if k.startswith('__'):
+            ret.append(k[3:])
+        else:
+            ret.append(k)
+    return '/'.join(ret).strip('/')
 
 def readkey(key, json, default=None):
     if not json or not isinstance(json, dict):

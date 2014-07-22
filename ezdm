@@ -9,7 +9,6 @@ def posthandler(action=None):
     if not action in sessions:
         return 'Error - this should never happen ! <a href="/">Return to home page</a>'
     print sessions[action]
-    print sessions[action].render(request.POST)
     return sessions[action].render(request.POST)
 
 
