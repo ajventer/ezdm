@@ -33,6 +33,12 @@ class Session:
         page.add('blank.tpl', self._data)
         return page.render()
 
+    def view(self, item):
+        """
+        Override this with a method to read-only view an item of data
+        """
+        self.render(item)
+
 
 class Page:
     def __init__(self, title=None):
@@ -75,6 +81,7 @@ class Page:
         page_content = ''
         for item in self.content:
             page_content += self._tplrender(item[0], item[1])
+        print page_content
         return page_content
 
 
@@ -129,3 +136,21 @@ class JSON_Editor(Session):
             return self.welcomeform()
         self._data.update(requestdata)
         return self.newform()
+
+    def view(self, item):
+        page = Page()
+        page.message(item)
+        if not item:
+            page.error('No item specified')
+            return page.render()
+        try:
+            print 'try %s' % self._name
+            json = readfile('%ss' % self._name, item, json=True)
+        except:
+            print 'except'
+            page.error('No files matching %s found in %s' % (item, self._name))
+            return page.render()
+        json = {"json": json}
+        print json
+        page.add('json_viewer.tpl', json)
+        return page.render()

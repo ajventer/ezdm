@@ -14,7 +14,7 @@ def posthandler(action=None):
     return sessions[action].render(request.POST)
 
 
-def gethandler(action=None):
+def gethandler(action=None, item=None):
     global sessions
     action = action or 'HOME'
     try:
@@ -24,22 +24,40 @@ def gethandler(action=None):
         from ezdm_libs.frontend import Session as ActionSession
     if not action in sessions:
         sessions[action] = ActionSession()
-    return sessions[action].render(None)
+    if not item:
+        return sessions[action].render(None)
+    else:
+        return sessions[action].view(item)
+
+
+@route('/view/<action>/<item>', method='get')
+def view(action, item):
+    print "View %s %s" % (action, item)
+    return gethandler(action, item)
+
+
+@route('/reset', method='get')
+@route('/reset/<action', method='get')
+def reset(action=None):
+    global sessions
+    if not action:
+        sessions = {}
+    else:
+        if action in sessions:
+            del(sessions[action])
+    return gethandler()
 
 
 @route('/', method='get')
-@route('/<action>', method='get')
-@route('/<action>', method='post')
+@route('/action/<action>', method='get')
+@route('/action/<action>', method='post')
 def main_page(action=None):
     global sessions
-    if action == 'reset':
-        action = None
-        sessions = {}
     print request
     if request.POST:
         return posthandler(action)
     else:
-        return gethandler(action)
+        return gethandler(action, None)
 
 
 if __name__ == '__main__':

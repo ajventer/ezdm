@@ -138,10 +138,11 @@ def find_files(source, needle=None, basename=False, strip=''):
     return list(set(matches))
 
 
-def readfile(source, name, json=False):
-    filenames = find_files(source, name)
-    if filenames:
-        filename = filenames[0]
+def readfile(source='', name='', filename='', json=False):
+    if not filename:
+        filenames = find_files(source, name)
+        if filenames:
+            filename = filenames[0]
     if not json:
         return open(filename, 'r').read()
     return loads(open(filename, 'r').read())

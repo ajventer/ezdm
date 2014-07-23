@@ -1,4 +1,4 @@
-<form action="{{action}}" method='post'>
+<form action="/action{{action}}" method='post'>
 <table border=1>
     <tr>
         <td bgcolor=lightgray colspan=2>

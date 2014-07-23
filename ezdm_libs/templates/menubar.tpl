@@ -2,7 +2,7 @@
     <tr>
         {%for item in menuitems %}
         <td bgcolor=lightgray>
-            <a href="/{{item}}">{{item}}</a>
+            <a href="/action/{{item}}">{{item}}</a>
         </td>
         {%endfor%}
         <td bgcolor=lightgray>
