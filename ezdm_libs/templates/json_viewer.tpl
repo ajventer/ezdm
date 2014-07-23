@@ -3,6 +3,9 @@
 {% if json.icon %}
 	<img align=right src="/icon/{{json.icon}}" border=0>
 {% endif %}    	
+{% if json.core and json.core.icon %}
+	<img align=right src="/icon/{{json.core.icon}}" border=0>
+{% endif %}    	
 <ul>
 {%- for key, value in json.items() recursive %}                       
   <li>{{ key }}                                                           

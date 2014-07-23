@@ -1,30 +1,10 @@
-from util import smart_input,highlight,rolldice,load_json,inrange,say,get_user_data,price_in_copper,convert_money,get_set_icon
+from util import rolldice,readfile,inrange,price_in_copper,convert_money, find_files, save_json
 import sys
 import datetime
 import os
-from simplejson import loads,dumps
 from glob import glob
 from random import randrange
-from pprint import pprint
 from item import Item
-from ezdm_libs import get_sys_data
-
-def list_chars(exclude=[],monsters=True):
-    chars={}
-    charfiles = glob(os.path.join(get_sys_data('characters'),"*.json"))
-    charfiles += glob(os.path.join(get_user_data('characters'),"*.json"))
-
-    for entry in set(charfiles):
-        cname=os.path.basename(entry).rstrip('.json')
-        char=Character(load_json('characters',cname),True)
-        if not cname in exclude:
-            if monsters:
-                chars[char.displayname()]=cname
-            elif not char.is_monster():
-                    chars[char.displayname()]=cname
-    if len(chars) == 0:
-        say('Note: you have not created any characters yet')
-    return chars
 
 class Character:
     removed=False
@@ -51,7 +31,7 @@ class Character:
         self.removed = True
         
     def xp_worth(self):
-        xpkey=self.json['combat']['level/hitdice']
+        xpkey=self.json['combat']['level-hitdice']
         xpvalues=load_json('adnd2e','creature_xp') or {}
         if str(xpkey) in xpvalues.keys():
             xp=xpvalues[str(xpkey)]
@@ -59,7 +39,6 @@ class Character:
             xp=3000+((int(xpkey)-13)*1000)
         return int(xp)
             
-    
     def set_index(self,index):
         self.index=index
         
@@ -156,8 +135,7 @@ class Character:
     def save(self):
         if 'temp' in self.json:
             del self.json['temp']
-        open(os.path.join(get_user_data('characters'),self.filename()),'w').write(dumps(self.json,indent=4))
-        highlight('%s status saved to disk' %self.displayname(),clear=False)
+        save_json('characters', self._filename(), self.get_json())
         
     def update(self,json,save=True):
         self.json=json
@@ -206,27 +184,15 @@ class Character:
                     mod=int(saving[race][key])
                     continue
         target=int(self.json['combat']['saving_throws'][against])
-        if not wsgi:
-            say ("%s Tries to roll a saving throw against %s" %(self.displayname(),prettyname))
-            say ("%s needs to roll %s" %(self.displayname(),target))
-        else:
-            out=["%s Tries to roll a saving throw against %s" %(self.displayname(),prettyname),"%s needs to roll %s" %(self.displayname(),target)]
+        out=["%s Tries to roll a saving throw against %s" %(self.displayname(),prettyname),"%s needs to roll %s" %(self.displayname(),target)]
         roll=rolldice(self.auto,1,20,mod,wsgi=True)
         out.append(roll[1])
         if roll[0] >= int(target):
-            if not wsgi:
-                say ("Saved !")
-                return True
-            else:
-                out.append('Saved !')
-                return (True,out)
+            out.append('Saved !')
+            return (True,out)
         else:
-            if not wsgi:
-                say ("Did not save !")
-                return False
-            else:
-                out.append("Did not save !")
-                return (False,out)
+            out.append("Did not save !")
+            return (False,out)
         
     def dmg(self,weapon):
         return int(self.weapons[weapon].json['conditionals']['dmg'])
@@ -255,12 +221,7 @@ class Character:
         current_xp=int(self.json['personal']['xp'])
         new_xp=current_xp+int(xp)
         self.json['personal']['xp'] = str(new_xp)
-        out=highlight("%s now has %s XP" %(self.displayname(),self.json['personal']['xp']),sayit=False)
-        self.save()
-        if not wsgi:
-            say(out)
-        else:
-            return out
+        return str(new_xp)
         
     def next_level(self):
         parentclass=self.json['class']['parent']
@@ -272,21 +233,14 @@ class Character:
         else:
             next_xp=int(xp_levels[childclass])
         return next_xp
-    
-        
-      
+
     def is_misile(self):
         try:
-            return self.weapons[self.weapon].json['conditionals']['weapon_type'] == "misile"
+            return self.weapons[self.weapon]['conditionals']['weapon_type'] == "misile"
         except IndexError:
-            #This could happen if a character has no weapons equiped
             return False
-
-        
+ 
     def attack_roll(self,target,mod):
-        #on_use=self.weapons[self.weapon].events.OnUse(self.json,target.json)
-        #self.json=on_use['character']
-        #target.json=on_use['target']
         self.next_weapon() 
         roll=rolldice(self.autoroll(),1,20,mod,wsgi=True)
         if roll[0] - mod == 1:
@@ -308,19 +262,11 @@ class Character:
         out.append(roll[1])
         if roll[0] > failrate:
             out += highlight('Spell succeeds !',clear=False,sayit=False)
-            if not wsgi:
-                say (out)
-                return True
-            else:
-                return (True,out)
+            return (True,out)
         else:
             out += highlight('Spell fails !',clear=False,sayit=False)
             self.spell_complete()
-            if not wsgi:
-                say (out)
-                return False
-            else:
-                return(False,['<br'.join(out)])
+            return(False,['<br'.join(out)])
     
     def load_weapons(self):
         weap=[]
@@ -331,35 +277,44 @@ class Character:
         if type(self.json['inventory']['pack']) <> type([]):
             self.json['inventory']['pack']=[]
         for item in self.json['inventory']['equiped']:
-            i=Item(load_json('items',item))
+            i=Item(item)
             if i.json['type'] == 'weapon':
                 weap.append(i)
         return weap
 
     def acquire_item(self,item):
         #self.json=item.events.OnPickup(self.json)
-        self.json['inventory']['pack'].append(item.filename(extension=None))
+        self.json['inventory']['pack'].append(readfile('items', item, json=True))
         
     def equip_item(self,itemname):
-        item=Item(load_json('items',itemname))
-        #self.json=item.events.OnEquip(self.json)
-        index=self.json['inventory']['pack'].index(itemname)
+        index = 0
+        for i in readkey('/inventory/pack', self.json, []):
+            if i['name'] == itemname:
+                break
+            else:
+                index += 1
+        self.json['inventory']['equiped'].append(i)
         del self.json['inventory']['pack'][index]
-        self.json['inventory']['equiped'].append(itemname)
+        
 
     def unequip_item(self,itemname):
-        item=Item(load_json('items',itemname))
-        #self.json=item.events.OnUnEquip(self.json)
-        index=self.json['inventory']['equiped'].index(itemname)
+        index = 0
+        for i in readkey('/inventory/equiped', self.json, []):
+            if i['name'] == itemname:
+                break
+            else:
+                index += 1
+        self.json['inventory']['pack'].append(i)
         del self.json['inventory']['equiped'][index]
-        self.json['inventory']['pack'].append(itemname)
         
     def drop_item(self,itemname):
-        item=Item(load_json('items',itemname))
-        #self.json=item.events.OnDrop(self.json)
-
-        index=self.json['inventory']['pack'].index(itemname)
-        del self.json['inventory']['pack'][index]
+        index=0
+        for i in readkey('/inventory/pack', self.json, []):
+            if i['name'] == itemname:
+                break
+            else:
+                index += 1
+        del (self.json['inventory']['pack'][index])
         
     def list_inventory(self,sections=['pack','equiped']):
         result=[]
@@ -368,11 +323,6 @@ class Character:
                     self.json['inventory'][section] = []
                 result = list(result+self.json['inventory'][section])
         return result
-    
-    def list_money(self):
-        return "Gold: %s, Silver: %s, Copper: %s" %(self.json['inventory']['money']['gold'],self.json['inventory']['money']['silver'],self.json['inventory']['money']['copper'])
-
-    
     
     def spend_money(self,gold=0,silver=0,copper=0):
         ihave=price_in_copper(int(self.json['inventory']['money']['gold'] or '0'),int(self.json['inventory']['money']['silver'] or '0'),int(self.json['inventory']['money']['copper'] or '0'))
@@ -415,8 +365,7 @@ class Character:
         if not "inventory" in self.json or not "equiped" in self.json["inventory"]:
             return []
         for item in self.list_inventory(['equiped']):
-            i=Item(load_json('items',item))
-            if i.json['type'] == 'armor':
+            if item['type'] == 'armor':
                 arm.append(i)
         return arm
         
@@ -445,17 +394,9 @@ class Character:
         roll=rolldice(self.autoroll(),1,100,wsgi=True)
         out.append(roll[1])
         if roll[0] <= target_roll:
-            if not wsgi:
-                say(out)
-                return True
-            else:
-                return (True,out)
+            return (True,out)
         else:
-            if not wsgi:
-                say(out)
-                return False
-            else:
-                return (False,out)
+            return (False,out)
 
         
     def conditionals(self):
@@ -507,78 +448,6 @@ class Character:
                 conditionals[key] = int(conditionals[key]) + dex_bonus + racial_bonus
         return conditionals
       
-    def pprint(self):
-        out =highlight(self.displayname(),sayit=False)
-        out.append("Level: %s " %self.json['combat']['level/hitdice'])
-        out.append( "XP %s/%s" %(self.current_xp(),self.next_level()))
-        out.append( "Class %s:%s" %(self.json['class']['parent'],self.json['class']['class']))
-        out.append( "Alignment: %s-%s" %(self.json['personal']['alignment']['law'],self.json['personal']['alignment']['social']))
-        out.append( "Race: %s" %self.json['personal']['race'])
-        if self.is_monster():
-            out.append( "XP Worth: %s" %self.xp_worth())
-        out.append( "Combat stats:")
-        out.append("    Armor class: %s" %self.armor_class())
-        for key in self.json['combat']:
-            if key not in ['saving_throws','level/hitdice']:
-                out.append("    %s: %s" %(key,self.json['combat'][key]))
-        out.append( "    Saving throws:")
-        line='      '
-        for key in self.json['combat']['saving_throws']:
-            prettyname=load_json('adnd2e','saving_throws')['names'][key]
-            line="%s [%s: %s] " %(line,prettyname,self.json['combat']['saving_throws'][key])
-        out.append(line)
-        out.append( "Ability scores:")
-        
-        for key in self.json['abilities']:
-            out.append( "   %s: %s" %(key,self.json['abilities'][key]))
-        out.append( "Total attacks per round: %s" %self.num_attacks())
-        out.append( "Weapons: %s" %self.num_weapons())
-        line='      '
-        out.append(line)
-        out.append( "Modifiers(first weapon):")
-        out.append( "Chance to hit: %s" %self.to_hit_mod())
-        out.append( "     Damage: %s" %self.dmg_mod())
-        out.append( "     Defense (modifies AC down): %s" %self.def_mod())
-        out.append( "     PPD Save: %s" %self.ppd_mod())
-        
-        conditionals=self.conditionals()
-        if len(conditionals) > 0:
-            out.append('Thief Abilities:')
-        various=load_json('adnd2e','various')
-        abilities=various['abilities']
-
-        subclass=self.json['class']['class']
-        parentclass=self.json['class']['parent']
-        level=self.json['combat']['level/hitdice']
-    
-        
-        for con in conditionals.keys():
-            out.append('    %s:%s percent' %(con,conditionals[con]))
-        out.append('Spell capability:')
-        spell_progression=various["spell progression"]
-        checkclass=None
-        if subclass in spell_progression:
-            checkclass=subclass
-        elif parentclass in spell_progression:
-            checkclass=parentclass
-        if checkclass:
-            for key in spell_progression[checkclass].keys():
-                if inrange(level,key):
-                    if "casting_level" in spell_progression[checkclass][key]:
-                        out.append('   Casting Level: %s' %(spell_progression[checkclass][key]["casting_level"]))
-                    if "priest spells" in spell_progression[checkclass][key]:
-                        line='   Priest spells:'
-                        for spell_level in sorted(spell_progression[checkclass][key]["priest spells"].keys()):
-                            line=line+' level %s - number %s ' %(spell_level,spell_progression[checkclass][key]["priest spells"][spell_level])
-                        out.append(line)
-                    if "wizard spells" in spell_progression[checkclass][key]:
-                        line='   Wizard spells:'
-                        for spell_level in sorted(spell_progression[checkclass][key]["wizard spells"].keys()):
-                            line=line+' level %s - number %s ' %(spell_level,spell_progression[checkclass][key]["wizard spells"][spell_level])
-                        out.append(line)
-                    
-        return(out)
-
 
     def displayname(self):
         out="%s %s" %(self.json['personal']['name']['first'],self.json['personal']['name']['last'])
@@ -596,10 +465,4 @@ class Character:
         for key2 in thac0s.keys():
             if inrange(self.json['combat']["level/hitdice"],key2):
                 return int(thac0s[key2])
-                
-    def viewchar(self):
-        print "<table width=100% cellpadding=20 border=0><tr><td>"
-        say(self.pprint())
-        print "</td><td valign=top>"
-        get_set_icon('characters',self.basename())
-        print "</td></tr></table>"
+

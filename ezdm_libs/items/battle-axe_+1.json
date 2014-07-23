@@ -1,10 +1,26 @@
 {
-    "type": "weapon",
-    "name": "battle-axe +1",
+    "core": {
+        "name": "battle-axe +1",
+        "weight": "10",
+        "price": {
+            "copper": "1",
+            "silver": "50",
+            "gold": ""
+        },
+        "icon": "w_axe_war_0.png",
+        "type": "weapon",
+        "size": "large"
+    },
+    "price": {
+        "copper": "1",
+        "silver": "0",
+        "gold": "0"
+    },
     "conditional": {
         "weapon_type": "melee",
-        "save_against": "none",
-        "to_hit": 1,
-        "dmg": 8
+        "to_hit": "1",
+        "dmg": "8",
+        "damage_type": "hack",
+        "save_against": "none"
     }
 }

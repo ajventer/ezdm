@@ -88,7 +88,6 @@ class Page:
         page_content = ''
         for item in self.content:
             page_content += self.tplrender(item[0], item[1])
-        print page_content
         return page_content
 
 
@@ -111,6 +110,9 @@ class JSON_Editor(Session):
         loadfrom['items'] = find_files(source, '*.json', basename=True, strip='.json')
         return ('load_defaults_from.tpl', loadfrom)
 
+    def sidebar(content):
+        self._sidebar += content
+
     def welcomeform(self):
         page = Page()
         lf = self._loadform(True)
@@ -124,7 +126,7 @@ class JSON_Editor(Session):
 
     def newform(self):
         page = Page()
-        self._sidebar = page.tplrender('icon_selecter.tpl', list_icons(self._data.get('icon','')))
+        self.sidebar(page.tplrender('icon_selecter.tpl', list_icons(self._data.get('icon',''))))
         lf = self._loadform(False)
         page.add(lf[0], lf[1])
         default = self._data.get('loadfrom', None)
@@ -143,6 +145,7 @@ class JSON_Editor(Session):
                 del(self._data[key])
         if 'core/name' in self._data and [k for k in self._data if k.startswith('conditional')]:
             page.message('%s saved to %s' % (self._name, save_json('%ss' % self._name, self._data['core/name'], self._data)))
+            self._destroy()            
         if self._sidebar:
             page.sidebar(self._sidebar)            
         return page.render()

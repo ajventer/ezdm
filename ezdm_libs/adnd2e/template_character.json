@@ -11,7 +11,7 @@
     "__Ixp":""
 },
 "combat":{
-    "__Ilevel/hitdice":"",
+    "__Ilevel-hitdice":"",
     "__Ihitpoints":"",
     "__Imax_hp":"",
     "__Xatacks_per_round": "",
