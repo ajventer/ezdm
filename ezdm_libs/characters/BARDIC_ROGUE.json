@@ -48,7 +48,7 @@
         "class": "bard",
         "parent": "rogue"
     },
-    "conditionals": {
+    "conditional": {
         "read languages": "0",
         "find/remove traps": "5",
         "pick pockets": "15",
