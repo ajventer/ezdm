@@ -38,12 +38,12 @@ def template_dict(template, defaults=None):
                     inputtype = 'select'
             else:
                 continue
-        if '__' in key:
-            for k in key.split('/'):
-                if k.startswith('__X'):
-                    break
-                if k.startswith('__Y'):
-                    inputtype = 'hidden'
+
+
+        if '__X' in key:
+            continue
+        if '__Y' in key:
+            inputtype = 'hidden'
         if isinstance(tpl[key], str) and tpl[key].startswith('__['):
             inputtype = 'select'
             options = tpl[key].replace('__[', '').replace(']', '').split(',')
@@ -113,6 +113,12 @@ def writekey(key, value, json):
         parse = new_parse
     parse = '%s = value' % (parse)
     exec parse
+
+def list_icons(selected=''):
+    icons = glob(get_sys_data('icons')+'/*')
+    icons.extend(glob(get_user_data('icons')+'/*'))
+    icons = [os.path.basename(icon) for icon in icons]
+    return {'selected': selected, 'icons': icons}
 
 
 def load_icon(icon='blank.png'):

@@ -1,5 +1,8 @@
 #!/usr/bin/env python
-from bottle import route, run, request
+from gevent import monkey; monkey.patch_all()
+from bottle import route, run, request, static_file
+from ezdm_libs.util import load_icon
+import os
 
 sessions = {}
 
@@ -28,6 +31,14 @@ def gethandler(action=None, item=None):
         return sessions[action].render(None)
     else:
         return sessions[action].view(item)
+
+
+@route('/icon/<filename>', method='get')
+def icon(filename):
+    icon = load_icon(filename)
+    print "Serving %s" %icon
+    extension = icon.split('.')[-1]
+    return static_file(os.path.basename(icon), root=os.path.dirname(icon), mimetype='image/%s' % extension)
 
 
 @route('/view/<action>/<item>', method='get')
@@ -61,4 +72,5 @@ def main_page(action=None):
 
 
 if __name__ == '__main__':
-    run(host='0.0.0.0', port=8000, reload=True)
+    run(host='0.0.0.0', port=8000, reloader=True)
+    #run(host='0.0.0.0', port=8000, server='gevent')

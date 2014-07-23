@@ -1,5 +1,5 @@
 from jinja2 import Template
-from util import readfile, find_files, template_dict, json_editor, save_json
+from util import readfile, find_files, template_dict, json_editor, save_json, list_icons
 
 
 class Session:
@@ -42,6 +42,7 @@ class Session:
 
 class Page:
     def __init__(self, title=None):
+        self._sidebar = ''
         self._messages = {'messages': [], 'warnings': [], 'errors': []}
         title = title or 'EZDM'
         menuitems = find_files('', 'ezdm*.py', basename=True)
@@ -62,10 +63,13 @@ class Page:
     def warning(self, warning):
         self._add_message(warning, 'warnings')
 
+    def sidebar(self, content=''):
+        self._sidebar = content
+
     def error(self, error):
         self._add_message(error, 'errors')
 
-    def _tplrender(self, name, data):
+    def tplrender(self, name, data):
         tpl = Template(readfile('templates', name))
         return tpl.render(data)
 
@@ -78,9 +82,12 @@ class Page:
             self.content.append(('footer.tpl', {}))
         if self._has_message():
             self.content.insert(2, ('messagebox.tpl', self._messages))
+        if self._sidebar:
+            self.content.insert(2, ('sidebar_top.tpl', {}))
+            self.content.insert(-2, ('sidebar.tpl', {'content': self._sidebar}))
         page_content = ''
         for item in self.content:
-            page_content += self._tplrender(item[0], item[1])
+            page_content += self.tplrender(item[0], item[1])
         print page_content
         return page_content
 
@@ -88,6 +95,7 @@ class Page:
 class JSON_Editor(Session):
 
     _name = 'X'
+    _sidebar = ''
 
     def __init__(self):
         Session.__init__(self)
@@ -107,10 +115,16 @@ class JSON_Editor(Session):
         page = Page()
         lf = self._loadform(True)
         page.add(lf[0], lf[1])
+        ilist = {'list':[], 'name': self._name}
+        for f in find_files('%ss' %self._name, '*.json', basename=True, strip='.json'):
+            ilist['list'].append('<a href=/view/%sS/%s.json>%s</a>' % (self._name.upper(), f, f))
+        page.add('list_viewer.tpl', ilist)
+
         return page.render()
 
     def newform(self):
         page = Page()
+        self._sidebar = page.tplrender('icon_selecter.tpl', list_icons(self._data.get('icon','')))
         lf = self._loadform(False)
         page.add(lf[0], lf[1])
         default = self._data.get('loadfrom', None)
@@ -129,6 +143,8 @@ class JSON_Editor(Session):
                 del(self._data[key])
         if 'core/name' in self._data and [k for k in self._data if k.startswith('conditional')]:
             page.message('%s saved to %s' % (self._name, save_json('%ss' % self._name, self._data['core/name'], self._data)))
+        if self._sidebar:
+            page.sidebar(self._sidebar)            
         return page.render()
 
     def render(self, requestdata):
