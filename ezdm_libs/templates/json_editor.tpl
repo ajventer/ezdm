@@ -3,12 +3,12 @@
 	<tr><td bgcolor=lightblue colspan=2>
 		<center>
 			<strong>
-				{{header[name]}}
+				{{header.name}}
 			</strong>
 		</center>
 		</td>
 	</tr>
-	{% for key in formdata|sort %}
+	{% for key in formdata|sort(True) %}
 	<tr>
 		<td>
 			{{formdata[key].name}}
@@ -26,7 +26,14 @@
 		</td>
 	</tr>
 	{% endfor %}
+	<tr>
+		<td colspan=2><center>
+			<input type=submit value="Save changes">
+		</center>
+		</td>
+	</tr>
 </table>
 </form>
+
 
 

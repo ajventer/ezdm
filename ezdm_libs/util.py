@@ -1,6 +1,6 @@
 import os
 from ezdm_libs import get_sys_data, get_user_data
-from simplejson import loads
+from simplejson import loads, dumps
 from glob import glob
 from random import randrange
 
@@ -25,11 +25,9 @@ def template_dict(template, defaults=None):
             name = key.split('/')
             del(name[1])
             name = realkey('/'.join(name))
-            print "name", name
             k, v = condition.split('=')
-            print "k", k, "v", v
+            k = k.replace('.', '/')
             dv = k in dfl and dfl[k]
-            print "dv", dv
             if dv == v:
                 if name in dfl:
                     value = dfl[name]
@@ -50,9 +48,9 @@ def template_dict(template, defaults=None):
             inputtype = 'select'
             options = tpl[key].replace('__[', '').replace(']', '').split(',')
         if realkey(key) in dfl:
-            value = readkey(realkey(key), dfl, '')
+            value = dfl[realkey(key)]
         elif realkey(key).replace('core/', '') in dfl:
-            value = readkey(realkey(key).replace('core/', ''), dfl, '')
+            value = dfl[realkey(key).replace('core/', '')]
         ret[name] = {'name': name, 'value': value, 'inputtype': inputtype, 'options': options}
     return ret
 
@@ -66,6 +64,18 @@ def flatten(init, lkey=''):
         else:
             ret[key] = val
     return ret
+
+
+def save_json(source, name, dic):
+    d = flatten(dic)
+    out = {}
+    if not name.endswith('.json'):
+        name = '%s.json' % name
+    filename = os.path.join(get_user_data(source), name)
+    for key in d:
+        writekey(key, d[key], out)
+    open(filename, 'w').write(dumps(out, indent=4))
+    return filename
 
 
 def realkey(key):

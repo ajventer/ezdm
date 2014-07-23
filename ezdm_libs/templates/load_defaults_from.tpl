@@ -1,5 +1,4 @@
-<center>
-<form action="{{action}}" method=post>
+<form action="{{action}}" method='post'>
 <table border=1>
     <tr>
         <td bgcolor=lightgray colspan=2>
@@ -11,6 +10,9 @@
     </td>
     <td>
         <select name="{{keyname}}">
+            {% if allow_new == 'True' %}
+                <option value="New {{name}}">New {{name}}</option>
+            {% endif %}
             {%for item in items %}
                 <option value="{{item}}">{{item}}</option>
             {%endfor%}
@@ -23,4 +25,3 @@
 </tr>
 </table>
 </form>
-</center>
