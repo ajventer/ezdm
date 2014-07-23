@@ -1,14 +1,13 @@
-import sys
-import datetime
 import os
 from ezdm_libs import get_sys_data, get_user_data
-from simplejson import loads, dumps
-from glob import iglob, glob
+from simplejson import loads
+from glob import glob
 from random import randrange
-from pprint import pprint
+
 
 def json_editor(tpldict, name, action):
-    return {'header': {'name': name, 'action':action}, 'formdata': tpldict}
+    return {'header': {'name': name, 'action': action}, 'formdata': tpldict}
+
 
 def template_dict(template, defaults=None):
     tpl = flatten(template)
@@ -17,7 +16,30 @@ def template_dict(template, defaults=None):
     for key in tpl:
         inputtype = 'text'
         options = []
-        value=''
+        value = ''
+        name = realkey(key)
+        if key.startswith('conditional') and not defaults:
+            continue
+        if key.startswith('conditional'):
+            condition = key.split('/')[1]
+            name = key.split('/')
+            del(name[1])
+            name = realkey('/'.join(name))
+            print "name", name
+            k, v = condition.split('=')
+            print "k", k, "v", v
+            dv = k in dfl and dfl[k]
+            print "dv", dv
+            if dv == v:
+                if name in dfl:
+                    value = dfl[name]
+                elif not tpl[key].startswith('__['):
+                    value = tpl[key]
+                else:
+                    options = tpl[key].replace('__[', '').replace(']', '').split(',')
+                    inputtype = 'select'
+            else:
+                continue
         if '__' in key:
             for k in key.split('/'):
                 if k.startswith('__X'):
@@ -26,22 +48,25 @@ def template_dict(template, defaults=None):
                     inputtype = 'hidden'
         if isinstance(tpl[key], str) and tpl[key].startswith('__['):
             inputtype = 'select'
-            options = tpl[key].replace('__[','').replace(']','').split(',')
+            options = tpl[key].replace('__[', '').replace(']', '').split(',')
         if realkey(key) in dfl:
-            value = dfl(realkey(key))
-        ret[realkey(key)] = {'name': realkey(key), 'value': value, 'inputtype': inputtype, 'options': options}
+            value = readkey(realkey(key), dfl, '')
+        elif realkey(key).replace('core/', '') in dfl:
+            value = readkey(realkey(key).replace('core/', ''), dfl, '')
+        ret[name] = {'name': name, 'value': value, 'inputtype': inputtype, 'options': options}
     return ret
 
 
 def flatten(init, lkey=''):
     ret = {}
-    for rkey,val in init.items():
-        key = lkey+rkey
+    for rkey, val in init.items():
+        key = lkey + rkey
         if isinstance(val, dict):
-            ret.update(flatten(val, key+'/'))
+            ret.update(flatten(val, key + '/'))
         else:
             ret[key] = val
     return ret
+
 
 def realkey(key):
     ret = []
@@ -52,6 +77,7 @@ def realkey(key):
             ret.append(k)
     return '/'.join(ret).strip('/')
 
+
 def readkey(key, json, default=None):
     if not json or not isinstance(json, dict):
         raise ValueError("%s must be a dict" % repr(json))
@@ -60,15 +86,12 @@ def readkey(key, json, default=None):
     for k in keylist:
         k = k.replace('/', '')
         if not k in json:
-            if default:
-                return default
-            else:
-                raise KeyError("Key %s from path %s not found in %s" % (k, key, json))
+            return default
         if keylist.index(k) == len(keylist) - 1:
             return json[k]
         else:
             ks = '/'.join(keylist[keylist.index(k) + 1:])
-            return json_readkey(ks, json[k], default)
+            return readkey(ks, json[k], default)
 
 
 def writekey(key, value, json):
@@ -83,8 +106,8 @@ def writekey(key, value, json):
 
 
 def load_icon(icon='blank.png'):
-    syspath=get_sys_data('icons')
-    userpath=get_user_data('icons')
+    syspath = get_sys_data('icons')
+    userpath = get_user_data('icons')
     path=''
     if os.path.exists(os.path.join(syspath,icon)):
         path=os.path.join(syspath,icon)
@@ -114,11 +137,11 @@ def readfile(source, name, json=False):
 
 
 def smart_input(*args):
-    print "Smart_input: %s%s" %( args, kwargs)
+    print "Smart_input: %s" % (args)
     pass
 
 def say(*args):
-    print "Say: %s%s" %( args, kwargs)
+    print "Say: %s" % (args)
 
     
 def attack_mods():
@@ -148,24 +171,7 @@ def heal_dice(auto=True):
         num=smart_input('Number of healing dice to roll',integer=True)
         return rolldice(auto,num,sides)        
 
-
-
-def highlight(out,clear=False,sayit=True):
-    if clear:
-        clearscr()
-    bar=''
-    output=[]
-    if not web:
-        output.append("# %s #" %(out))
-    else:
-        output.append('<center><table border=10 cellpadding=0 cellspacing=0><tr><td align=center valign=center bgcolor=darkgray>')
-        output.append("<b> %s </b>" %(out))
-        output.append('</td></tr></table></center>')
-    if sayit:
-        say(output)
-    else:
-        return output
-    
+  
 def dice_list():
     return ['4','6','8','10','100','12','20']
 

@@ -6,5 +6,5 @@
     },
     "type": "other",
     "name": "Healing Potion",
-    "conditionals": {}
+    "conditional": {}
 }

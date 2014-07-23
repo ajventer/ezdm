@@ -6,5 +6,5 @@
     },
     "type": "other",
     "name": "Dry Rations",
-    "conditionals": {}
+    "conditional": {}
 }

@@ -1,7 +1,7 @@
 {
     "type": "weapon",
     "name": "tiger jaw",
-    "conditionals": {
+    "conditional": {
         "weapon_type": "melee",
         "save_against": "none",
         "to_hit": 0,

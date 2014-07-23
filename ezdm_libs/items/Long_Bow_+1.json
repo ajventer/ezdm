@@ -6,7 +6,7 @@
         "silver": "0",
         "gold": "1"
     },
-    "conditionals": {
+    "conditional": {
         "weapon_type": "misile",
         "to_hit": "1",
         "dmg": "8",

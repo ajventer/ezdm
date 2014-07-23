@@ -6,7 +6,7 @@
     },
     "type": "armor",
     "name": "Great Helm",
-    "conditionals": {
+    "conditional": {
         "ac": "1"
     }
 }

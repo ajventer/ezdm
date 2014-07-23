@@ -6,5 +6,5 @@
     },
     "type": "other",
     "name": "candle",
-    "conditionals": {}
+    "conditional": {}
 }

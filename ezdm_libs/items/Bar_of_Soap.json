@@ -6,5 +6,5 @@
     },
     "type": "other",
     "name": "Bar of Soap",
-    "conditionals": {}
+    "conditional": {}
 }

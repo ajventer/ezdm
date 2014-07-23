@@ -1,7 +1,7 @@
 {
     "type": "weapon",
     "name": "dagger",
-    "conditionals": {
+    "conditional": {
         "weapon_type": "melee",
         "save_against": "none",
         "to_hit": 0,

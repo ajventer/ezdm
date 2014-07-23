@@ -1,7 +1,7 @@
 {
     "name": "short sword +1",
     "weight": "0",
-    "conditionals": {
+    "conditional": {
         "weapon_type": "melee",
         "damage_type": "slice",
         "save_against": "none"
