@@ -1,7 +1,0 @@
-{
-    "type": "armor",
-    "name": "Chain Mail",
-    "conditional": {
-        "ac": "5"
-    }
-}

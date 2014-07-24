@@ -24,7 +24,9 @@
 						<option value="{{value}}">{{value}}</option>
 					{%endfor%}
 			{% elif formdata[key].inputtype == 'textarea' %}
-				<textarea name="{{formdata[key].name}}" id="{{formdata[key].name}}">{{formdata[key].value}}</textarea>
+				<textarea rows=10 cols=50 name="{{formdata[key].name}}" id="{{formdata[key].name}}">
+					{{formdata[key].value}}
+				</textarea>
 			{% else %}
 				<input id="{{formdata[key].name}}" name="{{formdata[key].name}}" type="{{formdata[key].inputtype}}" value="{{formdata[key].value}}">
 			{% endif %}

@@ -1,0 +1,33 @@
+{
+    "core": {
+        "rounds_used": 0,
+        "name": "Offhand_Dagger",
+        "weight": "",
+        "price": {
+            "copper": "",
+            "silver": "",
+            "gold": ""
+        },
+        "description": "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tA small dagger balanced for use in the offhand.\r\n\t\t\t\t\r\n\t\t\t\t\r\n\t\t\t\t\r\n\t\t\t\t\r\n\t\t\t\t\r\n\t\t\t\t\r\n\t\t\t\t",
+        "rounds_afteruse": 0,
+        "icon": "sword.png",
+        "type": "weapon",
+        "size": ""
+    },
+    "conditional": {
+        "slot": "lefthand",
+        "dmg": 4,
+        "to_hit": 0,
+        "damage_type": "stab",
+        "weapon_type": "melee",
+        "save_against": "ppd"
+    },
+    "events": {
+        "onfinish_player_target": "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\r\n\t\t\t\t\r\n\t\t\t\t\r\n\t\t\t\t\r\n\t\t\t\t\r\n\t\t\t\t\r\n\t\t\t\t",
+        "ondrop_player": "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tpage.warning('%s has dropped %s' % player.displayname(), item.displayname())\r\n\r\n\t\t\t\t\r\n\t\t\t\t\r\n\t\t\t\t\r\n\t\t\t\t\r\n\t\t\t\t\r\n\t\t\t\t\r\n\t\t\t\t",
+        "onround_player_target": "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\r\n\t\t\t\t\r\n\t\t\t\t\r\n\t\t\t\t\r\n\t\t\t\t\r\n\t\t\t\t\r\n\t\t\t\t",
+        "onequip_player": "\t\t\t\t\t\r\n\t\t\t\t",
+        "onuse_player_target": "\t\t\t\t\t\r\n\t\t\t\t",
+        "onpickup_player": "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\r\n\t\t\t\t\r\n\t\t\t\t\r\n\t\t\t\t\r\n\t\t\t\t\r\n\t\t\t\t\r\n\t\t\t\t"
+    }
+}

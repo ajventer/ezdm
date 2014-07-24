@@ -5,8 +5,8 @@
     "weight": 0,
     "size":"__[small,medium,large]",
     "price":{"gold":0,"silver":0,"copper":0},
-    "rounds_afteruse": 0,
-    "rounds_used": 0,
+    "__Yrounds_afteruse": 0,
+    "__Yrounds_used": 0,
     "__Tdescription": ""
 },
 "events": {

@@ -11,7 +11,8 @@ class Item(EzdmObject):
         if 'temp' in self():
             del self()['temp']
         name = '%s.json' % self.get('/core/name', '')
-        return save_json('characters', name.lower(), self.json)
+        print "Saving ",name
+        return save_json('items', name.lower().replace(' ','_'), self.json)
 
     def slot(self):
         return self.get('/conditional/slot', '')

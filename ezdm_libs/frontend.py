@@ -149,7 +149,6 @@ class JSON_Editor(Session):
                 del(self._data['save_changes'])
                 self._obj.update(self._data)
                 page.message('%s saved to %s' % (self._name, self._obj.save()))
-                self.destroy()
         if self._sidebar:
             page.sidebar(self._sidebar)
         return page.render()

@@ -1,7 +1,0 @@
-{
-    "type": "armor",
-    "name": "Studded Leather Armor",
-    "conditional": {
-        "ac": "5"
-    }
-}

@@ -125,9 +125,9 @@ class Character(EzdmObject):
         return int(readkey('/dex/%s/defense' % self.get('/abilities/dex', 0), ability_mods, 0))
 
     def __get_saving_throws(self):
-        key = self.get('/class/parent', '')
+        key = self.get('/core/class/parent', '')
         sts = load_json("adnd2e", "saving_throws")[key]
-        hitdice = self.get('/combat/level-hitdice', 0)
+        hitdice = self.get('/core/combat/level-hitdice', 0)
         for key2 in sts.keys():
             if inrange(hitdice, key2):
                 st = sts[key2]
@@ -137,15 +137,15 @@ class Character(EzdmObject):
     def saving_throw(self, against):
         saving = load_json('adnd2e', 'saving_throws') or {}
         prettyname = saving['names'][against]
-        race = self.get('/personal/race', '')
-        con = int(self.get('/abilities/con', 0))
+        race = self.get('/core/personal/race', '')
+        con = int(self.get('/core/abilities/con', 0))
         mod = 0
         if race in saving.keys():
             for key in saving[race].keys():
                 if inrange(con, key):
                     mod = int(saving[race][key])
                     continue
-        target = int(self.get('/combat/saving_throws/%s' % against, 0))
+        target = int(self.get('/core/combat/saving_throws/%s' % against, 0))
         out = ["%s Tries to roll a saving throw against %s" % (self.displayname(), prettyname), "%s needs to roll %s" % (self.displayname(), target)]
         roll = rolldice(numdice=1, numsides=20, modifier=mod)
         out.append(roll[1])
@@ -161,7 +161,7 @@ class Character(EzdmObject):
 
     def hit_dice(self):
         if self.is_monster():
-            return int(self.get('/combat/level-hitdice', 1))
+            return int(self.get('/core/combat/level-hitdice', 1))
         else:
             return 1
 
@@ -180,14 +180,14 @@ class Character(EzdmObject):
             self.weapon = 0
 
     def give_xp(self, xp):
-        current_xp = int(self.get('/personal/xp', 0))
+        current_xp = int(self.get('/core/personal/xp', 0))
         new_xp = current_xp + int(xp)
-        self.put('/personal/xp', str(new_xp))
+        self.put('/core/personal/xp', str(new_xp))
         return str(new_xp)
 
     def next_level(self):
-        parentclass = self.get('/class/parent', '')
-        childclass = self.get('/class/class', '')
+        parentclass = self.get('/core/class/parent', '')
+        childclass = self.get('/core/class/class', '')
         nl = int(self.get('/combat/level-hitdice', '')) + 1
         xp_levels = readkey('/%s/%s' % (parentclass, str(nl)), load_json('adnd2e', 'xp_levels'), {})
         if 'all' in xp_levels:
@@ -217,7 +217,7 @@ class Character(EzdmObject):
 
     def spell_success(self):
         ability_scores = load_json('adnd2e', 'ability_scores')
-        wis = str(self.get('/abilities/wis', 0))
+        wis = str(self.get('/core/abilities/wis', 0))
         failrate = int(ability_scores["wis"][wis]["spell_failure"].split('%')[0])
         out = ["Spell failure rate: %s percent" % failrate]
         roll = rolldice(numdice=1, numsides=100)
@@ -234,28 +234,30 @@ class Character(EzdmObject):
         weap = []
         if not "inventory" in self() or not "equiped" in self()["inventory"]:
             return []
-        for item in self.get('/inventory/equiped', []):
-            i = Item(item)
-            if i.itemtype() == 'weapon':
-                weap.append(i)
+        for slot in ['righthand', 'lefthand']:
+            item =  Item(self.get('/core/inventory/equiped/%s' % slot, {}))
+            if item and not item.slot == 'twohand':
+                weap.append(lefthand)
+            elif item.slot == 'twohand':
+                weap = [lefthand]
         return weap
 
     def acquire_item(self, item):
-        self()['inventory']['pack'].append(item())
+        self()['core']['inventory']['pack'].append(item())
 
 
     def equip_item(self, itemname):
         slots = []
         has_unequiped = False
-        for item in [Item(i) for i in self.get('/inventory/pack', [])]:
+        for item in [Item(i) for i in self.get('/core/inventory/pack', [])]:
             if item.displayname == itemname:
                 break
         if item:
             if item.slot() == 'twohand':
                 slots = ['lefthand', 'righthand']
             elif item.slot() == 'finger':
-                left = self.get('/inventory/leftfinger', {})
-                right = self.get('/inventory/rightfinger', {})
+                left = self.get('/core/inventory/leftfinger', {})
+                right = self.get('/core/inventory/rightfinger', {})
                 #Hint for best results - drop a ring before equiping another
                 if not left:
                     slots = ['leftfinger']
@@ -266,34 +268,37 @@ class Character(EzdmObject):
             else:
                 slots = [item.slot()]
             for slot in slots:
-                if self.get('/inventory/equipped/%s' % item.slot(), {}) and not has_unequiped:
+                if self.get('/core/inventory/equipped/%s' % item.slot(), {}) and not has_unequiped:
                     self.unequip(slot)
                     #Prevent equipping over a twohander from duplicatng it
                     has_unequiped = True 
-                self.put('/inventory/equiped/%s' % slot, item)
+                self.put('/core/inventory/equiped/%s' % slot, item())
+                self.drop_item(item.displayname())
 
     def unequip_item(self, slot, item = None):
-        current = self.get('/inventory/equiped/%s' %slot, {})
+        current = self.get('/core/inventory/equiped/%s' %slot, {})
         if current:
             self.json['inventory']['pack'].append(current)
-        self.put('/inventory/equiped/%s' %slot, {})
+        self.put('/core/inventory/equiped/%s' %slot, {})
 
-    def drop_item(self, itemname):
-        item = self.get_item('pack', itemname)
-        if item:
-            i = self.json['inventory']['pack'].index(item())
-            del self.json['inventory']['pack'][i]
+    def drop_item(self, itemname, section='pack'):
+        for item in self.get('/core/inventory/%s' % section, []):
+            item = Item(item)
+            if item.displayname() == itemname:
+
+                i = self.get('/core/inventory/%s' % section, []).index(item())
+                del self.json['core']['inventory'][section][i]
 
     def list_inventory(self, sections=['pack', 'equiped']):
         result = []
         for section in sections:
-                result.extend(self.get('/inventory/%s' % section, []))
+                result.extend(self.get('/core/inventory/%s' % section, []))
         return result
 
     def money_tuple(self):
-        gold = self.get('/inventory/money/gold', 0)
-        silver = self.get('/inventory/money/silver', 0)
-        copper = self.get('/inventory/money/copper', 0)
+        gold = self.get('/core/inventory/money/gold', 0)
+        silver = self.get('/core/inventory/money/silver', 0)
+        copper = self.get('/core/inventory/money/copper', 0)
         return (int(gold), int(silver), int(copper))
 
     def spend_money(self, gold=0, silver=0, copper=0):
@@ -303,7 +308,7 @@ class Character(EzdmObject):
         if remains < 0:
             return False
         else:
-            self.put('/inventory/money', convert_money(remains))
+            self.put('/core/inventory/money', convert_money(remains))
             return True
 
     def buy_item(self, item):
@@ -314,18 +319,11 @@ class Character(EzdmObject):
         else:
             return False
 
-    def update_item(self, section, item, newitem):
-        inventory = self.get('/inventory/%s' % section, [])
-        if item in inventory:
-            index = inventory.index(item)
-            inventory[index] = Item(newitem())
-        self.put('/inventory/%s' % section, inventory)
-
     def gain_money(self, gold=0, silver=0, copper=0):
         total_gained = price_in_copper(gold, silver, copper)
         my_total = price_in_copper(*self.money_tuple())
         my_total += total_gained
-        self.put('/inventory/money', convert_money(my_total))
+        self.put('/core/inventory/money', convert_money(my_total))
 
     def armor_class(self):
         AC = 10
@@ -352,12 +350,12 @@ class Character(EzdmObject):
             ATR = 1
         else:
             for key in atr[parentclass].keys():
-                if inrange(self.get('/combat/level-hitdice', 1), key):
+                if inrange(self.get('/core/combat/level-hitdice', 1), key):
                     ATR = int(atr[parentclass][key])
         return self.num_weapons() * int(ATR)
 
     def current_xp(self):
-        return int(self.get('/personal/xp', 0))
+        return int(self.get('/core/personal/xp', 0))
 
     def tryability(self, ability, modifier=0):
         out = ['%s is trying to %s' % (self.displayname(), ability)]
@@ -372,13 +370,13 @@ class Character(EzdmObject):
             return (False, out)
 
     def conditionals(self):
-        subclass = self.get('/class/class', '')
-        parentclass = self.get('/class/parent', '')
-        level = self.get('/combat/level-hitdice', '')
+        subclass = self.get('/core/class/class', '')
+        parentclass = self.get('/core/class/parent', '')
+        level = self.get('/core/combat/level-hitdice', '')
         various = load_json('adnd2e', 'various')
         abilities = various['abilities']
         conditionals = self.get('/conditionals', {})
-        race = self.get('/personal/race', self())
+        race = self.get('/core/personal/race', self())
         for ability in abilities:
             base = 0
             if ability in conditionals:
@@ -416,18 +414,18 @@ class Character(EzdmObject):
         return conditionals
 
     def displayname(self):
-        out = "%s %s" % (self.get('/personal/name/first', ''), self.get('/personal/name/last', ''))
+        out = "%s %s" % (self.get('/core/personal/name/first', ''), self.get('/core/personal/name/last', ''))
         if self.index > -1:
             out = "%s (%s)" % (out, self.index)
         out = "[%s]" % out
         return out
 
     def __get_thac0(self):
-        if self.get('/personal/race', '') == "creature":
+        if self.get('/core/personal/race', '') == "creature":
             key = "creature"
         else:
-            key = self.get('/class/parent', '')
+            key = self.get('/core/class/parent', '')
         thac0s = load_json("adnd2e", "thac0")[key]
         for key2 in thac0s.keys():
-            if inrange(self.get('/combat/level-hitdice', 1), key2):
+            if inrange(self.get('/core/combat/level-hitdice', 1), key2):
                 return int(thac0s[key2])

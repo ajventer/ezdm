@@ -16,7 +16,7 @@ def template_dict(template, defaults=None):
     for key in tpl:
         inputtype = 'text'
         options = []
-        value = ''
+        value = tpl[key]
         name = realkey(key)
         if key.startswith('conditional') and not defaults:
             continue
@@ -36,6 +36,7 @@ def template_dict(template, defaults=None):
                 else:
                     options = tpl[key].replace('__[', '').replace(']', '').split(',')
                     inputtype = 'select'
+                    value = ''
             else:
                 continue
 
@@ -61,7 +62,6 @@ def flatten(init, lkey=''):
     for rkey, val in init.items():
         key = lkey + rkey
         if isinstance(val, dict) and val:
-            print key, val
             ret.update(flatten(val, key + '/'))
         else:
             ret[key] = val
@@ -70,7 +70,6 @@ def flatten(init, lkey=''):
 def inflate(dic):
     out = {}
     for key in dic:
-        print "  Processing key %s:%s" % (key, dic[key])
         try:
             v = loads(dic[key])
             print "  %s was json, converted" % key
@@ -81,7 +80,6 @@ def inflate(dic):
 
 def save_json(source, name, dic):
     d = inflate(flatten(dic))
-    print "Saving %s/%s data %s" % (source, name, dic)
     if not name.endswith('.json'):
         name = '%s.json' % name
     filename = os.path.join(get_user_data(source), name).replace(' ', '_')    
