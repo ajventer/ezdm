@@ -1,17 +1,17 @@
 #!/usr/bin/env python
 
-from distutils.core import setup
-from check_code import script_list
+from setuptools import setup
 
-setup(name='EZDM',
-      version='1.0',
+setup(name='ezdm',
+      depends=['simplejson', 'bottle', 'jinja2', 'setuptools'],
+      version='2.0-pre',
       description='Simple tools for helping dungeon masters with ADN&D games',
       author='A.J. Venter',
       license='GPLv3',
       author_email='ajventer@gmail.com',
       url='https://github.com/ajventer/ezdm',
-      scripts=script_list(),
+      scripts=['ezdm'],
       packages=['ezdm_libs'],
       package_dir={'ezdm_libs': 'ezdm_libs'},
-      package_data={'ezdm_libs': ['adnd2e/*', 'COPYING.html']}
+      package_data={'ezdm_libs': ['adnd2e/*', 'characters/*', 'icons/*', 'items/*', 'maps/*', 'templates/*']}
       )

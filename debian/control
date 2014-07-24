@@ -1,23 +1,12 @@
 Source: ezdm
-Section: games
-Priority: optional
 Maintainer: A.J. Venter <ajventer@gmail.com>
-Build-Depends: debhelper (>= 9.2), python-support (>= 1.0.15), python-simplejson (>= 2.6.1), python (>=2.7), desktop-file-utils
-XS-Python-Version: >= 2.7
-Standards-Version: 3.9.3.0
+Section: python
+Priority: optional
+Build-Depends: python-setuptools (>= 0.6b3), python-all (>= 2.6.6-3), debhelper (>= 7.4.3)
+Standards-Version: 3.9.1
 
-Package: ezdm
+Package: python-ezdm
 Architecture: all
-Homepage: https://github.com/ajventer/ezdm
-XB-Python-Version: ${python:Versions}
-Depends: ${misc:Depends},${python:Depends},python ( >=2.7),python-bottle, python-jinja2
-Description: Simple interactive helper tools for DM-ing an 
- AD&D second edition game  This is a simple set of tools for 
- dungeon managers. The current project only targets AD&D 2nd edition rules. 
- This is not an RPG game, it's some helper tools for people DM-ing real
- games and designed to not get in the way of role-play and story-telling
- but simply help to do the maths during encounters and levelling.
- Dice rolling can be done by the computer or the tools can be set for
- manual dice, in which case you simply enter the results of the roll.
-
+Depends: ${misc:Depends}, ${python:Depends}
+Description: Simple tools for helping dungeon masters with ADN&D games
 

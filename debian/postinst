@@ -1,6 +1,0 @@
-#!/bin/bash -x
-for I in /usr/lib/python2.7/dist-packages/ezdm_libs/*.py; do
-        python -m compileall $I
-done
-update-desktop-database
-#DEBHELPER#
