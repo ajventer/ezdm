@@ -1,54 +1,56 @@
-from util import readfile, save_json
-from glob import glob
-from simplejson import dumps
-import sys
-import os
-from ezdm_libs import get_sys_data
-      
-class ItemEvents:
-    json={}
-    def __init__(self,json):
-        self.json=json
-        
-    def OnEquip(self,character={}):
-        return character
+from util import save_json, readkey, writekey
 
-    def OnUnEquip(self,character={}):
-        return character
 
-    
-    def OnDrop(self,character={}):
-        return character
-    
-    def OnPickUp(self,character={}):
-        return character
-        
-    def OnUse(self,character={},target={}):
-        return {"character":character,"target":target}
-        
 class Item:
-    json={}
-    events=None
-    def __init__(self,json):
-        self.json=json
-           
-    def filename(self,extension="json"):
+    json = {}
+
+    def __init__(self, json):
+        self.json = json
+
+    def __call__(self):
+        return self.json
+
+    def get(self, key, default=None):
+        return readkey(key, self(), default)
+
+    def put(self, key, value):
+        writekey(key, value, self.json)
+        self.save()
+
+    def filename(self, extension="json"):
         if extension:
-            return "%s.%s" % (self.json['name'].replace(' ','_'),extension)
+            return "%s.%s" % (self.json['name'].replace(' ', '_'), extension)
         else:
-            return "%s" % (self.json['name'].replace(' ','_'))
-       
+            return "%s" % (self.json['name'].replace(' ', '_'))
+
     def save(self):
         save_json('items', self.filename(), self.json)
-        open(os.path.join(get_user_data('items'),self.filename()),'w').write(dumps(self.json,indent=4))
 
-    
     def displayname(self):
-        return self.json['name']
-    
+        return self.get('/core/name', '') or self.get('/name', '')
+
     def itemtype(self):
-        return self.json['type']
-    
+        return self.get('/core/type', 'other') or self.get('/type', self(), 'other')
 
+    def _event(self, key, *args):
+        python = self.get('/events/%s' % key, '')
+        if python:
+            exec python in {}, locals
 
-    
+    def onpickup(self, player, page):
+        self._event("/events/__Tonpickup_player", {'item': self, 'page': page, 'player': player})
+
+    def onequip(self, player, page):
+        self._event("/events/__Tonequip_player", {'item': self, 'page': page, 'player': player})
+
+    def onuse(self, player, target, page):
+        self._event("/events/__Tonuse_player_target", {'item': self, 'page': page, 'player': player, 'target': target})
+
+    def onround(self, player, target, page):
+        self._event("/events/__Tonround_player_target", {'item': self, 'page': page, 'player': player, 'target': target})
+
+    def onfinish(self, player, target, page):
+        self._event("/events/__Tonfinish_player_target", {'item': self, 'page': page, 'player': player, 'target': target})
+
+    def ondrop(self, player, page):
+        self._event("/events/__Tondrop_player", {'item': self, 'page': page, 'player': player})

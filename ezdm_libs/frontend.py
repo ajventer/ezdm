@@ -110,15 +110,15 @@ class JSON_Editor(Session):
         loadfrom['items'] = find_files(source, '*.json', basename=True, strip='.json')
         return ('load_defaults_from.tpl', loadfrom)
 
-    def sidebar(content):
+    def sidebar(self, content):
         self._sidebar += content
 
     def welcomeform(self):
         page = Page()
         lf = self._loadform(True)
         page.add(lf[0], lf[1])
-        ilist = {'list':[], 'name': self._name}
-        for f in find_files('%ss' %self._name, '*.json', basename=True, strip='.json'):
+        ilist = {'list': [], 'name': self._name}
+        for f in find_files('%ss' % self._name, '*.json', basename=True, strip='.json'):
             ilist['list'].append('<a href=/view/%sS/%s.json>%s</a>' % (self._name.upper(), f, f))
         page.add('list_viewer.tpl', ilist)
 
@@ -126,7 +126,7 @@ class JSON_Editor(Session):
 
     def newform(self):
         page = Page()
-        self.sidebar(page.tplrender('icon_selecter.tpl', list_icons(self._data.get('icon',''))))
+        self.sidebar(page.tplrender('icon_selecter.tpl', list_icons(self._data.get('icon', ''))))
         lf = self._loadform(False)
         page.add(lf[0], lf[1])
         default = self._data.get('loadfrom', None)
@@ -145,9 +145,9 @@ class JSON_Editor(Session):
                 del(self._data[key])
         if 'core/name' in self._data and [k for k in self._data if k.startswith('conditional')]:
             page.message('%s saved to %s' % (self._name, save_json('%ss' % self._name, self._data['core/name'], self._data)))
-            self._destroy()            
+            self._destroy()
         if self._sidebar:
-            page.sidebar(self._sidebar)            
+            page.sidebar(self._sidebar)
         return page.render()
 
     def render(self, requestdata):

@@ -39,9 +39,10 @@ def template_dict(template, defaults=None):
             else:
                 continue
 
-
         if '__X' in key:
             continue
+        if '__T' in key:
+            inputtype = 'textarea'
         if '__Y' in key:
             inputtype = 'hidden'
         if isinstance(tpl[key], str) and tpl[key].startswith('__['):
@@ -114,9 +115,10 @@ def writekey(key, value, json):
     parse = '%s = value' % (parse)
     exec parse
 
+
 def list_icons(selected=''):
-    icons = glob(get_sys_data('icons')+'/*')
-    icons.extend(glob(get_user_data('icons')+'/*'))
+    icons = glob(get_sys_data('icons') + '/*')
+    icons.extend(glob(get_user_data('icons') + '/*'))
     icons = [os.path.basename(icon) for icon in icons]
     return {'selected': selected, 'icons': icons}
 
@@ -144,14 +146,26 @@ def find_files(source, needle=None, basename=False, strip=''):
     return list(set(matches))
 
 
-def readfile(source='', name='', filename='', json=False):
+def readfile(source='', name='', filename='', json=False, default=None):
     if not filename:
         filenames = find_files(source, name)
         if filenames:
             filename = filenames[0]
     if not json:
-        return open(filename, 'r').read()
-    return loads(open(filename, 'r').read())
+        try:
+            return open(filename, 'r').read()
+        except:
+            return default
+    try:
+        return loads(open(filename, 'r').read())
+    except:
+        return default
+
+
+def load_json(source='', name='', filename='', default=None):
+    if name and not name.endswith('.json'):
+        name = '%s.json' % name
+    return readfile(source=source, name=name, filename=filename, json=True, default=default)
 
 
 def attack_mods():
@@ -192,9 +206,12 @@ def inrange(key1, key2):
             return False
 
 
-def rolldice(auto=True, numdice=1, numsides=20, modifier=0, quiet=False, wsgi=False):
+def rolldice(numdice=1, numsides=20, modifier=0):
     total = 0
+    numdice = int(numdice)
+    numsides = int(numsides)
+    modifier = int(modifier)
     for I in range(1, numdice + 1):
             roll = randrange(1, numsides, 1)
             total = total + roll
-    return total
+    return (total, 'Rolled a %s-sided dice %s times with modifier %s' % (numdice, numsides, modifier))

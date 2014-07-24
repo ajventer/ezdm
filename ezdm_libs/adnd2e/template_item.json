@@ -4,7 +4,18 @@
     "type":"__[weapon,armor,other]",
     "weight": 0,
     "size":"__[small,medium,large]",
-    "price":{"gold":0,"silver":0,"copper":0}
+    "price":{"gold":0,"silver":0,"copper":0},
+    "rounds_afteruse": 0,
+    "rounds_used": 0,
+    "__Tdescription": ""
+},
+"events": {
+    "__Tonpickup_player" : "",
+    "__Tonequip_player": "",
+    "__Tonuse_player_target": "",
+    "__Tonround_player_target": "",
+    "__Tonfinish_player_target": "",
+    "__Tondrop_player": "page.warning('%s has dropped %s' % (player.displayname(), item.displayname())"
 },
 "conditional":{
     "core.type=weapon":{

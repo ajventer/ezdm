@@ -9,7 +9,7 @@
         "con": 14
     },
     "combat": {
-        "level/hitdice": "5",
+        "level-hitdice": "5",
         "thac0": 16,
         "hitpoints": 23,
         "max_hp": "38",
