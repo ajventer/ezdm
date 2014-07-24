@@ -34,7 +34,7 @@
 	{% endfor %}
 	<tr>
 		<td colspan=2><center>
-			<input type=submit value="Save changes">
+			<input type=submit name="save_changes" value="Save changes">
 		</center>
 		</td>
 	</tr>

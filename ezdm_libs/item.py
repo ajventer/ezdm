@@ -1,33 +1,20 @@
 from util import save_json, readkey, writekey
+from objects import EzdmObject
 
 
-class Item:
-    json = {}
-
-    def __init__(self, json):
-        self.json = json
-
-    def __call__(self):
-        return self.json
-
-    def get(self, key, default=None):
-        return readkey(key, self(), default)
-
-    def put(self, key, value):
-        writekey(key, value, self.json)
-        self.save()
-
-    def filename(self, extension="json"):
-        if extension:
-            return "%s.%s" % (self.json['name'].replace(' ', '_'), extension)
-        else:
-            return "%s" % (self.json['name'].replace(' ', '_'))
-
-    def save(self):
-        save_json('items', self.filename(), self.json)
+class Item(EzdmObject):
 
     def displayname(self):
         return self.get('/core/name', '') or self.get('/name', '')
+
+    def save(self):
+        if 'temp' in self():
+            del self()['temp']
+        name = '%s.json' % self.get('/core/name', '')
+        return save_json('characters', name.lower(), self.json)
+
+    def slot(self):
+        return self.get('/conditional/slot', '')
 
     def itemtype(self):
         return self.get('/core/type', 'other') or self.get('/type', self(), 'other')

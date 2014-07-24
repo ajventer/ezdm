@@ -1,7 +1,7 @@
 {"core":{
     "icon":"",
     "name":"",
-    "type":"__[weapon,armor,other]",
+    "type":"__[weapon,armor,spell,other]",
     "weight": 0,
     "size":"__[small,medium,large]",
     "price":{"gold":0,"silver":0,"copper":0},
@@ -23,11 +23,12 @@
         "weapon_type": "__[melee,magic,misile]", 
         "damage_type": "__[slice,hack,stab]",
         "__Ito_hit": "",
+        "slot": "__[lefthand, righthand, twohand]",
         "save_against":"__[ppd,rod,pp,breath,spell,none]"
     },
     "core.type=armor":{
-        "ac":0
+        "ac":0,
+        "slot": "__[head, chest, legs, feet, wrists, hands, finger, neck]"
     }    
-
 }
 }

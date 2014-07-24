@@ -1,0 +1,57 @@
+{
+    "core": {
+        "abilities": {
+            "dex": 16,
+            "cha": 5,
+            "int": 10,
+            "wis": 8,
+            "str": 17,
+            "con": 15
+        },
+        "orientation": "",
+        "combat": {
+            "level-hitdice": 5,
+            "hitpoints": 22,
+            "max_hp": 22
+        },
+        "personal": {
+            "xp": 1,
+            "race": "monster",
+            "name": {
+                "last": "MONSTER",
+                "first": "RANDOM"
+            },
+            "alignment": {
+                "law": "chaotic",
+                "social": "evil"
+            }
+        },
+        "inventory": {
+            "equiped": {
+                "head": "",
+                "righthand": "",
+                "neck": "",
+                "wrists": "",
+                "rightfinger": "",
+                "chest": "",
+                "feet": "",
+                "leftfinger": "",
+                "legs": "",
+                "lefthand": ""
+            },
+            "money": {
+                "copper": 0,
+                "silver": 0,
+                "gold": 0
+            },
+            "pack": [],
+            "spells": ""
+        },
+        "class": {
+            "class": "fighter",
+            "parent": "warrior"
+        },
+        "icon": "rat.png"
+    },
+    "conditional": {}
+}

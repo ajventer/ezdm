@@ -1,0 +1,55 @@
+{
+    "core": {
+        "abilities": {
+            "dex": 12,
+            "cha": 17,
+            "int": 14,
+            "wis": 8,
+            "str": 9,
+            "con": 11
+        },
+        "orientation": "",
+        "combat": {
+            "level-hitdice": 4,
+            "hitpoints": 17,
+            "max_hp": 16
+        },
+        "personal": {
+            "xp": 5460,
+            "race": "half-elf",
+            "name": {
+                "last": "ROGUE",
+                "first": "BARDIC"
+            },
+            "alignment": {
+                "law": "neutral",
+                "social": "good"
+            }
+        },
+        "inventory": {
+            "money": {
+                "copper": 0,
+                "silver": 0,
+                "gold": 0
+            },
+            "pack": [],
+            "spells": ""
+        },
+        "class": {
+            "class": "bard",
+            "parent": "rogue"
+        },
+        "icon": "dwarf.png"
+    },
+    "conditional": {
+        "read languages": 0,
+        "pick pockets": 15,
+        "detect noise": 15,
+        "move silently": 10,
+        "open locks": 10,
+        "climb walls": 60,
+        "find": {
+            "remove traps": 5
+        }
+    }
+}

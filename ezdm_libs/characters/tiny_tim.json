@@ -1,0 +1,57 @@
+{
+    "core": {
+        "abilities": {
+            "dex": 12,
+            "cha": 10,
+            "int": 11,
+            "wis": 12,
+            "str": 17,
+            "con": 14
+        },
+        "orientation": "",
+        "combat": {
+            "level-hitdice": 5,
+            "hitpoints": 23,
+            "max_hp": 38
+        },
+        "personal": {
+            "xp": 25705,
+            "race": "dwarf",
+            "name": {
+                "last": "TIM",
+                "first": "TINY"
+            },
+            "alignment": {
+                "law": "neutral",
+                "social": "good"
+            }
+        },
+        "inventory": {
+            "equiped": {
+                "head": "",
+                "righthand": "",
+                "neck": "",
+                "wrists": "",
+                "rightfinger": "",
+                "chest": "",
+                "feet": "",
+                "leftfinger": "",
+                "legs": "",
+                "lefthand": ""
+            },
+            "money": {
+                "copper": 2,
+                "silver": 2,
+                "gold": 5
+            },
+            "pack": [],
+            "spells": ""
+        },
+        "class": {
+            "class": "fighter",
+            "parent": "warrior"
+        },
+        "icon": "dwarf.png"
+    },
+    "conditional": {}
+}

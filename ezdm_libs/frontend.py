@@ -1,5 +1,6 @@
 from jinja2 import Template
-from util import readfile, find_files, template_dict, json_editor, save_json, list_icons
+from objects import EzdmObject
+from util import readfile, find_files, template_dict, json_editor, save_json, list_icons, inflate
 
 
 class Session:
@@ -97,6 +98,7 @@ class JSON_Editor(Session):
     _sidebar = ''
 
     def __init__(self):
+        self._obj = EzdmObject({})
         Session.__init__(self)
 
     def _loadform(self, new=True):
@@ -111,7 +113,7 @@ class JSON_Editor(Session):
         return ('load_defaults_from.tpl', loadfrom)
 
     def sidebar(self, content):
-        self._sidebar += content
+        self._sidebar = content
 
     def welcomeform(self):
         page = Page()
@@ -137,15 +139,17 @@ class JSON_Editor(Session):
             del(self._data['loadfrom'])
         template = readfile('adnd2e', 'template_%s.json' % self._name, json=True)
         tpldict = template_dict(template, self._data)
-        print "Session data:", self._data
-        print "Template data:", tpldict
         page.add('json_editor.tpl', json_editor(tpldict, 'New %s' % self._name, '/%sS' % self._name.upper()))
-        duplicate_keys = [key for key in self._data.keys() if 'core/%s' % key in self._data]
-        for key in duplicate_keys:
-                del(self._data[key])
-        if 'core/name' in self._data and [k for k in self._data if k.startswith('conditional')]:
-            page.message('%s saved to %s' % (self._name, save_json('%ss' % self._name, self._data['core/name'], self._data)))
-            self._destroy()
+        inflated = inflate(self._data)
+        if 'core' in inflated:
+            duplicate_keys = [k for k in inflated if k in inflated['core']]
+            for key in duplicate_keys:
+                    del(self._data[key])
+            if "save_changes" in self._data and [k for k in self._data if k.startswith('conditional')]:
+                del(self._data['save_changes'])
+                self._obj.update(self._data)
+                page.message('%s saved to %s' % (self._name, self._obj.save()))
+                self.destroy()
         if self._sidebar:
             page.sidebar(self._sidebar)
         return page.render()

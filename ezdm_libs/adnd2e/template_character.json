@@ -1,6 +1,7 @@
 {
 "core":{
 "icon":"",
+"orientation": "__[player, friendly, neutral, aggressive]",
 "personal":{
     "alignment":{"law":"__[chaotic,neutral,lawful]",
                 "social":"__[evil,good,neutral]"},
@@ -22,7 +23,21 @@
     {"parent": "__[warrior,wizard,rogue,priest]",
     "class":"__[fighter,bard,ranger,thief,druid,mage,illusionist,cleric]"},
 "abilities":{"__Iwis": "","__Idex": "", "__Icha": "", "__Istr": "","__Icon": "","__Iint": ""},
-"__Yinventory":{"equiped":[],"pack":[],
+"__Yinventory":{
+        "equiped":{
+            "leftfinger": {},
+            "rightfinger": {},
+            "head": {},
+            "chest": {}, 
+            "legs": {},
+            "feet": {},
+            "wrists":{},
+            "neck": {},
+            "lefthand": {},
+            "righthand": {}
+    },
+        "spells": [],
+        "pack":[],
         "money":{"gold":0,"silver":0,"copper":0}
     }
 },
@@ -30,7 +45,7 @@
 "class.parent=rogue":{
         "pick pockets":15,
         "open locks": 10,
-        "find/remove traps":5,
+        "find-remove traps":5,
         "move silently":10,
         "detect noise":15,
         "climb walls":60,

@@ -60,22 +60,32 @@ def flatten(init, lkey=''):
     ret = {}
     for rkey, val in init.items():
         key = lkey + rkey
-        if isinstance(val, dict):
+        if isinstance(val, dict) and val:
+            print key, val
             ret.update(flatten(val, key + '/'))
         else:
             ret[key] = val
     return ret
 
+def inflate(dic):
+    out = {}
+    for key in dic:
+        print "  Processing key %s:%s" % (key, dic[key])
+        try:
+            v = loads(dic[key])
+            print "  %s was json, converted" % key
+        except:
+            v = dic[key]
+        writekey(key, v, out)
+    return out
 
 def save_json(source, name, dic):
-    d = flatten(dic)
-    out = {}
+    d = inflate(flatten(dic))
+    print "Saving %s/%s data %s" % (source, name, dic)
     if not name.endswith('.json'):
         name = '%s.json' % name
-    filename = os.path.join(get_user_data(source), name).replace(' ', '_')
-    for key in d:
-        writekey(key, d[key], out)
-    open(filename, 'w').write(dumps(out, indent=4))
+    filename = os.path.join(get_user_data(source), name).replace(' ', '_')    
+    open(filename, 'w').write(dumps(d, indent=4))
     return filename
 
 

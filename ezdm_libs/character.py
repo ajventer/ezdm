@@ -1,8 +1,8 @@
-from util import rolldice, readfile, inrange, price_in_copper, convert_money, save_json, load_json, readkey, writekey
+from util import inflate, flatten, rolldice, readfile, inrange, price_in_copper, convert_money, save_json, load_json, readkey, writekey
 from item import Item
+from objects import EzdmObject
 
-
-class Character:
+class Character(EzdmObject):
     removed = False
     cast_remaining = 0
     spell_target = None
@@ -14,20 +14,24 @@ class Character:
     armor = []
 
     def __init__(self, json):
+        print "Instantiating character"
         self.json = json
-        self.weapons = self.load_weapons()
-        self.armor = self.load_armor()
-        self.put('/combat/thac0', self.__get_thac0())
-        self.put('/combat/saving_throws', self.__get_saving_throws())
-        if self.is_monster():
-            self.put('/combat/hitpoints', rolldice(numdice=int(self.get('/combat/level-hitdice', '1')), numsides=8))
-            self.put('/combat/max_hp', self.get('/combat/hitpoints', 1))
+        try:
+            self.weapons = self.load_weapons()
+            self.armor = self.load_armor()
+            self.put('core/combat/thac0', self.__get_thac0())
+            self.put('core/combat/saving_throws', self.__get_saving_throws())
+            if self.is_monster():
+                self.put('core/combat/hitpoints', rolldice(numdice=int(self.get('/combat/level-hitdice', '1')), numsides=8))
+                self.put('core/combat/max_hp', self.get('/combat/hitpoints', 1))
+        except:
+            pass
 
     def remove_from_combat(self):
         self.removed = True
 
     def xp_worth(self):
-        xpkey = self.get('/combat/level-hitdice', 1)
+        xpkey = self.get('core/combat/level-hitdice', 1)
         xpvalues = readfile('adnd2e', 'creature_xp', json=True, default={})
         if str(xpkey) in xpvalues.keys():
             xp = xpvalues[str(xpkey)]
@@ -38,51 +42,37 @@ class Character:
     def set_index(self, index):
         self.index = index
 
-    def __call__(self):
-        return self.json
-
-    def get(self, key, default=None):
-        return readkey(key, self(), default)
-
-    def put(self, key, value):
-        writekey(key, value, self.json)
-        self.save()
-
     def heal(self, amount):
-        hp = int(self()['combat']['hitpoints'])
+        hp = int(self.get('/core/combat/hitpoints', 1))
         hp += amount
-        if hp > int(self()['combat']['max_hp']):
-            self()['combat']['hitpoints'] = int(self()['combat']['max_hp'])
+        if hp > int(self.get('/core/combat/max_hp', 1)):
+            self.put('/core/combat/hitpoints', int(self.get('/core/combat/max_hp', 1)))
         else:
-            self()['combat']['hitpoints'] = hp
-            self.save()
-            return self()['combat']['hitpoints']
+            self.put('/core/combat/hitpoints', hp)
+            return self.get('/core/combat/hitpoints')
 
     def take_damage(self, damage):
         out = []
-        if damage >= self.get('/combat/hitpoints', 1):
+        if damage >= self.get('/core/combat/hitpoints', 1):
             st = self.saving_throw('ppd')
             out = st[1]
             if not st[0]:
-                self.put('/combat/hitpoints', 0)
-                self.save()
+                self.put('/core/combat/hitpoints', 0)
                 out += "%s has died !" % self.displayname()
                 return (False, out)
             else:
-                self.put('/combat/hitpoints', 1)
-                self.save()
-                out += "%s barely survives. %s hitpoints remaining" % (self.displayname(), self.get('/combat/hitpoints', 1))
+                self.put('/core/combat/hitpoints', 1)
+                out += "%s barely survives. %s hitpoints remaining" % (self.displayname(), self.get('/core/combat/hitpoints', 1))
                 return (True, out)
         else:
-            hp = int(self.get('/combat/hitpoins', 1))
+            hp = int(self.get('/core/combat/hitpoins', 1))
             hp -= damage
-            self.put('/combat/hitpoins', hp)
-            self.save()
-            out += "%s takes %s damage. %s hitpoints remaining" % (self.displayname(), damage, self.get('/combat/hitpoints', 1))
+            self.put('/core/combat/hitpoins', hp)
+            out += "%s takes %s damage. %s hitpoints remaining" % (self.displayname(), damage, self.get('/core/combat/hitpoints', 1))
             return (True, out)
 
     def is_monster(self):
-        return self()["personal"]['race'] in ['creature', 'monster']
+        return self.get('/core/personal/race', '') in ['creature', 'monster']
 
     def start_casting(self, rounds, target):
         self.cast_remaining = rounds
@@ -106,23 +96,12 @@ class Character:
     def spell_friendly_target(self):
         return self.is_monster() == self.spell_target.is_monster()
 
-    def basename(self):
-        firstname = self.get('/personal/name/first', '').upper()
-        lastname = self.get('/personal/name/last', '').upper()
-        return "%s_%s" % (firstname, lastname)
-
-    def filename(self):
-        return "%s.json" % (self.basename())
-
     def save(self):
+        self.json = inflate(flatten(self.json))
         if 'temp' in self():
             del self()['temp']
-        save_json('characters', self.filename(), self())
-
-    def update(self, json, save=True):
-        self.json = json
-        if save:
-            self.save()
+        name = '%s_%s.json' % (self.get('/core/personal/name/first', ''), self.get('/core/personal/name/last', ''))
+        return save_json('characters', name.lower(), self.json)
 
     def to_hit_mod(self):
         ability_mods = readfile('adnd2e', 'ability_scores', json=True)
@@ -255,10 +234,6 @@ class Character:
         weap = []
         if not "inventory" in self() or not "equiped" in self()["inventory"]:
             return []
-        if not isinstance(self.get('/inventory/equiped', None), list):
-            self.put('/inventory/equiped', [])
-        if not isinstance(self.get('/inventory/pack', None), list):
-            self.put('/inventory/equiped', [])
         for item in self.get('/inventory/equiped', []):
             i = Item(item)
             if i.itemtype() == 'weapon':
@@ -268,36 +243,46 @@ class Character:
     def acquire_item(self, item):
         self()['inventory']['pack'].append(item())
 
-    def get_item(self, section, name):
-        if isinstance(name, int) and name < len(self.get('/inventory/%s' % section, [])):
-            return Item(self.get('/inventory/%s' % section, [])[name])
-        for item in self.get('/inventory/%s' % section, []):
-            i = Item(item)
-            if i.displayname() == name:
-                return i
 
     def equip_item(self, itemname):
-        item = self.get_item('pack', itemname)
+        slots = []
+        has_unequiped = False
+        for item in [Item(i) for i in self.get('/inventory/pack', [])]:
+            if item.displayname == itemname:
+                break
         if item:
-            self.json['inventory']['equiped'].append(item())
-            i = self.json['inventory']['pack'].index(item())
-            del self.json['inventory']['pack'][i]
-        self.save()
+            if item.slot() == 'twohand':
+                slots = ['lefthand', 'righthand']
+            elif item.slot() == 'finger':
+                left = self.get('/inventory/leftfinger', {})
+                right = self.get('/inventory/rightfinger', {})
+                #Hint for best results - drop a ring before equiping another
+                if not left:
+                    slots = ['leftfinger']
+                if not right:
+                    slots = ['rightfinger']
+                if not slots:
+                    slots = ['leftfinger']
+            else:
+                slots = [item.slot()]
+            for slot in slots:
+                if self.get('/inventory/equipped/%s' % item.slot(), {}) and not has_unequiped:
+                    self.unequip(slot)
+                    #Prevent equipping over a twohander from duplicatng it
+                    has_unequiped = True 
+                self.put('/inventory/equiped/%s' % slot, item)
 
-    def unequip_item(self, itemname):
-        item = self.get_item('equiped', itemname)
-        if item:
-            self.json['inventory']['pack'].append(item())
-            i = self.json['inventory']['equiped'].index(item())
-            del self.json['inventory']['equiped'][i]
-        self.save()
+    def unequip_item(self, slot, item = None):
+        current = self.get('/inventory/equiped/%s' %slot, {})
+        if current:
+            self.json['inventory']['pack'].append(current)
+        self.put('/inventory/equiped/%s' %slot, {})
 
     def drop_item(self, itemname):
         item = self.get_item('pack', itemname)
         if item:
             i = self.json['inventory']['pack'].index(item())
             del self.json['inventory']['pack'][i]
-        self.save()
 
     def list_inventory(self, sections=['pack', 'equiped']):
         result = []
@@ -319,7 +304,6 @@ class Character:
             return False
         else:
             self.put('/inventory/money', convert_money(remains))
-            self.save()
             return True
 
     def buy_item(self, item):
@@ -342,7 +326,6 @@ class Character:
         my_total = price_in_copper(*self.money_tuple())
         my_total += total_gained
         self.put('/inventory/money', convert_money(my_total))
-        self.save()
 
     def armor_class(self):
         AC = 10
