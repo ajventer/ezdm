@@ -2,6 +2,7 @@ from jinja2 import Template
 from objects import EzdmObject
 from util import readfile, find_files, template_dict, json_editor, save_json, list_icons, inflate
 
+mode = 'campaign'
 
 class Session:
     def __init__(self):
@@ -46,10 +47,15 @@ class Page:
         self._sidebar = ''
         self._messages = {'messages': [], 'warnings': [], 'errors': []}
         title = title or 'EZDM'
-        menuitems = find_files('', 'ezdm*.py', basename=True)
-        menuitems = [m.replace('ezdm_', '').replace('.py', '').upper() for m in menuitems]
+        global mode
+        if mode == 'dm':
+            menuitems = find_files('', 'ezdm*.py', basename=True)
+            menuitems = [m.replace('ezdm_', '').replace('.py', '').upper() for m in menuitems]
+        else:
+            menuitems = find_files('', 'campaign*.py', basename=True)
+            menuitems = [m.replace('campaign_', '').replace('.py', '').upper() for m in menuitems]
+            
         self._menuitems = {'menuitems': menuitems}
-
         self.content = [('header.tpl', {'title': title}), ('menubar.tpl', self._menuitems)]
 
     def _has_message(self):
@@ -147,7 +153,7 @@ class JSON_Editor(Session):
                     del(self._data[key])
             if "save_changes" in self._data and [k for k in self._data if k.startswith('conditional')]:
                 del(self._data['save_changes'])
-                self._obj.update(self._data)
+                self._obj.update(inflated)
                 page.message('%s saved to %s' % (self._name, self._obj.save()))
         if self._sidebar:
             page.sidebar(self._sidebar)

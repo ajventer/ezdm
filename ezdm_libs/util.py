@@ -72,7 +72,6 @@ def inflate(dic):
     for key in dic:
         try:
             v = loads(dic[key])
-            print "  %s was json, converted" % key
         except:
             v = dic[key]
         writekey(key, v, out)

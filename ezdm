@@ -2,10 +2,11 @@
 from gevent import monkey; monkey.patch_all()
 from bottle import route, run, request, static_file
 from ezdm_libs.util import load_icon
+from ezdm_libs import get_sys_data
+from ezdm_libs import frontend
 import os
 
 sessions = {}
-
 
 def posthandler(action=None):
     global sessions
@@ -31,6 +32,17 @@ def gethandler(action=None, item=None):
         return sessions[action].render(None)
     else:
         return sessions[action].view(item)
+
+@route ('/mode/<newmode>')
+def setmode(newmode):
+    frontend.mode = newmode
+    return gethandler(None, None)
+
+
+@route ('/js', method='get')
+def serve_js():
+    filename = request.GET['path']
+    return static_file(filename, root=get_sys_data('js'), mimetype='text/javascript')
 
 
 @route('/icon/<filename>', method='get')

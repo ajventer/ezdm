@@ -1,3 +1,4 @@
+<script language="javascript" type="text/javascript" src="/js?path=editarea_0_8_2/edit_area/edit_area_full.js"></script>
 <form action="/action{{header.action}}" method="post"> 
 <table border=1>
 	<tr><td bgcolor=lightblue colspan=2>
@@ -13,7 +14,7 @@
 		<input id="{{formdata[key].name}}" name="{{formdata[key].name}}" type="{{formdata[key].inputtype}}" value="{{formdata[key].value}}">
 	{% else %}
 	<tr>
-		<td>
+		<td width=10%>
 			{{formdata[key].name}}
 		</td>
 		<td>
@@ -24,9 +25,14 @@
 						<option value="{{value}}">{{value}}</option>
 					{%endfor%}
 			{% elif formdata[key].inputtype == 'textarea' %}
-				<textarea rows=10 cols=50 name="{{formdata[key].name}}" id="{{formdata[key].name}}">
-					{{formdata[key].value}}
-				</textarea>
+<textarea style="width:100%" name="{{formdata[key].name}}" id="{{formdata[key].name}}">{{formdata[key].value}}</textarea>
+<script language="javascript" type="text/javascript">
+editAreaLoader.init({
+	id : "{{formdata[key].name}}"		// textarea id
+	,syntax: "python"			// syntax to be uses for highgliting
+	,start_highlight: true		// to display with highlight mode on start-up
+});
+</script>
 			{% else %}
 				<input id="{{formdata[key].name}}" name="{{formdata[key].name}}" type="{{formdata[key].inputtype}}" value="{{formdata[key].value}}">
 			{% endif %}

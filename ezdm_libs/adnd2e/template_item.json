@@ -10,12 +10,11 @@
     "__Tdescription": ""
 },
 "events": {
-    "__Tonpickup_player" : "",
-    "__Tonequip_player": "",
-    "__Tonuse_player_target": "",
-    "__Tonround_player_target": "",
-    "__Tonfinish_player_target": "",
-    "__Tondrop_player": "page.warning('%s has dropped %s' % (player.displayname(), item.displayname())"
+    "__Tonpickup" : "",
+    "__Tonequip": "",
+    "__Tonuse": "",
+    "__Tonround": "",
+    "__Tondrop": "page.warning('%s has dropped %s' % (player.displayname(), item.displayname())"
 },
 "conditional":{
     "core.type=weapon":{
