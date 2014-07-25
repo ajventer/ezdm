@@ -50,15 +50,20 @@ class Page:
         title = title or 'EZDM'
         global mode
         if mode == 'dm':
-            menuitems = find_files('', 'ezdm*.py', basename=True)
-            menuitems = [m.replace('ezdm_', '').replace('.py', '').upper() for m in menuitems]
+            menuitems = self.make_menu(find_files('', 'ezdm*.py', basename=True), 'ezdm_')
         else:
-            menuitems = find_files('', 'campaign*.py', basename=True)
-            menuitems = [m.replace('campaign_', '').replace('.py', '').upper() for m in menuitems]
-        menuitems.extend(find_files('', 'all*.py', basename=True))
-        menuitems = [m.replace('all_', '').replace('.py', '').upper() for m in menuitems]
+            menuitems = self.make_menu(find_files('', 'campaign*.py', basename=True), 'campaign_')
+        menuitems.update(self.make_menu(find_files('', 'all*.py', basename=True), 'all_'))
         self._menuitems = {'menuitems': menuitems}
         self.content = [('header.tpl', {'title': title}), ('menubar.tpl', self._menuitems)]
+
+    def make_menu(self, files, base):
+        out = {}
+        for name in files:
+            display = name.replace(base, '').replace('.py', '').upper()
+            name = name.replace('.py', '').upper()
+            out[name] = display
+        return out
 
     def _has_message(self):
         return self._messages['messages'] or self._messages['warnings'] or self._messages['errors']

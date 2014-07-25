@@ -1,53 +1,61 @@
-This is a simple set of tools for dungeon managers with a simple browser-based interface
-The current project only targets AD&D 2nd edition rules.
+EZDM is a free/open-source toolkit for dungeons and dragons dungeon-masters
 
-If you're looking for a prebuilt debian package, I maintain an EZDM PPA
-at: https://launchpad.net/~ajventer/+archive/ezdm/
+Version 2.0 is a near-complete rewrite of the original code with massive improvements and much
+higher code quality in a truly elegant design.
+EZDM encapsulates virtually all of the ADnD2E ruleset in json data files, and could be adapted
+for other editions or different gaming systems with relative ease as nearly all the changes
+will be in the data files only (you would need to create child-class of Character and override
+some methods however as these are based on interpreting the 2E specific data). The system is based
+on python combined with json for data and jinja2 as the templating engine for the web-based gui.
 
-Branches: 
-        - Master is in flux - at any given moment, it may not build or run
-        - Stable is merged whenever master appears not to be broken
-        - All others are feature branches
+Usage: start the ezdm server and point your browser to: http://localhost:8000
 
-This is not an RPG game, it's some helper tools for people DM-ing table-top
-games and designed to not get in the way of role-play and story-telling
-but simply help to do the maths during encounters and levelling.
-Dice rolling can be done by the computer or the tools can be set for
-manual dice, in which case you simply enter the results of the roll.
+The library and data system could, with relative ease be adapted to become the engine for an RPG
+game, either using party or single-player mode but some functionality would have to be added.
+I would like to do so at some point.
 
-All game data, charts and character sheets are stored in json format. 
-There is a simple tool for creating and updating character sheets which
-uses a powerful templateing engine to manage them, when new keys are added
-to character sheets, simply add them to the template and load the sheets in with
-mkcs to ensure the key is in existing sheets.
+As of version 2.0 the system has two distinct modes of operation, which you can swith between at will.
+In Dungeon Master mode, you get the capacity to edit the data files for your personal campaigns by hand.
+You would use this to initially created character sheets for players, design maps or 
+create spells and items. 
+In Campaign mode the tools behave more like a game, displaying the (revealed parts of the) map and activities based on that or, when needed, the combat engine.
+All of this is turn-based in true DND style.
+As a dungeon master preparing for a session you will likely switch between these modes frequently as you 
+access various tools to prepare (and test) portions of the campaign.
+The system ships with some sample data, while any you add are saved in your home directory.
+
+EZDM is not a complete replacement for your normal DM role nor is it intended to be, it's job is merely
+to let you focus on story-telling while doing the hard maths for you. 
+
+Included tools: 
+Dungeon Master mode:
+	Character Sheet editor (for players and monsters)
+	Item Editor
+	Map Editor
+Campaign Mode:
+	Map Viewer/Navigator (hiding unrevealed parts) - behaves much like roguelikes do.
+	Dice Roller (for when you need to roll on something storywise that isn't coded into the map)
+	Combat Engine (choose who is in, EZDM will handle initiative rolls and the fight details based on player choices).
+	Character sheet view.
+	Inventory management.
+
+Magic:
+Perhaps the hardest part to implement in EZDM was magic, in all it's sources. EZDM handles this in a
+very elegant manner however. All items can, potentially, have magical effects - and spells are just a type
+of Item which is kept in a special inventory slot.
+The json files holding the data for items have a section called "events".
+Within this are subkeys for various supported events. Within these subkeys you implement magic by writing 
+short python snippets.
+The snippets run in a tightly constrained environment, but depending on the event have access to the objects
+they need to manipulate in order to function. The item template automatically inserts a small sample
+"ondrop" snippet into new items to give an idea of how to use it.
+
+The following objects are provided:
+player: the Character object that used the item. All events.
+self: A refference back to the Item object of this particular one. All events.
+target: the Character object the spell is used against. Only for events which have a target.
+page: the Page object for the next render of the screen, by using it's methods you can put messages
+on the screen, communicating your spell's effects to the user. All events.
 
 
-Combat is the crown jewel of the EZDM kit. Combat will let you load up any number of characters
-from your existing sheets, and will then guide the process of combat among them under your control.
-As the DM you decide who the NPCs attack, you tell the story represented by the information that quickcombat
-presents to you. QuickCombat ensures the right sized dice are rolled at the right time, the right saving throws
-and modifiers are applied, the right damage recorded etc.
-Quick-Combat deals with melee and misile factors, spell-casting and interruptions (including informing you when a spell is finished)
-and generically divides spells into heal, damage or other. You tell it what to handle (or what you will be handling yourself), and it 
-enables you without getting in your way.
-That is the core design goal of the entire EZDM suite - to enable your storytelling while making it easier to follow the rules
-and doing the math for you, but without EVER getting in your way.
-I wrote EZDM to help with DM-ing my own campaigns - but I hope it may be useful to others, hence it is published here on github.
-
-
-
-Template controls:
-Keys or values which start __? are controls.
-The __? parts are not stored in the output sheets, they only exist in the template
-to tell the engine how to use the key.
-Key controls:
-	__U - store the value of this key in upper-case
-	__L - store the value of this key in lower-case
-	__# - This is used to create subdictionary items with variable number of entries
-	      a __# key has a single dictionary in the template showing the subdictionary structure
-	      this subdictionary can use any template controls as well. The template engine will let
-              the user select how many subdictionaries to create, and populate these by using the subtemplate in the value
-Value controls:
-__[?,?]
-	Value must be selected from the options in the list between the []'s
 

@@ -4,10 +4,10 @@
             {{message}}<br>
         {% endfor %}
         {% for message in warnings %}
-            <font color=orange>Warning:{{message}}</font><br>
+            <font color=orange>{{message}}</font><br>
         {% endfor %}
         {% for message in errors %}
-            <font color=red>Error:{{message}}</font><br>
+            <font color=red>{{message}}</font><br>
         {% endfor %}
     </td>
 </tr>

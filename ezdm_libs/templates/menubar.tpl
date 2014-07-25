@@ -1,8 +1,8 @@
 <table border=1 width=100%>
     <tr>
-        {%for item in menuitems %}
+        {%for key in menuitems |sort %}
         <td bgcolor=lightgray>
-            <a href="/action/{{item}}">{{item}}</a>
+            <a href="/action/{{key}}">{{menuitems[key]}}</a>
         </td>
         {%endfor%}
         <td bgcolor=lightgray>

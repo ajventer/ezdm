@@ -1,10 +1,10 @@
 from frontend import Session, Page
 
 
-class HOME(Session):
+class LICENSE(Session):
     def render(self, requestdata):
         page = Page()
         if requestdata:
             self.destroy()
-        page.message(page.tplrender('README.tpl', {}))
+        page.message(page.tplrender('COPYING.tpl', {}))
         return page.render()

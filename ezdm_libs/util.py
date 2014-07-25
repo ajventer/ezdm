@@ -1,5 +1,5 @@
 import os
-from ezdm_libs import get_user_data, get_data_paths
+from ezdm_libs import get_user_data, data_paths
 from simplejson import loads, dumps
 from glob import glob
 from random import randrange
@@ -133,17 +133,17 @@ def list_icons(selected=''):
 
 def load_icon(icon='blank.png'):
     path = ''
-    for p in get_data_paths('icons'):
+    for p in data_paths('icons'):
         if os.path.exists(os.path.join(p, icon)):
             path = os.path.join(p, icon)
     if path == '':
-        path = os.path.join(get_data_paths('icons')[0], 'blank.png')
+        path = os.path.join(data_paths('icons')[0], 'blank.png')
     return path
 
 
 def find_files(source, needle=None, basename=False, strip=''):
     matches = []
-    for path in get_data_paths(source):
+    for path in data_paths(source):
         matches += glob(os.path.join(path, needle))
     if basename:
         matches = [os.path.basename(match) for match in matches]
