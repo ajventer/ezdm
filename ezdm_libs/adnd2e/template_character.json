@@ -1,6 +1,6 @@
 {
 "core":{
-"type": "__[player, npc]",
+"type": "__[player,npc]",
 "icon":"",
 "personal":{
     "alignment":{"law":"__[chaotic,neutral,lawful]",
@@ -42,13 +42,10 @@
     }
 },
 "conditional":{
-"core.type=npc": {
-    "orientation" : "__[friendly, neutral, aggressive]",
-    "events":{
-        "oninteract": "" 
-    }
+    "core.type=npc": {
+        "orientation" : "__[friendly, neutral, aggressive]"
     },
-"core.class.parent=rogue":{
+    "core.class.parent=rogue":{
         "pick pockets":15,
         "open locks": 10,
         "find-remove traps":5,

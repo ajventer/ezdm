@@ -55,7 +55,5 @@
         },
         "icon": "dwarf.png"
     },
-    "conditional": {},
-    "LoadDefaultFrom": "Continue",
-    "save_changes": "Save changes"
+    "conditional": {}
 }

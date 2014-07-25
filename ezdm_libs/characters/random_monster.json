@@ -48,14 +48,14 @@
             "pack": [],
             "spells": ""
         },
-        "type": " npc",
+        "type": "npc",
         "class": {
             "class": "fighter",
             "parent": "warrior"
         },
         "icon": "rat.png"
     },
-    "conditional": {},
-    "LoadDefaultFrom": "Continue",
-    "save_changes": "Save changes"
+    "conditional": {
+        "orientation": " aggressive"
+    }
 }

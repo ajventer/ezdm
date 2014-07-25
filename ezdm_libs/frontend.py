@@ -161,7 +161,8 @@ class JSON_Editor(Session):
             for key in duplicate_keys:
                     del(self._data[key])
             if "save_changes" in self._data and [k for k in self._data if k.startswith('conditional')]:
-                del(self._data['save_changes'])
+                if 'save_changes' in inflated:
+                    del(inflated['save_changes'])
                 self._obj.update(inflated)
                 page.message('%s saved to %s' % (self._name, self._obj.save()))
         if self._sidebar:
@@ -179,6 +180,8 @@ class JSON_Editor(Session):
         print requestdata
         if not 'LoadDefaultFrom' in requestdata:
             self._data.update(requestdata)
+            if 'LoadDefaultFrom' in self._data:
+                del(self._data['LoadDefaultFrom'])
         else:
             self._data = requestdata
         print self._data
