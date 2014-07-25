@@ -14,7 +14,7 @@
     "__Tonequip": "",
     "__Tonuse": "",
     "__Tonround": "",
-    "__Tondrop": "page.warning('%s has dropped %s' % (player.displayname(), item.displayname())"
+    "__Tondrop": "page.warning('%s has dropped %s' % (player.displayname(), item.displayname()))"
 },
 "conditional":{
     "core.type=weapon":{

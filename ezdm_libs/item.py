@@ -20,25 +20,25 @@ class Item(EzdmObject):
     def itemtype(self):
         return self.get('/core/type', 'other') or self.get('/type', self(), 'other')
 
-    def _event(self, key, *args):
-        python = self.get('/events/%s' % key, '')
-        if python:
-            exec python in {}, locals
+    def _event(self, key, localvars):
+        code = self.get(key, '')
+        if code:
+            exec code in {}, localvars
 
     def onpickup(self, player, page):
-        self._event("/events/__Tonpickup_player", {'item': self, 'page': page, 'player': player})
+        self._event("/events/onpickup", {'item': self, 'page': page, 'player': player})
 
     def onequip(self, player, page):
-        self._event("/events/__Tonequip_player", {'item': self, 'page': page, 'player': player})
+        self._event("/events/onequip", {'item': self, 'page': page, 'player': player})
 
     def onuse(self, player, target, page):
-        self._event("/events/__Tonuse_player_target", {'item': self, 'page': page, 'player': player, 'target': target})
+        self._event("/events/onuse", {'item': self, 'page': page, 'player': player, 'target': target})
 
     def onround(self, player, target, page):
-        self._event("/events/__Tonround_player_target", {'item': self, 'page': page, 'player': player, 'target': target})
+        self._event("/events/onround", {'item': self, 'page': page, 'player': player, 'target': target})
 
     def onfinish(self, player, target, page):
-        self._event("/events/__Tonfinish_player_target", {'item': self, 'page': page, 'player': player, 'target': target})
+        self._event("/events/onfinish", {'item': self, 'page': page, 'player': player, 'target': target})
 
     def ondrop(self, player, page):
-        self._event("/events/__Tondrop_player", {'item': self, 'page': page, 'player': player})
+        self._event("/events/ondrop", {'item': self, 'page': page, 'player': player})

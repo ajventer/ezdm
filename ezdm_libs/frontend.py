@@ -2,7 +2,7 @@ from jinja2 import Template
 from objects import EzdmObject
 from util import readfile, find_files, template_dict, json_editor, save_json, list_icons, inflate
 
-mode = 'campaign'
+mode = 'dm'
 
 class Session:
     def __init__(self):
@@ -54,7 +54,9 @@ class Page:
         else:
             menuitems = find_files('', 'campaign*.py', basename=True)
             menuitems = [m.replace('campaign_', '').replace('.py', '').upper() for m in menuitems]
-            
+        
+        menuitems.extend(find_files('', 'all*.py', basename=True))
+        menuitems = [m.replace('all_', '').replace('.py', '').upper() for m in menuitems]
         self._menuitems = {'menuitems': menuitems}
         self.content = [('header.tpl', {'title': title}), ('menubar.tpl', self._menuitems)]
 
@@ -160,6 +162,11 @@ class JSON_Editor(Session):
         return page.render()
 
     def render(self, requestdata):
+        global mode
+        if mode != 'dm':
+            page = Page()
+            page.error('Sorry, this feature cannot be used in campaign mode')
+            return page.render()
         if not requestdata:
             return self.welcomeform()
         self._data.update(requestdata)

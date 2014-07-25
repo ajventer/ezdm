@@ -1,4 +1,5 @@
 from frontend import Session, Page
+import frontend
 
 
 class HOME(Session):
@@ -6,5 +7,7 @@ class HOME(Session):
         page = Page()
         if requestdata:
             self.destroy()
-        page.add('COPYING.tpl', {})
+        if frontend.mode == 'dm':
+        	page.add('COPYING.tpl', {})
+        
         return page.render()
