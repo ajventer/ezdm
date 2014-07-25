@@ -1,8 +1,9 @@
 from jinja2 import Template
 from objects import EzdmObject
-from util import readfile, find_files, template_dict, json_editor, save_json, list_icons, inflate
+from util import readfile, find_files, template_dict, json_editor, list_icons, inflate
 
 mode = 'dm'
+
 
 class Session:
     def __init__(self):
@@ -54,7 +55,6 @@ class Page:
         else:
             menuitems = find_files('', 'campaign*.py', basename=True)
             menuitems = [m.replace('campaign_', '').replace('.py', '').upper() for m in menuitems]
-        
         menuitems.extend(find_files('', 'all*.py', basename=True))
         menuitems = [m.replace('all_', '').replace('.py', '').upper() for m in menuitems]
         self._menuitems = {'menuitems': menuitems}

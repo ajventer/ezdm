@@ -1,6 +1,10 @@
 import os
 
 
+def data_paths(path):
+    return [get_sys_data(path), get_user_data(path)]
+
+
 def get_user_data(path):
     _ROOT = os.path.expanduser('~')
     _ROOT = os.path.join(_ROOT, '.ezdm')

@@ -1,5 +1,5 @@
 import os
-from ezdm_libs import get_sys_data, get_user_data
+from ezdm_libs import get_user_data, get_data_paths
 from simplejson import loads, dumps
 from glob import glob
 from random import randrange
@@ -67,6 +67,7 @@ def flatten(init, lkey=''):
             ret[key] = val
     return ret
 
+
 def inflate(dic):
     out = {}
     for key in dic:
@@ -77,11 +78,12 @@ def inflate(dic):
         writekey(key, v, out)
     return out
 
+
 def save_json(source, name, dic):
     d = inflate(flatten(dic))
     if not name.endswith('.json'):
         name = '%s.json' % name
-    filename = os.path.join(get_user_data(source), name).replace(' ', '_')    
+    filename = os.path.join(get_user_data(source), name).replace(' ', '_')
     open(filename, 'w').write(dumps(d, indent=4))
     return filename
 
@@ -124,28 +126,25 @@ def writekey(key, value, json):
 
 
 def list_icons(selected=''):
-    icons = glob(get_sys_data('icons') + '/*')
-    icons.extend(glob(get_user_data('icons') + '/*'))
+    icons = find_files('icons', '*')
     icons = [os.path.basename(icon) for icon in icons]
     return {'selected': selected, 'icons': icons}
 
 
 def load_icon(icon='blank.png'):
-    syspath = get_sys_data('icons')
-    userpath = get_user_data('icons')
     path = ''
-    if os.path.exists(os.path.join(syspath, icon)):
-        path = os.path.join(syspath, icon)
-    if os.path.exists(os.path.join(userpath, icon)):
-        path = os.path.join(userpath, icon)
+    for p in get_data_paths('icons'):
+        if os.path.exists(os.path.join(p, icon)):
+            path = os.path.join(p, icon)
     if path == '':
-        path = os.path.join(syspath, 'blank.png')
+        path = os.path.join(get_data_paths('icons')[0], 'blank.png')
     return path
 
 
 def find_files(source, needle=None, basename=False, strip=''):
-    matches = glob(os.path.join(get_user_data(source), needle))
-    matches += glob(os.path.join(get_sys_data(source), needle))
+    matches = []
+    for path in get_data_paths(source):
+        matches += glob(os.path.join(path, needle))
     if basename:
         matches = [os.path.basename(match) for match in matches]
     if strip:

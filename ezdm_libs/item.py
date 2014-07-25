@@ -1,4 +1,4 @@
-from util import save_json, readkey, writekey
+from util import save_json
 from objects import EzdmObject
 
 
@@ -11,8 +11,7 @@ class Item(EzdmObject):
         if 'temp' in self():
             del self()['temp']
         name = '%s.json' % self.get('/core/name', '')
-        print "Saving ",name
-        return save_json('items', name.lower().replace(' ','_'), self.json)
+        return save_json('items', name.lower().replace(' ', '_'), self.json)
 
     def slot(self):
         return self.get('/conditional/slot', '')
