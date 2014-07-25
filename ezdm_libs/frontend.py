@@ -148,9 +148,11 @@ class JSON_Editor(Session):
         if default and not default == 'New %s' % self._name:
             defaults = readfile('%ss' % self._name, '%s.json' % default, json=True)
             self._data.update(defaults)
-        if 'loadfrom' in self._data:
             del(self._data['loadfrom'])
+        print "Using template file: template_%s.json" % self._name
         template = readfile('adnd2e', 'template_%s.json' % self._name, json=True)
+        print "template", template
+        print "Data", self._data
         tpldict = template_dict(template, self._data)
         page.add('json_editor.tpl', json_editor(tpldict, 'New %s' % self._name, '/%sS' % self._name.upper()))
         inflated = inflate(self._data)
@@ -174,7 +176,12 @@ class JSON_Editor(Session):
             return page.render()
         if not requestdata:
             return self.welcomeform()
-        self._data.update(requestdata)
+        print requestdata
+        if not 'LoadDefaultFrom' in requestdata:
+            self._data.update(requestdata)
+        else:
+            self._data = requestdata
+        print self._data
         return self.newform()
 
     def view(self, item):

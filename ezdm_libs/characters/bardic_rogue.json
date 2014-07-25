@@ -10,6 +10,7 @@
         },
         "orientation": "",
         "combat": {
+            "thac0": 18,
             "level-hitdice": 4,
             "hitpoints": 17,
             "max_hp": 16
@@ -27,6 +28,15 @@
             }
         },
         "inventory": {
+            "equiped": {
+                "neck": {},
+                "rightfinger": {},
+                "feet": {},
+                "leftfinger": {},
+                "legs": {},
+                "lefthand": {},
+                "chest": {}
+            },
             "money": {
                 "copper": 0,
                 "silver": 0,
@@ -35,6 +45,7 @@
             "pack": [],
             "spells": ""
         },
+        "type": "player",
         "class": {
             "class": "bard",
             "parent": "rogue"
@@ -42,6 +53,7 @@
         "icon": "dwarf.png"
     },
     "conditional": {
+        "find-remove traps": 5,
         "read languages": 0,
         "pick pockets": 15,
         "detect noise": 15,
@@ -51,5 +63,6 @@
         "find": {
             "remove traps": 5
         }
-    }
+    },
+    "save_changes": "Save changes"
 }

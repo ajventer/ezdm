@@ -13,7 +13,7 @@ def template_dict(template, defaults=None):
     tpl = flatten(template)
     dfl = defaults and flatten(defaults) or {}
     ret = {}
-    for key in tpl:
+    for key in sorted(tpl):
         inputtype = 'text'
         options = []
         value = tpl[key]
@@ -33,7 +33,7 @@ def template_dict(template, defaults=None):
                     value = dfl[name]
                 elif isinstance(tpl[key], str) and not tpl[key].startswith('__['):
                     value = tpl[key]
-                else:
+                elif isinstance(tpl[key], str) and tpl[key].startswith('__['):
                     options = tpl[key].replace('__[', '').replace(']', '').split(',')
                     inputtype = 'select'
                     value = ''
@@ -53,6 +53,8 @@ def template_dict(template, defaults=None):
             value = dfl[realkey(key)]
         elif realkey(key).replace('core/', '') in dfl:
             value = dfl[realkey(key).replace('core/', '')]
+        if isinstance(value, str) and value.startswith('__['):
+            value = ''
         ret[name] = {'name': name, 'value': value, 'inputtype': inputtype, 'options': options}
     return ret
 
@@ -155,8 +157,10 @@ def find_files(source, needle=None, basename=False, strip=''):
 def readfile(source='', name='', filename='', json=False, default=None):
     if not filename:
         filenames = find_files(source, name)
+        print filenames
         if filenames:
             filename = filenames[0]
+            print filename
     if not json:
         try:
             return open(filename, 'r').read()

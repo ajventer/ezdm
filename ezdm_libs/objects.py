@@ -1,6 +1,12 @@
 from util import readkey, writekey
 
 
+def event(obj, key, localvars):
+    code = obj.get(key, '')
+    if code:
+        exec code in {}, localvars
+
+
 class EzdmObject(object):
     json = {}
 

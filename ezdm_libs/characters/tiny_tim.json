@@ -10,6 +10,7 @@
         },
         "orientation": "",
         "combat": {
+            "thac0": 16,
             "level-hitdice": 5,
             "hitpoints": 23,
             "max_hp": 38
@@ -47,11 +48,14 @@
             "pack": [],
             "spells": ""
         },
+        "type": "player",
         "class": {
             "class": "fighter",
             "parent": "warrior"
         },
         "icon": "dwarf.png"
     },
-    "conditional": {}
+    "conditional": {},
+    "LoadDefaultFrom": "Continue",
+    "save_changes": "Save changes"
 }

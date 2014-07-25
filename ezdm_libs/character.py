@@ -1,6 +1,7 @@
-from util import inflate, flatten, rolldice, readfile, inrange, price_in_copper, convert_money, save_json, load_json, readkey, writekey
+from util import inflate, flatten, rolldice, readfile, inrange, price_in_copper, convert_money, save_json, load_json, readkey
 from item import Item
-from objects import EzdmObject
+from objects import EzdmObject, event
+
 
 class Character(EzdmObject):
     removed = False
@@ -26,6 +27,9 @@ class Character(EzdmObject):
                 self.put('core/combat/max_hp', self.get('/combat/hitpoints', 1))
         except:
             pass
+
+    def oninteract(self, target, page):
+        event(self, '/conditional/events/oninteract', {'character': self, 'page': page, 'target': target})
 
     def remove_from_combat(self):
         self.removed = True
@@ -235,16 +239,15 @@ class Character(EzdmObject):
         if not "inventory" in self() or not "equiped" in self()["inventory"]:
             return []
         for slot in ['righthand', 'lefthand']:
-            item =  Item(self.get('/core/inventory/equiped/%s' % slot, {}))
-            if item and not item.slot == 'twohand':
-                weap.append(lefthand)
-            elif item.slot == 'twohand':
-                weap = [lefthand]
+            item = Item(self.get('/core/inventory/equiped/%s' % slot, {}))
+            if item and not item.slot == 'twohand' and slot == 'lefthand':
+                weap.append(item)
+            elif item.slot == 'twohand' and not item.slot == 'righthand':
+                weap = [item]
         return weap
 
     def acquire_item(self, item):
         self()['core']['inventory']['pack'].append(item())
-
 
     def equip_item(self, itemname):
         slots = []
@@ -271,15 +274,28 @@ class Character(EzdmObject):
                 if self.get('/core/inventory/equipped/%s' % item.slot(), {}) and not has_unequiped:
                     self.unequip(slot)
                     #Prevent equipping over a twohander from duplicatng it
-                    has_unequiped = True 
+                    has_unequiped = True
                 self.put('/core/inventory/equiped/%s' % slot, item())
                 self.drop_item(item.displayname())
 
-    def unequip_item(self, slot, item = None):
-        current = self.get('/core/inventory/equiped/%s' %slot, {})
+    def unequip_item(self, slot):
+        current = self.get('/core/inventory/equiped/%s' % slot, {})
         if current:
             self.json['inventory']['pack'].append(current)
-        self.put('/core/inventory/equiped/%s' %slot, {})
+        self.put('/core/inventory/equiped/%s' % slot, {})
+
+    def sell_item(self, itemname, buyer='shop', gold=0, silver=0, copper=0):
+        for item in self.get('/inventory/pack'):
+            if item.displayname() == itemname:
+                tosell = Item(item)
+                break
+        if buyer != 'shop':
+            buyer.spend_money(gold, silver, copper)
+            buyer.acquire_item(tosell())
+        else:
+            gold, silver, copper = item.money_tuple().items()
+        self.drop_item(itemname)
+        self.gain_money(gold, silver, copper)
 
     def drop_item(self, itemname, section='pack'):
         for item in self.get('/core/inventory/%s' % section, []):

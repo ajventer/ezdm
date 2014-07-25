@@ -17,7 +17,7 @@
     </td>
 </tr>
     <td colspan=2>
-        <center><input type=submit value="Continue"></center>
+        <center><input type=submit name="LoadDefaultFrom" value="Continue"></center>
     </td>
 </tr>
 </table>

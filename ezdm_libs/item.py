@@ -1,5 +1,5 @@
 from util import save_json
-from objects import EzdmObject
+from objects import EzdmObject, event
 
 
 class Item(EzdmObject):
@@ -16,28 +16,26 @@ class Item(EzdmObject):
     def slot(self):
         return self.get('/conditional/slot', '')
 
+    def price_tuple(self):
+        return (self.get('/core/price/gold', 0), self.get('/core/price/silver', 0), self.get('/core/price/copper', 0))
+
     def itemtype(self):
         return self.get('/core/type', 'other') or self.get('/type', self(), 'other')
 
-    def _event(self, key, localvars):
-        code = self.get(key, '')
-        if code:
-            exec code in {}, localvars
-
     def onpickup(self, player, page):
-        self._event("/events/onpickup", {'item': self, 'page': page, 'player': player})
+        event(self, "/events/onpickup", {'item': self, 'page': page, 'player': player})
 
     def onequip(self, player, page):
-        self._event("/events/onequip", {'item': self, 'page': page, 'player': player})
+        event(self, "/events/onequip", {'item': self, 'page': page, 'player': player})
 
     def onuse(self, player, target, page):
-        self._event("/events/onuse", {'item': self, 'page': page, 'player': player, 'target': target})
+        event(self, "/events/onuse", {'item': self, 'page': page, 'player': player, 'target': target})
 
     def onround(self, player, target, page):
-        self._event("/events/onround", {'item': self, 'page': page, 'player': player, 'target': target})
+        event(self, "/events/onround", {'item': self, 'page': page, 'player': player, 'target': target})
 
     def onfinish(self, player, target, page):
-        self._event("/events/onfinish", {'item': self, 'page': page, 'player': player, 'target': target})
+        event(self, "/events/onfinish", {'item': self, 'page': page, 'player': player, 'target': target})
 
     def ondrop(self, player, page):
-        self._event("/events/ondrop", {'item': self, 'page': page, 'player': player})
+        event(self, "/events/ondrop", {'item': self, 'page': page, 'player': player})
