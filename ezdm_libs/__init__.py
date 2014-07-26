@@ -2,7 +2,7 @@ import os
 
 
 def data_paths(path):
-    return [get_sys_data(path), get_user_data(path)]
+    return [get_user_data(path), get_sys_data(path)]
 
 
 def get_user_data(path):

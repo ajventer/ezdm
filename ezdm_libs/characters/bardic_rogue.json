@@ -33,6 +33,7 @@
                 "rightfinger": {},
                 "feet": {},
                 "leftfinger": {},
+                "gloves": {},
                 "legs": {},
                 "lefthand": {},
                 "chest": {}
@@ -59,6 +60,7 @@
         "detect noise": 15,
         "move silently": 10,
         "open locks": 10,
+        "armor_types": "['cloth', 'leather']",
         "climb walls": 60,
         "find": {
             "remove traps": 5

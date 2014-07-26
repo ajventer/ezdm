@@ -28,7 +28,6 @@ def template_dict(template, defaults=None):
             k, v = condition.split('=')
             k = k.replace('.', '/')
             dv = k in dfl and dfl[k]
-            print "Key: -%s- Condition: -%s- == -%s- | DFL value -%s-" %(key, k, v, dv) ,
             if dv == v:
                 print "Match !"
                 if name in dfl:
@@ -161,7 +160,7 @@ def readfile(source='', name='', filename='', json=False, default=None):
     if not filename:
         filenames = find_files(source, name)
         if filenames:
-            filename = filenames[0]
+            filename = filenames[-1]
     if not json:
         try:
             return open(filename, 'r').read()
