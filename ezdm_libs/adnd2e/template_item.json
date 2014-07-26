@@ -22,12 +22,13 @@
         "weapon_type": "__[melee,magic,misile]", 
         "damage_type": "__[slice,hack,stab]",
         "__Ito_hit": "",
-        "slot": "__[lefthand, righthand, twohand]",
+        "slot": "__[lefthand,righthand,twohand]",
         "save_against":"__[ppd,rod,pp,breath,spell,none]"
     },
     "core.type=armor":{
         "ac":0,
-        "slot": "__[head, chest, legs, feet, wrists, hands, finger, neck]"
+        "material": "__[cloth,leather,mail,plate]",
+        "slot": "__[head,chest,legs,feet,wrists,hands,finger,neck]"
     }    
 }
 }
