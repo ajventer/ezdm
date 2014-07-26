@@ -27,13 +27,13 @@ def posthandler(action=None):
 
 def gethandler(action=None, item=None):
     global sessions
-    print "GetHandler", sessions
+    print "GetHandler", sessions, action, item
+    from ezdm_libs.frontend import Session as ActionSession
     action = action or 'ALL_HOME'
     try:
         exec 'from ezdm_libs.%s import %s as ActionSession' % (action.lower(), action.upper().split('_')[1])
-    except Exception as e:
-        print "Failed to load %s: %s\nLoading default session" % (action, e)
-        from ezdm_libs.frontend import Session as ActionSession
+    except:
+        pass
     if not action_name(action) in sessions:
         sessions[action_name(action)] = ActionSession()
     if not item:

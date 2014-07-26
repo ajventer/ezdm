@@ -28,6 +28,9 @@ class Character(EzdmObject):
         except:
             pass
 
+    def character_type(self):
+        return self.get('/core/type', 'player')
+
     def oninteract(self, target, page):
         event(self, '/conditional/events/oninteract', {'character': self, 'page': page, 'target': target})
 
