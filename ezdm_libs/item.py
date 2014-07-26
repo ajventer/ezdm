@@ -22,6 +22,9 @@ class Item(EzdmObject):
     def itemtype(self):
         return self.get('/core/type', 'other') or self.get('/type', self(), 'other')
 
+    def armortype(self):
+        return self.get('/conditional/material', 'plate')
+
     def onpickup(self, player, page):
         event(self, "/events/onpickup", {'item': self, 'page': page, 'player': player})
 

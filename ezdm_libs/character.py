@@ -259,6 +259,8 @@ class Character(EzdmObject):
             if item.displayname == itemname:
                 break
         if item:
+            if item.itemtype() == 'armor' and not item.armortype() in self.get('/conditional/armor_types', ['cloth']):
+                return (False, "%s cannot wear %s armor like %s" % (self.displayname(), item.armortype(), item.displayname()))
             if item.slot() == 'twohand':
                 slots = ['lefthand', 'righthand']
             elif item.slot() == 'finger':
@@ -280,6 +282,7 @@ class Character(EzdmObject):
                     has_unequiped = True
                 self.put('/core/inventory/equiped/%s' % slot, item())
                 self.drop_item(item.displayname())
+        return (True, "%s has equiped %s" % (self.displayname(), item.displayname()))
 
     def unequip_item(self, slot):
         current = self.get('/core/inventory/equiped/%s' % slot, {})
