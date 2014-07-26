@@ -1,0 +1,42 @@
+{
+    "core":{
+        "name": "",
+        "type": "__[floor,door,wall,link,other,shop]",
+        "background": ""
+    },
+    "conditional": {
+        "core.type=floor": {
+            "canenter": true,
+            "items":[],
+            "gold":0,
+            "silver":0,
+            "copper":0,
+            "npcs":[],
+            "players":[],
+            "events": {
+                "onenter": ""
+            },
+        },
+        "core.type=door": {
+            "background_alternate": "",
+            "locked": true,
+            "canenter": false,
+            "events": {
+                "onenter":"",
+                "ontryunlock":"",
+                "onunlock":"tile.put('/conditional/canenter, True)\ntile.put('/core/background', tile.get('/conditional/background',tile.get('/core/background','')))"
+            }
+        },
+        "core.type=wall": {
+            "canenter": false,
+            "events":""
+        },
+        "core.type=other":{
+            "canenter": false,
+            "events":""
+        },
+        "core.type=shop":{
+            "items_for_sale":[]
+        }
+    }
+}

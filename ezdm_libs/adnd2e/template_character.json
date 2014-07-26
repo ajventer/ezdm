@@ -44,7 +44,14 @@
 },
 "conditional":{
     "core.type=npc": {
-        "orientation" : "__[friendly, neutral, aggressive]"
+        "orientation" : "__[friendly, neutral, aggressive]",
+        "loot": {
+            "gold": 10,
+            "silver": 99,
+            "copper": 99,
+            "items_possible": [],
+            "max_items":1
+        }
     },
     "core.class.parent=rogue":{
         "__Yarmor_types": ["cloth","leather"],
