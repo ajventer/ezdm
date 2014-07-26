@@ -29,7 +29,6 @@ def template_dict(template, defaults=None):
             k = k.replace('.', '/')
             dv = k in dfl and dfl[k]
             if dv == v:
-                print "Match !"
                 if name in dfl:
                     value = dfl[name]
                 elif isinstance(tpl[key], str) and not tpl[key].startswith('__['):
@@ -39,7 +38,6 @@ def template_dict(template, defaults=None):
                     inputtype = 'select'
                     value = ''
             else:
-                print "No match"
                 continue
 
         if '__X' in key:
@@ -153,14 +151,20 @@ def find_files(source, needle=None, basename=False, strip=''):
         matches = [os.path.basename(match) for match in matches]
     if strip:
         matches = [match.replace(strip, '') for match in matches]
-    return list(set(matches))
+    unique = {}
+    for m in matches:
+        bname = os.path.basename(m)
+        if not bname in unique:
+            unique[bname] = m
+    print unique
+    return unique.values()
 
 
 def readfile(source='', name='', filename='', json=False, default=None):
     if not filename:
         filenames = find_files(source, name)
         if filenames:
-            filename = filenames[-1]
+            filename = filenames[0]
     if not json:
         try:
             return open(filename, 'r').read()

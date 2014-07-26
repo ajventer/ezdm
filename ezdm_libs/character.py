@@ -186,16 +186,55 @@ class Character(EzdmObject):
         if self.weapon > self.num_weapons() - 1:
             self.weapon = 0
 
-    def give_xp(self, xp):
+    def level_up(self):
+        level = int(self.get('/core/combat/level-hitdice', 1))
+        level += 1
+        out = '%s has reached level %s !' % (self.displayname(), level)
+        self.put('/core/combat/level-hitdice', level)
+        ability_scores = load_json('adnd2e', 'ability_scores')
+        con = self.get('/core/abilities/con', 1)
+        out += '<br>Character constitution: %s' % con
+        con_bonus = int(readkey('/con/%s/hit' % con, ability_scores, 0))
+        out += '<br>Constitution Bonus: %s' % con_bonus
+        xp_levels = load_json('adnd2e', 'xp_levels')
+        pclass = self.get('/core/class/parent', '')
+        xp_levels = readkey('%s' % (pclass), xp_levels)
+        hitdice = readkey('/%s/hit_dice' % (level), xp_levels, 1)
+        print "Read hitdice as ", hitdice
+        if not '+' in hitdice:
+            hitdice = hitdice + '+0'
+        hitdice, bonus = hitdice.split('+')
+        dice = int(readkey('/dice', xp_levels, 1))
+        more_hp, roll = rolldice(numdice=int(hitdice), numsides=dice, modifier=con_bonus)
+        out += '<br>%s' % roll
+        more_hp += int(bonus)
+        current_max = int(self.get('/core/combat/max_hp', 1))
+        new_max = current_max + more_hp
+        out += '<br>Maximum hitpoints increased by %s. Maximum hitpoints now: %s' % (more_hp, new_max)
+        self.put('core/combat/max_hp', new_max)
+        current_hp = int(self.get('/core/combat/hitpoints', 0))
+        new_hp = current_hp + more_hp
+        out += '<br>Character hitpoints now %s' % new_hp
+        self.put('/core/combat/hitpoints', new_hp)
+        return out
+
+    def give_xp(self, xp, page):
         current_xp = int(self.get('/core/personal/xp', 0))
         new_xp = current_xp + int(xp)
         self.put('/core/personal/xp', str(new_xp))
-        return str(new_xp)
+        page.message('Character gains experience points. XP now: %s' % new_xp)
+        next_level = self.next_level()
+        if new_xp >= next_level:
+            page.warning(self.level_up())
+            page.error('Check for and apply manual increases to other stats if needed !')
+        else:
+            page.message('Next level at %s. %s experience points to go' % (next_level, next_level - new_xp))
+        return new_xp
 
     def next_level(self):
         parentclass = self.get('/core/class/parent', '')
         childclass = self.get('/core/class/class', '')
-        nl = int(self.get('/combat/level-hitdice', '')) + 1
+        nl = int(self.get('/core/combat/level-hitdice', '')) + 1
         xp_levels = readkey('/%s/%s' % (parentclass, str(nl)), load_json('adnd2e', 'xp_levels'), {})
         if 'all' in xp_levels:
             next_xp = int(xp_levels['all'])
