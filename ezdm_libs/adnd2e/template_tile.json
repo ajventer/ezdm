@@ -2,7 +2,8 @@
     "core":{
         "name": "",
         "type": "__[floor,door,wall,link,other,shop]",
-        "background": ""
+        "icon": "",
+        "revealed": "__[true,false]"
     },
     "conditional": {
         "core.type=floor": {
@@ -15,7 +16,10 @@
             "players":[],
             "events": {
                 "onenter": ""
-            },
+            }
+        },
+        "core.type=link": {
+            "newmap":""
         },
         "core.type=door": {
             "background_alternate": "",

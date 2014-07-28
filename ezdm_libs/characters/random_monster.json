@@ -37,6 +37,7 @@
                 "chest": "",
                 "feet": "",
                 "leftfinger": "",
+                "gloves": {},
                 "legs": "",
                 "lefthand": ""
             },
@@ -56,6 +57,16 @@
         "icon": "rat.png"
     },
     "conditional": {
+        "armor_types": "['cloth', 'leather', 'mail', 'plate']",
+        "loot": {
+            "copper": 99,
+            "silver": 99,
+            "max_items": 1
+        },
+        "events": {
+            "oninspect": "",
+            "oninteract": ""
+        },
         "orientation": " aggressive"
     }
 }

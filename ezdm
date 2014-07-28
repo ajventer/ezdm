@@ -30,12 +30,12 @@ def gethandler(action=None, item=None):
     print "GetHandler", sessions, action, item
     from ezdm_libs.frontend import Session as ActionSession
     action = action or 'ALL_HOME'
-    try:
-        exec 'from ezdm_libs.%s import %s as ActionSession' % (action.lower(), action.upper().split('_')[1])
-    except:
-        pass
+    to_import = 'from ezdm_libs.%s import %s as ActionSession' % (action.lower(), action.upper().split('_')[1])
+    print to_import
+    exec to_import
     if not action_name(action) in sessions:
         sessions[action_name(action)] = ActionSession()
+    print sessions
     if not item:
         return sessions[action_name(action)].render(None)
     else:
@@ -54,9 +54,9 @@ def serve_js():
     return static_file(filename, root=get_sys_data('js'), mimetype='text/javascript')
 
 
-@route('/icon/<filename>', method='get')
-def icon(filename):
-    icon = load_icon(filename)
+@route('/icon/<source>/<filename>', method='get')
+def icon(source, filename):
+    icon = load_icon(os.path.join(source, filename))
     print "Serving %s" % icon
     extension = icon.split('.')[-1]
     return static_file(os.path.basename(icon), root=os.path.dirname(icon), mimetype='image/%s' % extension)

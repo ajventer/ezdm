@@ -1,0 +1,11 @@
+{
+    "core": {
+        "type": "wall",
+        "name": "rock_wall",
+        "icon": "backgrounds/wall_rock.png"
+    },
+    "conditional": {
+        "canenter": "False",
+        "events": ""
+    }
+}

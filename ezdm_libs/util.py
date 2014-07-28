@@ -12,6 +12,7 @@ def json_editor(tpldict, name, action):
 def template_dict(template, defaults=None):
     tpl = flatten(template)
     dfl = defaults and flatten(defaults) or {}
+    print "Icon in dfl", dfl.get('core/icon')
     ret = {}
     for key in sorted(tpl):
         inputtype = 'text'
@@ -67,6 +68,7 @@ def flatten(init, lkey=''):
             ret.update(flatten(val, key + '/'))
         else:
             ret[key] = val
+        print key, val
     return ret
 
 
@@ -127,15 +129,19 @@ def writekey(key, value, json):
     exec parse
 
 
-def list_icons(selected=''):
-    icons = find_files('icons', '*')
-    icons = [os.path.basename(icon) for icon in icons]
-    return {'selected': selected, 'icons': icons}
+def list_icons(source='icons'):
+    icons = find_files(source, '*')
+    icons = [os.path.join(source, os.path.basename(icon)) for icon in icons]
+    return {'icons': icons}
 
 
-def load_icon(icon='blank.png'):
+def load_icon(icon='icons/blank.png'):
+    if '/' in icon:
+        source, icon = icon.split('/')
+    else:
+        source = 'icons'
     path = ''
-    for p in data_paths('icons'):
+    for p in data_paths(source):
         if os.path.exists(os.path.join(p, icon)):
             path = os.path.join(p, icon)
     if path == '':
@@ -143,8 +149,9 @@ def load_icon(icon='blank.png'):
     return path
 
 
-def find_files(source, needle=None, basename=False, strip=''):
+def find_files(source, needle='', basename=False, strip=''):
     matches = []
+    print source, needle
     for path in data_paths(source):
         matches += glob(os.path.join(path, needle))
     if basename:

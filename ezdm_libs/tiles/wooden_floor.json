@@ -1,0 +1,19 @@
+{
+    "core": {
+        "type": "floor",
+        "name": "Wooden Floor",
+        "icon": "backgrounds/floor_wood.png"
+    },
+    "conditional": {
+        "copper": 0,
+        "canenter": "True",
+        "gold": 0,
+        "items": [],
+        "events": {
+            "onenter": ""
+        },
+        "npcs": [],
+        "players": [],
+        "silver": 0
+    }
+}

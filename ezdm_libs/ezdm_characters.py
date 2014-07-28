@@ -6,4 +6,5 @@ class CHARACTERS(JSON_Editor):
     def __init__(self):
         self._name = 'character'
         JSON_Editor.__init__(self)
+        self._icons = 'avatars'
         self._obj = Character({})
