@@ -69,7 +69,7 @@
                     {% else %}
                     <td valign=bottom style="background-image:url(/icon/icons/blank.png);background-repeat:no-repeat;background-size:50px 50px; width:50; height:50" >
                     {% endif %}
-                    {% for k,v in mapobj.tile_icons(zoom_x,zoom_y).items() %}
+                    {% for k,v in mapobj.tile_icons(x,y).items() %}
                         <img width=20 height=20 src="/icon/{{v}}" align=left>
                     {% endfor %}<br>
                       {% if editmode or col.conditional and col.conditional.canenter %}
