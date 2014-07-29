@@ -153,7 +153,8 @@ def find_files(source, needle='', basename=False, strip=''):
     matches = []
     print source, needle
     for path in data_paths(source):
-        matches += glob(os.path.join(path, needle))
+        if path:
+            matches += glob(os.path.join(path, needle))
     if basename:
         matches = [os.path.basename(match) for match in matches]
     if strip:

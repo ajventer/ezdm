@@ -142,7 +142,8 @@ class JSON_Editor(Session):
 
     def newform(self):
         page = Page()
-        self.sidebar(page.tplrender('icon_selecter.tpl', list_icons(self._icons)))
+        if self._icons:
+            self.sidebar(page.tplrender('icon_selecter.tpl', list_icons(self._icons)))
         lf = self._loadform(False)
         page.add(lf[0], lf[1])
         default = self._data.get('loadfrom', None)

@@ -13,5 +13,5 @@ setup(name='ezdm',
       scripts=['ezdm'],
       packages=['ezdm_libs'],
       package_dir={'ezdm_libs': 'ezdm_libs'},
-      package_data={'ezdm_libs': ['adnd2e/*', 'characters/*', 'icons/*', 'items/*', 'maps/*', 'templates/*']}
+      package_data={'ezdm_libs': ['adnd2e/*', 'characters/*', 'icons/*', 'items/*', 'maps/*', 'templates/*', 'avatars/*', 'tiles/*', 'backgrounds/*']}
       )
