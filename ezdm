@@ -20,7 +20,7 @@ def posthandler(action=None):
     print "Posthandler", sessions
     if not action_name(action) in sessions:
         print "Session reset %s" % action_name(action)
-        return gethandler(action_name(action))
+        return gethandler(action)
     print sessions[action_name(action)]
     return sessions[action_name(action)].render(request.POST)
 
@@ -30,7 +30,7 @@ def gethandler(action=None, item=None):
     print "GetHandler", sessions, action, item
     from ezdm_libs.frontend import Session as ActionSession
     action = action or 'ALL_HOME'
-    to_import = 'from ezdm_libs.%s import %s as ActionSession' % (action.lower(), action.upper().split('_')[1])
+    to_import = 'from ezdm_libs.%s import %s as ActionSession' % (action.lower(), action_name(action))
     print to_import
     exec to_import
     if not action_name(action) in sessions:

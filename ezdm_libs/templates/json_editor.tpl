@@ -1,5 +1,5 @@
 <script language="javascript" type="text/javascript" src="/js?path=editarea_0_8_2/edit_area/edit_area_full.js"></script>
-<form action="/action{{header.action}}" method="post"> 
+<form method="post"> 
 <table border=1>
 	<tr><td bgcolor=lightblue colspan=2>
 		<center>

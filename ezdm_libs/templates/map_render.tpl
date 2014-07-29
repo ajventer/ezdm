@@ -11,27 +11,76 @@
     }
 </script>
 
-<table border=1>
+</center>
+
+<table border=0 width=100%>
+<tr>
+    <td>
+
+<table border=1, cellpadding=0, cellspacing=0>
     <tr>
-        <td colspan=20 bgcolor=lightblue>
-            <center><strong>{{name}}
-                {% if turn %} - {{turn}}'s turn{% endif %}
-            </strong></center>
+        <td colspan="{{map.max_x + 1}}" bgcolor=lightblue align=center>
+            {% if editmode %}
+            <table border=1 width=100%>
+            <tr>
+                <td align=center width=50%>
+                <form method=post id="mapload">
+                    <select name="loadmap">
+                        {% for mapitem in maplist %}
+                            <option value="{{mapitem}}">{{mapitem}}</option>
+                        {% endfor %}
+                    </select>
+                    <input type=submit value="Load Map">
+                </form>
+                </td><td align=center>
+                <form method=post id="mapsave">Map name:
+                    <input type=text name="mapname" value="{{map.name}}">
+                    {% if map.name == 'New Map' %}
+                        Max X:<input type=text size=2 name="max_x" value="{{map.max_x}}">
+                        Max Y:<input type=text size=2 name="max_y" value="{{map.max_y}}">
+                    {%endif%}
+                    <input type=submit name="savemap" value="Save Map">
+                </form>
+                </td>
+            </tr>
+            </table>
+            {% else %}
+                <center><strong>{{map.name}}
+                </strong></center>
+            {%endif %}
         </td>
     </tr>
-
-    {% for row in tiles%}
-        {% set x = loop.index - 1 %}
+    <tr>
+        <td bgcolor=lightgray></td>
+        {% for a in range (0,map.max_x) %}
+            <td bgcolor=lightgray>{{a}}</td>
+        {% endfor %}
+    </tr>
+    {% for row in map.tiles%}
+        {% set y = loop.index - 1 %}
         <tr>
+            <td bgcolor=lightgray>{{y}}</td>
             {% for col in row %}
-                {% set y = loop.index - 1%}
-                {% if col.core and col.core.icon %}
-                <td valign=bottom style="background-image:url(/icon/{{col.core.icon}});background-repeat:no-repeat;background-size:50px 50px; width:50; height:50" >
+                {% set x = loop.index - 1%}
+                {% if editmode or (col.core and col.core.revealed) %}
+                    {% if col.core and col.core.icon %}
+                    <td valign=bottom style="background-image:url(/icon/{{col.core.icon}});background-repeat:no-repeat;background-size:50px 50px; width:50; height:50" >
+                    {% else %}
+                    <td valign=bottom style="background-image:url(/icon/icons/blank.png);background-repeat:no-repeat;background-size:50px 50px; width:50; height:50" >
+                    {% endif %}
+                        <input type=button onclick="clickHandler({{x}},{{y}})" value="+">
                 {% else %}
-                <td valign=bottom style="background-image:url(/icon/blank.png);background-repeat:no-repeat;background-size:50px 50px; width:50; height:50" >
+                    <td valign=bottom style="background-image:url(/icon/backgrounds/unrevealed.png);background-repeat:no-repeat;background-size:50px 50px; width:50; height:50" >
                 {% endif %}
-                    <input type=button onclick="clickHandler({{x}},{{y}})" value="->">
-                </td>
+                    </td>
             {% endfor %}
         </tr>
     {% endfor %}
+</table>
+
+</td><td valign=top>
+    Interaction Screen
+</td></tr>
+</table>
+
+<center>

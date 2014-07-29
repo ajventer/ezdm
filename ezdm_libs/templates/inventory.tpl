@@ -36,7 +36,7 @@
 		<tr>
 			<td>
 				{% if inventory.pack %}
-				<form action="/INVENTORY" method="post">
+				<form method="post">
 					
 					Manage Pack:
 					<select name="equip">
@@ -51,7 +51,7 @@
 			</td>
 			<td>
 				{% if inventory.equiped %}
-				<form action="/INVENTORY" method="post">	
+				<form method="post">	
 					Manage Equiped:
 					<select name="equip">
 						{% for item in inventory.equiped %}
@@ -63,7 +63,7 @@
 				{%endif %}
 			</td>
 			<td>
-				<form action="/INVENTORY" method="post">
+				<form method="post">
 					Gold:<input type=text name="gold" size=5>
 					Silver:<input type=text name="silver" size=5>
 					Copper:<input type=text name="copper" size=5><br>
