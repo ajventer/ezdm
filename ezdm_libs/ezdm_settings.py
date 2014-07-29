@@ -4,10 +4,11 @@ from util import save_json
 
 
 class Settings(EzdmObject):
-    def save():
+    def save(self):
         name = 'settings.json'
-        dest = 'etc'
-        return save_json(dest, name)
+        dest = 'settingss'
+        print "Saving settings"
+        return save_json(dest, name, self.json)
 
 
 class SETTINGS(JSON_Editor):

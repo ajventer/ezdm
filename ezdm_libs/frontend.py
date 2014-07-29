@@ -155,14 +155,17 @@ class JSON_Editor(Session):
         for key in sorted(self._data):
             print '     ', key, self._data[key]
         tpldict = template_dict(template, self._data)
-        print "tpldict", tpldict.get('core/icon')
+        print "tpldict", tpldict
         page.add('json_editor.tpl', json_editor(tpldict, 'New %s' % self._name, '/ezdm_%sS' % self._name.upper()))
         inflated = inflate(self._data)
+        print "inflated", inflated
         if 'core' in inflated:
             duplicate_keys = [k for k in inflated if k in inflated['core']]
             for key in duplicate_keys:
                     del(self._data[key])
-            if "save_changes" in self._data and [k for k in self._data if k.startswith('conditional')]:
+            print "Data without dupes", self._data
+            if "save_changes" in self._data:
+                print "Saving changes"
                 if 'save_changes' in inflated:
                     del(inflated['save_changes'])
                 self._obj.update(inflated)

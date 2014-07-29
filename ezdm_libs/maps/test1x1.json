@@ -1,0 +1,32 @@
+{
+    "tiles": [
+        [
+            {
+                "core": {
+                    "revealed": false,
+                    "type": "floor",
+                    "name": "Wooden Floor",
+                    "icon": "backgrounds/floor_wood.png"
+                },
+                "conditional": {
+                    "copper": 0,
+                    "canenter": "True",
+                    "gold": 0,
+                    "items": [],
+                    "events": {
+                        "onenter": ""
+                    },
+                    "npcs": [],
+                    "players": [
+                        "bardic_rogue.json",
+                        "random_monster.json"
+                    ],
+                    "silver": 0
+                }
+            }
+        ]
+    ],
+    "name": "test1x1",
+    "max_x": 1,
+    "max_y": 1
+}

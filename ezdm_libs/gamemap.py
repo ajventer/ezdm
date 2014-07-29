@@ -1,5 +1,5 @@
 from objects import EzdmObject
-from util import save_json, load_json
+from util import save_json, load_json, readkey
 
 
 class Tile(EzdmObject):
@@ -23,19 +23,71 @@ class Tile(EzdmObject):
 
 class GameMap(EzdmObject):
 
-    def __init__(self, json={}, name=None):
+    def __init__(self, json={}, name='', max_x=25, max_y=15):
         if not json:
-            self.new(name)
+            self.new(name=name, max_x=max_x, max_y=max_y)
         else:
             self.json = json
 
-    def new(self, name=''):
+    def new(self, name='', max_x=25, max_y=15):
         self.json = {'name': name}
-        self.json['tiles'] = [[{}] * 20 for _ in range(20)]
+        self.json['max_x'] = max_x
+        self.json['max_y'] = max_y
+        self.json['tiles'] = [[{}] * max_x for _ in range(max_y)]
 
     def load_tile(self, x, y, tile):
         tjson = load_json('tiles', tile)
-        self()['tiles'][x][y] = tjson
+        self()['tiles'][y][x] = tjson
 
     def tile(self, x, y):
-        return Tile(self()['tiles'][x][y])
+        return Tile(self()['tiles'][y][x])
+
+    def putmoney(self, x, y, gold, silver, copper):
+        tile = self.tile(x, y)
+        tile.put('/conditional/gold', gold)
+        tile.put('/conditional/silver', silver)
+        tile.put('/conditional/copper', copper)
+        self()['tiles'][y][x] = tile()
+
+    def getmoney(self, x, y):
+        tile = self.tile(x, y)
+        return (int(tile.get('/conditional/gold', 0)), int(tile.get('/conditional/silver', 0)), int(tile.get('/conditional/copper', 0)))
+
+    def addtotile(self, x, y, name, objtype):
+        tile = self.tile(x, y)
+        current = tile.get('/conditional/%s' % objtype, [])
+        current.append(name)
+        tile.put('/conditional/%s' % objtype, current)
+        self()['tiles'][y][x] = tile()
+
+    def removefromtile(self, x, y, name, objtype):
+        tile = self.tile(x, y)
+        current = tile.get('/conditional/%s' % objtype, [])
+        print current
+        newlist = [item for item in current if not item == name]
+        print newlist
+        tile.put('/conditional/%s' % objtype, newlist)
+        print tile()
+        self()['tiles'][y][x] = tile()
+
+    def tile_icons(self, x, y):
+        tile = self.tile(x, y)
+        if not tile():
+            return {}
+        out = {}
+        sources = {'items': 'items', 'npcs': 'characters', 'players': 'characters'}
+        for section in ['items', 'npcs', 'players']:
+            for thingy in tile.get('/conditional/%s' % section, []):
+                json = load_json(sources[section], thingy)
+                out[thingy] = readkey('/core/icon', json, '')
+        money = self.getmoney(x, y)
+        if money[0] or money[1] or money[2]:
+            out['money'] = 'icons/money.png'
+        return out
+
+    def name(self):
+        name = '%s.json' % self.get('name', '').lower().replace(' ', '_')
+        return name
+
+    def save(self):
+        return save_json('maps', self.name(), self())

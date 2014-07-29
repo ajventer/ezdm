@@ -1,6 +1,7 @@
 from util import inflate, flatten, rolldice, readfile, inrange, price_in_copper, convert_money, save_json, load_json, readkey
 from item import Item
 from objects import EzdmObject, event
+from gamemap import GameMap
 
 
 class Character(EzdmObject):
@@ -22,11 +23,27 @@ class Character(EzdmObject):
             self.armor = self.load_armor()
             self.put('core/combat/thac0', self.__get_thac0())
             self.put('core/combat/saving_throws', self.__get_saving_throws())
-            if self.is_monster():
+            if not self.character_type() == 'player':
                 self.put('core/combat/hitpoints', rolldice(numdice=int(self.get('/combat/level-hitdice', '1')), numsides=8))
                 self.put('core/combat/max_hp', self.get('/combat/hitpoints', 1))
         except:
             pass
+
+    def location(self):
+        return self.get('/core/location', {})
+
+    def moveto(self, mapname, x, y):
+        current = self.location()
+        if current.get('map'):
+            gamemap = GameMap(load_json('maps', current['map']))
+            gamemap.removefromtile(current['x'], current['y'], self.name(), 'players')
+            print "Saving", gamemap.save()
+        self.put('/core/location/x', x)
+        self.put('/core/location/y', y)
+        self.put('/core/location/map', mapname)
+        gamemap = GameMap(load_json('maps', mapname))
+        gamemap.addtotile(x, y, self.name(), 'players')
+        print "Saving", gamemap.save()
 
     def character_type(self):
         return self.get('/core/type', 'player')
@@ -78,9 +95,6 @@ class Character(EzdmObject):
             out += "%s takes %s damage. %s hitpoints remaining" % (self.displayname(), damage, self.get('/core/combat/hitpoints', 1))
             return (True, out)
 
-    def is_monster(self):
-        return self.get('/core/personal/race', '') in ['creature', 'monster']
-
     def start_casting(self, rounds, target):
         self.cast_remaining = rounds
         self.spell_target = target
@@ -103,12 +117,15 @@ class Character(EzdmObject):
     def spell_friendly_target(self):
         return self.is_monster() == self.spell_target.is_monster()
 
+    def name(self):
+        name = '%s_%s.json' % (self.get('/core/personal/name/first', ''), self.get('/core/personal/name/last', ''))
+        return name.lower()
+
     def save(self):
         self.json = inflate(flatten(self.json))
         if 'temp' in self():
             del self()['temp']
-        name = '%s_%s.json' % (self.get('/core/personal/name/first', ''), self.get('/core/personal/name/last', ''))
-        return save_json('characters', name.lower(), self.json)
+        return save_json('characters', self.name(), self.json)
 
     def to_hit_mod(self):
         ability_mods = readfile('adnd2e', 'ability_scores', json=True)
@@ -277,16 +294,7 @@ class Character(EzdmObject):
             return(False, out)
 
     def load_weapons(self):
-        weap = []
-        if not "inventory" in self() or not "equiped" in self()["inventory"]:
-            return []
-        for slot in ['righthand', 'lefthand']:
-            item = Item(self.get('/core/inventory/equiped/%s' % slot, {}))
-            if item and not item.slot == 'twohand' and slot == 'lefthand':
-                weap.append(item)
-            elif item.slot == 'twohand' and not item.slot == 'righthand':
-                weap = [item]
-        return weap
+        return self.equiped_by_type('weapon')
 
     def acquire_item(self, item):
         self()['core']['inventory']['pack'].append(item())
@@ -350,12 +358,6 @@ class Character(EzdmObject):
                 i = self.get('/core/inventory/%s' % section, []).index(item())
                 del self.json['core']['inventory'][section][i]
 
-    def list_inventory(self, sections=['pack', 'equiped']):
-        result = []
-        for section in sections:
-                result.extend(self.get('/core/inventory/%s' % section, []))
-        return result
-
     def money_tuple(self):
         gold = self.get('/core/inventory/money/gold', 0)
         silver = self.get('/core/inventory/money/silver', 0)
@@ -392,14 +394,17 @@ class Character(EzdmObject):
             AC -= int(readkey('/conditionals/ac', item()), 0)
         return AC
 
-    def load_armor(self):
+    def equiped_by_type(self, itemtype):
         arm = []
-        if not "inventory" in self() or not "equiped" in self()["inventory"]:
-            return []
-        for item in self.list_inventory(['equiped']):
-            if item['type'] == 'armor':
-                arm.append(Item(item))
+        equiped = self.get('/inventory/equiped', {})
+        for slot in equiped:
+            item = Item(equiped[slot])
+            if item.itemtype == itemtype:
+                arm.append(item)
         return arm
+
+    def load_armor(self):
+        return self.equiped_by_type('armor')
 
     def num_weapons(self):
         return len(self.weapons)

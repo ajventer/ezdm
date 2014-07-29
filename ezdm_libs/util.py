@@ -12,7 +12,6 @@ def json_editor(tpldict, name, action):
 def template_dict(template, defaults=None):
     tpl = flatten(template)
     dfl = defaults and flatten(defaults) or {}
-    print "Icon in dfl", dfl.get('core/icon')
     ret = {}
     for key in sorted(tpl):
         inputtype = 'text'
@@ -57,6 +56,8 @@ def template_dict(template, defaults=None):
         if isinstance(value, str) and value.startswith('__['):
             value = ''
         ret[name] = {'name': name, 'value': value, 'inputtype': inputtype, 'options': options}
+    if not 'conditional' in ret:
+        ret['conditional'] = 'placeholder'
     return ret
 
 
@@ -103,7 +104,7 @@ def realkey(key):
 
 
 def readkey(key, json, default=None):
-    if not json or not isinstance(json, dict):
+    if not isinstance(json, dict):
         raise ValueError("%s must be a dict" % repr(json))
     key = key.strip('/')
     keylist = key.split('/')

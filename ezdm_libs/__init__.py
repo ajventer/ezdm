@@ -29,7 +29,7 @@ def get_sys_data(path):
 
 
 def get_settings_data(path):
-    for p in get_user_data(path) + get_sys_data(path):
+    for p in get_user_data('settingss') or [] + get_sys_data('settingss') or []:
         filename = os.path.join(p, 'settings.json')
         if os.path.exists(filename):
             break
@@ -40,10 +40,9 @@ def get_settings_data(path):
     try:
         json = loads(open(filename, 'r').read())
         p = json['core']['extra_data_paths']
-        p = os.path.join(p, path)
-        if os.path.exists(p):
-            return p
-        else:
-            return None
-    except:
+        for pth in p:
+            pt = os.path.join(pth, path)
+            if os.path.exists(pt):
+                return pt
+    finally:
         return None
