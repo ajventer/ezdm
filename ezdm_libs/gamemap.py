@@ -1,4 +1,4 @@
-from objects import EzdmObject
+from objects import EzdmObject, event
 from util import save_json, load_json, readkey
 
 
@@ -32,6 +32,9 @@ class Tile(EzdmObject):
 
     def list(self, objtype):
         return self.get('/conditional/%s' % objtype, [])
+
+    def onenter(self, player, page):
+        event(self, "/conditional/events/onenter", {'tile': self, 'page': page, 'player': player})
 
 
 class GameMap(EzdmObject):

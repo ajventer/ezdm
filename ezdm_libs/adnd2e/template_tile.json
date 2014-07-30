@@ -40,7 +40,7 @@
             "events":""
         },
         "core.type=shop":{
-            "items_for_sale":[]
+            "items":[]
         }
     }
 }

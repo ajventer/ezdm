@@ -32,7 +32,7 @@ class Character(EzdmObject):
     def location(self):
         return self.get('/core/location', {})
 
-    def moveto(self, mapname, x, y):
+    def moveto(self, mapname, x, y, page=None):
         current = self.location()
         if current.get('map'):
             gamemap = GameMap(load_json('maps', current['map']))
@@ -43,6 +43,8 @@ class Character(EzdmObject):
         self.put('/core/location/map', mapname)
         gamemap = GameMap(load_json('maps', mapname))
         gamemap.addtotile(x, y, self.name(), 'players')
+        if page:
+            gamemap.tile(x, y).onenter(self, page)
         print "Saving", gamemap.save()
 
     def character_type(self):
