@@ -117,23 +117,27 @@
                             <input type=submit name="loadtilefromfile" value="Load tile from file"><br>
                             {% if mapobj.tile(zoom_x,zoom_y).canenter() %}
                             <select name="charactername">
-                                {% for char in playerlist %}
+                                {% for char in playerlist - mapobj.tile(zoom_x,zoom_y).list('players') %}
                                     <option value="{{char}}">{{char}}</option>
                                 {% endfor %}
                             </select>
-                            <input type=submit name="addchartotile" value="Add character to tile"><br>
+                            <input type=submit name="addchartotile" value="Add character (Will autosave map)"><br>
                             <select name="npcname">
                                 {% for char in npclist %}
                                     <option value="{{char}}">{{char}}</option>
                                 {% endfor %}
-                            </select>
-                            <input type=submit name="addnpctotile" value="Add NPC to tile"><br>
+                            </select>                            
+                            <input type=submit name="addnpctotile" value="Add NPC">
+                            <input type=submit name="removenpcfromtile" value="Remove NPC">
+                            <br>
                             <select name="itemname">
                                 {% for item in itemlist %}
                                     <option value="{{item}}">{{item}}</option>
                                 {% endfor %}
-                            </select>
-                            <input type=submit name="additemtotile" value="Add Item to tile"><br>
+                            </select>                            
+                            <input type=submit name="additemtotile" value="Add Item">
+                            <input type=submit name="removeitemfromtile" value="Remove Item">
+                            <br>
                             {% endif %}
                     {% else %}
                        Campaign Mode Goes Here

@@ -42,6 +42,10 @@ class MAPS(Session):
                 self._map.addtotile(self._data['zoom_x'], self._data['zoom_y'], requestdata['npcname'], 'npcs')
             if 'additemtotile' in requestdata:
                 self._map.addtotile(self._data['zoom_x'], self._data['zoom_y'], requestdata['itemname'], 'items')
+            if 'removenpcfromtile' in requestdata:
+                self._map.removefromtile(self._data['zoom_x'], self._data['zoom_y'], requestdata['npcname'], 'npcs')
+            if 'removeitemfromtile' in requestdata:
+                self._map.removefromtile(self._data['zoom_x'], self._data['zoom_y'], requestdata['itemname'], 'items')
             if not 'savemap' in requestdata and not 'loadmap' in requestdata:
                 page.warning('WARNING: Changes are not yet saved')
 

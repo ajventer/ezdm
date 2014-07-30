@@ -30,6 +30,9 @@ class Tile(EzdmObject):
         newlist = [item for item in current if not item == name]
         self.put('/conditional/%s' % objtype, newlist)
 
+    def list(self, objtype):
+        return self.get('/conditional/%s' % objtype, [])
+
 
 class GameMap(EzdmObject):
 
