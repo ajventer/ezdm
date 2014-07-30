@@ -1,12 +1,13 @@
 {
     "core": {
+        "revealed": "",
         "type": "floor",
         "name": "Wooden Floor",
         "icon": "backgrounds/floor_wood.png"
     },
     "conditional": {
         "copper": 0,
-        "canenter": "True",
+        "canenter": true,
         "gold": 0,
         "items": [],
         "events": {

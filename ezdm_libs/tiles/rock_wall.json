@@ -1,11 +1,12 @@
 {
     "core": {
+        "revealed": "",
         "type": "wall",
         "name": "rock_wall",
         "icon": "backgrounds/wall_rock.png"
     },
     "conditional": {
-        "canenter": "False",
+        "canenter": false,
         "events": ""
     }
 }

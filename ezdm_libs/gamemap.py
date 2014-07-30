@@ -13,12 +13,22 @@ class Tile(EzdmObject):
 
     def canenter(self, new=None):
         if new is None:
-            return self.get('/core/canenter', False)
-        self.put('/core/canenter', new)
+            return self.get('/conditional/canenter', False)
+        self.put('/conditional/canenter', new)
 
     def save(self):
         name = '%s.json' % self.get('/core/name', '')
         return save_json('tiles', name.lower().replace(' ', '_'), self.json)
+
+    def add(self, name, objtype):
+        current = self.get('/conditional/%s' % objtype, [])
+        current.append(name)
+        self.put('/conditional/%s' % objtype, current)
+
+    def remove(self, name, objtype):
+        current = self.get('/conditional/%s' % objtype, [])
+        newlist = [item for item in current if not item == name]
+        self.put('/conditional/%s' % objtype, newlist)
 
 
 class GameMap(EzdmObject):
@@ -55,19 +65,12 @@ class GameMap(EzdmObject):
 
     def addtotile(self, x, y, name, objtype):
         tile = self.tile(x, y)
-        current = tile.get('/conditional/%s' % objtype, [])
-        current.append(name)
-        tile.put('/conditional/%s' % objtype, current)
+        tile.add(name, objtype)
         self()['tiles'][y][x] = tile()
 
     def removefromtile(self, x, y, name, objtype):
         tile = self.tile(x, y)
-        current = tile.get('/conditional/%s' % objtype, [])
-        print current
-        newlist = [item for item in current if not item == name]
-        print newlist
-        tile.put('/conditional/%s' % objtype, newlist)
-        print tile()
+        tile.remove(name, objtype)
         self()['tiles'][y][x] = tile()
 
     def tile_icons(self, x, y):

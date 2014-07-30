@@ -115,12 +115,14 @@
                                 {% endfor %}
                             </select>
                             <input type=submit name="loadtilefromfile" value="Load tile from file"><br>
+                            {% if mapobj.tile(zoom_x,zoom_y).canenter() %}
                             <select name="charactername">
                                 {% for char in charlist %}
                                     <option value="{{char}}">{{char}}</option>
                                 {% endfor %}
                             </select>
                             <input type=submit name="addchartotile" value="Add character to tile"><br>
+                            {% endif %}
                     {% else %}
                        Campaign Mode Goes Here
                     {% endif %}
@@ -132,7 +134,7 @@
                 <script language="javascript" type="text/javascript" src="/js?path=editarea_0_8_2/edit_area/edit_area_full.js"></script>
                     <td>
                         <form method=post>
-                            <textarea id="pythonconsole" cols=60 rows=10 name="pythonconsole">#Enter python commands here to manipulate the map fast</textarea><br>
+                            <textarea id="pythonconsole" cols=60 rows=10 name="pythonconsole">#python console</textarea><br>
                             <script language="javascript" type="text/javascript">
                                 editAreaLoader.init({
                                     id : "pythonconsole"       // textarea id
