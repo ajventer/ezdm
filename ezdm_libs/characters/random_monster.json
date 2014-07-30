@@ -20,7 +20,7 @@
                 "first": "RANDOM"
             },
             "backstory": "",
-            "sex": "",
+            "sex": "male",
             "race": "monster",
             "xp": 1,
             "alignment": {

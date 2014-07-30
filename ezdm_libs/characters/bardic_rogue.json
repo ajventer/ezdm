@@ -15,16 +15,29 @@
             "max_hp": 16
         },
         "personal": {
-            "xp": 5460,
-            "race": "half-elf",
             "name": {
                 "last": "ROGUE",
                 "first": "BARDIC"
             },
+            "backstory": "",
+            "sex": "female",
+            "race": "half-elf",
+            "xp": 5460,
             "alignment": {
                 "law": "neutral",
                 "social": "good"
             }
+        },
+        "location": {
+            "y": "",
+            "x": "",
+            "map": ""
+        },
+        "icon": "avatars/48x48_Faces_4th_Sheet_Update_CharlesGabriel_OGA_0-1-3.png",
+        "type": "player",
+        "class": {
+            "class": "bard",
+            "parent": "rogue"
         },
         "inventory": {
             "equiped": {
@@ -47,13 +60,7 @@
             },
             "pack": [],
             "spells": ""
-        },
-        "type": "player",
-        "class": {
-            "class": "bard",
-            "parent": "rogue"
-        },
-        "icon": "avatars/48x48_Faces_4th_Sheet_Update_CharlesGabriel_OGA_0-1-3.png"
+        }
     },
     "conditional": {
         "find-remove traps": 5,

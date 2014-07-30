@@ -72,7 +72,7 @@
                     {% for k,v in mapobj.tile_icons(x,y).items() %}
                         <img width=20 height=20 src="/icon/{{v}}" align=left>
                     {% endfor %}<br>
-                      {% if editmode or col.conditional and col.conditional.canenter %}
+                      {% if editmode or mapobj.tile(x,y).canenter() %}
                         <input type=button onclick="clickHandler({{x}},{{y}})" value="+">
                       {% endif %}
                 {% else %}
@@ -117,11 +117,23 @@
                             <input type=submit name="loadtilefromfile" value="Load tile from file"><br>
                             {% if mapobj.tile(zoom_x,zoom_y).canenter() %}
                             <select name="charactername">
-                                {% for char in charlist %}
+                                {% for char in playerlist %}
                                     <option value="{{char}}">{{char}}</option>
                                 {% endfor %}
                             </select>
                             <input type=submit name="addchartotile" value="Add character to tile"><br>
+                            <select name="npcname">
+                                {% for char in npclist %}
+                                    <option value="{{char}}">{{char}}</option>
+                                {% endfor %}
+                            </select>
+                            <input type=submit name="addnpctotile" value="Add NPC to tile"><br>
+                            <select name="itemname">
+                                {% for item in itemlist %}
+                                    <option value="{{item}}">{{item}}</option>
+                                {% endfor %}
+                            </select>
+                            <input type=submit name="additemtotile" value="Add Item to tile"><br>
                             {% endif %}
                     {% else %}
                        Campaign Mode Goes Here

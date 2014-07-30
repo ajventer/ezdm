@@ -9,10 +9,11 @@
             "gold": ""
         },
         "description": "A small dagger balanced for use in the offhand.",
+        "identified": false,
         "rounds_afteruse": 0,
-        "icon": "sword.png",
+        "icon": "icons/sword.png",
         "type": "weapon",
-        "size": ""
+        "size": "small"
     },
     "conditional": {
         "slot": "lefthand",
@@ -21,5 +22,12 @@
         "damage_type": "stab",
         "weapon_type": "melee",
         "save_against": "ppd"
+    },
+    "events": {
+        "onequip": "",
+        "onpickup": "",
+        "onround": "",
+        "ondrop": "page.warning('%s has dropped %s' % (player.displayname(), item.displayname()))",
+        "onuse": ""
     }
 }

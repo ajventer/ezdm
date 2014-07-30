@@ -15,16 +15,29 @@
             "max_hp": 38
         },
         "personal": {
-            "xp": 25705,
-            "race": "dwarf",
             "name": {
                 "last": "TIM",
                 "first": "TINY"
             },
+            "backstory": "",
+            "sex": "male",
+            "race": "dwarf",
+            "xp": 25705,
             "alignment": {
                 "law": "neutral",
                 "social": "good"
             }
+        },
+        "location": {
+            "y": "",
+            "x": "",
+            "map": ""
+        },
+        "icon": "avatars/dwarf.png",
+        "type": "player",
+        "class": {
+            "class": "fighter",
+            "parent": "warrior"
         },
         "inventory": {
             "equiped": {
@@ -47,13 +60,7 @@
             },
             "pack": [],
             "spells": ""
-        },
-        "type": "player",
-        "class": {
-            "class": "fighter",
-            "parent": "warrior"
-        },
-        "icon": "avatars/dwarf.png"
+        }
     },
     "conditional": {
         "armor_types": "['cloth', 'leather', 'mail', 'plate']"
