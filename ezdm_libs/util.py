@@ -76,7 +76,7 @@ def flatten(init, lkey=''):
 def inflate(dic):
     out = {}
     for key in dic:
-        if dic[key].lower() in ['true', 'false']:
+        if isinstance(dic[key], str) and dic[key].lower() in ['true', 'false']:
             dic[key] = dic[key].lower()
         try:
             v = loads(dic[key])

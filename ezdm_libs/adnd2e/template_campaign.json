@@ -1,0 +1,11 @@
+{
+    "core": {
+        "name": "",
+        "players": [],
+        "starting_map": "",
+        "__Ycombat_chars": [],
+        "__Yinitiative": [],
+        "__Ychars_in_map":[],
+        "__Ycurrent_char": null
+    }
+}
