@@ -1,0 +1,18 @@
+{
+    "core": {
+        "revealed": false,
+        "type": "door",
+        "name": "door_unlocked",
+        "icon": "backgrounds/dngn_open_door.png"
+    },
+    "conditional": {
+        "canenter": true,
+        "locked": false,
+        "events": {
+            "ontryunlock": "",
+            "onunlock": "",
+            "onenter": ""
+        },
+        "background_alternate": ""
+    }
+}

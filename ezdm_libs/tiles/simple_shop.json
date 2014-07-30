@@ -1,0 +1,12 @@
+{
+    "core": {
+        "revealed": "False",
+        "type": "shop",
+        "name": "simple_shop",
+        "icon": "backgrounds/dngn_enter_shop.png"
+    },
+    "conditional": {
+        "items": [],
+        "canenter": true
+    }
+}

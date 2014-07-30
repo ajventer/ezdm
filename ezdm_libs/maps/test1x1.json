@@ -3,8 +3,8 @@
         [
             {
                 "core": {
-                    "revealed": false,
                     "type": "floor",
+                    "revealed": false,
                     "name": "Wooden Floor",
                     "icon": "backgrounds/floor_wood.png"
                 },
@@ -13,15 +13,14 @@
                     "canenter": "True",
                     "gold": 0,
                     "items": [],
-                    "events": {
-                        "onenter": ""
-                    },
+                    "silver": 0,
                     "npcs": [],
                     "players": [
-                        "bardic_rogue.json",
-                        "random_monster.json"
+                        "bardic_rogue.json"
                     ],
-                    "silver": 0
+                    "events": {
+                        "onenter": ""
+                    }
                 }
             }
         ]

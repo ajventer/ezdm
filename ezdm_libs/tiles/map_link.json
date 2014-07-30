@@ -1,0 +1,16 @@
+{
+    "core": {
+        "revealed": "False",
+        "type": "link",
+        "name": "map_link",
+        "icon": "backgrounds/map_link.png"
+    },
+    "conditional": {
+        "canenter": "True",
+        "newmap": {
+            "y": 0,
+            "x": 0,
+            "mapname": ""
+        }
+    }
+}

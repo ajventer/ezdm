@@ -46,6 +46,11 @@ class MAPS(Session):
                 self._map.removefromtile(self._data['zoom_x'], self._data['zoom_y'], requestdata['npcname'], 'npcs')
             if 'removeitemfromtile' in requestdata:
                 self._map.removefromtile(self._data['zoom_x'], self._data['zoom_y'], requestdata['itemname'], 'items')
+            if 'settargetmap' in requestdata:
+                target = requestdata['targetmap']
+                target_x = int(requestdata['target_x'])
+                target_y = int(requestdata['target_y'])
+                self._map.tile(self._data['zoom_x'], self._data['zoom_y']).linktarget(target=target, x=target_x, y=target_y)
             if not 'savemap' in requestdata and not 'loadmap' in requestdata:
                 page.warning('WARNING: Changes are not yet saved')
 
@@ -64,6 +69,5 @@ class MAPS(Session):
             else:
                 self._data['npclist'].append(c)
         print self._data['tilelist']
-        self._data['maplist'].insert(0, 'New Map')
         page.add('map_render.tpl', self._data)
         return page.render()

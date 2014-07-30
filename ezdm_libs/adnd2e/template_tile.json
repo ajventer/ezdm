@@ -1,7 +1,7 @@
 {
     "core":{
         "name": "",
-        "type": "__[floor,door,wall,link,other,shop]",
+        "type": "__[floor,door,wall,link,other,shop,signpost]",
         "icon": "",
         "revealed": "__[true,false]"
     },
@@ -19,16 +19,21 @@
             }
         },
         "core.type=link": {
-            "newmap":""
+            "newmap":{
+                "mapname":"",
+                "x":0,
+                "y":0
+                },
+            "canenter": true
         },
         "core.type=door": {
             "background_alternate": "",
             "locked": true,
             "canenter": false,
             "events": {
-                "onenter":"",
-                "ontryunlock":"",
-                "onunlock":"tile.put('/conditional/canenter, True)\ntile.put('/core/background', tile.get('/conditional/background',tile.get('/core/background','')))"
+                "__Tonenter":"",
+                "__Tontryunlock":"",
+                "__Tonunlock":"tile.put('/conditional/canenter, True)\ntile.put('/core/background', tile.get('/conditional/background',tile.get('/core/background','')))"
             }
         },
         "core.type=wall": {
@@ -40,7 +45,13 @@
             "events":""
         },
         "core.type=shop":{
+            "canenter": true,
             "items":[]
+        },
+        "core.type=signpost":{
+            "canenter": false,
+            "message":""
         }
+
     }
 }

@@ -1,0 +1,12 @@
+{
+    "core": {
+        "revealed": false,
+        "type": "signpost",
+        "name": "simple_signpost",
+        "icon": "backgrounds/signpost.png"
+    },
+    "conditional": {
+        "message": "The rusty blade: Blacksmith shop",
+        "canenter": false
+    }
+}

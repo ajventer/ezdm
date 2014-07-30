@@ -1,0 +1,18 @@
+{
+    "core": {
+        "revealed": "False",
+        "type": "door",
+        "name": "door_locked",
+        "icon": "backgrounds/dngn_closed_door.png"
+    },
+    "conditional": {
+        "canenter": "False",
+        "locked": "True",
+        "events": {
+            "ontryunlock": "",
+            "onunlock": "tile.put('/conditional/canenter, True)\r\ntile.put('/core/background', tile.get('/conditional/background',tile.get('/core/background','')))",
+            "onenter": ""
+        },
+        "background_alternate": "backgrounds/dngn_open_door.png"
+    }
+}

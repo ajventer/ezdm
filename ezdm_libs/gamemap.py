@@ -8,6 +8,12 @@ class Tile(EzdmObject):
     def tiletype(self):
         return self.get('/core/type', 'floor')
 
+    def linktarget(self, target=None, x=0, y=0):
+        if not target:
+            return self.get('/conditional/newmap', {})
+        else:
+            self.put('/conditional/newmap', {'mapname': target, "x": x, "y": y})
+
     def background(self):
         return self.get('/core/background')
 
@@ -21,14 +27,18 @@ class Tile(EzdmObject):
         return save_json('tiles', name.lower().replace(' ', '_'), self.json)
 
     def add(self, name, objtype):
+        if not name.endswith('.json'):
+            name = '%s.json' % name
         current = self.get('/conditional/%s' % objtype, [])
         current.append(name)
         self.put('/conditional/%s' % objtype, current)
 
     def remove(self, name, objtype):
+        if not name.endswith('.json'):
+            name = '%s.json' % name
         current = self.get('/conditional/%s' % objtype, [])
-        newlist = [item for item in current if not item == name]
-        self.put('/conditional/%s' % objtype, newlist)
+        del(current[current.index(name)])
+        self.put('/conditional/%s' % objtype, current)
 
     def list(self, objtype):
         return self.get('/conditional/%s' % objtype, [])
@@ -79,20 +89,23 @@ class GameMap(EzdmObject):
         tile.remove(name, objtype)
         self()['tiles'][y][x] = tile()
 
-    def tile_icons(self, x, y):
+    def tile_icons(self, x, y, unique=False):
         tile = self.tile(x, y)
         if not tile():
             return {}
-        out = {}
+        out = []
         sources = {'items': 'items', 'npcs': 'characters', 'players': 'characters'}
         for section in ['items', 'npcs', 'players']:
             for thingy in tile.get('/conditional/%s' % section, []):
                 json = load_json(sources[section], thingy)
-                out[thingy] = readkey('/core/icon', json, '')
+                out.append((thingy.replace('.json', ''), readkey('/core/icon', json, '')))
         money = self.getmoney(x, y)
         if money[0] or money[1] or money[2]:
-            out['money'] = 'icons/money.png'
-        return out
+            out.append('money', 'icons/money.png')
+        if not unique:
+            return out
+        else:
+            return list(set(out))
 
     def name(self):
         name = '%s.json' % self.get('name', '').lower().replace(' ', '_')

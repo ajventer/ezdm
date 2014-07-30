@@ -27,6 +27,7 @@
                 <td align=center width=50%>
                 <form method=post id="mapload">
                     <select name="loadmap">
+                        <option value="New Map">New Map</option>
                         {% for mapitem in maplist %}
                             <option value="{{mapitem}}">{{mapitem}}</option>
                         {% endfor %}
@@ -65,18 +66,27 @@
                 {% set x = loop.index - 1%}
                 {% if editmode or (col.core and col.core.revealed) %}
                     {% if col.core and col.core.icon %}
-                    <td valign=bottom style="background-image:url(/icon/{{col.core.icon}});background-repeat:no-repeat;background-size:50px 50px; width:50; height:50" >
+                    <td valign=bottom style="background-image:url(/icon/{{col.core.icon}});background-repeat:repeat;background-size:50px 50px; width:50; height:50" >
+                        {% if mapobj.tile(x,y).tiletype() == 'signpost' %}
+                        <img src=/icon/icons/blank.png width=50 height=20 align=top
+                        title="{{mapobj.tile(x,y).get('/conditional/message', '') }}"
+                        onclick="clickHandler({{x}},{{y}})">
+                        {% endif %}                           
                     {% else %}
                     <td valign=bottom style="background-image:url(/icon/icons/blank.png);background-repeat:no-repeat;background-size:50px 50px; width:50; height:50" >
                     {% endif %}
-                    {% for k,v in mapobj.tile_icons(x,y).items() %}
-                        <img width=20 height=20 src="/icon/{{v}}" align=left>
+                    {% for icontuple in mapobj.tile_icons(x,y,True) %}
+                    {% set k = icontuple[0] %}
+                    {% set v = icontuple[1] %}
+                        {% if not mapobj.tile(x,y).tiletype() == 'shop' %}
+                            <img width=25 height=25 src="/icon/{{v}}" title="{{k}}" onclick="clickHandler({{x}},{{y}})" align=left>
+                        {% endif %}
                     {% endfor %}<br>
                       {% if editmode or mapobj.tile(x,y).canenter() %}
-                        <input type=button onclick="clickHandler({{x}},{{y}})" value="+">
+                        <img src="/icon/icons/page-zoom.png" width=20 height=20 align=top onclick="clickHandler({{x}},{{y}})">
                       {% endif %}
                 {% else %}
-                    <td valign=bottom style="background-image:url(/icon/backgrounds/unrevealed.png);background-repeat:no-repeat;background-size:50px 50px; width:50; height:50" >
+                    <td valign=top style="background-image:url(/icon/backgrounds/unrevealed.png);background-repeat:repeat;background-size:50px 50px; width:50; height:50" >
                 {% endif %}
                     </td>
             {% endfor %}
@@ -94,12 +104,19 @@
                 {% set tile = map.tiles[zoom_y][zoom_x] %}
                 {% if tile.core %}
                     {% set icon = tile.core.icon %}
-                    <td height=500 valign=bottom style="background-image:url(/icon/{{icon}});background-repeat:repeat;background-size:500px 500px; width:500; height:500">
+                    <td height=500 valign=middle style="background-image:url(/icon/{{icon}});background-repeat:repeat;background-size:500px 500px; width:500; height:500">
+                     {% if mapobj.tile(zoom_x,zoom_y).tiletype() == 'signpost' %}
+                       <strong><center><font color=red size=12>
+                        {{mapobj.tile(zoom_x,zoom_y).get('/conditional/message', '') }}
+                       </font></strong></center>
+                    {% endif %}    
                 {% else %}
                     <td height=500 valign=bottom style="background-image:url(/icon/icons/blank.png;background-repeat:repeat;background-size:500px 500px; width:500; height:500">
                 {% endif %}
-                    {% for k,v in mapobj.tile_icons(zoom_x,zoom_y).items() %}
-                        <img src="/icon/{{v}}" align=left>
+                    {% for icontuple in mapobj.tile_icons(zoom_x,zoom_y) %}
+                    {% set k = icontuple[0] %}
+                    {% set v = icontuple[1] %}
+                        <img title="{{k}}" src="/icon/{{v}}" align=left>
                     {% endfor %}
                 </td>
             </tr>
@@ -115,9 +132,13 @@
                                 {% endfor %}
                             </select>
                             <input type=submit name="loadtilefromfile" value="Load tile from file"><br>
+                                {% if mapobj.tile(zoom_x,zoom_y).tiletype() == 'signpost' %}
+                                    Message:<input type=text size=70 name=message value="{{mapobj.tile(zoom_x,zoom_y).get('/conditional/message', '') }}">
+                                    <input type=submit name="signpostmessage" value="Change Signpost">
+                                {% endif %}
                             {% if mapobj.tile(zoom_x,zoom_y).canenter() %}
                             <select name="charactername">
-                                {% for char in playerlist - mapobj.tile(zoom_x,zoom_y).list('players') %}
+                                {% for char in playerlist %}
                                     <option value="{{char}}">{{char}}</option>
                                 {% endfor %}
                             </select>
@@ -138,6 +159,19 @@
                             <input type=submit name="additemtotile" value="Add Item">
                             <input type=submit name="removeitemfromtile" value="Remove Item">
                             <br>
+                                {% if mapobj.tile(zoom_x,zoom_y).tiletype() == 'link' %}
+                                {% set target = mapobj.tile(zoom_x,zoom_y).linktarget() %}
+                                Link Map: 
+                                <select name=targetmap>
+                                    <option value="{{target['mapname']}}">{{target['mapname']}}</option>
+                                    {% for tmap in maplist %}
+                                    <option value="{{tmap}}">{{tmap}}</option>
+                                    {%endfor%}
+                                </select>
+                                X:<input type=text size=2 name='target_x' value="{{target['x']}}">
+                                Y:<input type=text size=2 name="target_y" value="{{target['y']}}">
+                                <input type=submit value="Set Target" name="settargetmap">
+                                {% endif %}
                             {% endif %}
                     {% else %}
                        Campaign Mode Goes Here
