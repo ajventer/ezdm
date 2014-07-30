@@ -64,21 +64,25 @@
             "__Toninspect": ""
         }
     },
-    "core.class.parent=rogue":{
+    "__1core.class.parent=rogue":{
         "__Yarmor_types": ["cloth","leather"],
-        "pick pockets":15,
-        "open locks": 10,
-        "find-remove traps":5,
-        "move silently":10,
-        "detect noise":15,
-        "climb walls":60,
-        "read languages":0
+        "abilities":{
+            "pick pockets":15,
+            "open locks": 10,
+            "find-remove traps":5,
+            "move silently":10,
+            "detect noise":15,
+            "climb walls":60,
+            "read languages":0
+        }
     },
-    "core.class.class=bard":{
-        "climb walls": 50,
-        "detect noise": 20,
-        "pick pockets": 10,
-        "read languages": 5
+    "__2core.class.class=bard":{
+        "abilities": {
+            "climb walls": 50,
+            "detect noise": 20,
+            "pick pockets": 10,
+            "read languages": 5
+        }
     },
     "core.class.parent=warrior":{
         "__Yarmor_types": ["cloth","leather","mail","plate"]

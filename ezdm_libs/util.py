@@ -21,7 +21,7 @@ def template_dict(template, defaults=None):
         if key.startswith('conditional') and not defaults:
             continue
         if key.startswith('conditional'):
-            condition = key.split('/')[1]
+            condition = realkey(key.split('/')[1])
             name = key.split('/')
             del(name[1])
             name = realkey('/'.join(name))

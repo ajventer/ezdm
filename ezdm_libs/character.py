@@ -441,7 +441,7 @@ class Character(EzdmObject):
         level = self.get('/core/combat/level-hitdice', '')
         various = load_json('adnd2e', 'various')
         abilities = various['abilities']
-        conditionals = self.get('/conditionals', {})
+        conditionals = self.get('/conditionals/abilities', {})
         race = self.get('/core/personal/race', self())
         for ability in abilities:
             base = 0
