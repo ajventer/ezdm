@@ -1,12 +1,12 @@
 {
     "core": {
-        "revealed": "False",
+        "revealed": false,
         "type": "shop",
         "name": "simple_shop",
         "icon": "backgrounds/dngn_enter_shop.png"
     },
     "conditional": {
         "items": [],
-        "canenter": true
+        "canenter": "True"
     }
 }

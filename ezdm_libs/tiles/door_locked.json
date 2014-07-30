@@ -1,12 +1,12 @@
 {
     "core": {
-        "revealed": "False",
+        "revealed": false,
         "type": "door",
         "name": "door_locked",
         "icon": "backgrounds/dngn_closed_door.png"
     },
     "conditional": {
-        "canenter": "False",
+        "canenter": false,
         "locked": "True",
         "events": {
             "ontryunlock": "",

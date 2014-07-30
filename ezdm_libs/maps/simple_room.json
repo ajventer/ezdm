@@ -135,14 +135,14 @@
                     "canenter": "True",
                     "gold": 0,
                     "items": [],
-                    "events": {
-                        "onenter": ""
-                    },
+                    "silver": 0,
                     "npcs": [],
                     "players": [
                         "tiny_tim.json"
                     ],
-                    "silver": 0
+                    "events": {
+                        "onenter": ""
+                    }
                 }
             },
             {
@@ -156,12 +156,12 @@
                     "canenter": "True",
                     "gold": 0,
                     "items": [],
-                    "events": {
-                        "onenter": ""
-                    },
+                    "silver": 0,
                     "npcs": [],
                     "players": [],
-                    "silver": 0
+                    "events": {
+                        "onenter": ""
+                    }
                 }
             },
             {
@@ -175,12 +175,12 @@
                     "canenter": "True",
                     "gold": 0,
                     "items": [],
-                    "events": {
-                        "onenter": ""
-                    },
+                    "silver": 0,
                     "npcs": [],
                     "players": [],
-                    "silver": 0
+                    "events": {
+                        "onenter": ""
+                    }
                 }
             },
             {
@@ -194,12 +194,12 @@
                     "canenter": "True",
                     "gold": 0,
                     "items": [],
-                    "events": {
-                        "onenter": ""
-                    },
+                    "silver": 0,
                     "npcs": [],
                     "players": [],
-                    "silver": 0
+                    "events": {
+                        "onenter": ""
+                    }
                 }
             },
             {
@@ -213,24 +213,24 @@
                     "canenter": "True",
                     "gold": 0,
                     "items": [],
-                    "events": {
-                        "onenter": ""
-                    },
+                    "silver": 0,
                     "npcs": [],
                     "players": [],
-                    "silver": 0
+                    "events": {
+                        "onenter": ""
+                    }
                 }
             },
             {
                 "core": {
-                    "type": "door",
                     "revealed": false,
+                    "type": "door",
                     "name": "door_unlocked",
                     "icon": "backgrounds/dngn_open_door.png"
                 },
                 "conditional": {
-                    "locked": false,
                     "canenter": true,
+                    "locked": false,
                     "events": {
                         "ontryunlock": "",
                         "onunlock": "",
@@ -250,12 +250,12 @@
                     "canenter": "True",
                     "gold": 0,
                     "items": [],
-                    "events": {
-                        "onenter": ""
-                    },
+                    "silver": 0,
                     "npcs": [],
                     "players": [],
-                    "silver": 0
+                    "events": {
+                        "onenter": ""
+                    }
                 }
             },
             {
@@ -269,12 +269,12 @@
                     "canenter": "True",
                     "gold": 0,
                     "items": [],
-                    "events": {
-                        "onenter": ""
-                    },
+                    "silver": 0,
                     "npcs": [],
                     "players": [],
-                    "silver": 0
+                    "events": {
+                        "onenter": ""
+                    }
                 }
             },
             {
@@ -312,12 +312,12 @@
                     "canenter": "True",
                     "gold": 0,
                     "items": [],
-                    "events": {
-                        "onenter": ""
-                    },
+                    "silver": 0,
                     "npcs": [],
                     "players": [],
-                    "silver": 0
+                    "events": {
+                        "onenter": ""
+                    }
                 }
             },
             {
@@ -331,12 +331,12 @@
                     "canenter": "True",
                     "gold": 0,
                     "items": [],
-                    "events": {
-                        "onenter": ""
-                    },
+                    "silver": 0,
                     "npcs": [],
                     "players": [],
-                    "silver": 0
+                    "events": {
+                        "onenter": ""
+                    }
                 }
             },
             {
@@ -350,15 +350,15 @@
                     "canenter": "True",
                     "gold": 0,
                     "items": [],
-                    "events": {
-                        "onenter": ""
-                    },
+                    "silver": 0,
                     "npcs": [
                         "random_monster.json",
                         "random_monster.json"
                     ],
                     "players": [],
-                    "silver": 0
+                    "events": {
+                        "onenter": ""
+                    }
                 }
             },
             {
@@ -372,12 +372,12 @@
                     "canenter": "True",
                     "gold": 0,
                     "items": [],
-                    "events": {
-                        "onenter": ""
-                    },
+                    "silver": 0,
                     "npcs": [],
                     "players": [],
-                    "silver": 0
+                    "events": {
+                        "onenter": ""
+                    }
                 }
             },
             {
@@ -391,18 +391,18 @@
                     "canenter": "True",
                     "gold": 0,
                     "items": [],
-                    "events": {
-                        "onenter": ""
-                    },
+                    "silver": 0,
                     "npcs": [],
                     "players": [],
-                    "silver": 0
+                    "events": {
+                        "onenter": ""
+                    }
                 }
             },
             {
                 "core": {
-                    "type": "wall",
                     "revealed": "",
+                    "type": "wall",
                     "name": "rock_wall",
                     "icon": "backgrounds/wall_rock.png"
                 },
@@ -413,8 +413,8 @@
             },
             {
                 "core": {
-                    "type": "wall",
                     "revealed": "",
+                    "type": "wall",
                     "name": "rock_wall",
                     "icon": "backgrounds/wall_rock.png"
                 },
@@ -434,16 +434,16 @@
                     "canenter": "True",
                     "gold": 0,
                     "items": [],
-                    "events": {
-                        "onenter": ""
-                    },
+                    "silver": 0,
                     "npcs": [
                         "random_monster.json",
                         "random_monster.json",
                         "random_monster.json"
                     ],
                     "players": [],
-                    "silver": 0
+                    "events": {
+                        "onenter": ""
+                    }
                 }
             },
             {
@@ -481,12 +481,12 @@
                     "canenter": "True",
                     "gold": 0,
                     "items": [],
-                    "events": {
-                        "onenter": ""
-                    },
+                    "silver": 0,
                     "npcs": [],
                     "players": [],
-                    "silver": 0
+                    "events": {
+                        "onenter": ""
+                    }
                 }
             },
             {
@@ -500,12 +500,12 @@
                     "canenter": "True",
                     "gold": 0,
                     "items": [],
-                    "events": {
-                        "onenter": ""
-                    },
+                    "silver": 0,
                     "npcs": [],
                     "players": [],
-                    "silver": 0
+                    "events": {
+                        "onenter": ""
+                    }
                 }
             },
             {
@@ -519,14 +519,14 @@
                     "canenter": "True",
                     "gold": 0,
                     "items": [],
-                    "events": {
-                        "onenter": ""
-                    },
+                    "silver": 0,
                     "npcs": [
                         "random_monster.json"
                     ],
                     "players": [],
-                    "silver": 0
+                    "events": {
+                        "onenter": ""
+                    }
                 }
             },
             {
@@ -540,12 +540,12 @@
                     "canenter": "True",
                     "gold": 0,
                     "items": [],
-                    "events": {
-                        "onenter": ""
-                    },
+                    "silver": 0,
                     "npcs": [],
                     "players": [],
-                    "silver": 0
+                    "events": {
+                        "onenter": ""
+                    }
                 }
             },
             {
@@ -559,12 +559,12 @@
                     "canenter": "True",
                     "gold": 0,
                     "items": [],
-                    "events": {
-                        "onenter": ""
-                    },
+                    "silver": 0,
                     "npcs": [],
                     "players": [],
-                    "silver": 0
+                    "events": {
+                        "onenter": ""
+                    }
                 }
             },
             {
@@ -578,18 +578,18 @@
                     "canenter": "True",
                     "gold": 0,
                     "items": [],
-                    "events": {
-                        "onenter": ""
-                    },
+                    "silver": 0,
                     "npcs": [],
                     "players": [],
-                    "silver": 0
+                    "events": {
+                        "onenter": ""
+                    }
                 }
             },
             {
                 "core": {
-                    "type": "wall",
                     "revealed": "",
+                    "type": "wall",
                     "name": "rock_wall",
                     "icon": "backgrounds/wall_rock.png"
                 },
@@ -609,15 +609,15 @@
                     "canenter": "True",
                     "gold": 0,
                     "items": [],
-                    "events": {
-                        "onenter": ""
-                    },
+                    "silver": 0,
                     "npcs": [
                         "random_monster.json",
                         "random_monster.json"
                     ],
                     "players": [],
-                    "silver": 0
+                    "events": {
+                        "onenter": ""
+                    }
                 }
             },
             {
@@ -655,12 +655,12 @@
                     "canenter": "True",
                     "gold": 0,
                     "items": [],
-                    "events": {
-                        "onenter": ""
-                    },
+                    "silver": 0,
                     "npcs": [],
                     "players": [],
-                    "silver": 0
+                    "events": {
+                        "onenter": ""
+                    }
                 }
             },
             {
@@ -674,12 +674,12 @@
                     "canenter": "True",
                     "gold": 0,
                     "items": [],
-                    "events": {
-                        "onenter": ""
-                    },
+                    "silver": 0,
                     "npcs": [],
                     "players": [],
-                    "silver": 0
+                    "events": {
+                        "onenter": ""
+                    }
                 }
             },
             {
@@ -693,14 +693,14 @@
                     "canenter": "True",
                     "gold": 0,
                     "items": [],
-                    "events": {
-                        "onenter": ""
-                    },
+                    "silver": 0,
                     "npcs": [
                         "random_monster.json"
                     ],
                     "players": [],
-                    "silver": 0
+                    "events": {
+                        "onenter": ""
+                    }
                 }
             },
             {
@@ -714,12 +714,12 @@
                     "canenter": "True",
                     "gold": 0,
                     "items": [],
-                    "events": {
-                        "onenter": ""
-                    },
+                    "silver": 0,
                     "npcs": [],
                     "players": [],
-                    "silver": 0
+                    "events": {
+                        "onenter": ""
+                    }
                 }
             },
             {
@@ -733,12 +733,12 @@
                     "canenter": "True",
                     "gold": 0,
                     "items": [],
-                    "events": {
-                        "onenter": ""
-                    },
+                    "silver": 0,
                     "npcs": [],
                     "players": [],
-                    "silver": 0
+                    "events": {
+                        "onenter": ""
+                    }
                 }
             },
             {
@@ -752,18 +752,18 @@
                     "canenter": "True",
                     "gold": 0,
                     "items": [],
-                    "events": {
-                        "onenter": ""
-                    },
+                    "silver": 0,
                     "npcs": [],
                     "players": [],
-                    "silver": 0
+                    "events": {
+                        "onenter": ""
+                    }
                 }
             },
             {
                 "core": {
-                    "type": "wall",
                     "revealed": "",
+                    "type": "wall",
                     "name": "rock_wall",
                     "icon": "backgrounds/wall_rock.png"
                 },
@@ -783,12 +783,12 @@
                     "canenter": "True",
                     "gold": 0,
                     "items": [],
-                    "events": {
-                        "onenter": ""
-                    },
+                    "silver": 0,
                     "npcs": [],
                     "players": [],
-                    "silver": 0
+                    "events": {
+                        "onenter": ""
+                    }
                 }
             },
             {
@@ -826,12 +826,12 @@
                     "canenter": "True",
                     "gold": 0,
                     "items": [],
-                    "events": {
-                        "onenter": ""
-                    },
+                    "silver": 0,
                     "npcs": [],
                     "players": [],
-                    "silver": 0
+                    "events": {
+                        "onenter": ""
+                    }
                 }
             },
             {
@@ -845,12 +845,12 @@
                     "canenter": "True",
                     "gold": 0,
                     "items": [],
-                    "events": {
-                        "onenter": ""
-                    },
+                    "silver": 0,
                     "npcs": [],
                     "players": [],
-                    "silver": 0
+                    "events": {
+                        "onenter": ""
+                    }
                 }
             },
             {
@@ -864,12 +864,12 @@
                     "canenter": "True",
                     "gold": 0,
                     "items": [],
-                    "events": {
-                        "onenter": ""
-                    },
+                    "silver": 0,
                     "npcs": [],
                     "players": [],
-                    "silver": 0
+                    "events": {
+                        "onenter": ""
+                    }
                 }
             },
             {
@@ -883,12 +883,12 @@
                     "canenter": "True",
                     "gold": 0,
                     "items": [],
-                    "events": {
-                        "onenter": ""
-                    },
+                    "silver": 0,
                     "npcs": [],
                     "players": [],
-                    "silver": 0
+                    "events": {
+                        "onenter": ""
+                    }
                 }
             },
             {
@@ -902,12 +902,12 @@
                     "canenter": "True",
                     "gold": 0,
                     "items": [],
-                    "events": {
-                        "onenter": ""
-                    },
+                    "silver": 0,
                     "npcs": [],
                     "players": [],
-                    "silver": 0
+                    "events": {
+                        "onenter": ""
+                    }
                 }
             },
             {
@@ -921,18 +921,18 @@
                     "canenter": "True",
                     "gold": 0,
                     "items": [],
-                    "events": {
-                        "onenter": ""
-                    },
+                    "silver": 0,
                     "npcs": [],
                     "players": [],
-                    "silver": 0
+                    "events": {
+                        "onenter": ""
+                    }
                 }
             },
             {
                 "core": {
-                    "type": "wall",
                     "revealed": "",
+                    "type": "wall",
                     "name": "rock_wall",
                     "icon": "backgrounds/wall_rock.png"
                 },
@@ -952,12 +952,12 @@
                     "canenter": "True",
                     "gold": 0,
                     "items": [],
-                    "events": {
-                        "onenter": ""
-                    },
+                    "silver": 0,
                     "npcs": [],
                     "players": [],
-                    "silver": 0
+                    "events": {
+                        "onenter": ""
+                    }
                 }
             },
             {
@@ -995,12 +995,12 @@
                     "canenter": "True",
                     "gold": 0,
                     "items": [],
-                    "events": {
-                        "onenter": ""
-                    },
+                    "silver": 0,
                     "npcs": [],
                     "players": [],
-                    "silver": 0
+                    "events": {
+                        "onenter": ""
+                    }
                 }
             },
             {
@@ -1014,12 +1014,12 @@
                     "canenter": "True",
                     "gold": 0,
                     "items": [],
-                    "events": {
-                        "onenter": ""
-                    },
+                    "silver": 0,
                     "npcs": [],
                     "players": [],
-                    "silver": 0
+                    "events": {
+                        "onenter": ""
+                    }
                 }
             },
             {
@@ -1033,12 +1033,12 @@
                     "canenter": "True",
                     "gold": 0,
                     "items": [],
-                    "events": {
-                        "onenter": ""
-                    },
+                    "silver": 0,
                     "npcs": [],
                     "players": [],
-                    "silver": 0
+                    "events": {
+                        "onenter": ""
+                    }
                 }
             },
             {
@@ -1052,12 +1052,12 @@
                     "canenter": "True",
                     "gold": 0,
                     "items": [],
-                    "events": {
-                        "onenter": ""
-                    },
+                    "silver": 0,
                     "npcs": [],
                     "players": [],
-                    "silver": 0
+                    "events": {
+                        "onenter": ""
+                    }
                 }
             },
             {
@@ -1071,12 +1071,12 @@
                     "canenter": "True",
                     "gold": 0,
                     "items": [],
-                    "events": {
-                        "onenter": ""
-                    },
+                    "silver": 0,
                     "npcs": [],
                     "players": [],
-                    "silver": 0
+                    "events": {
+                        "onenter": ""
+                    }
                 }
             },
             {
@@ -1090,18 +1090,18 @@
                     "canenter": "True",
                     "gold": 0,
                     "items": [],
-                    "events": {
-                        "onenter": ""
-                    },
+                    "silver": 0,
                     "npcs": [],
                     "players": [],
-                    "silver": 0
+                    "events": {
+                        "onenter": ""
+                    }
                 }
             },
             {
                 "core": {
-                    "type": "wall",
                     "revealed": "",
+                    "type": "wall",
                     "name": "rock_wall",
                     "icon": "backgrounds/wall_rock.png"
                 },
@@ -1112,14 +1112,14 @@
             },
             {
                 "core": {
+                    "revealed": false,
                     "type": "door",
-                    "revealed": "False",
                     "name": "door_locked",
                     "icon": "backgrounds/dngn_closed_door.png"
                 },
                 "conditional": {
+                    "canenter": false,
                     "locked": "True",
-                    "canenter": "False",
                     "events": {
                         "ontryunlock": "",
                         "onunlock": "tile.put('/conditional/canenter, True)\r\ntile.put('/core/background', tile.get('/conditional/background',tile.get('/core/background','')))",
@@ -1163,12 +1163,12 @@
                     "canenter": "True",
                     "gold": 0,
                     "items": [],
-                    "events": {
-                        "onenter": ""
-                    },
+                    "silver": 0,
                     "npcs": [],
                     "players": [],
-                    "silver": 0
+                    "events": {
+                        "onenter": ""
+                    }
                 }
             },
             {
@@ -1182,12 +1182,12 @@
                     "canenter": "True",
                     "gold": 0,
                     "items": [],
-                    "events": {
-                        "onenter": ""
-                    },
+                    "silver": 0,
                     "npcs": [],
                     "players": [],
-                    "silver": 0
+                    "events": {
+                        "onenter": ""
+                    }
                 }
             },
             {
@@ -1201,12 +1201,12 @@
                     "canenter": "True",
                     "gold": 0,
                     "items": [],
-                    "events": {
-                        "onenter": ""
-                    },
+                    "silver": 0,
                     "npcs": [],
                     "players": [],
-                    "silver": 0
+                    "events": {
+                        "onenter": ""
+                    }
                 }
             },
             {
@@ -1220,12 +1220,12 @@
                     "canenter": "True",
                     "gold": 0,
                     "items": [],
-                    "events": {
-                        "onenter": ""
-                    },
+                    "silver": 0,
                     "npcs": [],
                     "players": [],
-                    "silver": 0
+                    "events": {
+                        "onenter": ""
+                    }
                 }
             },
             {
@@ -1239,18 +1239,18 @@
                     "canenter": "True",
                     "gold": 0,
                     "items": [],
-                    "events": {
-                        "onenter": ""
-                    },
+                    "silver": 0,
                     "npcs": [],
                     "players": [],
-                    "silver": 0
+                    "events": {
+                        "onenter": ""
+                    }
                 }
             },
             {
                 "core": {
-                    "revealed": false,
                     "type": "signpost",
+                    "revealed": false,
                     "name": "simple_signpost",
                     "icon": "backgrounds/signpost.png"
                 },
@@ -1261,8 +1261,8 @@
             },
             {
                 "core": {
-                    "type": "wall",
                     "revealed": "",
+                    "type": "wall",
                     "name": "rock_wall",
                     "icon": "backgrounds/wall_rock.png"
                 },
@@ -1282,12 +1282,12 @@
                     "canenter": "True",
                     "gold": 0,
                     "items": [],
-                    "events": {
-                        "onenter": ""
-                    },
+                    "silver": 0,
                     "npcs": [],
                     "players": [],
-                    "silver": 0
+                    "events": {
+                        "onenter": ""
+                    }
                 }
             },
             {
@@ -1325,12 +1325,12 @@
                     "canenter": "True",
                     "gold": 0,
                     "items": [],
-                    "events": {
-                        "onenter": ""
-                    },
+                    "silver": 0,
                     "npcs": [],
                     "players": [],
-                    "silver": 0
+                    "events": {
+                        "onenter": ""
+                    }
                 }
             },
             {
@@ -1344,12 +1344,12 @@
                     "canenter": "True",
                     "gold": 0,
                     "items": [],
-                    "events": {
-                        "onenter": ""
-                    },
+                    "silver": 0,
                     "npcs": [],
                     "players": [],
-                    "silver": 0
+                    "events": {
+                        "onenter": ""
+                    }
                 }
             },
             {
@@ -1363,12 +1363,12 @@
                     "canenter": "True",
                     "gold": 0,
                     "items": [],
-                    "events": {
-                        "onenter": ""
-                    },
+                    "silver": 0,
                     "npcs": [],
                     "players": [],
-                    "silver": 0
+                    "events": {
+                        "onenter": ""
+                    }
                 }
             },
             {
@@ -1382,12 +1382,12 @@
                     "canenter": "True",
                     "gold": 0,
                     "items": [],
-                    "events": {
-                        "onenter": ""
-                    },
+                    "silver": 0,
                     "npcs": [],
                     "players": [],
-                    "silver": 0
+                    "events": {
+                        "onenter": ""
+                    }
                 }
             },
             {
@@ -1401,33 +1401,30 @@
                     "canenter": "True",
                     "gold": 0,
                     "items": [],
-                    "events": {
-                        "onenter": ""
-                    },
+                    "silver": 0,
                     "npcs": [],
                     "players": [],
-                    "silver": 0
+                    "events": {
+                        "onenter": ""
+                    }
                 }
             },
             {
                 "core": {
                     "type": "shop",
-                    "revealed": "False",
+                    "revealed": false,
                     "name": "simple_shop",
                     "icon": "backgrounds/dngn_enter_shop.png"
                 },
                 "conditional": {
-                    "items": [
-                        "mainhand_dagger.json",
-                        "offhand_dagger.json"
-                    ],
-                    "canenter": true
+                    "items": [],
+                    "canenter": "True"
                 }
             },
             {
                 "core": {
-                    "type": "wall",
                     "revealed": "",
+                    "type": "wall",
                     "name": "rock_wall",
                     "icon": "backgrounds/wall_rock.png"
                 },
@@ -1439,12 +1436,12 @@
             {
                 "core": {
                     "type": "link",
-                    "revealed": "False",
+                    "revealed": false,
                     "name": "map_link",
                     "icon": "backgrounds/map_link.png"
                 },
                 "conditional": {
-                    "canenter": "True",
+                    "canenter": true,
                     "newmap": {
                         "mapname": "test1x1",
                         "x": 0,
