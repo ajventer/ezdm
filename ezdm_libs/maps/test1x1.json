@@ -1,10 +1,11 @@
 {
+    "name": "test1x1",
     "tiles": [
         [
             {
                 "core": {
-                    "type": "floor",
                     "revealed": false,
+                    "type": "floor",
                     "name": "Wooden Floor",
                     "icon": "backgrounds/floor_wood.png"
                 },
@@ -13,19 +14,19 @@
                     "canenter": "True",
                     "gold": 0,
                     "items": [],
-                    "silver": 0,
+                    "events": {
+                        "onenter": ""
+                    },
                     "npcs": [],
                     "players": [
                         "bardic_rogue.json"
                     ],
-                    "events": {
-                        "onenter": ""
-                    }
+                    "silver": 0
                 }
             }
         ]
     ],
-    "name": "test1x1",
+    "lightradius": 1,
     "max_x": 1,
     "max_y": 1
 }

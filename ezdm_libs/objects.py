@@ -20,6 +20,8 @@ class EzdmObject(object):
         self.__init__(json)
 
     def get(self, key, default):
+        if not self():
+            return default
         return readkey(key, self(), default)
 
     def put(self, key, value):

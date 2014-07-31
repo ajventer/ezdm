@@ -3,6 +3,7 @@ from objects import EzdmObject
 from util import readfile, find_files, template_dict, json_editor, list_icons, inflate
 
 mode = 'dm'
+campaign = None
 
 
 class Session:
@@ -44,7 +45,7 @@ class Session:
 
 
 class Page:
-    def __init__(self, title=None):
+    def __init__(self, title=None, menu=True):
         self._sidebar = ''
         self._messages = {'messages': [], 'warnings': [], 'errors': []}
         title = title or 'EZDM'

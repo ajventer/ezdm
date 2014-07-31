@@ -3,9 +3,9 @@
         "name": "",
         "players": [],
         "starting_map": "",
+        "__Yincombat": false,
         "__Ycombat_chars": [],
         "__Yinitiative": [],
-        "__Ychars_in_map":[],
-        "__Ycurrent_char": null
+        "__Ycurrent_char": 0
     }
 }

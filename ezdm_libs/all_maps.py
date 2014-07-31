@@ -12,6 +12,9 @@ class MAPS(Session):
         self._data['zoom_y'] = 0
 
         self._data['editmode'] = frontend.mode == 'dm'
+        if not self._data['editmode'] and not requestdata:
+            mapname = frontend.campaign.current_char().get('/core/location/map', '')
+            self._map = GameMap(load_json('maps', mapname))
         if (not requestdata and self._data['editmode']) or (requestdata and 'loadmap' in requestdata and requestdata['loadmap'] == 'New Map'):
             self._map = GameMap(name='New Map')
         else:
@@ -20,7 +23,7 @@ class MAPS(Session):
             elif requestdata and 'savemap' in requestdata:
                 self._map.put('/name', requestdata['mapname'])
                 if 'max_x' in requestdata:
-                    self._map = GameMap(name=requestdata['mapname'], max_x=int(requestdata['max_x']), max_y=int(requestdata['max_y']))
+                    self._map = GameMap(name=requestdata['mapname'], max_x=int(requestdata['max_x']), max_y=int(requestdata['max_y']), lightradius=int(requestdata['lightradius']))
                 page.message('Map saved as:' + self._map.save())
         if requestdata:
             if "clicked_x" in requestdata:

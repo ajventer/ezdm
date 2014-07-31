@@ -1,4 +1,4 @@
-from util import inflate, flatten, rolldice, readfile, inrange, price_in_copper, convert_money, save_json, load_json, readkey
+from util import inflate, flatten, rolldice, readfile, inrange, price_in_copper, convert_money, save_json, load_json, readkey, writekey
 from item import Item
 from objects import EzdmObject, event
 from gamemap import GameMap
@@ -22,7 +22,7 @@ class Character(EzdmObject):
             self.weapons = self.load_weapons()
             self.armor = self.load_armor()
             self.put('core/combat/thac0', self.__get_thac0())
-            self.put('core/combat/saving_throws', self.__get_saving_throws())
+            self.put('core/combat/saving_throws', self.get_saving_throws())
             if not self.character_type() == 'player':
                 self.put('core/combat/hitpoints', rolldice(numdice=int(self.get('/combat/level-hitdice', '1')), numsides=8))
                 self.put('core/combat/max_hp', self.get('/combat/hitpoints', 1))
@@ -130,27 +130,29 @@ class Character(EzdmObject):
         return save_json('characters', self.name(), self.json)
 
     def to_hit_mod(self):
-        ability_mods = readfile('adnd2e', 'ability_scores', json=True)
-        base = int(ability_mods["str"][str(self()['abilities']['str'])]['hit'])
+        ability_mods = load_json('adnd2e', 'ability_scores')
+        strength = self.get('/core/abilities/str', 1)
+        base = int(readkey('/str/%s/hit' % strength, ability_mods, 0))
         if len(self.weapons) > 0:
-            bonus = int(readkey('/conditionals/tohit', self.weapons[self.weapon].json, 0))
+            bonus = int(readkey('/conditionals/to_hit', self.weapons[self.weapon](), 0))
         else:
             bonus = 0
         return base + bonus
 
     def ppd_mod(self):
-        ability_mods = readfile('adnd2e', 'ability_scores', json=True)
-        return int(ability_mods["con"][str(self()['abilities']['con'])]['ppd'])
+        ability_mods = load_json('adnd2e', 'ability_scores')
+        con = self.get('/core/abilities/con', 1)
+        return int(readkey('/con/%s/ppd' % con, ability_mods))
 
     def dmg_mod(self):
         ability_mods = readfile('adnd2e', 'ability_scores', json=True)
-        return int(readkey('/str/%s/dmg' % self.get('/abilities/str', 0), ability_mods, 0))
+        return int(readkey('/str/%s/dmg' % self.get('/core/abilities/str', 0), ability_mods, 0))
 
     def def_mod(self):
         ability_mods = readfile('adnd2e', 'ability_scores', json=True)
-        return int(readkey('/dex/%s/defense' % self.get('/abilities/dex', 0), ability_mods, 0))
+        return int(readkey('/dex/%s/defense' % self.get('core/abilities/dex', 0), ability_mods, 0))
 
-    def __get_saving_throws(self):
+    def get_saving_throws(self):
         key = self.get('/core/class/parent', '')
         sts = load_json("adnd2e", "saving_throws")[key]
         hitdice = self.get('/core/combat/level-hitdice', 0)
@@ -235,6 +237,7 @@ class Character(EzdmObject):
         new_hp = current_hp + more_hp
         out += '<br>Character hitpoints now %s' % new_hp
         self.put('/core/combat/hitpoints', new_hp)
+        self.__init__(self())
         return out
 
     def give_xp(self, xp, page):
@@ -325,12 +328,13 @@ class Character(EzdmObject):
             else:
                 slots = [item.slot()]
             for slot in slots:
-                if self.get('/core/inventory/equipped/%s' % item.slot(), {}) and not has_unequiped:
+                if self.get('/core/inventory/equipped/%s' % item.slot().strip(), {}) and not has_unequiped:
                     self.unequip(slot)
                     #Prevent equipping over a twohander from duplicatng it
                     has_unequiped = True
-                self.put('/core/inventory/equiped/%s' % slot, item())
+                self.put('/core/inventory/equiped/%s' % slot.strip(), item())
                 self.drop_item(item.displayname())
+        self.__init__(self())
         return (True, "%s has equiped %s" % (self.displayname(), item.displayname()))
 
     def unequip_item(self, slot):
@@ -338,6 +342,7 @@ class Character(EzdmObject):
         if current:
             self.json['inventory']['pack'].append(current)
         self.put('/core/inventory/equiped/%s' % slot, {})
+        self.__init__(self())
 
     def sell_item(self, itemname, buyer='shop', gold=0, silver=0, copper=0):
         for item in self.get('/inventory/pack'):
@@ -398,10 +403,10 @@ class Character(EzdmObject):
 
     def equiped_by_type(self, itemtype):
         arm = []
-        equiped = self.get('/inventory/equiped', {})
+        equiped = self.get('/core/inventory/equiped', {})
         for slot in equiped:
             item = Item(equiped[slot])
-            if item.itemtype == itemtype:
+            if item.itemtype() == itemtype:
                 arm.append(item)
         return arm
 
@@ -427,7 +432,7 @@ class Character(EzdmObject):
 
     def tryability(self, ability, modifier=0):
         out = ['%s is trying to %s' % (self.displayname(), ability)]
-        target_roll = int(self.conditionals()[ability])
+        target_roll = int(self.abilities()[ability])
         target_roll += int(modifier)
         out.append('%s must roll %s or lower to succeed' % (self.displayname(), target_roll))
         roll = rolldice(numdice=1, numsides=100)
@@ -437,13 +442,14 @@ class Character(EzdmObject):
         else:
             return (False, out)
 
-    def conditionals(self):
+    def abilities(self):
         subclass = self.get('/core/class/class', '')
         parentclass = self.get('/core/class/parent', '')
         level = self.get('/core/combat/level-hitdice', '')
         various = load_json('adnd2e', 'various')
         abilities = various['abilities']
-        conditionals = self.get('/conditionals/abilities', {})
+        conditionals = self.get('/conditional/abilities', {})
+        print conditionals
         race = self.get('/core/personal/race', self())
         for ability in abilities:
             base = 0
@@ -497,3 +503,29 @@ class Character(EzdmObject):
         for key2 in thac0s.keys():
             if inrange(self.get('/core/combat/level-hitdice', 1), key2):
                 return int(thac0s[key2])
+
+    def render(self):
+        out = self()
+        prettynames = load_json('adnd2e', 'saving_throws')
+        writekey('/conditional/abilities', self.abilities(), out)
+        if not self.character_type() == 'player':
+            out['XP Worth'] = self.xp_worth()
+        del out['core']['combat']['saving_throws']
+        for k, v in self.get('/core/combat/saving_throws', {}).items():
+            prettyname = readkey('/names/%s' % k, prettynames, k)
+            writekey('/core/combat/saving_throws/%s ' % prettyname, v, out)
+        self.reset_weapon()
+        out['to_hit_mod'] = {}
+        out['to_hit_mod']
+        done = False
+        if self.weapons:
+            for I in range(0, len(self.weapons)):
+                self.next_weapon()
+                name = self.weapons[self.weapon].get('/core/name', '')
+                writekey('/to_hit_mod/%s' % name, self.to_hit_mod(), out)
+                if self.weapon == 0:
+                    if done:
+                        break
+                    else:
+                        done = True
+        return out

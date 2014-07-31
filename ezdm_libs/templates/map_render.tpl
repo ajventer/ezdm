@@ -40,6 +40,7 @@
                     {% if map.name == 'New Map' %}
                         Max X:<input type=text size=2 name="max_x" value="{{map.max_x}}">
                         Max Y:<input type=text size=2 name="max_y" value="{{map.max_y}}">
+                        Lightradius:<input type=text size=2 name="lightradius" value="{{map.lightradius}}">
                     {%endif%}
                     <input type=submit name="savemap" value="Save Map">
                 </form>

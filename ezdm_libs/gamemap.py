@@ -49,13 +49,15 @@ class Tile(EzdmObject):
 
 class GameMap(EzdmObject):
 
-    def __init__(self, json={}, name='', max_x=25, max_y=15):
+    def __init__(self, json={}, name='', max_x=25, max_y=15, lightradius=1):
         if not json:
-            self.new(name=name, max_x=max_x, max_y=max_y)
+            self.new(name=name, max_x=max_x, max_y=max_y, lightradius=lightradius)
         else:
             self.json = json
+        if not 'lightradius' in self.json:
+            self.json['lightradius'] = lightradius
 
-    def new(self, name='', max_x=25, max_y=15):
+    def new(self, name='', max_x=25, max_y=15, lightradius=1):
         self.json = {'name': name}
         self.json['max_x'] = max_x
         self.json['max_y'] = max_y
@@ -112,4 +114,5 @@ class GameMap(EzdmObject):
         return name
 
     def save(self):
+        print self()
         return save_json('maps', self.name(), self())

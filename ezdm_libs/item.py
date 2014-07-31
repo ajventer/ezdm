@@ -20,7 +20,7 @@ class Item(EzdmObject):
         return (self.get('/core/price/gold', 0), self.get('/core/price/silver', 0), self.get('/core/price/copper', 0))
 
     def itemtype(self):
-        return self.get('/core/type', 'other') or self.get('/type', self(), 'other')
+        return self.get('/core/type', 'other')
 
     def armortype(self):
         return self.get('/conditional/material', 'plate')

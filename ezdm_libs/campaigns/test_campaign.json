@@ -1,0 +1,10 @@
+{
+    "core": {
+        "name": "Test Campaign",
+        "players": ["tiny_tim", "bardic_rogue"],
+        "initiative": [],
+        "incombat": false,
+        "starting_map": "simple_room",
+        "current_char": 0
+    }
+}

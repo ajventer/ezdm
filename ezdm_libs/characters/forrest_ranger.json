@@ -1,0 +1,65 @@
+{
+    "core": {
+        "abilities": {
+            "dex": 16,
+            "cha": 15,
+            "int": 11,
+            "wis": 8,
+            "str": 20,
+            "con": 13
+        },
+        "combat": {
+            "thac0": 20,
+            "level-hitdice": 1,
+            "hitpoints": 18,
+            "max_hp": 18
+        },
+        "personal": {
+            "name": {
+                "last": "Ranger",
+                "first": "Forrest"
+            },
+            "backstory": "",
+            "sex": "female",
+            "race": "half-elf",
+            "xp": "",
+            "alignment": {
+                "law": "neutral",
+                "social": "good"
+            }
+        },
+        "location": {
+            "y": "",
+            "x": "",
+            "map": ""
+        },
+        "icon": "avatars/48x48_Faces_4th_Sheet_Update_CharlesGabriel_OGA_0-5-1.png",
+        "type": "player",
+        "class": {
+            "class": "ranger",
+            "parent": "warrior"
+        },
+        "inventory": {
+            "equiped": {
+                "head": {},
+                "righthand": {},
+                "neck": {},
+                "wrists": {},
+                "rightfinger": {},
+                "chest": {},
+                "feet": {},
+                "leftfinger": {},
+                "gloves": {},
+                "legs": {},
+                "lefthand": {}
+            },
+            "money": {
+                "copper": 0,
+                "silver": 0,
+                "gold": 0
+            },
+            "pack": [],
+            "spells": []
+        }
+    }
+}

@@ -9,9 +9,16 @@
             "con": 11
         },
         "combat": {
+            "hitpoints": 17,
             "thac0": 18,
             "level-hitdice": 4,
-            "hitpoints": 17,
+            "saving_throws": {
+                "breath": 16,
+                "pp": 12,
+                "spell": 15,
+                "rod": 14,
+                "ppd": 13
+            },
             "max_hp": 16
         },
         "personal": {
@@ -45,13 +52,46 @@
                 "righthand": {},
                 "neck": {},
                 "wrists": {},
-                "rightfinger": {},
-                "chest": {},
-                "feet": {},
+                " righthand": {
+                    "core": {
+                        "rounds_used": 0,
+                        "name": "Mainhand Dagger",
+                        "weight": "",
+                        "price": {
+                            "copper": "",
+                            "silver": "",
+                            "gold": ""
+                        },
+                        "description": "A small dagger balanced for use in the main hand.",
+                        "identified": false,
+                        "rounds_afteruse": 0,
+                        "size": "small",
+                        "type": "weapon",
+                        "icon": "icons/sword.png"
+                    },
+                    "conditional": {
+                        "slot": " righthand",
+                        "to_hit": 0,
+                        "dmg": 4,
+                        "damage_type": "stab",
+                        "weapon_type": "melee",
+                        "save_against": "none"
+                    },
+                    "events": {
+                        "onequip": "",
+                        "onpickup": "",
+                        "onround": "",
+                        "ondrop": "page.warning('%s has dropped %s' % (player.displayname(), item.displayname()))",
+                        "onuse": ""
+                    }
+                },
                 "leftfinger": {},
+                "feet": {},
+                "rightfinger": {},
                 "gloves": {},
                 "legs": {},
-                "lefthand": {}
+                "lefthand": {},
+                "chest": {}
             },
             "money": {
                 "copper": 0,
@@ -63,13 +103,15 @@
         }
     },
     "conditional": {
-        "find-remove traps": 5,
-        "read languages": 0,
-        "pick pockets": 15,
-        "detect noise": 15,
-        "move silently": 10,
-        "open locks": 10,
         "armor_types": "['cloth', 'leather']",
-        "climb walls": 60
+        "abilities": {
+            "climb walls": 50,
+            "read languages": 5,
+            "pick pockets": 10,
+            "detect noise": 20,
+            "move silently": 10,
+            "open locks": 10,
+            "find-remove traps": 5
+        }
     }
 }
