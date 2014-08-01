@@ -65,7 +65,10 @@ class GameMap(EzdmObject):
 
     def load_tile(self, x, y, tile):
         tjson = load_json('tiles', tile)
-        self()['tiles'][y][x] = tjson
+        self.load_tile_from_json(x, y, tjson)
+
+    def load_tile_from_json(self, x, y, json):
+        self()['tiles'][y][x] = json
 
     def tile(self, x, y):
         return Tile(self()['tiles'][y][x])
@@ -116,3 +119,27 @@ class GameMap(EzdmObject):
     def save(self):
         print self()
         return save_json('maps', self.name(), self())
+
+    def reveal(self, x, y, xtraradius=0):
+        radius = int(self.get('/core/lightradius', 1)) + xtraradius
+        #TODO prevent looking through walls
+        max_x = int(self.get('/core/max_x'))
+        max_y = int(self.get('/core/max_y'))
+        left = x - radius
+        if left < 0:
+            left = 0
+        right = x + radius + 1
+        if right > max_x:
+            right = max_x
+        top = y - radius
+        if top < 0:
+            top = 0
+        bottom = y + radius + 1
+        if bottom > max_y:
+            bottom = max_y
+        for pt_y in range(top, bottom):
+            for pt_x in range(left, right):
+                tile = self.tile(pt_x, pt_y)
+                tile.put('/core/revealed', True)
+                self.load_tile_from_json(pt_x, pt_y, tile())
+        self.save()

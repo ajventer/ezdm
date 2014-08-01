@@ -14,6 +14,7 @@ class Character(EzdmObject):
     weapon = 0
     weapons = []
     armor = []
+    lightradius = 0
 
     def __init__(self, json):
         print "Instantiating character"
@@ -44,7 +45,10 @@ class Character(EzdmObject):
         gamemap = GameMap(load_json('maps', mapname))
         gamemap.addtotile(x, y, self.name(), 'players')
         if page:
-            gamemap.tile(x, y).onenter(self, page)
+            tile = gamemap.tile(x, y)
+            tile.onenter(self, page)
+            gamemap.load_tile_from_json(tile())
+        gamemap.reveal(x, y, self.lightradius)
         print "Saving", gamemap.save()
 
     def character_type(self):
