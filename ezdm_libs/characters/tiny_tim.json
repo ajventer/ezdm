@@ -9,9 +9,16 @@
             "con": 14
         },
         "combat": {
+            "hitpoints": 23,
             "thac0": 16,
             "level-hitdice": 5,
-            "hitpoints": 23,
+            "saving_throws": {
+                "breath": 13,
+                "pp": 12,
+                "spell": 14,
+                "rod": 13,
+                "ppd": 11
+            },
             "max_hp": 38
         },
         "personal": {
@@ -29,20 +36,14 @@
             }
         },
         "location": {
-            "y": 1,
-            "x": 1,
+            "y": 2,
+            "x": 2,
             "map": "simple_room.json"
-        },
-        "icon": "avatars/dwarf.png",
-        "type": "player",
-        "class": {
-            "class": "fighter",
-            "parent": "warrior"
         },
         "inventory": {
             "equiped": {
                 "head": "",
-                "righthand": "",
+                "righthand": {},
                 "neck": "",
                 "wrists": "",
                 "rightfinger": "",
@@ -56,11 +57,17 @@
             "money": {
                 "copper": 2,
                 "silver": 2,
-                "gold": 5
+                "gold": 110
             },
             "pack": [],
             "spells": ""
-        }
+        },
+        "type": "player",
+        "class": {
+            "class": "fighter",
+            "parent": "warrior"
+        },
+        "icon": "avatars/dwarf.png"
     },
     "conditional": {
         "armor_types": "['cloth', 'leather', 'mail', 'plate']"

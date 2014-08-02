@@ -10,14 +10,51 @@ class Item(EzdmObject):
     def save(self):
         if 'temp' in self():
             del self()['temp']
+        return save_json('items', self.name(), self.json)
+
+    def name(self):
         name = '%s.json' % self.get('/core/name', '')
-        return save_json('items', name.lower().replace(' ', '_'), self.json)
+        return name.lower().replace(' ', '_')
 
     def slot(self):
         return self.get('/conditional/slot', '')
 
+    def identified(self):
+        return self.get('/core/identified', '')
+
+    def render(self):
+        if self.identified():
+            out = self()
+            if 'events' in out:
+                del(out['events'])
+        else:
+            out = {}
+            out['core'] = {}
+            out['core']['icon'] = self.get('/core/icon', '')
+            out['core']['name'] = self.get('/core/name', '')
+            out['core']['identified'] = self.get('/core/identified', False)
+        return out
+
+    def identify(self):
+        self.put('/core/identified', True)
+
     def price_tuple(self):
-        return (self.get('/core/price/gold', 0), self.get('/core/price/silver', 0), self.get('/core/price/copper', 0))
+        gold = self.get('/core/price/gold', 0)
+        silver = self.get('/core/price/silver', 0)
+        copper = self.get('/core/price/copper', 0)
+        try:
+            gold = int(gold)
+        except ValueError:
+            gold = 0
+        try:
+            silver = int(silver)
+        except ValueError:
+            silver = 0
+        try:
+            copper = int(copper)
+        except ValueError:
+            copper = 0
+        return (gold, silver, copper)
 
     def itemtype(self):
         return self.get('/core/type', 'other')

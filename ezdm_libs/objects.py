@@ -1,4 +1,5 @@
 from util import readkey, writekey
+from simplejson import dumps
 
 
 def event(obj, key, localvars):
@@ -15,6 +16,9 @@ class EzdmObject(object):
 
     def __call__(self):
         return self.json
+
+    def __str__(self):
+        return dumps(self(), indent=4)
 
     def update(self, json):
         self.__init__(json)

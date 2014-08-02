@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from gevent import monkey
 monkey.patch_all()
-from bottle import route, run, request, static_file
+from bottle import route, run, request, static_file, redirect
 from ezdm_libs.util import load_icon, find_files, load_json
 from ezdm_libs import get_sys_data
 from ezdm_libs import frontend
@@ -40,9 +40,19 @@ def gethandler(action=None, item=None):
         return out
     from ezdm_libs.frontend import Session as ActionSession
     action = action or 'ALL_HOME'
-    to_import = 'from ezdm_libs.%s import %s as ActionSession' % (action.lower(), action_name(action))
-    print to_import
-    exec to_import
+    if '_' in action:
+        to_import = 'from ezdm_libs.%s import %s as ActionSession' % (action.lower(), action_name(action))
+        print to_import
+        exec to_import
+    else:
+        for prefix in ['all', 'ezdm', 'campaign']:
+            try:
+                to_import = 'from ezdm_libs.%s_%s import %s as ActionSession' % (prefix, action.lower(), action_name(action))
+                print to_import
+                exec to_import
+                break
+            except:
+                pass
     if not action_name(action) in sessions:
         sessions[action_name(action)] = ActionSession()
     print sessions
@@ -52,16 +62,22 @@ def gethandler(action=None, item=None):
         return sessions[action_name(action)].view(item)
 
 
-@route('/load_campaign/<campaign>')
+@route('/endround', method='get')
+def endround():
+    frontend.campaign.endround()
+    return redirect('/action/ALL_MAPS', 302)
+
+
+@route('/load_campaign/<campaign>', method='get')
 def load_campaign(campaign):
     frontend.campaign = Campaign(load_json('campaigns', campaign))
-    return gethandler(None, None)
+    return redirect('/action/ALL_MAPS', 302)
 
 
-@route('/mode/<newmode>')
+@route('/mode/<newmode>', method='get')
 def setmode(newmode):
     frontend.mode = newmode
-    return gethandler(None, None)
+    return redirect('/action/ALL_MAPS', 302)
 
 
 @route('/js', method='get')

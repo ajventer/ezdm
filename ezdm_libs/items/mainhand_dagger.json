@@ -6,7 +6,7 @@
         "price": {
             "copper": "",
             "silver": "",
-            "gold": ""
+            "gold": 25
         },
         "description": "A small dagger balanced for use in the main hand.",
         "identified": false,

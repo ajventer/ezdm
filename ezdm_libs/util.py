@@ -69,7 +69,6 @@ def flatten(init, lkey=''):
             ret.update(flatten(val, key + '/'))
         else:
             ret[key] = val
-        print key, val
     return ret
 
 
@@ -154,7 +153,6 @@ def load_icon(icon='icons/blank.png'):
 
 def find_files(source, needle='', basename=False, strip=''):
     matches = []
-    print source, needle
     for path in data_paths(source):
         if path:
             matches += glob(os.path.join(path, needle))
@@ -167,7 +165,6 @@ def find_files(source, needle='', basename=False, strip=''):
         bname = os.path.basename(m)
         if not bname in unique:
             unique[bname] = m
-    print unique
     return unique.values()
 
 
@@ -239,4 +236,4 @@ def rolldice(numdice=1, numsides=20, modifier=0):
     for I in range(1, numdice + 1):
             roll = randrange(1, numsides, 1)
             total = total + roll
-    return (total, 'Rolled a %s-sided dice %s times with modifier %s' % (numdice, numsides, modifier))
+    return (total, 'Rolled a %s-sided dice %s times with modifier %s' % (numsides, numdice, modifier))

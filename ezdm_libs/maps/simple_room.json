@@ -1,9 +1,9 @@
 {
-    "name": "Simple Room",
     "tiles": [
         [
             {
                 "core": {
+                    "revealed": true,
                     "type": "wall",
                     "name": "rock_wall",
                     "icon": "backgrounds/wall_rock.png"
@@ -15,6 +15,7 @@
             },
             {
                 "core": {
+                    "revealed": true,
                     "type": "wall",
                     "name": "rock_wall",
                     "icon": "backgrounds/wall_rock.png"
@@ -26,6 +27,7 @@
             },
             {
                 "core": {
+                    "revealed": true,
                     "type": "wall",
                     "name": "rock_wall",
                     "icon": "backgrounds/wall_rock.png"
@@ -116,6 +118,7 @@
         [
             {
                 "core": {
+                    "revealed": true,
                     "type": "wall",
                     "name": "rock_wall",
                     "icon": "backgrounds/wall_rock.png"
@@ -127,6 +130,7 @@
             },
             {
                 "core": {
+                    "revealed": true,
                     "type": "floor",
                     "name": "Wooden Floor",
                     "icon": "backgrounds/floor_wood.png"
@@ -140,14 +144,33 @@
                         "onenter": ""
                     },
                     "npcs": [],
-                    "players": [
-                        "tiny_tim.json"
-                    ],
+                    "players": [],
                     "silver": 0
                 }
             },
             {
                 "core": {
+                    "revealed": true,
+                    "type": "floor",
+                    "name": "Wooden Floor",
+                    "icon": "backgrounds/floor_wood.png"
+                },
+                "conditional": {
+                    "copper": 0,
+                    "canenter": "True",
+                    "gold": 0,
+                    "items": [],
+                    "events": {
+                        "onenter": ""
+                    },
+                    "npcs": [],
+                    "players": [],
+                    "silver": 0
+                }
+            },
+            {
+                "core": {
+                    "revealed": true,
                     "type": "floor",
                     "name": "Wooden Floor",
                     "icon": "backgrounds/floor_wood.png"
@@ -168,6 +191,7 @@
             {
                 "core": {
                     "type": "floor",
+                    "revealed": true,
                     "name": "Wooden Floor",
                     "icon": "backgrounds/floor_wood.png"
                 },
@@ -187,25 +211,7 @@
             {
                 "core": {
                     "type": "floor",
-                    "name": "Wooden Floor",
-                    "icon": "backgrounds/floor_wood.png"
-                },
-                "conditional": {
-                    "copper": 0,
-                    "canenter": "True",
-                    "gold": 0,
-                    "items": [],
-                    "events": {
-                        "onenter": ""
-                    },
-                    "npcs": [],
-                    "players": [],
-                    "silver": 0
-                }
-            },
-            {
-                "core": {
-                    "type": "floor",
+                    "revealed": false,
                     "name": "Wooden Floor",
                     "icon": "backgrounds/floor_wood.png"
                 },
@@ -242,6 +248,7 @@
             },
             {
                 "core": {
+                    "revealed": false,
                     "type": "floor",
                     "name": "Wooden Floor",
                     "icon": "backgrounds/floor_wood.png"
@@ -261,6 +268,7 @@
             },
             {
                 "core": {
+                    "revealed": false,
                     "type": "floor",
                     "name": "Wooden Floor",
                     "icon": "backgrounds/floor_wood.png"
@@ -280,6 +288,7 @@
             },
             {
                 "core": {
+                    "revealed": true,
                     "type": "wall",
                     "name": "rock_wall",
                     "icon": "backgrounds/wall_rock.png"
@@ -293,6 +302,7 @@
         [
             {
                 "core": {
+                    "revealed": true,
                     "type": "wall",
                     "name": "rock_wall",
                     "icon": "backgrounds/wall_rock.png"
@@ -304,6 +314,7 @@
             },
             {
                 "core": {
+                    "revealed": true,
                     "type": "floor",
                     "name": "Wooden Floor",
                     "icon": "backgrounds/floor_wood.png"
@@ -323,6 +334,7 @@
             },
             {
                 "core": {
+                    "revealed": true,
                     "type": "floor",
                     "name": "Wooden Floor",
                     "icon": "backgrounds/floor_wood.png"
@@ -336,12 +348,15 @@
                         "onenter": ""
                     },
                     "npcs": [],
-                    "players": [],
+                    "players": [
+                        "tiny_tim.json"
+                    ],
                     "silver": 0
                 }
             },
             {
                 "core": {
+                    "revealed": true,
                     "type": "floor",
                     "name": "Wooden Floor",
                     "icon": "backgrounds/floor_wood.png"
@@ -365,6 +380,7 @@
             {
                 "core": {
                     "type": "floor",
+                    "revealed": true,
                     "name": "Wooden Floor",
                     "icon": "backgrounds/floor_wood.png"
                 },
@@ -384,6 +400,7 @@
             {
                 "core": {
                     "type": "floor",
+                    "revealed": false,
                     "name": "Wooden Floor",
                     "icon": "backgrounds/floor_wood.png"
                 },
@@ -403,7 +420,7 @@
             {
                 "core": {
                     "type": "wall",
-                    "revealed": "",
+                    "revealed": false,
                     "name": "rock_wall",
                     "icon": "backgrounds/wall_rock.png"
                 },
@@ -415,7 +432,7 @@
             {
                 "core": {
                     "type": "wall",
-                    "revealed": "",
+                    "revealed": false,
                     "name": "rock_wall",
                     "icon": "backgrounds/wall_rock.png"
                 },
@@ -426,6 +443,7 @@
             },
             {
                 "core": {
+                    "revealed": false,
                     "type": "floor",
                     "name": "Wooden Floor",
                     "icon": "backgrounds/floor_wood.png"
@@ -449,6 +467,7 @@
             },
             {
                 "core": {
+                    "revealed": true,
                     "type": "wall",
                     "name": "rock_wall",
                     "icon": "backgrounds/wall_rock.png"
@@ -473,6 +492,7 @@
             },
             {
                 "core": {
+                    "revealed": true,
                     "type": "floor",
                     "name": "Wooden Floor",
                     "icon": "backgrounds/floor_wood.png"
@@ -492,6 +512,7 @@
             },
             {
                 "core": {
+                    "revealed": true,
                     "type": "floor",
                     "name": "Wooden Floor",
                     "icon": "backgrounds/floor_wood.png"
@@ -511,6 +532,7 @@
             },
             {
                 "core": {
+                    "revealed": true,
                     "type": "floor",
                     "name": "Wooden Floor",
                     "icon": "backgrounds/floor_wood.png"
@@ -533,6 +555,7 @@
             {
                 "core": {
                     "type": "floor",
+                    "revealed": true,
                     "name": "Wooden Floor",
                     "icon": "backgrounds/floor_wood.png"
                 },
@@ -551,6 +574,7 @@
             },
             {
                 "core": {
+                    "revealed": false,
                     "type": "floor",
                     "name": "Wooden Floor",
                     "icon": "backgrounds/floor_wood.png"
@@ -571,6 +595,7 @@
             {
                 "core": {
                     "type": "floor",
+                    "revealed": false,
                     "name": "Wooden Floor",
                     "icon": "backgrounds/floor_wood.png"
                 },
@@ -590,7 +615,7 @@
             {
                 "core": {
                     "type": "wall",
-                    "revealed": "",
+                    "revealed": false,
                     "name": "rock_wall",
                     "icon": "backgrounds/wall_rock.png"
                 },
@@ -601,6 +626,7 @@
             },
             {
                 "core": {
+                    "revealed": false,
                     "type": "floor",
                     "name": "Wooden Floor",
                     "icon": "backgrounds/floor_wood.png"
@@ -623,6 +649,7 @@
             },
             {
                 "core": {
+                    "revealed": true,
                     "type": "wall",
                     "name": "rock_wall",
                     "icon": "backgrounds/wall_rock.png"
@@ -648,6 +675,7 @@
             {
                 "core": {
                     "type": "floor",
+                    "revealed": false,
                     "name": "Wooden Floor",
                     "icon": "backgrounds/floor_wood.png"
                 },
@@ -667,6 +695,7 @@
             {
                 "core": {
                     "type": "floor",
+                    "revealed": true,
                     "name": "Wooden Floor",
                     "icon": "backgrounds/floor_wood.png"
                 },
@@ -686,6 +715,7 @@
             {
                 "core": {
                     "type": "floor",
+                    "revealed": true,
                     "name": "Wooden Floor",
                     "icon": "backgrounds/floor_wood.png"
                 },
@@ -700,12 +730,35 @@
                     "npcs": [
                         "random_monster.json"
                     ],
+                    "players": [
+                        "random_monster.json"
+                    ],
+                    "silver": 0
+                }
+            },
+            {
+                "core": {
+                    "type": "floor",
+                    "revealed": true,
+                    "name": "Wooden Floor",
+                    "icon": "backgrounds/floor_wood.png"
+                },
+                "conditional": {
+                    "copper": 0,
+                    "canenter": "True",
+                    "gold": 0,
+                    "items": [],
+                    "events": {
+                        "onenter": ""
+                    },
+                    "npcs": [],
                     "players": [],
                     "silver": 0
                 }
             },
             {
                 "core": {
+                    "revealed": false,
                     "type": "floor",
                     "name": "Wooden Floor",
                     "icon": "backgrounds/floor_wood.png"
@@ -726,25 +779,7 @@
             {
                 "core": {
                     "type": "floor",
-                    "name": "Wooden Floor",
-                    "icon": "backgrounds/floor_wood.png"
-                },
-                "conditional": {
-                    "copper": 0,
-                    "canenter": "True",
-                    "gold": 0,
-                    "items": [],
-                    "events": {
-                        "onenter": ""
-                    },
-                    "npcs": [],
-                    "players": [],
-                    "silver": 0
-                }
-            },
-            {
-                "core": {
-                    "type": "floor",
+                    "revealed": false,
                     "name": "Wooden Floor",
                     "icon": "backgrounds/floor_wood.png"
                 },
@@ -764,7 +799,52 @@
             {
                 "core": {
                     "type": "wall",
-                    "revealed": "",
+                    "revealed": false,
+                    "name": "rock_wall",
+                    "icon": "backgrounds/wall_rock.png"
+                },
+                "conditional": {
+                    "canenter": false,
+                    "events": ""
+                }
+            },
+            {
+                "core": {
+                    "revealed": false,
+                    "type": "floor",
+                    "name": "Wooden Floor",
+                    "icon": "backgrounds/floor_wood.png"
+                },
+                "conditional": {
+                    "copper": 0,
+                    "canenter": "True",
+                    "gold": 0,
+                    "items": [],
+                    "events": {
+                        "onenter": ""
+                    },
+                    "npcs": [],
+                    "players": [],
+                    "silver": 0
+                }
+            },
+            {
+                "core": {
+                    "revealed": true,
+                    "type": "wall",
+                    "name": "rock_wall",
+                    "icon": "backgrounds/wall_rock.png"
+                },
+                "conditional": {
+                    "canenter": false,
+                    "events": ""
+                }
+            }
+        ],
+        [
+            {
+                "core": {
+                    "type": "wall",
                     "name": "rock_wall",
                     "icon": "backgrounds/wall_rock.png"
                 },
@@ -776,6 +856,139 @@
             {
                 "core": {
                     "type": "floor",
+                    "revealed": false,
+                    "name": "Wooden Floor",
+                    "icon": "backgrounds/floor_wood.png"
+                },
+                "conditional": {
+                    "copper": 0,
+                    "canenter": "True",
+                    "gold": 0,
+                    "items": [],
+                    "events": {
+                        "onenter": ""
+                    },
+                    "npcs": [],
+                    "players": [],
+                    "silver": 0
+                }
+            },
+            {
+                "core": {
+                    "revealed": true,
+                    "type": "floor",
+                    "name": "Wooden Floor",
+                    "icon": "backgrounds/floor_wood.png"
+                },
+                "conditional": {
+                    "copper": 0,
+                    "canenter": "True",
+                    "gold": 0,
+                    "items": [],
+                    "events": {
+                        "onenter": ""
+                    },
+                    "npcs": [],
+                    "players": [],
+                    "silver": 0
+                }
+            },
+            {
+                "core": {
+                    "revealed": true,
+                    "type": "floor",
+                    "name": "Wooden Floor",
+                    "icon": "backgrounds/floor_wood.png"
+                },
+                "conditional": {
+                    "copper": 0,
+                    "canenter": "True",
+                    "gold": 0,
+                    "items": [],
+                    "events": {
+                        "onenter": ""
+                    },
+                    "npcs": [],
+                    "players": [],
+                    "silver": 0
+                }
+            },
+            {
+                "core": {
+                    "revealed": true,
+                    "type": "floor",
+                    "name": "Wooden Floor",
+                    "icon": "backgrounds/floor_wood.png"
+                },
+                "conditional": {
+                    "copper": 0,
+                    "canenter": "True",
+                    "gold": 0,
+                    "items": [],
+                    "events": {
+                        "onenter": ""
+                    },
+                    "npcs": [],
+                    "players": [],
+                    "silver": 0
+                }
+            },
+            {
+                "core": {
+                    "revealed": false,
+                    "type": "floor",
+                    "name": "Wooden Floor",
+                    "icon": "backgrounds/floor_wood.png"
+                },
+                "conditional": {
+                    "copper": 0,
+                    "canenter": "True",
+                    "gold": 0,
+                    "items": [],
+                    "events": {
+                        "onenter": ""
+                    },
+                    "npcs": [],
+                    "players": [],
+                    "silver": 0
+                }
+            },
+            {
+                "core": {
+                    "type": "floor",
+                    "revealed": false,
+                    "name": "Wooden Floor",
+                    "icon": "backgrounds/floor_wood.png"
+                },
+                "conditional": {
+                    "copper": 0,
+                    "canenter": "True",
+                    "gold": 0,
+                    "items": [],
+                    "events": {
+                        "onenter": ""
+                    },
+                    "npcs": [],
+                    "players": [],
+                    "silver": 0
+                }
+            },
+            {
+                "core": {
+                    "type": "wall",
+                    "revealed": false,
+                    "name": "rock_wall",
+                    "icon": "backgrounds/wall_rock.png"
+                },
+                "conditional": {
+                    "canenter": false,
+                    "events": ""
+                }
+            },
+            {
+                "core": {
+                    "type": "floor",
+                    "revealed": false,
                     "name": "Wooden Floor",
                     "icon": "backgrounds/floor_wood.png"
                 },
@@ -819,6 +1032,7 @@
             {
                 "core": {
                     "type": "floor",
+                    "revealed": false,
                     "name": "Wooden Floor",
                     "icon": "backgrounds/floor_wood.png"
                 },
@@ -838,6 +1052,7 @@
             {
                 "core": {
                     "type": "floor",
+                    "revealed": false,
                     "name": "Wooden Floor",
                     "icon": "backgrounds/floor_wood.png"
                 },
@@ -857,6 +1072,29 @@
             {
                 "core": {
                     "type": "floor",
+                    "revealed": false,
+                    "name": "Wooden Floor",
+                    "icon": "backgrounds/floor_wood.png"
+                },
+                "conditional": {
+                    "copper": 10,
+                    "canenter": "True",
+                    "gold": 10,
+                    "items": [
+                        "mainhand_dagger.json"
+                    ],
+                    "silver": 0,
+                    "npcs": [],
+                    "players": [],
+                    "events": {
+                        "onenter": ""
+                    }
+                }
+            },
+            {
+                "core": {
+                    "type": "floor",
+                    "revealed": false,
                     "name": "Wooden Floor",
                     "icon": "backgrounds/floor_wood.png"
                 },
@@ -876,6 +1114,7 @@
             {
                 "core": {
                     "type": "floor",
+                    "revealed": false,
                     "name": "Wooden Floor",
                     "icon": "backgrounds/floor_wood.png"
                 },
@@ -895,25 +1134,7 @@
             {
                 "core": {
                     "type": "floor",
-                    "name": "Wooden Floor",
-                    "icon": "backgrounds/floor_wood.png"
-                },
-                "conditional": {
-                    "copper": 0,
-                    "canenter": "True",
-                    "gold": 0,
-                    "items": [],
-                    "events": {
-                        "onenter": ""
-                    },
-                    "npcs": [],
-                    "players": [],
-                    "silver": 0
-                }
-            },
-            {
-                "core": {
-                    "type": "floor",
+                    "revealed": false,
                     "name": "Wooden Floor",
                     "icon": "backgrounds/floor_wood.png"
                 },
@@ -933,176 +1154,7 @@
             {
                 "core": {
                     "type": "wall",
-                    "revealed": "",
-                    "name": "rock_wall",
-                    "icon": "backgrounds/wall_rock.png"
-                },
-                "conditional": {
-                    "canenter": false,
-                    "events": ""
-                }
-            },
-            {
-                "core": {
-                    "type": "floor",
-                    "name": "Wooden Floor",
-                    "icon": "backgrounds/floor_wood.png"
-                },
-                "conditional": {
-                    "copper": 0,
-                    "canenter": "True",
-                    "gold": 0,
-                    "items": [],
-                    "events": {
-                        "onenter": ""
-                    },
-                    "npcs": [],
-                    "players": [],
-                    "silver": 0
-                }
-            },
-            {
-                "core": {
-                    "type": "wall",
-                    "name": "rock_wall",
-                    "icon": "backgrounds/wall_rock.png"
-                },
-                "conditional": {
-                    "canenter": false,
-                    "events": ""
-                }
-            }
-        ],
-        [
-            {
-                "core": {
-                    "type": "wall",
-                    "name": "rock_wall",
-                    "icon": "backgrounds/wall_rock.png"
-                },
-                "conditional": {
-                    "canenter": false,
-                    "events": ""
-                }
-            },
-            {
-                "core": {
-                    "type": "floor",
-                    "name": "Wooden Floor",
-                    "icon": "backgrounds/floor_wood.png"
-                },
-                "conditional": {
-                    "copper": 0,
-                    "canenter": "True",
-                    "gold": 0,
-                    "items": [],
-                    "events": {
-                        "onenter": ""
-                    },
-                    "npcs": [],
-                    "players": [],
-                    "silver": 0
-                }
-            },
-            {
-                "core": {
-                    "type": "floor",
-                    "name": "Wooden Floor",
-                    "icon": "backgrounds/floor_wood.png"
-                },
-                "conditional": {
-                    "copper": 0,
-                    "canenter": "True",
-                    "gold": 0,
-                    "items": [],
-                    "events": {
-                        "onenter": ""
-                    },
-                    "npcs": [],
-                    "players": [],
-                    "silver": 0
-                }
-            },
-            {
-                "core": {
-                    "type": "floor",
-                    "name": "Wooden Floor",
-                    "icon": "backgrounds/floor_wood.png"
-                },
-                "conditional": {
-                    "copper": 0,
-                    "canenter": "True",
-                    "gold": 0,
-                    "items": [],
-                    "events": {
-                        "onenter": ""
-                    },
-                    "npcs": [],
-                    "players": [],
-                    "silver": 0
-                }
-            },
-            {
-                "core": {
-                    "type": "floor",
-                    "name": "Wooden Floor",
-                    "icon": "backgrounds/floor_wood.png"
-                },
-                "conditional": {
-                    "copper": 0,
-                    "canenter": "True",
-                    "gold": 0,
-                    "items": [],
-                    "events": {
-                        "onenter": ""
-                    },
-                    "npcs": [],
-                    "players": [],
-                    "silver": 0
-                }
-            },
-            {
-                "core": {
-                    "type": "floor",
-                    "name": "Wooden Floor",
-                    "icon": "backgrounds/floor_wood.png"
-                },
-                "conditional": {
-                    "copper": 0,
-                    "canenter": "True",
-                    "gold": 0,
-                    "items": [],
-                    "events": {
-                        "onenter": ""
-                    },
-                    "npcs": [],
-                    "players": [],
-                    "silver": 0
-                }
-            },
-            {
-                "core": {
-                    "type": "floor",
-                    "name": "Wooden Floor",
-                    "icon": "backgrounds/floor_wood.png"
-                },
-                "conditional": {
-                    "copper": 0,
-                    "canenter": "True",
-                    "gold": 0,
-                    "items": [],
-                    "events": {
-                        "onenter": ""
-                    },
-                    "npcs": [],
-                    "players": [],
-                    "silver": 0
-                }
-            },
-            {
-                "core": {
-                    "type": "wall",
-                    "revealed": "",
+                    "revealed": true,
                     "name": "rock_wall",
                     "icon": "backgrounds/wall_rock.png"
                 },
@@ -1114,7 +1166,7 @@
             {
                 "core": {
                     "type": "door",
-                    "revealed": false,
+                    "revealed": true,
                     "name": "door_locked",
                     "icon": "backgrounds/dngn_closed_door.png"
                 },
@@ -1132,6 +1184,7 @@
             {
                 "core": {
                     "type": "wall",
+                    "revealed": true,
                     "name": "rock_wall",
                     "icon": "backgrounds/wall_rock.png"
                 },
@@ -1156,6 +1209,7 @@
             {
                 "core": {
                     "type": "floor",
+                    "revealed": false,
                     "name": "Wooden Floor",
                     "icon": "backgrounds/floor_wood.png"
                 },
@@ -1175,6 +1229,7 @@
             {
                 "core": {
                     "type": "floor",
+                    "revealed": false,
                     "name": "Wooden Floor",
                     "icon": "backgrounds/floor_wood.png"
                 },
@@ -1194,6 +1249,7 @@
             {
                 "core": {
                     "type": "floor",
+                    "revealed": false,
                     "name": "Wooden Floor",
                     "icon": "backgrounds/floor_wood.png"
                 },
@@ -1212,6 +1268,7 @@
             },
             {
                 "core": {
+                    "revealed": false,
                     "type": "floor",
                     "name": "Wooden Floor",
                     "icon": "backgrounds/floor_wood.png"
@@ -1231,6 +1288,7 @@
             },
             {
                 "core": {
+                    "revealed": false,
                     "type": "floor",
                     "name": "Wooden Floor",
                     "icon": "backgrounds/floor_wood.png"
@@ -1263,7 +1321,7 @@
             {
                 "core": {
                     "type": "wall",
-                    "revealed": "",
+                    "revealed": true,
                     "name": "rock_wall",
                     "icon": "backgrounds/wall_rock.png"
                 },
@@ -1275,6 +1333,7 @@
             {
                 "core": {
                     "type": "floor",
+                    "revealed": true,
                     "name": "Wooden Floor",
                     "icon": "backgrounds/floor_wood.png"
                 },
@@ -1287,13 +1346,16 @@
                         "onenter": ""
                     },
                     "npcs": [],
-                    "players": [],
+                    "players": [
+                        "bardic_rogue.json"
+                    ],
                     "silver": 0
                 }
             },
             {
                 "core": {
                     "type": "wall",
+                    "revealed": true,
                     "name": "rock_wall",
                     "icon": "backgrounds/wall_rock.png"
                 },
@@ -1318,6 +1380,7 @@
             {
                 "core": {
                     "type": "floor",
+                    "revealed": false,
                     "name": "Wooden Floor",
                     "icon": "backgrounds/floor_wood.png"
                 },
@@ -1337,6 +1400,7 @@
             {
                 "core": {
                     "type": "floor",
+                    "revealed": false,
                     "name": "Wooden Floor",
                     "icon": "backgrounds/floor_wood.png"
                 },
@@ -1356,6 +1420,7 @@
             {
                 "core": {
                     "type": "floor",
+                    "revealed": false,
                     "name": "Wooden Floor",
                     "icon": "backgrounds/floor_wood.png"
                 },
@@ -1375,6 +1440,7 @@
             {
                 "core": {
                     "type": "floor",
+                    "revealed": false,
                     "name": "Wooden Floor",
                     "icon": "backgrounds/floor_wood.png"
                 },
@@ -1394,6 +1460,7 @@
             {
                 "core": {
                     "type": "floor",
+                    "revealed": false,
                     "name": "Wooden Floor",
                     "icon": "backgrounds/floor_wood.png"
                 },
@@ -1418,14 +1485,17 @@
                     "icon": "backgrounds/dngn_enter_shop.png"
                 },
                 "conditional": {
-                    "items": [],
+                    "items": [
+                        "mainhand_dagger.json",
+                        "offhand_dagger.json"
+                    ],
                     "canenter": "True"
                 }
             },
             {
                 "core": {
                     "type": "wall",
-                    "revealed": "",
+                    "revealed": true,
                     "name": "rock_wall",
                     "icon": "backgrounds/wall_rock.png"
                 },
@@ -1436,23 +1506,25 @@
             },
             {
                 "core": {
-                    "revealed": false,
+                    "revealed": true,
                     "type": "link",
                     "name": "map_link",
                     "icon": "backgrounds/map_link.png"
                 },
                 "conditional": {
+                    "players": [],
                     "canenter": true,
                     "newmap": {
-                        "mapname": "test1x1",
-                        "x": 0,
-                        "y": 0
+                        "mapname": "test4x4",
+                        "x": 2,
+                        "y": 2
                     }
                 }
             },
             {
                 "core": {
                     "type": "wall",
+                    "revealed": true,
                     "name": "rock_wall",
                     "icon": "backgrounds/wall_rock.png"
                 },
@@ -1543,6 +1615,7 @@
             {
                 "core": {
                     "type": "wall",
+                    "revealed": true,
                     "name": "rock_wall",
                     "icon": "backgrounds/wall_rock.png"
                 },
@@ -1554,6 +1627,7 @@
             {
                 "core": {
                     "type": "wall",
+                    "revealed": true,
                     "name": "rock_wall",
                     "icon": "backgrounds/wall_rock.png"
                 },
@@ -1565,6 +1639,7 @@
             {
                 "core": {
                     "type": "wall",
+                    "revealed": true,
                     "name": "rock_wall",
                     "icon": "backgrounds/wall_rock.png"
                 },
@@ -1576,6 +1651,7 @@
         ]
     ],
     "lightradius": 1,
+    "name": "Simple Room",
     "max_x": 10,
     "max_y": 10
 }

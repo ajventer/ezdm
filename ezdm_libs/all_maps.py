@@ -2,7 +2,9 @@ from frontend import Session, Page
 import frontend
 from gamemap import GameMap
 from util import find_files, load_json
+from simplejson import loads
 from character import Character
+from item import Item
 
 
 class MAPS(Session):
@@ -13,6 +15,7 @@ class MAPS(Session):
 
         self._data['editmode'] = frontend.mode == 'dm'
         if not self._data['editmode'] and not requestdata:
+            print "reloading map"
             mapname = frontend.campaign.current_char().get('/core/location/map', '')
             self._map = GameMap(load_json('maps', mapname))
         if (not requestdata and self._data['editmode']) or (requestdata and 'loadmap' in requestdata and requestdata['loadmap'] == 'New Map'):
@@ -41,6 +44,9 @@ class MAPS(Session):
                 character.save()
                 self._map = GameMap(load_json('maps', self._map.name()))
                 self._data['savemap'] = 'Save'
+            if 'updatejson' in requestdata:
+                newjson = loads(requestdata['jsonbox'])
+                self._map.load_tile_from_json(self._data['zoom_x'], self._data['zoom_y'], newjson)
             if 'addnpctotile' in requestdata:
                 self._map.addtotile(self._data['zoom_x'], self._data['zoom_y'], requestdata['npcname'], 'npcs')
             if 'additemtotile' in requestdata:
@@ -54,11 +60,80 @@ class MAPS(Session):
                 target_x = int(requestdata['target_x'])
                 target_y = int(requestdata['target_y'])
                 self._map.tile(self._data['zoom_x'], self._data['zoom_y']).linktarget(target=target, x=target_x, y=target_y)
-            if not 'savemap' in requestdata and not 'loadmap' in requestdata:
+            if 'movehere' in requestdata:
+                frontend.campaign.current_char().moveto(self._map.name(), self._data['zoom_x'], self._data['zoom_y'])
+                self._map = GameMap(load_json('maps', self._map.name()))
+            if "followlink" in requestdata:
+                tile = self._map.tile(self._data['zoom_x'], self._data['zoom_y'])
+                newmap = tile.get('/conditional/newmap/mapname', '')
+                new_x = tile.get('/conditional/newmap/x', 0)
+                new_y = tile.get('/conditional/newmap/y', 0)
+                char = frontend.campaign.current_char()
+                char.moveto(mapname=newmap, x=new_x, y=new_y, page=page)
+                self._map = GameMap(load_json('maps', newmap))
+                self._data = {}
+                self._data['zoom_x'] = 0
+                self._data['zoom_y'] = 0
+                self._data['editmode'] = frontend.mode == 'dm'
+            if 'sellitem' in requestdata:
+                idx = int(requestdata['itemtosell'])
+                char = frontend.campaign.current_char()
+                char.sell_item(idx)
+                char.save()
+            if 'iconsection' in requestdata and requestdata['iconsection']:
+                print "Processing icon click"
+                iconsection = requestdata['iconsection']
+                self._data['detailname'] = requestdata['iconname']
+                if iconsection == 'money':
+                    self._data['detailview'] = {}
+                    self._data['detailview']['gold'] = self._map.tile(self._data['zoom_x'], self._data['zoom_y']).get('/conditional/gold', 0)
+                    self._data['detailview']['silver'] = self._map.tile(self._data['zoom_x'], self._data['zoom_y']).get('/conditional/silver', 0)
+                    self._data['detailview']['copper'] = self._map.tile(self._data['zoom_x'], self._data['zoom_y']).get('/conditional/copper', 0)
+                    self._data['detailtype'] = 'item'
+                elif iconsection == 'items':
+                    i = Item(load_json('items', requestdata['iconname']))
+                    if self._map.tile(self._data['zoom_x'], self._data['zoom_y']).tiletype() == 'shop':
+                        print "Pre-identifying item from shop"
+                        i.identify()
+                    self._data['detailview'] = i.render()
+                    self._data['detailtype'] = 'item'
+                elif iconsection == 'players':
+                    self._data['detailview'] = Character(load_json('characters', requestdata['iconname'])).render()
+                    self._data['detailtype'] = 'player'
+                elif iconsection == 'npcs':
+                    self._data['detailview'] = Character(load_json('characters', requestdata['iconname'])).render()
+                    self._data['detailtype'] = 'npc'
+            if 'itemdetail' in requestdata:
+                del(self._data['detailtype'])
+                if requestdata['detailname'] == 'money':
+                    moneytuple = self._map.getmoney(self._data['zoom_x'], self._data['zoom_y'])
+                    char = frontend.campaign.current_char()
+                    char.gain_money(*moneytuple)
+                    self._map.putmoney(self._data['zoom_x'], self._data['zoom_y'], 0, 0, 0)
+                    page.message('You picked up some money !')
+                    char.save()
+                elif requestdata['detailtype'] == 'item':
+                    print "Processing item selection"
+                    i = Item(load_json('items', requestdata['detailname']))
+                    char = frontend.campaign.current_char()
+                    if requestdata['itemdetail'] == 'Pick up':
+                        print "Pickin up item"
+                        char.acquire_item(i)
+                        self._map.removefromtile(self._data['zoom_x'], self._data['zoom_y'], requestdata['detailname'], 'items')
+                        page.message('You picked up a %s' % requestdata['detailname'])
+                    else:
+                        print "Buying item"
+                        i.identify()
+                        char.buy_item(i, page=page)
+                    char.save()
+
+            if not 'savemap' in requestdata and not 'loadmap' in requestdata and self._data['editmode']:
                 page.warning('WARNING: Changes are not yet saved')
 
         self._data['map'] = self._map()
         self._data['mapobj'] = self._map
+        if frontend.campaign:
+            self._data['packitems'] = frontend.campaign.current_char().for_sale()
         self._data['maplist'] = find_files('maps', '*.json', basename=True, strip='.json')
         self._data['tilelist'] = find_files('tiles', '*.json', basename=True, strip='.json')
         charlist = find_files('characters', '*.json', basename=True, strip='.json')
@@ -73,4 +148,6 @@ class MAPS(Session):
                 self._data['npclist'].append(c)
         print self._data['tilelist']
         page.add('map_render.tpl', self._data)
+        if not self._data['editmode']:
+            self._map.save()
         return page.render()

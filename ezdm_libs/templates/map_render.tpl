@@ -1,12 +1,23 @@
 <form  id="maprender" method=post>
     <input type=hidden name="clicked_x" id="clicked_x" value="">
     <input type=hidden name="clicked_y" id="clicked_y" value="">
+    <input type=hidden name="iconsection" id="iconsection" value="">
+    <input type=hidden name="iconname" id="iconname" value="">
 </form>
 
 <script>
     function clickHandler(x,y) {
         document.getElementById('clicked_x').value = x;
         document.getElementById('clicked_y').value = y;
+        document.getElementById('maprender').submit();
+    }
+</script>
+<script>
+    function itemclickHandler(x,y, section, name) {
+        document.getElementById('clicked_x').value = x;
+        document.getElementById('clicked_y').value = y;
+        document.getElementById('iconsection').value = section;
+        document.getElementById('iconname').value = name;
         document.getElementById('maprender').submit();
     }
 </script>
@@ -117,16 +128,17 @@
                     {% for icontuple in mapobj.tile_icons(zoom_x,zoom_y) %}
                     {% set k = icontuple[0] %}
                     {% set v = icontuple[1] %}
-                        <img title="{{k}}" src="/icon/{{v}}" align=left>
+                    {% set section = icontuple[2] %}
+                        <img title="{{k}}" src="/icon/{{v}}" align=left onclick="itemclickHandler({{zoom_x}},{{zoom_y}}, '{{section}}', '{{k}}')">
                     {% endfor %}
                 </td>
             </tr>
             <tr>
                 <td>
                     <form method=post>
+                        <input type=hidden name="clicked_x" id="clicked_x" value="{{zoom_x}}">
+                        <input type=hidden name="clicked_y" id="clicked_y" value="{{zoom_y}}">
                     {% if editmode %}
-                            <input type=hidden name="clicked_x" id="clicked_x" value="{{zoom_x}}">
-                            <input type=hidden name="clicked_y" id="clicked_y" value="{{zoom_y}}">
                             <select name="load_tile_from_file">
                                 {% for tile in tilelist %}
                                     <option value="{{tile}}">{{tile}}</option>
@@ -175,7 +187,22 @@
                                 {% endif %}
                             {% endif %}
                     {% else %}
-                       Campaign Mode Goes Here
+                       {% if mapobj.tile(zoom_x,zoom_y).canenter() %}
+                            <input type=submit name="movehere" value="Move Here"><br>
+                       {% endif %}
+                       {% if mapobj.tile(zoom_x,zoom_y).tiletype() == 'link' %}
+                            <input type=submit name="followlink" value="Go to next map"><br>
+                       {% endif %}
+                       {% if mapobj.tile(zoom_x, zoom_y).tiletype() == 'shop' %}
+                       {% if packitems %}
+                            <select name="itemtosell">
+                                {% for item, name, price in packitems %}
+                                    <option value={{item}}>{{name}} - {{price}}</option>
+                                {% endfor %}
+                            </select>
+                            <input type=submit name="sellitem" value="Sell Item"><br>
+                        {% endif %}
+                       {% endif %}
                     {% endif %}
                     </form>
                 </td>
@@ -194,9 +221,57 @@
                                 });
                             </script>
                             <input type=submit value="Run code">
+                        </form><br>
+                        jsonbox<form method=post>
+                            <input type=hidden name="clicked_x" id="clicked_x" value="{{zoom_x}}">
+                            <input type=hidden name="clicked_y" id="clicked_y" value="{{zoom_y}}">
+                            <textarea id="jsonbox" cols=60 rows=10 name="jsonbox">{{mapobj.tile(zoom_x,zoom_y)}}</textarea><br>
+                            <script language="javascript" type="text/javascript">
+                                editAreaLoader.init({
+                                    id : "jsonbox"       // textarea id
+                                    ,syntax: "python"           // syntax to be uses for highgliting
+                                    ,start_highlight: true      // to display with highlight mode on start-up
+                                });
+                            </script>
+                            <input type=submit value="Update tile JSON" name="updatejson">
                         </form>
                     </td>
                 </tr>
+                {% else %}
+                {% if detailtype %}
+                <tr>
+                    <td bgcolor=lightblue>
+                        <form method=post>
+                            <input type=hidden name="clicked_x" id="clicked_x" value="{{zoom_x}}">
+                            <input type=hidden name="clicked_y" id="clicked_y" value="{{zoom_y}}">
+                            <input type=hidden name="detailtype" id="detailtype" value="{{detailtype}}">
+                            <input type=hidden name="detailname" id="detailname" value="{{detailname}}">
+                            {% if detailtype == 'item' %}
+                                {% if mapobj.tile(zoom_x,zoom_y).tiletype() == 'shop' %}
+                                    <input type="submit" name="itemdetail" value="Buy">
+                                {% else %}   
+                                    <input type="submit" name="itemdetail" value="Pick up">
+                                {% endif %}
+                            {% elif detailtype == 'players' %}  
+                                Player buttons here
+                            {% else %}
+                                NPC buttons here
+                            {% endif %}
+                        <br>
+                        <ul>
+                        {%- for key, value in detailview.items() recursive  %}                       
+                          <li>{{ key }}                                                           
+                            {%- if value is mapping %}                            
+                            <ul>{{ loop(value.items())}}</ul>
+                            {% else %}
+                                = {{value}}
+                            {%- endif %}                                                            
+                          </li>                                                                     
+                        {%- endfor %}   
+                        </ul>
+                    </td>
+                </tr>
+                {% endif %}
                 {%endif%}
             </table>
         </table>

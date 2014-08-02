@@ -36,9 +36,9 @@
             }
         },
         "location": {
-            "y": 3,
-            "x": 3,
-            "map": "simple_room.json"
+            "y": 7,
+            "map": "simple_room.json",
+            "x": 8
         },
         "icon": "avatars/48x48_Faces_4th_Sheet_Update_CharlesGabriel_OGA_0-1-3.png",
         "type": "player",
@@ -49,11 +49,9 @@
         "inventory": {
             "equiped": {
                 "head": {},
-                "righthand": {},
-                "neck": {},
-                "wrists": {},
-                " righthand": {
+                "righthand": {
                     "core": {
+                        "size": "small",
                         "rounds_used": 0,
                         "name": "Mainhand Dagger",
                         "weight": "",
@@ -62,41 +60,60 @@
                             "silver": "",
                             "gold": ""
                         },
-                        "description": "A small dagger balanced for use in the main hand.",
-                        "identified": false,
+                        "identified": true,
                         "rounds_afteruse": 0,
-                        "size": "small",
+                        "icon": "icons/sword.png",
                         "type": "weapon",
-                        "icon": "icons/sword.png"
+                        "description": "A small dagger balanced for use in the main hand."
                     },
                     "conditional": {
                         "slot": " righthand",
-                        "to_hit": 0,
                         "dmg": 4,
+                        "to_hit": 0,
                         "damage_type": "stab",
                         "weapon_type": "melee",
                         "save_against": "none"
-                    },
-                    "events": {
-                        "onequip": "",
-                        "onpickup": "",
-                        "onround": "",
-                        "ondrop": "page.warning('%s has dropped %s' % (player.displayname(), item.displayname()))",
-                        "onuse": ""
                     }
                 },
+                "neck": {},
+                "wrists": {},
                 "leftfinger": {},
                 "feet": {},
                 "rightfinger": {},
                 "gloves": {},
                 "legs": {},
-                "lefthand": {},
+                "lefthand": {
+                    "core": {
+                        "size": "small",
+                        "rounds_used": 0,
+                        "name": "Offhand_Dagger",
+                        "weight": "",
+                        "price": {
+                            "copper": "",
+                            "silver": "",
+                            "gold": ""
+                        },
+                        "identified": true,
+                        "rounds_afteruse": 0,
+                        "icon": "icons/sword.png",
+                        "type": "weapon",
+                        "description": "A small dagger balanced for use in the offhand."
+                    },
+                    "conditional": {
+                        "slot": "lefthand",
+                        "dmg": 4,
+                        "to_hit": 0,
+                        "damage_type": "stab",
+                        "weapon_type": "melee",
+                        "save_against": "ppd"
+                    }
+                },
                 "chest": {}
             },
             "money": {
-                "copper": 0,
-                "silver": 0,
-                "gold": 0
+                "copper": 10,
+                "silver": 1,
+                "gold": 105
             },
             "pack": [],
             "spells": ""

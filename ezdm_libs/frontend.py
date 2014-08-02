@@ -55,6 +55,8 @@ class Page:
         else:
             menuitems = self.make_menu(find_files('', 'campaign*.py', basename=True), 'campaign_')
         menuitems.update(self.make_menu(find_files('', 'all*.py', basename=True), 'all_'))
+        if mode == 'campaign' and campaign:
+            title += "   - %s's round" % campaign.current_char().displayname()
         self._menuitems = {'menuitems': menuitems}
         self.content = [('header.tpl', {'title': title}), ('menubar.tpl', self._menuitems)]
 
@@ -118,7 +120,6 @@ class JSON_Editor(Session):
 
     def _loadform(self, new=True):
         loadfrom = {}
-        loadfrom['action'] = '/ezdm_%sS' % self._name.upper()
         loadfrom['name'] = self._name
         loadfrom['keyname'] = 'loadfrom'
         if new:
@@ -136,7 +137,7 @@ class JSON_Editor(Session):
         page.add(lf[0], lf[1])
         ilist = {'list': [], 'name': self._name}
         for f in find_files('%ss' % self._name, '*.json', basename=True, strip='.json'):
-            ilist['list'].append('<a href=/view/ezdm_%sS/%s.json>%s</a>' % (self._name.upper(), f, f))
+            ilist['list'].append('<a href=/view/%sS/%s.json>%s</a>' % (self._name.upper(), f, f))
         page.add('list_viewer.tpl', ilist)
 
         return page.render()

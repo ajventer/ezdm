@@ -17,7 +17,6 @@ class Character(EzdmObject):
     lightradius = 0
 
     def __init__(self, json):
-        print "Instantiating character"
         self.json = json
         try:
             self.weapons = self.load_weapons()
@@ -25,8 +24,9 @@ class Character(EzdmObject):
             self.put('core/combat/thac0', self.__get_thac0())
             self.put('core/combat/saving_throws', self.get_saving_throws())
             if not self.character_type() == 'player':
-                self.put('core/combat/hitpoints', rolldice(numdice=int(self.get('/combat/level-hitdice', '1')), numsides=8))
-                self.put('core/combat/max_hp', self.get('/combat/hitpoints', 1))
+                numdice = int(self.get('/core/combat/level-hitdice', '1'))
+                self.put('core/combat/hitpoints', rolldice(numdice=numdice, numsides=8)[0])
+                self.put('core/combat/max_hp', numdice * 8)
         except:
             pass
 
@@ -35,6 +35,7 @@ class Character(EzdmObject):
 
     def moveto(self, mapname, x, y, page=None):
         current = self.location()
+        print current
         if current.get('map'):
             gamemap = GameMap(load_json('maps', current['map']))
             gamemap.removefromtile(current['x'], current['y'], self.name(), 'players')
@@ -42,12 +43,13 @@ class Character(EzdmObject):
         self.put('/core/location/x', x)
         self.put('/core/location/y', y)
         self.put('/core/location/map', mapname)
+        self.save()
         gamemap = GameMap(load_json('maps', mapname))
         gamemap.addtotile(x, y, self.name(), 'players')
         if page:
             tile = gamemap.tile(x, y)
             tile.onenter(self, page)
-            gamemap.load_tile_from_json(tile())
+            gamemap.load_tile_from_json(x, y, tile())
         gamemap.reveal(x, y, self.lightradius)
         print "Saving", gamemap.save()
 
@@ -62,7 +64,9 @@ class Character(EzdmObject):
 
     def xp_worth(self):
         xpkey = self.get('core/combat/level-hitdice', 1)
-        xpvalues = readfile('adnd2e', 'creature_xp', json=True, default={})
+        print xpkey
+        xpvalues = load_json('adnd2e', 'creature_xp.json')
+        print xpvalues
         if str(xpkey) in xpvalues.keys():
             xp = xpvalues[str(xpkey)]
         elif int(xpkey) > 12:
@@ -306,14 +310,19 @@ class Character(EzdmObject):
         return self.equiped_by_type('weapon')
 
     def acquire_item(self, item):
-        self()['core']['inventory']['pack'].append(item())
+        self()['core']['inventory']['pack'].insert(0, item())
 
     def equip_item(self, itemname):
         slots = []
         has_unequiped = False
-        for item in [Item(i) for i in self.get('/core/inventory/pack', [])]:
-            if item.displayname == itemname:
-                break
+        if isinstance(itemname, int):
+            item = Item(self.get('/core/inventory/pack', [])[itemname])
+        else:
+            for item in [Item(i) for i in self.get('/core/inventory/pack', [])]:
+                if item.displayname == itemname:
+                    break
+        if not item.identified():
+            item.identify()
         if item:
             if item.itemtype() == 'armor' and not item.armortype() in self.get('/conditional/armor_types', ['cloth']):
                 return (False, "%s cannot wear %s armor like %s" % (self.displayname(), item.armortype(), item.displayname()))
@@ -338,36 +347,64 @@ class Character(EzdmObject):
                     has_unequiped = True
                 self.put('/core/inventory/equiped/%s' % slot.strip(), item())
                 self.drop_item(item.displayname())
-        self.__init__(self())
         return (True, "%s has equiped %s" % (self.displayname(), item.displayname()))
 
     def unequip_item(self, slot):
+        slot = slot.strip()
+        print slot
         current = self.get('/core/inventory/equiped/%s' % slot, {})
+        print current
         if current:
-            self.json['inventory']['pack'].append(current)
+            self.json['core']['inventory']['pack'].append(current)
         self.put('/core/inventory/equiped/%s' % slot, {})
-        self.__init__(self())
+
+    def sell_price(self, gold, copper, silver):
+            price = price_in_copper(gold, silver, copper)
+            print price
+            cha = int(self.get('/core/abilities/cha', 1))
+            price = (price / 2) + ((price / 100) * cha)
+            print price
+            money = convert_money(price)
+            print money
+            return (money['gold'], money['silver'], money['copper'])
 
     def sell_item(self, itemname, buyer='shop', gold=0, silver=0, copper=0):
-        for item in self.get('/inventory/pack'):
-            if item.displayname() == itemname:
-                tosell = Item(item)
-                break
+        if isinstance(itemname, int):
+            tosell = Item(self.get('/core/inventory/pack', [])[itemname])
+        else:
+            for item in self.get('/core/inventory/pack', []):
+                if item.displayname() == itemname:
+                    tosell = Item(item)
+                    break
         if buyer != 'shop':
             buyer.spend_money(gold, silver, copper)
             buyer.acquire_item(tosell())
         else:
-            gold, silver, copper = item.money_tuple().items()
+            gold, silver, copper = self.sell_price(*tosell.price_tuple())
+
         self.drop_item(itemname)
         self.gain_money(gold, silver, copper)
 
-    def drop_item(self, itemname, section='pack'):
-        for item in self.get('/core/inventory/%s' % section, []):
-            item = Item(item)
-            if item.displayname() == itemname:
+    def for_sale(self):
+        out = []
+        pack = self.get('/core/inventory/pack', [])
+        for i in pack:
+            item = Item(i)
+            if item.name() != '.json':
+                gold, silver, copper = self.sell_price(*item.price_tuple())
+                moneystr = 'Gold %s, Silver %s, Copper %s' % (gold, silver, copper)
+                out.append((pack.index(i), item.displayname(), moneystr))
+        return out
 
-                i = self.get('/core/inventory/%s' % section, []).index(item())
-                del self.json['core']['inventory'][section][i]
+    def drop_item(self, itemname, section='pack'):
+        if isinstance(itemname, str):
+            for item in self.get('/core/inventory/%s' % section, []):
+                item = Item(item)
+                if item.displayname() == itemname:
+                    i = self.get('/core/inventory/%s' % section, []).index(item())
+                    del self.json['core']['inventory'][section][i]
+        else:
+            del(self.json['core']['inventory']['pack'][itemname])
 
     def money_tuple(self):
         gold = self.get('/core/inventory/money/gold', 0)
@@ -385,12 +422,13 @@ class Character(EzdmObject):
             self.put('/core/inventory/money', convert_money(remains))
             return True
 
-    def buy_item(self, item):
-        price = readkey('/price', item(), {"gold": 0, "silver": 0, "copper": 0})
-        if self.spend_money(int(price['gold']), int(price['silver']), int(price['copper'])):
+    def buy_item(self, item, page=None):
+        if self.spend_money(*item.price_tuple()):
             self.acquire_item(item)
+            page.message('You bought a %s' % item.name())
             return True
         else:
+            page.error('You cannot afford to buy %s' % item.name())
             return False
 
     def gain_money(self, gold=0, silver=0, copper=0):
@@ -532,4 +570,6 @@ class Character(EzdmObject):
                         break
                     else:
                         done = True
+        del(out['core']['inventory'])
+        out['spells'] = self.get('inventory/spells', [])
         return out

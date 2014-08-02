@@ -9,10 +9,17 @@
             "con": 15
         },
         "combat": {
+            "hitpoints": 19,
             "thac0": 16,
             "level-hitdice": 5,
-            "hitpoints": 22,
-            "max_hp": 22
+            "saving_throws": {
+                "breath": 13,
+                "pp": 12,
+                "spell": 14,
+                "rod": 13,
+                "ppd": 11
+            },
+            "max_hp": 40
         },
         "personal": {
             "name": {
@@ -29,15 +36,9 @@
             }
         },
         "location": {
-            "y": "",
-            "x": "",
-            "map": ""
-        },
-        "icon": "avatars/rat.png",
-        "type": "npc",
-        "class": {
-            "class": "fighter",
-            "parent": "warrior"
+            "y": 4,
+            "x": 3,
+            "map": "simple_room.json"
         },
         "inventory": {
             "equiped": {
@@ -60,7 +61,13 @@
             },
             "pack": [],
             "spells": ""
-        }
+        },
+        "type": "npc",
+        "class": {
+            "class": "fighter",
+            "parent": "warrior"
+        },
+        "icon": "avatars/rat.png"
     },
     "conditional": {
         "armor_types": "['cloth', 'leather', 'mail', 'plate']",
