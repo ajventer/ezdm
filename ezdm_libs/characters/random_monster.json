@@ -9,7 +9,7 @@
             "con": 15
         },
         "combat": {
-            "hitpoints": 19,
+            "hitpoints": 21,
             "thac0": 16,
             "level-hitdice": 5,
             "saving_throws": {
@@ -36,7 +36,7 @@
             }
         },
         "location": {
-            "y": 4,
+            "y": 2,
             "x": 3,
             "map": "simple_room.json"
         },
@@ -60,6 +60,7 @@
                 "gold": 0
             },
             "pack": [],
+            "%s": [],
             "spells": ""
         },
         "type": "npc",

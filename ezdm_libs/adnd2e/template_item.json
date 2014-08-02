@@ -16,6 +16,7 @@
     "__Tonequip": "",
     "__Tonuse": "",
     "__Tonround": "",
+    "__Tonfinish": "",
     "__Tondrop": "page.warning('%s has dropped %s' % (player.displayname(), item.displayname()))"
 },
 "conditional":{
@@ -27,6 +28,10 @@
         "slot": "__[lefthand,righthand,twohand]",
         "save_against":"__[ppd,rod,pp,breath,spell,none]"
     },
+    "core.type=spell":{
+        "spell_level": 1,
+        "spell_school": "__[Abjuration,Alteration,Conjuration,Enchantment,Divination,Illusion,Invocation,Necromancy]"
+        },
     "core.type=armor":{
         "ac":0,
         "material": "__[cloth,leather,mail,plate]",

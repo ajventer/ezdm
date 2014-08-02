@@ -116,7 +116,32 @@
                 "gold": 105
             },
             "pack": [],
-            "spells": ""
+            "%s": [],
+            "spells": [
+                {
+                    "core": {
+                        "description": "Fires a bolt of arcane energy at the target, if it hits it does 1d4 damage.",
+                        "weight": 0,
+                        "in_use": false,
+                        "charges": -1,
+                        "price": {
+                            "copper": 25,
+                            "silver": 50,
+                            "gold": 200
+                        },
+                        "identified": true,
+                        "rounds_per_charge": 2,
+                        "icon": "icons/magic_misile.png",
+                        "size": "small",
+                        "type": "spell",
+                        "name": "Magic Misile"
+                    },
+                    "conditional": {
+                        "spell_school": "Conjuration",
+                        "spell_level": 1
+                    }
+                }
+            ]
         }
     },
     "conditional": {

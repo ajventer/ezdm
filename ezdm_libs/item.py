@@ -76,7 +76,8 @@ class Item(EzdmObject):
     def onround(self, player, target, page):
         if self.get('/core/in_use', False):
             rounds = self.get('/core/rounds_per_charge', 0)
-            rounds -= 1
+            if rounds > 0:
+                rounds -= 1
             self.put('/core/rounds_per_charge', rounds)
             target = target or self.get('/core/target', None)
             if rounds:
@@ -88,8 +89,9 @@ class Item(EzdmObject):
         self.put('/core/in_use', False)
         self.put('/core/target', None)
         charges = self.get('/core/charges', 0)
-        charges -= 1
-        self.put('/core/charges', charges)
+        if charges > 0:
+            charges -= 1
+            self.put('/core/charges', charges)
         event(self, "/events/onfinish", {'item': self, 'page': page, 'player': player, 'target': target})
 
     def ondrop(self, player, page):

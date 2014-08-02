@@ -60,6 +60,7 @@
                 "gold": 110
             },
             "pack": [],
+            "%s": [],
             "spells": ""
         },
         "type": "player",

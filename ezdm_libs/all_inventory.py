@@ -30,7 +30,11 @@ class INVENTORY(Session):
             self._data['inventory'] = self._character.get('/core/inventory', {})
 
             self._data['character'] = self._character.displayname()
-            self._data['items'] = find_files('items', '*.json', basename=True, strip='.json')
+            itemlist = find_files('items', '*.json', basename=True, strip='.json')
+            self._data['items'] = []
+            for item in itemlist:
+                if Item(load_json('items', item)).itemtype() != 'spell':
+                    self._data['items'].append(item)
 
             if requestdata:
                 if 'acquire_item' in requestdata:

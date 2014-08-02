@@ -303,6 +303,16 @@ class Character(EzdmObject):
     def load_weapons(self):
         return self.equiped_by_type('weapon')
 
+    def learn_spell(self, spellitem):
+        spells = self.get('/core/inventory/spells', [])
+        if not isinstance(spells, list):
+            self.put('/core/inventory/spells', [])
+        spellitem.identify()
+        self()['core']['inventory']['spells'].append(spellitem())
+
+    def unlearn_spell(self, index):
+        del(self()['core']['inventory']['spells'][index])
+
     def acquire_item(self, item):
         self()['core']['inventory']['pack'].insert(0, item())
 
@@ -528,7 +538,7 @@ class Character(EzdmObject):
 
     def displayname(self):
         out = "%s %s" % (self.get('/core/personal/name/first', ''), self.get('/core/personal/name/last', ''))
-        if self.index > -1:
+        if self.index > -1 and self.character_type() == 'npc':
             out = "%s (%s)" % (out, self.index)
         out = "[%s]" % out
         return out
@@ -568,5 +578,4 @@ class Character(EzdmObject):
                     else:
                         done = True
         del(out['core']['inventory'])
-        out['spells'] = self.get('inventory/spells', [])
         return out

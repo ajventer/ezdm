@@ -1,0 +1,31 @@
+{
+    "core": {
+        "name": "Magic Misile",
+        "weight": 0,
+        "in_use": false,
+        "charges": -1,
+        "price": {
+            "copper": 25,
+            "silver": 50,
+            "gold": 200
+        },
+        "description": "Fires a bolt of arcane energy at the target, if it hits it does 1d4 damage.",
+        "identified": "",
+        "rounds_per_charge": 2,
+        "size": "small",
+        "type": "spell",
+        "icon": "icons/magic_misile.png"
+    },
+    "conditional": {
+        "spell_school": "Conjuration",
+        "spell_level": 1
+    },
+    "events": {
+        "ondrop": "",
+        "onround": "page.warning('%s continues to cast Magic Misile at %s'  % (player.displayname(), target.displayname())",
+        "onequip": "",
+        "onpickup": "",
+        "onuse": "page.warning('%s is casting Magic Missile at %s' % (player.displayname(), target.displayname())\r\n",
+        "onfinish": "page.warning('%s has finished casting Magic Misile at %s'  % (player.displayname(), target.displayname())\r\nfrom util import rolldice\r\nspell_success = player.spell_success()\r\nif not spell_success[1]:\r\n\tpage.error(spell_success[0])\r\nelse:\r\n\tdmg = rolldice(numdice=1, numsides=4, modifier=0)\r\n\tresult = target.take_damage(dmg)\r\n\tpage.error(result[1])\r\n"
+    }
+}
