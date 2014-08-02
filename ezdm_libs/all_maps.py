@@ -129,9 +129,7 @@ class MAPS(Session):
 
         self._data['editmode'] = frontend.mode == 'dm'
         self._character = frontend.onround(self._character, page)
-        print self._character
         if not self._data['editmode']:
-            print self._character
             self._data['packitems'] = self._character.for_sale()
 
         if requestdata:

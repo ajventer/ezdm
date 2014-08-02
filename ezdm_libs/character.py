@@ -121,28 +121,6 @@ class Character(EzdmObject):
             out += "%s takes %s damage. %s hitpoints remaining" % (self.displayname(), damage, self.get('/core/combat/hitpoints', 1))
             return (True, out)
 
-    def start_casting(self, rounds, target):
-        self.cast_remaining = rounds
-        self.spell_target = target
-
-    def continue_casting(self):
-        self.cast_remaining -= 1
-        return self.is_casting()
-
-    def is_casting(self):
-        return self.cast_remaining > 0
-
-    def interrupt_cast(self, by=''):
-        self.spell_complete()
-        return '%s: spell casting interrupted %s !' % (self.displayname(), by)
-
-    def spell_complete(self):
-        self.cast_remaining = 0
-        self.spell_target = None
-
-    def spell_friendly_target(self):
-        return self.is_monster() == self.spell_target.is_monster()
-
     def name(self):
         name = '%s_%s.json' % (self.get('/core/personal/name/first', ''), self.get('/core/personal/name/last', ''))
         return name.lower()
