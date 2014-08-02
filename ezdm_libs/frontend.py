@@ -2,7 +2,7 @@ from jinja2 import Template
 from objects import EzdmObject
 from util import readfile, find_files, template_dict, json_editor, list_icons, inflate
 
-mode = 'dm'
+mode = 'campaign'
 campaign = None
 
 
@@ -10,6 +10,7 @@ def onround(character, page):
     page.message('New round !')
     if campaign.current_char() != character:
         character = campaign.current_char()
+        page.message(character.displayname())
         for item in character.inventory_generator():
             if item[1].get('/core/in_use', False):
                 page.warning('%s is being used - %s charges/rounds left' % (item[1].displayname, item[1].get('/core/charges')))
@@ -19,7 +20,7 @@ def onround(character, page):
                 else:
                     character()['core']['inventory'][item[0]][item[3]] = item[1]()
         character.save()
-        return character
+    return character
 
 
 class Session:

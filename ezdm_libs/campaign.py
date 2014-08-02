@@ -9,12 +9,13 @@ class Campaign(EzdmObject):
     def __init__(self, json):
         self.json = json
         self.put('/core/current_char', 0)
+        self.chars_in_round()
 
     def chars_in_round(self):
         chars = []
         maps_parsed = []
         players = self.get('/core/players', [])
-        for player in players:
+        for player in sorted(players):
             if not player.endswith('.json'):
                 player = '%s.json' % player
             p = Character(load_json('characters', player))
@@ -22,11 +23,10 @@ class Campaign(EzdmObject):
                 p.set_index(len(chars))
                 print "player", player, p.index
                 chars.append(p)
-        for player in players:
+        for player in sorted(players):
             p = Character(load_json('characters', player))
             loc = p.get('/core/location/', '')
             mapname = loc['map']
-            p.moveto(mapname, loc['x'], loc['y'])
 
             if not mapname in maps_parsed:
                 maps_parsed.append(mapname)
@@ -38,23 +38,23 @@ class Campaign(EzdmObject):
                     tile = gamemap.tile(x, y)
                     if tile.get('/core/revealed', False) is True:
                         npcs_here = tile.get('/conditional/npcs', [])
-                        for npc in npcs_here:
+                        for npc in sorted(npcs_here):
                             n = Character(load_json('characters', npc))
                             if n.get('/conditional/orientation', 'friendly').strip() == 'aggressive':
                                 n.put('/core/location', {"map": mapname, "x": x, "y": y})
                                 n.set_index(len(chars))
                                 print npc, n.index
                                 chars.append(n)
-        return list(set(chars))
+        self.characters = list(set(chars))
 
     def current_char(self):
             c = self.get('/core/current_char', 0)
-            return self.chars_in_round()[c]
+            return self.characters[c]
 
     def endround(self):
         next_char = int(self.get('/core/current_char', 0))
         next_char += 1
-        if next_char >= len(self.chars_in_round()):
+        if next_char >= len(self.characters):
             next_char = 0
         self.put('/core/current_char', next_char)
         char = self.current_char()

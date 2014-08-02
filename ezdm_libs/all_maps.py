@@ -8,19 +8,12 @@ from item import Item
 
 
 class MAPS(Session):
-    def render(self, requestdata):
-        page = Page()
-        self._data['zoom_x'] = 0
-        self._data['zoom_y'] = 0
+    def __init__(self):
         self._character = None
+        Session.__init__(self)
 
-        self._data['editmode'] = frontend.mode == 'dm'
-        if not self._data['editmode'] and not requestdata:
-            print "reloading map"
-            self._character = frontend.onround(self._character, page)
-            mapname = self._character.get('/core/location/map', '')
-            self._map = GameMap(load_json('maps', mapname))
-        if (not requestdata and self._data['editmode']) or (requestdata and 'loadmap' in requestdata and requestdata['loadmap'] == 'New Map'):
+    def inputhandler(self, requestdata, page):
+        if 'loadmap' in requestdata and requestdata['loadmap'] == 'New Map':
             self._map = GameMap(name='New Map')
         else:
             if requestdata and 'loadmap' in requestdata and requestdata['loadmap'] != 'New Map':
@@ -126,14 +119,33 @@ class MAPS(Session):
                         i.identify()
                         self._character.buy_item(i, page=page)
                     self._character.save()
-
             if not 'savemap' in requestdata and not 'loadmap' in requestdata and self._data['editmode']:
                 page.warning('WARNING: Changes are not yet saved')
 
+    def render(self, requestdata):
+        page = Page()
+        self._data['zoom_x'] = 0
+        self._data['zoom_y'] = 0
+
+        self._data['editmode'] = frontend.mode == 'dm'
+        self._character = frontend.onround(self._character, page)
+        print self._character
+        if not self._data['editmode']:
+            print self._character
+            self._data['packitems'] = self._character.for_sale()
+
+        if requestdata:
+            self.inputhandler(requestdata, page)
+        else:
+            if not self._data['editmode']:
+                print "reloading map"
+                mapname = self._character.get('/core/location/map', '')
+                self._map = GameMap(load_json('maps', mapname))
+        if self._data['editmode'] and not self._map:
+            self._map = GameMap(name='New Map')
+
         self._data['map'] = self._map()
         self._data['mapobj'] = self._map
-        if frontend.campaign:
-            self._data['packitems'] = self._character.for_sale()
         self._data['maplist'] = find_files('maps', '*.json', basename=True, strip='.json')
         self._data['tilelist'] = find_files('tiles', '*.json', basename=True, strip='.json')
         charlist = find_files('characters', '*.json', basename=True, strip='.json')

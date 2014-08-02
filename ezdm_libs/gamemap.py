@@ -1,5 +1,6 @@
 from objects import EzdmObject, event
 from util import save_json, load_json, readkey
+import frontend
 
 
 class Tile(EzdmObject):
@@ -140,6 +141,7 @@ class GameMap(EzdmObject):
         #TODO prevent looking through walls
         max_x = int(self.get('max_x', 1))
         max_y = int(self.get('max_y', 1))
+        has_revealed = False
         print "x", x, "max_x", max_x, "y", y, "max_y", max_y
         print max_x
         left = x - radius
@@ -158,6 +160,10 @@ class GameMap(EzdmObject):
         for pt_y in range(top, bottom):
             for pt_x in range(left, right):
                 tile = self.tile(pt_x, pt_y)
+                if not tile.get('/core/revealed', False):
+                    has_revealed = True
                 tile.put('/core/revealed', True)
                 self.load_tile_from_json(pt_x, pt_y, tile())
+        if has_revealed:
+            frontend.campaign.chars_in_round()
         self.save()
