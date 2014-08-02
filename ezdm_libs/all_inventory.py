@@ -16,7 +16,7 @@ class INVENTORY(Session):
         if requestdata and 'loadfrom' in requestdata:
             self._character = Character(load_json('characters', requestdata['loadfrom']))
         if frontend.mode == 'campaign' and frontend.campaign:
-                self._character = frontend.campaign.current_char()
+                self._character = frontend.onround(self._character, page)
         self._data['editmode'] = frontend.mode == 'dm'
         if self._data['editmode']:
             loadfrom = {}
@@ -53,7 +53,7 @@ class INVENTORY(Session):
                     self._data['detailview'] = item.render()
                 if 'dropitem' in requestdata:
                     idx = int(requestdata['pack_index'])
-                    self._character.drop_item(idx)
+                    self._character.drop_item(idx, page)
                 if 'equipitem' in requestdata:
                     idx = int(requestdata['pack_index'])
                     self._character.equip_item(idx)

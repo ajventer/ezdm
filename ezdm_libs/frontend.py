@@ -6,6 +6,22 @@ mode = 'dm'
 campaign = None
 
 
+def onround(character, page):
+    page.message('New round !')
+    if campaign.current_char() != character:
+        character = campaign.current_char()
+        for item in character.inventory_generator():
+            if item[1].get('/core/in_use', False):
+                page.warning('%s is being used - %s charges/rounds left' % (item[1].displayname, item[1].get('/core/charges')))
+                item[1].onround(player=character, target=None, page=page)
+                if item[0] in character.get('/core/inventory/equiped', {}).keys():
+                    character.put('/core/inventory/equiped/%s' % item[0], item[1]())
+                else:
+                    character()['core']['inventory'][item[0]][item[3]] = item[1]()
+        character.save()
+        return character
+
+
 class Session:
     def __init__(self):
         self._data = {}

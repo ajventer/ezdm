@@ -5,8 +5,9 @@
     "weight": 0,
     "size":"__[small,medium,large]",
     "price":{"gold":0,"silver":0,"copper":0},
-    "__Yrounds_afteruse": 0,
-    "__Yrounds_used": 0,
+    "charges": 0,
+    "rounds_per_charge":0,
+    "__Yin_use": false,
     "__Tdescription": "",
     "identified":"__[false,true]"
 },

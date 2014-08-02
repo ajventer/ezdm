@@ -50,8 +50,24 @@ class Character(EzdmObject):
             tile = gamemap.tile(x, y)
             tile.onenter(self, page)
             gamemap.load_tile_from_json(x, y, tile())
-        gamemap.reveal(x, y, self.lightradius)
+        if self.character_type() == 'player':
+            gamemap.reveal(x, y, self.lightradius)
         print "Saving", gamemap.save()
+
+    def inventory_generator(self, sections=['pack', 'equiped', 'spells']):
+        for section in sections:
+            print "Getting items from ", section
+            items = self.get('/core/inventory/%s' % section, [])
+            idx = -1
+            if isinstance(items, list):
+                for item in items:
+                    idx += 1
+                    yield (section, Item(item), idx)
+            elif isinstance(items, dict):
+                for k, v in items.items():
+                    yield (k, Item(v), 0)
+            else:
+                self.put('/core/inventory/%s', [])
 
     def character_type(self):
         return self.get('/core/type', 'player')
@@ -396,15 +412,18 @@ class Character(EzdmObject):
                 out.append((pack.index(i), item.displayname(), moneystr))
         return out
 
-    def drop_item(self, itemname, section='pack'):
+    def drop_item(self, itemname, section='pack', page=None):
         if isinstance(itemname, str):
             for item in self.get('/core/inventory/%s' % section, []):
                 item = Item(item)
                 if item.displayname() == itemname:
-                    i = self.get('/core/inventory/%s' % section, []).index(item())
-                    del self.json['core']['inventory'][section][i]
+                    todrop = self.get('/core/inventory/%s' % section, []).index(item())
         else:
-            del(self.json['core']['inventory']['pack'][itemname])
+            todrop = itemname
+        item = Item(self.json['core']['inventory']['pack'][todrop])
+        if page:
+            item.ondrop(player=self, page=page)
+        del(self.json['core']['inventory']['pack'][itemname])
 
     def money_tuple(self):
         gold = self.get('/core/inventory/money/gold', 0)
