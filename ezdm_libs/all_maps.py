@@ -133,8 +133,6 @@ class MAPS(Session):
         page = Page()
         self._data['zoom_x'] = 0
         self._data['zoom_y'] = 0
-        if 'detailview' in self._data:
-            del(self._data['detailview'])
 
         self._data['attackmods'] = load_json('adnd2e', 'attack_mods')
         self._data['editmode'] = frontend.mode == 'dm'
