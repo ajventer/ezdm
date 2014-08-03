@@ -94,7 +94,7 @@
                             <img width=25 height=25 src="/icon/{{v}}" title="{{k}}" onclick="clickHandler({{x}},{{y}})" align=left>
                         {% endif %}
                     {% endfor %}<br>
-                      {% if editmode or mapobj.tile(x,y).canenter() %}
+                      {% if editmode or (mapobj.tile(x,y).canenter() and x >= min_x and x <= max_x and y >= min_y and y <= max_y )%}
                         <img src="/icon/icons/page-zoom.png" width=20 height=20 align=top onclick="clickHandler({{x}},{{y}})">
                       {% endif %}
                 {% else %}

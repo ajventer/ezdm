@@ -129,6 +129,12 @@ class MAPS(Session):
 
         self._data['editmode'] = frontend.mode == 'dm'
         self._character = frontend.onround(self._character, page)
+        loc = self._character.location()
+        self._data['min_x'] = int(loc['x']) - 1
+        self._data['max_x'] = int(loc['x']) + 1
+        self._data['min_y'] = int(loc['y']) - 1
+        self._data['max_y'] = int(loc['y']) + 1
+
         if not self._data['editmode']:
             self._data['packitems'] = self._character.for_sale()
 

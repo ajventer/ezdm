@@ -36,9 +36,9 @@
             }
         },
         "location": {
-            "y": 7,
+            "y": 6,
             "map": "simple_room.json",
-            "x": 8
+            "x": 1
         },
         "icon": "avatars/48x48_Faces_4th_Sheet_Update_CharlesGabriel_OGA_0-1-3.png",
         "type": "player",
@@ -123,7 +123,7 @@
                         "description": "Fires a bolt of arcane energy at the target, if it hits it does 1d4 damage.",
                         "weight": 0,
                         "in_use": false,
-                        "charges": -1,
+                        "charges": "Unlimited",
                         "price": {
                             "copper": 25,
                             "silver": 50,

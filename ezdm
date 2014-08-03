@@ -65,12 +65,13 @@ def gethandler(action=None, item=None):
 @route('/endround', method='get')
 def endround():
     frontend.campaign.endround()
-    return redirect('/action/ALL_MAPS', 302)
+    return gethandler(None, None)
 
 
 @route('/load_campaign/<campaign>', method='get')
 def load_campaign(campaign):
     frontend.campaign = Campaign(load_json('campaigns', campaign))
+    frontend.campaign.endround()
     return redirect('/action/ALL_MAPS', 302)
 
 

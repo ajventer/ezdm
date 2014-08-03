@@ -27,6 +27,10 @@ class Item(EzdmObject):
             out = self()
             if 'events' in out:
                 del(out['events'])
+            if 'core' in out:
+                if 'charges' in out['core']:
+                    if int(out['core']['charges']) == -1:
+                        out['core']['charges'] = 'Unlimited'
         else:
             out = {}
             out['core'] = {}

@@ -10,6 +10,7 @@ class Campaign(EzdmObject):
         self.json = json
         self.put('/core/current_char', 0)
         self.chars_in_round()
+        self.character = self.characters[0]
 
     def chars_in_round(self):
         chars = []
@@ -48,8 +49,7 @@ class Campaign(EzdmObject):
         self.characters = list(set(chars))
 
     def current_char(self):
-            c = self.get('/core/current_char', 0)
-            return self.characters[c]
+            return self.character
 
     def endround(self):
         next_char = int(self.get('/core/current_char', 0))
@@ -57,11 +57,11 @@ class Campaign(EzdmObject):
         if next_char >= len(self.characters):
             next_char = 0
         self.put('/core/current_char', next_char)
-        char = self.current_char()
-        loc = char.get('/core/location', {})
+        self.character = self.characters[next_char]
+        loc = self.character.get('/core/location', {})
         print loc
         if loc:
-            char.moveto(mapname=loc['map'], x=loc['x'], y=loc['y'])
+            self.character.moveto(mapname=loc['map'], x=loc['x'], y=loc['y'])
 
     def save(self):
         name = '%s.json' % self.get('/core/name', '')

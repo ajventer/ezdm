@@ -36,9 +36,15 @@
             }
         },
         "location": {
-            "y": 2,
+            "y": 4,
             "x": 3,
             "map": "simple_room.json"
+        },
+        "icon": "avatars/rat.png",
+        "type": "npc",
+        "class": {
+            "class": "fighter",
+            "parent": "warrior"
         },
         "inventory": {
             "equiped": {
@@ -62,13 +68,7 @@
             "pack": [],
             "%s": [],
             "spells": ""
-        },
-        "type": "npc",
-        "class": {
-            "class": "fighter",
-            "parent": "warrior"
-        },
-        "icon": "avatars/rat.png"
+        }
     },
     "conditional": {
         "armor_types": "['cloth', 'leather', 'mail', 'plate']",
