@@ -81,12 +81,10 @@ class Campaign(EzdmObject):
 
     def onround(self, character):
         print "[DEBUG] Campaign.onround: character: %s" % character.displayname()
-        self.message(character.displayname())
         for item in character.inventory_generator():
-            print item
             if item[1].get('/core/in_use', False):
-                self.warning('%s is being used - %s rounds left' % (item[1].displayname, item[1].get('/core/rounds', 0)))
-                item[1].onround(player=character, target=None)
+                self.error('%s is being used' % (item[1].displayname()))
+                item[1].onround(player=character)
                 if item[0] in character.get('/core/inventory/equiped', {}).keys():
                     print "[DEBUG] Campaign.onround: Equipped update: %s, %s" % (item[0], item[1])
                     character.put('/core/inventory/equiped/%s' % item[0], item[1]())

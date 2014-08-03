@@ -71,7 +71,7 @@ def gethandler(action=None, item=None):
 def endround():
     if frontend.campaign:
         frontend.campaign.endround()
-    return gethandler(None, None)
+    return redirect('/action/ALL_MAPS', 302)
 
 
 @route('/load_campaign/<campaign>', method='get')

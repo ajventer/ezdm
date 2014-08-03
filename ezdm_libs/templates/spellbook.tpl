@@ -50,12 +50,21 @@
                 {%- endfor %}   
                 </ul>  
                 <br>
-                {% if editmode %}
-                    <form method=post>
-                        <input type=hidden name="spellindex" value="{{detailidx}}">
-                        <input type=submit name="unlearn" value="Unlearn Spell">
-                    </form>
-                {% endif %}              
+                <form method=post>                
+                    {% if editmode %}
+                            <input type=hidden name="spellindex" value="{{detailidx}}">
+                            <input type=submit name="unlearn" value="Unlearn Spell">
+                    {% endif %}
+                    {% if not editmode %}
+                    <input type=hidden name="pack_index" value="{{detailidx}}">
+                    <select name="cast_spell_target">
+                        {% for target in targetlist %}
+                            <option value="{{target.name()}}">{{target.displayname()}}</option>
+                        {% endfor %}
+                    </select>
+                    <input type=submit name="cast_spell" value="Cast spell">                    
+                    {% endif %}
+                </form>
             {% endif %}
 
         </td>

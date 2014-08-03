@@ -3,6 +3,7 @@ import frontend
 from character import Character
 from item import Item
 from util import load_json, find_files
+import copy
 
 
 class SPELLBOOK(Session):
@@ -12,6 +13,8 @@ class SPELLBOOK(Session):
 
     def render(self, requestdata):
         page = Page()
+        self._data['detailview'] = None
+        self._data['targetlist'] = copy.deepcopy(frontend.campaign.characters)
         self._data['editmode'] = frontend.mode == 'dm'
         if not self._data['editmode']:
             self._character = frontend.campaign.current_char()
@@ -28,6 +31,7 @@ class SPELLBOOK(Session):
                 self._character = Character(load_json('characters', requestdata['loadfrom']))
         if not self._character:
             return page.render()
+        self._data['targetlist'].insert(0, self._character)
         self._data['spells'] = []
         self._data['spell_list'] = []
         for spell in find_files('items', '*.json', basename=True, strip='.json'):
@@ -48,6 +52,12 @@ class SPELLBOOK(Session):
                 self._data['detailview'] = None
                 self._character.unlearn_spell(int(requestdata['spellindex']))
                 page.warning('Spell has been unlearned')
+            if 'cast_spell' in requestdata:
+                print "Casting spell on %s" % requestdata['cast_spell_target']
+                item = Item(self._character.get('/core/inventory/spells', [])[int(requestdata['pack_index'])])
+                target = Character(load_json('characters', requestdata['cast_spell_target']))
+                item.onuse(self._character, target)
+                self._character()['core']['inventory']['spells'][int(requestdata['pack_index'])] = item()
 
             self._character.save()
         for spell in self._character.inventory_generator(sections=['spells']):

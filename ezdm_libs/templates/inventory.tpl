@@ -79,7 +79,7 @@
 		<td>
 			{% if detailview %}
 				<ul>
-				{%- for key, value in detailview.items() recursive %}                       
+				{%- for key, value in detailview.render().items() recursive %}                       
 				<li>{{ key }}                                                           
 				{%- if value is mapping %}                                                                                                
 				  <ul>{{ loop(value.items())}}</ul>
@@ -99,12 +99,16 @@
 					<input type=submit name="unequipitem" value="Unequip Item">
 					{% endif%}
 					<br/>
-					<select name="useitem_target">
-						{% for target in targetlist %}
-							<option value="{{target.name()}}">{{target.displayname()}}</option>
-						{% endfor %}
-					</select>
-					<input type=submit name="useitem" value="Use Item">
+					{% if not editmode %}
+					{% if detailview.get('/core/charges',0) != 0 %}
+						<select name="useitem_target">
+							{% for target in targetlist %}
+								<option value="{{target.name()}}">{{target.displayname()}}</option>
+							{% endfor %}
+						</select>
+						<input type=submit name="useitem" value="Use Item">
+					{% endif %}
+					{% endif %}
 				</form>
 			{% endif %}
 	</td>

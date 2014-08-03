@@ -57,7 +57,6 @@ class Character(EzdmObject):
 
     def inventory_generator(self, sections=['pack', 'equiped', 'spells']):
         for section in sections:
-            print "Getting items from ", section
             items = self.get('/core/inventory/%s' % section, [])
             idx = -1
             if isinstance(items, list):

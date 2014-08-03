@@ -1,6 +1,7 @@
 from util import save_json
 from objects import EzdmObject, event
 import copy
+import frontend
 
 
 class Item(EzdmObject):
@@ -75,11 +76,17 @@ class Item(EzdmObject):
         event(self, "/events/onequip", {'item': self, 'player': player})
 
     def onuse(self, player, target):
+        print "[DEBUG] Item.onuse: player %s, target %s" % (player.displayname(), target.displayname())
+        charges = self.get('/core/charges', 0)
+        if charges == 0:
+            return
         self.put('/core/in_use', True)
-        self.put('/core/target', target.name())
+        self.put('/core/target', target.index)
         event(self, "/events/onuse", {'item': self, 'player': player, 'target': target})
 
-    def onround(self, player, target):
+    def onround(self, player):
+        target = self.get('/core/target', 0)
+        target = frontend.campaign.characters[target]
         print "[DEBUG] Item.onround: self: %s, player: %s, target: %s" % (self.displayname(), player.displayname(), target)
         if self.get('/core/in_use', False):
             rounds = self.get('/core/rounds_per_charge', 0)
@@ -88,15 +95,16 @@ class Item(EzdmObject):
             if current_rounds_performed < rounds:
                 current_rounds_performed += 1
             self.put('/core/current_rounds_performed', current_rounds_performed)
-            target = target or self.get('/core/target', None)
             if current_rounds_performed < rounds:
                 print "[DEBUG] item.onround: run onround event"
                 event(self, "/events/onround", {'item': self, 'player': player, 'target': target})
             else:
                 print "[DEBUG] item.onround: running onfinish"
-                self.onfinish(player=player, target=target)
+                self.onfinish(player=player)
 
-    def onfinish(self, player, target):
+    def onfinish(self, player):
+        target = self.get('/core/target', 0)
+        target = frontend.campaign.characters[target]
         self.put('/core/in_use', False)
         self.put('/core/target', None)
         charges = self.get('/core/charges', 0)

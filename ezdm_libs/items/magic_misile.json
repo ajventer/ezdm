@@ -23,10 +23,10 @@
     },
     "events": {
         "ondrop": "",
-        "onround": "campaign.warning('%s continues to cast Magic Misile at %s'  % (player.displayname(), target.displayname())",
+        "onround": "campaign.error('%s continues to cast Magic Misile at %s' % (player.displayname(), target.displayname()))",
         "onequip": "",
         "onpickup": "",
-        "onuse": "campaign.warning('%s is casting Magic Missile at %s' % (player.displayname(), target.displayname())",
-        "onfinish": "campaign.warning('%s has finished casting Magic Misile at %s'  % (player.displayname(), target.displayname())\r\nfrom util import rolldice\r\nspell_success = player.spell_success()\r\nif not spell_success[1]:\r\n\tcampaign.error(spell_success[0])\r\nelse:\r\n\tdmg = rolldice(numdice=1, numsides=4, modifier=0)\r\n\tresult = target.take_damage(dmg)\r\n\tcampaign.error(result[1])"
+        "onuse": "campaign.error('%s is casting Magic Missile at %s' % (player.displayname(), target.displayname()))",
+        "onfinish": "campaign.warning('%s has finished casting Magic Misile at %s'  % (player.displayname(), target.displayname()))\r\nfrom ezdm_libs.util import rolldice\r\nspell_success = player.spell_success()\r\nif not spell_success[1]:\r\n\tcampaign.error(spell_success[0])\r\nelse:\r\n\tdmg = rolldice(numdice=1, numsides=4, modifier=0)\r\n\tresult = target.take_damage(dmg)\r\n\tcampaign.error(result[1])"
     }
 }
