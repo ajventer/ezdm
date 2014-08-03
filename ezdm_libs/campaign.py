@@ -10,7 +10,8 @@ class Campaign(EzdmObject):
         self.json = json
         self.put('/core/current_char', 0)
         self.chars_in_round()
-        self.character = self.characters[0]
+        if self.characters:
+            self.character = self.characters[0]
         self.messages = []
 
     def chars_in_round(self):

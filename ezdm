@@ -32,7 +32,8 @@ def posthandler(action=None):
 def gethandler(action=None, item=None):
     global sessions
     print "GetHandler", sessions, action, item
-    if frontend.campaign is None:
+    print action
+    if frontend.campaign is None and not action == 'EZDM_CAMPAIGNS':
         page = Page()
         out = page.tplrender('header.tpl', {'title': 'Load Campaign'})
         campaigns = find_files('campaigns', '*.json', basename=True, strip=".json")
@@ -40,6 +41,8 @@ def gethandler(action=None, item=None):
         out += page.tplrender('load_campaign.tpl', campaigns)
         out += page.tplrender('footer.tpl', {})
         return out
+    elif action == 'EZDM_CAMPAIGNS':
+        frontend.mode = 'dm'
     from ezdm_libs.frontend import Session as ActionSession
     action = action or 'ALL_HOME'
     if '_' in action:
