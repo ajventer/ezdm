@@ -6,6 +6,12 @@ import frontend
 class Tile(EzdmObject):
     json = {}
 
+    def revealed(self):
+        if frontend.mode == 'dm':
+            print "Showing as revealed in DM mode"
+            return True
+        return self.get('/core/revealed', False) is True
+
     def tiletype(self):
         return self.get('/core/type', 'floor')
 

@@ -9,16 +9,24 @@ class Campaign(EzdmObject):
     def __init__(self, json):
         self.rounds = 0
         self.json = json
-        self.put('/core/current_char', -1)
+        self.put('/core/current_char', 0)
         self.chars_in_round()
         if self.characters:
             self.character = self.characters[0]
         self.messages = []
 
+    def addmap(self, mapname):
+        maps = self.get('/core/maps', [])
+        if not isinstance(maps, list):
+            maps = []
+        maps.append(mapname)
+        self.put('/core/maps', mapname)
+        self.json['core']['maps'] = maps
+        self.save()
+
     def chars_in_round(self):
         self.icons = {}
         chars = []
-        maps_parsed = []
         players = self.get('/core/players', [])
         for player in sorted(players):
             if not player.endswith('.json'):
@@ -28,27 +36,24 @@ class Campaign(EzdmObject):
                 p.set_index(len(chars))
                 print "player", player, p.index
                 chars.append(p)
-        for player in sorted(players):
-            p = Character(load_json('characters', player))
-            loc = p.get('/core/location/', '')
+            loc = p.get('/core/location', {})
             mapname = loc['map']
             if not mapname in self.icons:
                 self.icons[mapname] = {}
             if not (loc['x'], loc['y']) in self.icons[mapname]:
                 self.icons[mapname][(loc['x'], loc['y'])] = []
             self.icons[mapname][(loc['x'], loc['y'])].append(p)
-            if not mapname in maps_parsed:
-                maps_parsed.append(mapname)
-            else:
-                continue
+        for mapname in self.get('/core/maps', []):
             gamemap = GameMap(load_json('maps', mapname))
             for y in range(0, gamemap.get('/max_y', 1)):
                 for x in range(0, gamemap.get('/max_x', 1)):
                     tile = gamemap.tile(x, y)
-                    if tile.get('/core/revealed', False) is True:
+                    if tile.revealed():
+                        print "Processing NPCs from %sx%s" % (x, y)
                         npcs_here = tile.get('/conditional/npcs', [])
                         for npc in sorted(npcs_here):
                             n = Character(load_json('characters', npc))
+                            print "   Found %s" % n.displayname()
                             n.put('/core/location', {"map": mapname, "x": x, "y": y})
                             n.set_index(len(chars))
                             if not (x, y) in self.icons[mapname]:

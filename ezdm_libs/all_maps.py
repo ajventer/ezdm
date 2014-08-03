@@ -24,6 +24,7 @@ class MAPS(Session):
                 if 'max_x' in requestdata:
                     self._map = GameMap(name=requestdata['mapname'], max_x=int(requestdata['max_x']), max_y=int(requestdata['max_y']), lightradius=int(requestdata['lightradius']))
                 page.message('Map saved as:' + self._map.save())
+                frontend.campaign.addmap(self._map.name())
         if requestdata:
             if "clicked_x" in requestdata:
                 self._data['zoom_x'] = int(requestdata['clicked_x'])
@@ -156,7 +157,6 @@ class MAPS(Session):
                 self._map = GameMap(load_json('maps', mapname))
         if self._data['editmode'] and not self._map:
             self._map = GameMap(name='New Map')
-
         self._data['map'] = self._map()
         self._data['mapobj'] = self._map
         self._data['charicons'] = frontend.campaign.icons[self._map.name()]
