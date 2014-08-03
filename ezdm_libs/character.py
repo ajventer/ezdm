@@ -2,6 +2,7 @@ from util import inflate, flatten, rolldice, readfile, inrange, price_in_copper,
 from item import Item
 from objects import EzdmObject, event
 from gamemap import GameMap
+import copy
 
 
 class Character(EzdmObject):
@@ -554,7 +555,7 @@ class Character(EzdmObject):
                 return int(thac0s[key2])
 
     def render(self):
-        out = self()
+        out = copy.deepcopy(self())
         prettynames = load_json('adnd2e', 'saving_throws')
         writekey('/conditional/abilities', self.abilities(), out)
         if not self.character_type() == 'player':

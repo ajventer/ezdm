@@ -1,5 +1,6 @@
 from util import save_json
 from objects import EzdmObject, event
+import copy
 
 
 class Item(EzdmObject):
@@ -24,7 +25,8 @@ class Item(EzdmObject):
 
     def render(self):
         if self.identified():
-            out = self()
+            out = copy.deepcopy(self())
+            print "Self charges", self().get('/core/charges', '')
             if 'events' in out:
                 del(out['events'])
             if 'core' in out:

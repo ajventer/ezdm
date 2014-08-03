@@ -123,7 +123,7 @@
                         "description": "Fires a bolt of arcane energy at the target, if it hits it does 1d4 damage.",
                         "weight": 0,
                         "in_use": false,
-                        "charges": "Unlimited",
+                        "charges": -1,
                         "price": {
                             "copper": 25,
                             "silver": 50,
