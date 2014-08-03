@@ -80,15 +80,20 @@ class Item(EzdmObject):
         event(self, "/events/onuse", {'item': self, 'player': player, 'target': target})
 
     def onround(self, player, target):
+        print "[DEBUG] Item.onround: self: %s, player: %s, target: %s" % (self.displayname(), player.displayname(), target)
         if self.get('/core/in_use', False):
             rounds = self.get('/core/rounds_per_charge', 0)
-            if rounds > 0:
-                rounds -= 1
-            self.put('/core/rounds_per_charge', rounds)
+            current_rounds_performed = self.get('/core/current_rounds_performed', 0)
+            print "[DEBUG] item.onround: current_rounds_performed: %s, round: %s" % (current_rounds_performed, rounds)
+            if current_rounds_performed < rounds:
+                current_rounds_performed += 1
+            self.put('/core/current_rounds_performed', current_rounds_performed)
             target = target or self.get('/core/target', None)
-            if rounds:
+            if current_rounds_performed < rounds:
+                print "[DEBUG] item.onround: run onround event"
                 event(self, "/events/onround", {'item': self, 'player': player, 'target': target})
             else:
+                print "[DEBUG] item.onround: running onfinish"
                 self.onfinish(player=player, target=target)
 
     def onfinish(self, player, target):
@@ -98,6 +103,7 @@ class Item(EzdmObject):
         if charges > 0:
             charges -= 1
             self.put('/core/charges', charges)
+        self.put('/core/current_rounds_performed', 0)
         event(self, "/events/onfinish", {'item': self, 'player': player, 'target': target})
 
     def ondrop(self, player):

@@ -1,5 +1,6 @@
 {
     "core": {
+        "current_rounds_performed": 0,
         "name": "Health Potion",
         "weight": 0,
         "in_use": false,

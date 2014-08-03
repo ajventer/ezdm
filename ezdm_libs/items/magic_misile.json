@@ -1,5 +1,6 @@
 {
     "core": {
+        "current_rounds_performed": 0,
         "name": "Magic Misile",
         "weight": 0,
         "in_use": false,
@@ -12,9 +13,9 @@
         "description": "Fires a bolt of arcane energy at the target, if it hits it does 1d4 damage.",
         "identified": "",
         "rounds_per_charge": 2,
-        "size": "small",
+        "icon": "icons/magic_misile.png",
         "type": "spell",
-        "icon": "icons/magic_misile.png"
+        "size": "small"
     },
     "conditional": {
         "spell_school": "Conjuration",

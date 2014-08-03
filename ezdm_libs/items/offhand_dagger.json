@@ -1,5 +1,6 @@
 {
     "core": {
+        "current_rounds_performed": 0,
         "name": "Offhand_Dagger",
         "weight": "",
         "in_use": false,

@@ -401,7 +401,7 @@ class Character(EzdmObject):
                 out.append((pack.index(i), item.displayname(), moneystr))
         return out
 
-    def drop_item(self, itemname, section='pack', page=None):
+    def drop_item(self, itemname, section='pack'):
         if isinstance(itemname, str):
             for item in self.get('/core/inventory/%s' % section, []):
                 item = Item(item)
@@ -410,9 +410,8 @@ class Character(EzdmObject):
         else:
             todrop = itemname
         item = Item(self.json['core']['inventory']['pack'][todrop])
-        if page:
-            item.ondrop(player=self, page=page)
-        del(self.json['core']['inventory']['pack'][itemname])
+        item.ondrop(player=self)
+        del(self.json['core']['inventory']['pack'][todrop])
 
     def money_tuple(self):
         gold = self.get('/core/inventory/money/gold', 0)
@@ -566,7 +565,6 @@ class Character(EzdmObject):
             writekey('/core/combat/saving_throws/%s ' % prettyname, v, out)
         self.reset_weapon()
         out['to_hit_mod'] = {}
-        out['to_hit_mod']
         done = False
         if self.weapons:
             for I in range(0, len(self.weapons)):

@@ -69,7 +69,8 @@ def gethandler(action=None, item=None):
 
 @route('/endround', method='get')
 def endround():
-    frontend.campaign.endround()
+    if frontend.campaign:
+        frontend.campaign.endround()
     return gethandler(None, None)
 
 

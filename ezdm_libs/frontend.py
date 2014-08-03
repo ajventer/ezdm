@@ -6,23 +6,6 @@ mode = 'campaign'
 campaign = None
 
 
-def onround(character, page):
-    page.message('New round !')
-    if campaign.current_char() != character:
-        character = campaign.current_char()
-        page.message(character.displayname())
-        for item in character.inventory_generator():
-            if item[1].get('/core/in_use', False):
-                page.warning('%s is being used - %s rounds left' % (item[1].displayname, item[1].get('/core/rounds', 0)))
-                item[1].onround(player=character, target=None, page=page)
-                if item[0] in character.get('/core/inventory/equiped', {}).keys():
-                    character.put('/core/inventory/equiped/%s' % item[0], item[1]())
-                else:
-                    character()['core']['inventory'][item[0]][item[3]] = item[1]()
-        character.save()
-    return character
-
-
 class Session:
     def __init__(self):
         self._data = {}
@@ -72,10 +55,12 @@ class Page:
         else:
             menuitems = self.make_menu(find_files('', 'campaign*.py', basename=True), 'campaign_')
         menuitems.update(self.make_menu(find_files('', 'all*.py', basename=True), 'all_'))
-        if mode == 'campaign' and campaign:
+        if campaign:
             title += "   - %s's round" % campaign.current_char().displayname()
         self._menuitems = {'menuitems': menuitems}
         self.content = [('header.tpl', {'title': title}), ('menubar.tpl', self._menuitems)]
+
+    def display_campaign_messages(self):
         if campaign:
             for message in campaign.messages:
                 self._add_message(*message)
@@ -115,6 +100,7 @@ class Page:
         self.content.append((template, data))
 
     def render(self):
+        self.display_campaign_messages()
         if not ('footer.tpl', {}) in self.content:
             self.content.append(('menubar.tpl', self._menuitems))
             self.content.append(('footer.tpl', {}))

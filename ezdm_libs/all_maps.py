@@ -128,7 +128,7 @@ class MAPS(Session):
         self._data['zoom_y'] = 0
 
         self._data['editmode'] = frontend.mode == 'dm'
-        self._character = frontend.onround(self._character, page)
+        self._character = frontend.campaign.current_char()
         loc = self._character.location()
         self._data['min_x'] = int(loc['x']) - 1
         self._data['max_x'] = int(loc['x']) + 1
