@@ -30,7 +30,8 @@
 		<td>
 			<ul>
 				{% for item in inventory.pack %}
-				<li>{{item.core.name}}
+				<li>
+					<a href="#" onclick="clickHandler('{{loop.index -1}}', 'pack')">{{item.core.name}}</a>
 					<img onclick="clickHandler('{{loop.index -1}}', 'pack')" src="/icon/{{item.core.icon}}"></li>
 				{% endfor %}
 			</ul>
@@ -63,7 +64,9 @@
  					<li>{{slot}}
   						{% if 'core' in inventory.equiped[slot] %}
  						<ul>
- 							<li>{{inventory.equiped[slot].core.name}}</li>
+ 							<li>
+								<a href="#" onclick="clickHandler('x', '{{slot}}')">{{inventory.equiped[slot].core.name}}</a>
+ 							</li>
  							<li>
  							<img onclick="clickHandler('x', '{{slot}}')" src="/icon/{{inventory.equiped[slot].core.icon}}">
  						</li>

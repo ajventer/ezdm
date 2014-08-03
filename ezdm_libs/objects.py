@@ -5,7 +5,10 @@ from simplejson import dumps
 def event(obj, key, localvars):
     code = obj.get(key, '')
     if code:
-        exec code in {}, localvars
+        try:
+            exec code in {}, localvars
+        except Exception as e:
+            raise Exception("Exception %s, while running event code, key: %s, object: %s, localvars: %s\n%s" % (e, key, obj.displayname(), localvars, code))
 
 
 class EzdmObject(object):
