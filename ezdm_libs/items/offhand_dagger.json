@@ -1,8 +1,9 @@
 {
     "core": {
-        "rounds_used": 0,
         "name": "Offhand_Dagger",
         "weight": "",
+        "in_use": false,
+        "charges": 0,
         "price": {
             "copper": "",
             "silver": "",
@@ -10,7 +11,7 @@
         },
         "description": "A small dagger balanced for use in the offhand.",
         "identified": false,
-        "rounds_afteruse": 0,
+        "rounds_per_charge": 0,
         "icon": "icons/sword.png",
         "type": "weapon",
         "size": "small"
@@ -24,10 +25,11 @@
         "save_against": "ppd"
     },
     "events": {
+        "ondrop": "campaign.warning('%s has dropped %s' % (player.displayname(), item.displayname()))",
+        "onround": "",
         "onequip": "",
         "onpickup": "",
-        "onround": "",
-        "ondrop": "page.warning('%s has dropped %s' % (player.displayname(), item.displayname()))",
-        "onuse": ""
+        "onuse": "",
+        "onfinish": ""
     }
 }

@@ -1,9 +1,11 @@
 from util import readkey, writekey
 from simplejson import dumps
+import frontend
 
 
 def event(obj, key, localvars):
     code = obj.get(key, '')
+    localvars['campaign'] = frontend.campaign
     if code:
         try:
             exec code in {}, localvars
