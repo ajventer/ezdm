@@ -11,6 +11,7 @@ class Campaign(EzdmObject):
         self.put('/core/current_char', 0)
         self.chars_in_round()
         self.character = self.characters[0]
+        self.messages = []
 
     def chars_in_round(self):
         chars = []
@@ -66,3 +67,12 @@ class Campaign(EzdmObject):
     def save(self):
         name = '%s.json' % self.get('/core/name', '')
         return save_json('campaigns', name.lower().replace(' ', '_'), self.json)
+
+    def message(self, s):
+        self.messages.append((s, 'messages'))
+
+    def warning(self, s):
+        self.messages.append((s, 'warnings'))
+
+    def error(self, s):
+        self.messages.append((s, 'errors'))

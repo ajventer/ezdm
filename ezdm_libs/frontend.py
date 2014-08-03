@@ -76,6 +76,10 @@ class Page:
             title += "   - %s's round" % campaign.current_char().displayname()
         self._menuitems = {'menuitems': menuitems}
         self.content = [('header.tpl', {'title': title}), ('menubar.tpl', self._menuitems)]
+        if campaign:
+            for message in campaign.messages:
+                self._add_message(*message)
+            campaign.messages = []
 
     def make_menu(self, files, base):
         out = {}

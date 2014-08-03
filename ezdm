@@ -19,6 +19,8 @@ def action_name(action):
 
 def posthandler(action=None):
     global sessions
+    if not frontend.campaign:
+        return gethandler(None, None)
     print "Posthandler", sessions
     if not action_name(action) in sessions:
         print "Session reset %s" % action_name(action)
@@ -30,7 +32,7 @@ def posthandler(action=None):
 def gethandler(action=None, item=None):
     global sessions
     print "GetHandler", sessions, action, item
-    if frontend.mode == 'campaign' and frontend.campaign is None:
+    if frontend.campaign is None:
         page = Page()
         out = page.tplrender('header.tpl', {'title': 'Load Campaign'})
         campaigns = find_files('campaigns', '*.json', basename=True, strip=".json")
