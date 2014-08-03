@@ -270,6 +270,7 @@
                             <input type=hidden name="clicked_y" id="clicked_y" value="{{zoom_y}}">
                             <input type=hidden name="detailtype" id="detailtype" value="{{detailtype}}">
                             <input type=hidden name="detailname" id="detailname" value="{{detailname}}">
+                            <input type=hidden name="detailindex" id="detailindex" value="{{detailindex}}"
                             {% if detailtype == 'item' %}
                                 {% if mapobj.tile(zoom_x,zoom_y).tiletype() == 'shop' %}
                                     <input type="submit" name="itemdetail" value="Buy">

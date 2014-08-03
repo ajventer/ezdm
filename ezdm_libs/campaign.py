@@ -1,4 +1,4 @@
-from util import save_json, load_json
+from util import save_json, load_json, rolldice
 from character import Character
 from gamemap import GameMap
 from objects import EzdmObject
@@ -7,15 +7,16 @@ from objects import EzdmObject
 class Campaign(EzdmObject):
 
     def __init__(self, json):
+        self.rounds = 0
         self.json = json
-        self.icons = {}
-        self.put('/core/current_char', 0)
+        self.put('/core/current_char', -1)
         self.chars_in_round()
         if self.characters:
             self.character = self.characters[0]
         self.messages = []
 
     def chars_in_round(self):
+        self.icons = {}
         chars = []
         maps_parsed = []
         players = self.get('/core/players', [])
@@ -59,11 +60,42 @@ class Campaign(EzdmObject):
     def current_char(self):
             return self.character
 
+    def roll_for_initiative(self):
+        print "Before rolling initiative", self.characters
+        initiative = []
+        self.message('Rolling for initiative:')
+        for char in self.characters:
+            roll = rolldice(numdice=1, numsides=20, modifier=0)
+            self.message('%s %s' % (char.displayname(), roll[1]))
+            initiative.append((roll[0], char))
+        self.characters = []
+        print "Unsorted", initiative, "Sorted", sorted(initiative, reverse=True)
+        for char in sorted(initiative, reverse=True):
+            self.characters.append(char[1])
+        print "After rolling initiave", self.characters
+        self.message('%s rolled the highest and goes first' % self.characters[0].displayname())
+
+    def endturn(self):
+        self.error('End of turn. Starting new turn.')
+        self.chars_in_round()
+        self.roll_for_initiative()
+
     def endround(self):
+        self.rounds += 1
         next_char = int(self.get('/core/current_char', 0))
-        next_char += 1
-        if next_char >= len(self.characters):
-            next_char = 0
+        char_health = 0
+        cycle = False
+        while char_health == 0:
+            next_char += 1
+            if next_char >= len(self.characters):
+                if not cycle:
+                    cycle = True
+                else:
+                    self.error('All characters are dead !')
+                    break
+                next_char = 0
+                self.endturn()
+            char_health = int(self.characters[next_char].get('/core/combat/hitpoints', 0))
         self.put('/core/current_char', next_char)
         self.character = self.characters[next_char]
         self.onround(self.character)

@@ -1,5 +1,4 @@
 from jinja2 import Template
-from objects import EzdmObject
 from util import readfile, find_files, template_dict, json_editor, list_icons, inflate
 
 mode = 'campaign'
@@ -121,7 +120,7 @@ class JSON_Editor(Session):
     _sidebar = ''
 
     def __init__(self):
-        self._obj = EzdmObject({})
+        self._obj = None
         Session.__init__(self)
         self._icons = 'icons'
 

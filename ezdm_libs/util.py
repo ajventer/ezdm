@@ -236,4 +236,4 @@ def rolldice(numdice=1, numsides=20, modifier=0):
     for I in range(1, numdice + 1):
             roll = randrange(1, numsides, 1)
             total = total + roll
-    return (total, 'Rolled a %s-sided dice %s times with modifier %s' % (numsides, numdice, modifier))
+    return (total, 'Rolled a %s-sided dice %s times with modifier %s: result %s' % (numsides, numdice, modifier, total))

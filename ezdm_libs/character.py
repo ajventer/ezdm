@@ -1,4 +1,4 @@
-from util import inflate, flatten, rolldice, readfile, inrange, price_in_copper, convert_money, save_json, load_json, readkey, writekey
+from util import inflate, flatten, rolldice, inrange, price_in_copper, convert_money, save_json, load_json, readkey, writekey
 from item import Item
 from objects import EzdmObject, event
 from gamemap import GameMap
@@ -7,8 +7,6 @@ import copy
 
 class Character(EzdmObject):
     removed = False
-    cast_remaining = 0
-    spell_target = None
     json = {}
     auto = False
     index = -1
@@ -16,6 +14,7 @@ class Character(EzdmObject):
     weapons = []
     armor = []
     lightradius = 0
+    is_casting = False
 
     def __init__(self, json):
         self.json = json
@@ -69,6 +68,16 @@ class Character(EzdmObject):
             else:
                 self.put('/core/inventory/%s', [])
 
+    def interrupt_cast(self):
+        self.is_casting = False
+        for item in self.inventory_generator():
+            if item[1].get('/core/in_use', False):
+                item[1].put('/core/in_use', True)
+            if item[0] in ['spells', 'pack']:
+                self()['core']['inventory'][item[0]][item[2]] = item[1]()
+            else:
+                self.put('/core/inventory/equiped_by_type/%s' % item[0], item[1]())
+
     def character_type(self):
         return self.get('/core/type', 'player')
 
@@ -102,23 +111,23 @@ class Character(EzdmObject):
         return self.get('/core/combat/hitpoints', 1)
 
     def take_damage(self, damage):
-        out = []
+        out = ''
         if damage >= self.get('/core/combat/hitpoints', 1):
             st = self.saving_throw('ppd')
             out = st[1]
             if not st[0]:
                 self.put('/core/combat/hitpoints', 0)
-                out += "%s has died !" % self.displayname()
+                out += "<br>%s has died !" % self.displayname()
                 return (False, out)
             else:
                 self.put('/core/combat/hitpoints', 1)
-                out += "%s barely survives. %s hitpoints remaining" % (self.displayname(), self.get('/core/combat/hitpoints', 1))
+                out += "<br>%s barely survives. %s hitpoints remaining" % (self.displayname(), self.get('/core/combat/hitpoints', 1))
                 return (True, out)
         else:
             hp = int(self.get('/core/combat/hitpoins', 1))
             hp -= damage
             self.put('/core/combat/hitpoins', hp)
-            out += "%s takes %s damage. %s hitpoints remaining" % (self.displayname(), damage, self.get('/core/combat/hitpoints', 1))
+            out += "<br>%s takes %s damage. %s hitpoints remaining" % (self.displayname(), damage, self.get('/core/combat/hitpoints', 1))
             return (True, out)
 
     def name(self):
@@ -147,12 +156,14 @@ class Character(EzdmObject):
         return int(readkey('/con/%s/ppd' % con, ability_mods))
 
     def dmg_mod(self):
-        ability_mods = readfile('adnd2e', 'ability_scores', json=True)
-        return int(readkey('/str/%s/dmg' % self.get('/core/abilities/str', 0), ability_mods, 0))
+        ability_mods = load_json('adnd2e', 'ability_scores')
+        strength = self.get('/core/abilities/str', 0)
+        return int(readkey('/str/%s/dmg' % strength, ability_mods, 0))
 
     def def_mod(self):
-        ability_mods = readfile('adnd2e', 'ability_scores', json=True)
-        return int(readkey('/dex/%s/defense' % self.get('core/abilities/dex', 0), ability_mods, 0))
+        ability_mods = load_json('adnd2e', 'ability_scores')
+        dex = self.get('/core/abilities/dex', 0)
+        return int(readkey('/dex/%s/defense' % dex, ability_mods, 0))
 
     def get_saving_throws(self):
         key = self.get('/core/class/parent', '')
@@ -184,10 +195,7 @@ class Character(EzdmObject):
             return (True, out)
         else:
             out.append("Did not save !")
-            return (False, out)
-
-    def dmg(self, weapon):
-        return int(readkey('/conditionals/dmg', self.weapons[weapon](), 0))
+            return (False, '<br>'.join(out))
 
     def hit_dice(self):
         if self.is_monster():
@@ -199,7 +207,7 @@ class Character(EzdmObject):
         return self.auto
 
     def current_weapon(self):
-        return self.weapon
+        return self.weapons[self.weapon]
 
     def reset_weapon(self):
         self.weapon = 0
@@ -276,14 +284,14 @@ class Character(EzdmObject):
         self.next_weapon()
         roll = rolldice(numdice=1, numsides=20, modifier=mod)
         if roll[0] - mod == 1:
-                return ("Critical Miss !", roll[1])
+                return (roll[0], "Critical Miss !", roll[1])
         elif roll[0] - mod == 20:
-            return ("Critical Hit !", roll[1])
+            return (roll[0], "Critical Hit !", roll[1])
         else:
             if roll[0] >= self.__get_thac0() - target.armor_class() - target.def_mod():
-                return ("Hit !", roll[1])
+                return (roll[0], "Hit !", roll[1])
             else:
-                return ("Miss !", roll[1])
+                return (roll[0], "Miss !", roll[1])
 
     def spell_success(self):
         ability_scores = load_json('adnd2e', 'ability_scores')
@@ -301,7 +309,13 @@ class Character(EzdmObject):
             return(False, out)
 
     def load_weapons(self):
-        return self.equiped_by_type('weapon')
+        weapons = self.equiped_by_type('weapon')
+        if not weapons:
+            fist = Item(load_json('items', 'fist.json'))
+            self.acquire_item(fist)
+            self.equip_item(fist.name())
+        weapons = self.equiped_by_type('weapon')
+        return weapons
 
     def learn_spell(self, spellitem):
         spells = self.get('/core/inventory/spells', [])
@@ -468,14 +482,21 @@ class Character(EzdmObject):
         return len(self.weapons)
 
     def num_attacks(self):
-        atr = readkey('/various/attacks_per_round', readfile('adnd2e', 'various', json=True), 0)
-        parentclass = self.get('/class/parent', '')
+        atr_json = load_json('adnd2e', 'various')
+        atr = readkey('/various/attacks_per_round', atr_json)
+        print atr
+        parentclass = self.get('/core/class/parent', '')
+        print "Parent class:", parentclass
         if not parentclass in atr:
             ATR = 1
         else:
             for key in atr[parentclass].keys():
+                print "Checking", key
                 if inrange(self.get('/core/combat/level-hitdice', 1), key):
+                    print "Matched !"
                     ATR = int(atr[parentclass][key])
+                    print "Base ATR", ATR
+        print "Num weapons", self.num_weapons()
         return self.num_weapons() * int(ATR)
 
     def current_xp(self):

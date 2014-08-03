@@ -1,0 +1,37 @@
+{
+    "core": {
+        "current_rounds_performed": 0,
+        "name": "Fist",
+        "weight": 0,
+        "in_use": false,
+        "charges": 0,
+        "price": {
+            "copper": 0,
+            "silver": 0,
+            "gold": 0
+        },
+        "description": "Throw a barehanded punch with fist.",
+        "identified": true,
+        "rounds_per_charge": 0,
+        "icon": "",
+        "type": "weapon",
+        "size": "small"
+    },
+    "conditional": {
+        "slot": "twohand",
+        "to_hit": 0,
+        "dmg": 2,
+        "range": "short",
+        "damage_type": "stab",
+        "weapon_type": "melee",
+        "save_against": "none"
+    },
+    "events": {
+        "ondrop": "page.warning('%s has dropped %s' % (player.displayname(), item.displayname()))",
+        "onround": "",
+        "onequip": "",
+        "onpickup": "",
+        "onuse": "",
+        "onfinish": ""
+    }
+}

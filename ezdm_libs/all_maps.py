@@ -5,6 +5,7 @@ from util import find_files, load_json
 from simplejson import loads
 from character import Character
 from item import Item
+from combat import attack
 
 
 class MAPS(Session):
@@ -94,8 +95,9 @@ class MAPS(Session):
                     self._data['detailtype'] = 'item'
             if 'iconindex' in requestdata and requestdata['iconindex']:
                 self._data['detailtype'] = 'character'
-                self._target = frontend.campaign.characters[int(requestdata['iconindex'])]
-                self._data['detailview'] = self._target.render()
+                target = frontend.campaign.characters[int(requestdata['iconindex'])]
+                self._data['detailview'] = target.render()
+                self._data['detailindex'] = requestdata['iconindex']
             if 'itemdetail' in requestdata:
                 del(self._data['detailtype'])
                 if requestdata['detailname'] == 'money':
@@ -120,7 +122,9 @@ class MAPS(Session):
             if 'attack' in requestdata:
                 attackmods = requestdata.getall('attackmods')
                 print attackmods
-                #combat.do_attack(self._character, target, attackmods)
+                target = frontend.campaign.characters[int(requestdata['detailindex'])]
+                attack(self._character, target, attackmods)
+                frontend.campaign.endround()
             if not 'savemap' in requestdata and not 'loadmap' in requestdata and self._data['editmode']:
                 page.warning('WARNING: Changes are not yet saved')
 
@@ -128,6 +132,8 @@ class MAPS(Session):
         page = Page()
         self._data['zoom_x'] = 0
         self._data['zoom_y'] = 0
+        if 'detailview' in self._data:
+            del(self._data['detailview'])
 
         self._data['attackmods'] = load_json('adnd2e', 'attack_mods')
         self._data['editmode'] = frontend.mode == 'dm'

@@ -9,7 +9,7 @@
             "con": 14
         },
         "combat": {
-            "hitpoints": 1,
+            "hitpoints": 22,
             "thac0": 16,
             "level-hitdice": 5,
             "saving_throws": {
