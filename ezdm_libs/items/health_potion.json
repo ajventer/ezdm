@@ -1,0 +1,27 @@
+{
+    "core": {
+        "name": "Health Potion",
+        "weight": 0,
+        "in_use": false,
+        "charges": 1,
+        "price": {
+            "copper": 0,
+            "silver": 0,
+            "gold": 10
+        },
+        "description": "Heals the target character for 1d6 hitpoints",
+        "identified": true,
+        "rounds_per_charge": 1,
+        "size": "small",
+        "type": "other",
+        "icon": "icons/health_potion.png"
+    },
+    "events": {
+        "ondrop": "",
+        "onround": "",
+        "onequip": "",
+        "onpickup": "",
+        "onuse": "page.warning('%s is using a %s on %s' % (player.displayname(), item.displayname(), target.displayname())\r\n",
+        "onfinish": "from util import rolldice\r\nhealth = rolldice(numdice=1, numsides=6, modifier=0)\r\nresult = target.heal(health)\r\npage.error('%s has been healed for %s, and current hitpoints are %s' % (player.displayname(), health, result)"
+    }
+}

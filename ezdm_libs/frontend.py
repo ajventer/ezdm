@@ -13,7 +13,7 @@ def onround(character, page):
         page.message(character.displayname())
         for item in character.inventory_generator():
             if item[1].get('/core/in_use', False):
-                page.warning('%s is being used - %s charges/rounds left' % (item[1].displayname, item[1].get('/core/charges')))
+                page.warning('%s is being used - %s rounds left' % (item[1].displayname, item[1].get('/core/rounds')))
                 item[1].onround(player=character, target=None, page=page)
                 if item[0] in character.get('/core/inventory/equiped', {}).keys():
                     character.put('/core/inventory/equiped/%s' % item[0], item[1]())

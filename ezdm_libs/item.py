@@ -76,7 +76,7 @@ class Item(EzdmObject):
 
     def onuse(self, player, target, page):
         self.put('/core/in_use', True)
-        self.put('/core/target', target)
+        self.put('/core/target', target.name())
         event(self, "/events/onuse", {'item': self, 'page': page, 'player': player, 'target': target})
 
     def onround(self, player, target, page):

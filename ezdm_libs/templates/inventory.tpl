@@ -95,6 +95,13 @@
 					<input type=hidden name="slot_name" value="{{itemslot}}">
 					<input type=submit name="unequipitem" value="Unequip Item">
 					{% endif%}
+					<br/>
+					<select name="useitem_target">
+						{% for target in targetlist %}
+							<option value="{{target.name()}}">{{target.displayname()}}</option>
+						{% endfor %}
+					</select>
+					<input type=submit name="useitem" value="Use Item">
 				</form>
 			{% endif %}
 	</td>

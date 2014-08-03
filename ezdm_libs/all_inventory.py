@@ -3,6 +3,7 @@ import frontend
 from character import Character
 from item import Item
 from util import load_json, find_files
+import copy
 
 
 class INVENTORY(Session):
@@ -13,6 +14,7 @@ class INVENTORY(Session):
     def render(self, requestdata):
         page = Page()
         self._data['detailview'] = None
+        self._data['targetlist'] = copy.deepcopy(frontend.campaign.characters)
         if requestdata and 'loadfrom' in requestdata:
             self._character = Character(load_json('characters', requestdata['loadfrom']))
         if frontend.mode == 'campaign' and frontend.campaign:
@@ -27,6 +29,7 @@ class INVENTORY(Session):
             loadfrom['items'] = find_files(source, '*.json', basename=True, strip='.json')
             page.add('load_defaults_from.tpl', loadfrom)
         if self._character:
+            self._data['targetlist'].insert(0, self._character)
             self._data['inventory'] = self._character.get('/core/inventory', {})
 
             self._data['character'] = self._character.displayname()
@@ -64,6 +67,14 @@ class INVENTORY(Session):
                 if 'unequipitem' in requestdata:
                     print "Unequiping from %s" % requestdata['slot_name']
                     self._character.unequip_item(requestdata['slot_name'].strip())
+                if 'useitem' in requestdata:
+                    if 'pack_index' in requestdata:
+                        item = Item(self._character.get('/core/inventory/pack', [])[int(requestdata['pack_index'])])
+                    else:
+                        item = Item(self._character.get('/core/inventory/equiped/%s' % requestdata['slot_name'], {}))
+                    print "Using item: Player: %s, item: %s" % (self._character.displayname(), item.displayname())
+                    target = Character(load_json('characters', requestdata['useitem_target']))
+                    item.onuse(self._character, target, page)
                 if 'givemoney' in requestdata:
                     gold = int(requestdata['gold'])
                     silver = int(requestdata['silver'])

@@ -100,7 +100,7 @@ class Character(EzdmObject):
             self.put('/core/combat/hitpoints', int(self.get('/core/combat/max_hp', 1)))
         else:
             self.put('/core/combat/hitpoints', hp)
-            return self.get('/core/combat/hitpoints')
+        return self.get('/core/combat/hitpoints')
 
     def take_damage(self, damage):
         out = []
