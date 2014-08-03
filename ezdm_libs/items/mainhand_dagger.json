@@ -13,14 +13,15 @@
         "description": "A small dagger balanced for use in the main hand.",
         "identified": false,
         "rounds_per_charge": 0,
-        "icon": "icons/sword.png",
+        "icon": "icons/dagger.png",
         "type": "weapon",
         "size": "small"
     },
     "conditional": {
         "slot": " righthand",
-        "dmg": 4,
         "to_hit": 0,
+        "dmg": 4,
+        "range": "",
         "damage_type": "stab",
         "weapon_type": "melee",
         "save_against": "none"

@@ -26,6 +26,7 @@
         "weapon_type": "__[melee,magic,misile]", 
         "damage_type": "__[slice,hack,stab]",
         "__Ito_hit": "",
+        "range": "__[short,medium,long]",
         "slot": "__[lefthand,righthand,twohand]",
         "save_against":"__[ppd,rod,pp,breath,spell,none]"
     },

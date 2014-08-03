@@ -2,6 +2,7 @@
     <input type=hidden name="clicked_x" id="clicked_x" value="">
     <input type=hidden name="clicked_y" id="clicked_y" value="">
     <input type=hidden name="iconsection" id="iconsection" value="">
+    <input type=hidden name="iconindex" id="iconindex" value="">
     <input type=hidden name="iconname" id="iconname" value="">
 </form>
 
@@ -18,6 +19,15 @@
         document.getElementById('clicked_y').value = y;
         document.getElementById('iconsection').value = section;
         document.getElementById('iconname').value = name;
+        document.getElementById('maprender').submit();
+    }
+</script>
+
+<script>
+    function charclickHandler(x,y, index) {
+        document.getElementById('clicked_x').value = x;
+        document.getElementById('clicked_y').value = y;
+        document.getElementById('iconindex').value = index;
         document.getElementById('maprender').submit();
     }
 </script>
@@ -88,12 +98,18 @@
                     <td valign=bottom style="background-image:url(/icon/icons/blank.png);background-repeat:no-repeat;background-size:50px 50px; width:50; height:50" >
                     {% endif %}
                     {% for icontuple in mapobj.tile_icons(x,y,True) %}
-                    {% set k = icontuple[0] %}
-                    {% set v = icontuple[1] %}
+                        {% set k = icontuple[0] %}
+                        {% set v = icontuple[1] %}
                         {% if not mapobj.tile(x,y).tiletype() == 'shop' %}
                             <img width=25 height=25 src="/icon/{{v}}" title="{{k}}" onclick="clickHandler({{x}},{{y}})" align=left>
                         {% endif %}
-                    {% endfor %}<br>
+                    {% endfor %}
+                    {% for char in charicons[(x, y)] %}
+                        {% set title = char.displayname() %}
+                        {% set icon = char.get('/core/icon', '') %}
+                        <img width=25 height=25 src="/icon/{{icon}}" title="{{title}}" onclick="clickHandler({{x}},{{y}})" align=left>
+                    {% endfor %}
+                    <br>
                       {% if editmode or (mapobj.tile(x,y).canenter() and x >= min_x and x <= max_x and y >= min_y and y <= max_y )%}
                         <img src="/icon/icons/page-zoom.png" width=20 height=20 align=top onclick="clickHandler({{x}},{{y}})">
                       {% endif %}
@@ -126,10 +142,17 @@
                     <td height=500 valign=bottom style="background-image:url(/icon/icons/blank.png;background-repeat:repeat;background-size:500px 500px; width:500; height:500">
                 {% endif %}
                     {% for icontuple in mapobj.tile_icons(zoom_x,zoom_y) %}
-                    {% set k = icontuple[0] %}
-                    {% set v = icontuple[1] %}
-                    {% set section = icontuple[2] %}
+                        {% set k = icontuple[0] %}
+                        {% set v = icontuple[1] %}
+                        {% set section = icontuple[2] %}
                         <img title="{{k}}" src="/icon/{{v}}" align=left onclick="itemclickHandler({{zoom_x}},{{zoom_y}}, '{{section}}', '{{k}}')">
+                    {% endfor %}
+                    {% for char in charicons[(zoom_x, zoom_y)] %}
+                        {% set title = char.displayname() %}
+                        {% set index = char.index %}
+                        {% set icon = char.get('/core/icon', '') %}
+                        <img title="{{title}}" src="/icon/{{icon}}" align=left onclick="charclickHandler({{zoom_x}},{{zoom_y}}, '{{index}}')">
+
                     {% endfor %}
                 </td>
             </tr>
@@ -188,7 +211,8 @@
                             {% endif %}
                     {% else %}
                        {% if mapobj.tile(zoom_x,zoom_y).canenter() %}
-                            <input type=submit name="movehere" value="Move Here"><br>
+                            <input type=submit name="movehere" value="Move Here">
+                            <br>
                        {% endif %}
                        {% if mapobj.tile(zoom_x,zoom_y).tiletype() == 'link' %}
                             <input type=submit name="followlink" value="Go to next map"><br>
@@ -252,10 +276,17 @@
                                 {% else %}   
                                     <input type="submit" name="itemdetail" value="Pick up">
                                 {% endif %}
-                            {% elif detailtype == 'players' %}  
-                                Player buttons here
-                            {% else %}
-                                NPC buttons here
+                            {% else %}  
+                                <fieldset>
+                                    <legend>Attack options</legend>
+                                    {% for option in attackmods %}
+                                        <div>
+                                            <input type=checkbox name=attackmods value="{{option}}">
+                                            <label>{{option}}</label>
+                                        </div>
+                                    {% endfor %}
+                                    <input type=submit name="attack" value="Attack">
+                                </fieldset>
                             {% endif %}
                         <br>
                         <ul>

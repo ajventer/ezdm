@@ -9,7 +9,7 @@
             "con": 15
         },
         "combat": {
-            "hitpoints": 21,
+            "hitpoints": 30,
             "thac0": 16,
             "level-hitdice": 5,
             "saving_throws": {
@@ -40,12 +40,6 @@
             "x": 3,
             "map": "simple_room.json"
         },
-        "icon": "avatars/rat.png",
-        "type": "npc",
-        "class": {
-            "class": "fighter",
-            "parent": "warrior"
-        },
         "inventory": {
             "equiped": {
                 "head": "",
@@ -68,7 +62,13 @@
             "pack": [],
             "%s": [],
             "spells": ""
-        }
+        },
+        "type": "npc",
+        "class": {
+            "class": "fighter",
+            "parent": "warrior"
+        },
+        "icon": "avatars/rat.png"
     },
     "conditional": {
         "armor_types": "['cloth', 'leather', 'mail', 'plate']",

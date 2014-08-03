@@ -9,7 +9,7 @@
             "con": 14
         },
         "combat": {
-            "hitpoints": 23,
+            "hitpoints": 1,
             "thac0": 16,
             "level-hitdice": 5,
             "saving_throws": {
@@ -37,22 +37,100 @@
         },
         "location": {
             "y": 6,
-            "x": 2,
-            "map": "simple_room.json"
+            "map": "simple_room.json",
+            "x": 2
+        },
+        "icon": "avatars/dwarf.png",
+        "type": "player",
+        "class": {
+            "class": "fighter",
+            "parent": "warrior"
         },
         "inventory": {
             "equiped": {
                 "head": "",
-                "righthand": {},
+                "righthand": {
+                    "core": {
+                        "current_rounds_performed": 0,
+                        "name": "Halberd +1",
+                        "weight": "",
+                        "in_use": false,
+                        "charges": 0,
+                        "price": {
+                            "copper": "",
+                            "silver": "",
+                            "gold": 25
+                        },
+                        "identified": true,
+                        "rounds_per_charge": 0,
+                        "icon": "icons/w_axe_war_0.png",
+                        "size": "large",
+                        "type": "weapon",
+                        "description": "A small dagger balanced for use in the main hand."
+                    },
+                    "conditional": {
+                        "slot": "twohand",
+                        "to_hit": 1,
+                        "dmg": 8,
+                        "range": "medium",
+                        "damage_type": "hack",
+                        "weapon_type": "melee",
+                        "save_against": "none"
+                    },
+                    "events": {
+                        "ondrop": "campaign.warning('%s has dropped %s' % (player.displayname(), item.displayname()))",
+                        "onround": "",
+                        "onequip": "",
+                        "onpickup": "",
+                        "onuse": "",
+                        "onfinish": ""
+                    }
+                },
                 "neck": "",
                 "wrists": "",
-                "rightfinger": "",
-                "chest": "",
-                "feet": "",
                 "leftfinger": "",
+                "feet": "",
+                "rightfinger": "",
                 "gloves": {},
                 "legs": "",
-                "lefthand": ""
+                "lefthand": {
+                    "core": {
+                        "current_rounds_performed": 0,
+                        "description": "A small dagger balanced for use in the main hand.",
+                        "weight": "",
+                        "in_use": false,
+                        "charges": 0,
+                        "price": {
+                            "copper": "",
+                            "silver": "",
+                            "gold": 25
+                        },
+                        "identified": true,
+                        "name": "Halberd +1",
+                        "rounds_per_charge": 0,
+                        "size": "large",
+                        "type": "weapon",
+                        "icon": "icons/w_axe_war_0.png"
+                    },
+                    "conditional": {
+                        "slot": "twohand",
+                        "dmg": 8,
+                        "to_hit": 1,
+                        "range": "medium",
+                        "damage_type": "hack",
+                        "weapon_type": "melee",
+                        "save_against": "none"
+                    },
+                    "events": {
+                        "ondrop": "campaign.warning('%s has dropped %s' % (player.displayname(), item.displayname()))",
+                        "onround": "",
+                        "onequip": "",
+                        "onpickup": "",
+                        "onuse": "",
+                        "onfinish": ""
+                    }
+                },
+                "chest": ""
             },
             "money": {
                 "copper": 2,
@@ -62,13 +140,7 @@
             "pack": [],
             "%s": [],
             "spells": ""
-        },
-        "type": "player",
-        "class": {
-            "class": "fighter",
-            "parent": "warrior"
-        },
-        "icon": "avatars/dwarf.png"
+        }
     },
     "conditional": {
         "armor_types": "['cloth', 'leather', 'mail', 'plate']"

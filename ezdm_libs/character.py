@@ -401,6 +401,7 @@ class Character(EzdmObject):
         return out
 
     def drop_item(self, itemname, section='pack'):
+        todrop = None
         if isinstance(itemname, str):
             for item in self.get('/core/inventory/%s' % section, []):
                 item = Item(item)
@@ -408,6 +409,8 @@ class Character(EzdmObject):
                     todrop = self.get('/core/inventory/%s' % section, []).index(item())
         else:
             todrop = itemname
+        if todrop is None:
+            return
         item = Item(self.json['core']['inventory']['pack'][todrop])
         item.ondrop(player=self)
         del(self.json['core']['inventory']['pack'][todrop])

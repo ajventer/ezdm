@@ -9,9 +9,16 @@
             "con": 13
         },
         "combat": {
+            "hitpoints": 18,
             "thac0": 20,
             "level-hitdice": 1,
-            "hitpoints": 18,
+            "saving_throws": {
+                "breath": 17,
+                "pp": 15,
+                "spell": 17,
+                "rod": 16,
+                "ppd": 14
+            },
             "max_hp": 18
         },
         "personal": {
@@ -30,8 +37,8 @@
         },
         "location": {
             "y": "",
-            "x": "",
-            "map": ""
+            "map": "",
+            "x": ""
         },
         "icon": "avatars/48x48_Faces_4th_Sheet_Update_CharlesGabriel_OGA_0-5-1.png",
         "type": "player",
@@ -42,16 +49,88 @@
         "inventory": {
             "equiped": {
                 "head": {},
-                "righthand": {},
+                "righthand": {
+                    "core": {
+                        "current_rounds_performed": 0,
+                        "name": "Long bow",
+                        "weight": "",
+                        "in_use": false,
+                        "charges": 0,
+                        "price": {
+                            "copper": "",
+                            "silver": "",
+                            "gold": 25
+                        },
+                        "identified": true,
+                        "rounds_per_charge": 0,
+                        "icon": "icons/longbow.png",
+                        "size": "large",
+                        "type": "weapon",
+                        "description": "A small dagger balanced for use in the main hand."
+                    },
+                    "conditional": {
+                        "slot": "twohand",
+                        "to_hit": 0,
+                        "dmg": 8,
+                        "range": "long",
+                        "damage_type": "hack",
+                        "weapon_type": "melee",
+                        "save_against": "none"
+                    },
+                    "events": {
+                        "ondrop": "campaign.warning('%s has dropped %s' % (player.displayname(), item.displayname()))",
+                        "onround": "",
+                        "onequip": "",
+                        "onpickup": "",
+                        "onuse": "",
+                        "onfinish": ""
+                    }
+                },
                 "neck": {},
                 "wrists": {},
-                "rightfinger": {},
-                "chest": {},
-                "feet": {},
                 "leftfinger": {},
+                "feet": {},
+                "rightfinger": {},
                 "gloves": {},
                 "legs": {},
-                "lefthand": {}
+                "lefthand": {
+                    "core": {
+                        "current_rounds_performed": 0,
+                        "description": "A small dagger balanced for use in the main hand.",
+                        "weight": "",
+                        "in_use": false,
+                        "charges": 0,
+                        "price": {
+                            "copper": "",
+                            "silver": "",
+                            "gold": 25
+                        },
+                        "identified": true,
+                        "name": "Long bow",
+                        "rounds_per_charge": 0,
+                        "size": "large",
+                        "type": "weapon",
+                        "icon": "icons/longbow.png"
+                    },
+                    "conditional": {
+                        "slot": "twohand",
+                        "dmg": 8,
+                        "to_hit": 0,
+                        "range": "long",
+                        "damage_type": "hack",
+                        "weapon_type": "melee",
+                        "save_against": "none"
+                    },
+                    "events": {
+                        "ondrop": "campaign.warning('%s has dropped %s' % (player.displayname(), item.displayname()))",
+                        "onround": "",
+                        "onequip": "",
+                        "onpickup": "",
+                        "onuse": "",
+                        "onfinish": ""
+                    }
+                },
+                "chest": {}
             },
             "money": {
                 "copper": 0,

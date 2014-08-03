@@ -1,4 +1,5 @@
 {
+    "name": "Simple Room",
     "tiles": [
         [
             {
@@ -1108,7 +1109,7 @@
             {
                 "core": {
                     "type": "floor",
-                    "revealed": false,
+                    "revealed": true,
                     "name": "Wooden Floor",
                     "icon": "backgrounds/floor_wood.png"
                 },
@@ -1128,7 +1129,7 @@
             {
                 "core": {
                     "type": "floor",
-                    "revealed": false,
+                    "revealed": true,
                     "name": "Wooden Floor",
                     "icon": "backgrounds/floor_wood.png"
                 },
@@ -1283,7 +1284,7 @@
             },
             {
                 "core": {
-                    "revealed": false,
+                    "revealed": true,
                     "type": "floor",
                     "name": "Wooden Floor",
                     "icon": "backgrounds/floor_wood.png"
@@ -1303,7 +1304,7 @@
             },
             {
                 "core": {
-                    "revealed": false,
+                    "revealed": true,
                     "type": "floor",
                     "name": "Wooden Floor",
                     "icon": "backgrounds/floor_wood.png"
@@ -1323,7 +1324,7 @@
             },
             {
                 "core": {
-                    "revealed": false,
+                    "revealed": true,
                     "type": "signpost",
                     "name": "simple_signpost",
                     "icon": "backgrounds/signpost.png"
@@ -1414,7 +1415,7 @@
             {
                 "core": {
                     "type": "floor",
-                    "revealed": false,
+                    "revealed": true,
                     "name": "Wooden Floor",
                     "icon": "backgrounds/floor_wood.png"
                 },
@@ -1434,7 +1435,7 @@
             {
                 "core": {
                     "type": "floor",
-                    "revealed": false,
+                    "revealed": true,
                     "name": "Wooden Floor",
                     "icon": "backgrounds/floor_wood.png"
                 },
@@ -1454,7 +1455,7 @@
             {
                 "core": {
                     "type": "floor",
-                    "revealed": false,
+                    "revealed": true,
                     "name": "Wooden Floor",
                     "icon": "backgrounds/floor_wood.png"
                 },
@@ -1474,7 +1475,7 @@
             {
                 "core": {
                     "type": "floor",
-                    "revealed": false,
+                    "revealed": true,
                     "name": "Wooden Floor",
                     "icon": "backgrounds/floor_wood.png"
                 },
@@ -1493,7 +1494,7 @@
             },
             {
                 "core": {
-                    "revealed": false,
+                    "revealed": true,
                     "type": "shop",
                     "name": "simple_shop",
                     "icon": "backgrounds/dngn_enter_shop.png"
@@ -1587,7 +1588,7 @@
             },
             {
                 "core": {
-                    "revealed": false,
+                    "revealed": true,
                     "type": "wall",
                     "name": "rock_wall",
                     "icon": "backgrounds/wall_rock.png"
@@ -1599,7 +1600,7 @@
             },
             {
                 "core": {
-                    "revealed": false,
+                    "revealed": true,
                     "type": "wall",
                     "name": "rock_wall",
                     "icon": "backgrounds/wall_rock.png"
@@ -1611,7 +1612,7 @@
             },
             {
                 "core": {
-                    "revealed": false,
+                    "revealed": true,
                     "type": "wall",
                     "name": "rock_wall",
                     "icon": "backgrounds/wall_rock.png"
@@ -1623,7 +1624,7 @@
             },
             {
                 "core": {
-                    "revealed": false,
+                    "revealed": true,
                     "type": "wall",
                     "name": "rock_wall",
                     "icon": "backgrounds/wall_rock.png"
@@ -1672,7 +1673,6 @@
         ]
     ],
     "lightradius": 1,
-    "name": "Simple Room",
     "max_x": 10,
     "max_y": 10
 }

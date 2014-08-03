@@ -92,12 +92,10 @@ class MAPS(Session):
                         i.identify()
                     self._data['detailview'] = i.render()
                     self._data['detailtype'] = 'item'
-                elif iconsection == 'players':
-                    self._data['detailview'] = Character(load_json('characters', requestdata['iconname'])).render()
-                    self._data['detailtype'] = 'player'
-                elif iconsection == 'npcs':
-                    self._data['detailview'] = Character(load_json('characters', requestdata['iconname'])).render()
-                    self._data['detailtype'] = 'npc'
+            if 'iconindex' in requestdata and requestdata['iconindex']:
+                self._data['detailtype'] = 'character'
+                self._target = frontend.campaign.characters[int(requestdata['iconindex'])]
+                self._data['detailview'] = self._target.render()
             if 'itemdetail' in requestdata:
                 del(self._data['detailtype'])
                 if requestdata['detailname'] == 'money':
@@ -119,6 +117,10 @@ class MAPS(Session):
                         i.identify()
                         self._character.buy_item(i, page=page)
                     self._character.save()
+            if 'attack' in requestdata:
+                attackmods = requestdata.getall('attackmods')
+                print attackmods
+                #combat.do_attack(self._character, target, attackmods)
             if not 'savemap' in requestdata and not 'loadmap' in requestdata and self._data['editmode']:
                 page.warning('WARNING: Changes are not yet saved')
 
@@ -127,6 +129,7 @@ class MAPS(Session):
         self._data['zoom_x'] = 0
         self._data['zoom_y'] = 0
 
+        self._data['attackmods'] = load_json('adnd2e', 'attack_mods')
         self._data['editmode'] = frontend.mode == 'dm'
         self._character = frontend.campaign.current_char()
         loc = self._character.location()
@@ -150,6 +153,7 @@ class MAPS(Session):
 
         self._data['map'] = self._map()
         self._data['mapobj'] = self._map
+        self._data['charicons'] = frontend.campaign.icons[self._map.name()]
         self._data['maplist'] = find_files('maps', '*.json', basename=True, strip='.json')
         self._data['tilelist'] = find_files('tiles', '*.json', basename=True, strip='.json')
         charlist = find_files('characters', '*.json', basename=True, strip='.json')

@@ -116,11 +116,9 @@ class GameMap(EzdmObject):
         if not tile():
             return {}
         out = []
-        sources = {'items': 'items', 'npcs': 'characters', 'players': 'characters'}
-        for section in ['items', 'npcs', 'players']:
-            for thingy in tile.get('/conditional/%s' % section, []):
-                json = load_json(sources[section], thingy)
-                out.append((thingy.replace('.json', ''), readkey('/core/icon', json, ''), section))
+        for thingy in tile.get('/conditional/items', []):
+            json = load_json('items', thingy)
+            out.append((thingy.replace('.json', ''), readkey('/core/icon', json, ''), 'items'))
         money = self.getmoney(x, y)
         if money[0] or money[1] or money[2]:
             out.append(('money', 'icons/money.png', 'money'))

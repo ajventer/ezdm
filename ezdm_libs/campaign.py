@@ -8,6 +8,7 @@ class Campaign(EzdmObject):
 
     def __init__(self, json):
         self.json = json
+        self.icons = {}
         self.put('/core/current_char', 0)
         self.chars_in_round()
         if self.characters:
@@ -30,7 +31,11 @@ class Campaign(EzdmObject):
             p = Character(load_json('characters', player))
             loc = p.get('/core/location/', '')
             mapname = loc['map']
-
+            if not mapname in self.icons:
+                self.icons[mapname] = {}
+            if not (loc['x'], loc['y']) in self.icons[mapname]:
+                self.icons[mapname][(loc['x'], loc['y'])] = []
+            self.icons[mapname][(loc['x'], loc['y'])].append(p)
             if not mapname in maps_parsed:
                 maps_parsed.append(mapname)
             else:
@@ -43,11 +48,12 @@ class Campaign(EzdmObject):
                         npcs_here = tile.get('/conditional/npcs', [])
                         for npc in sorted(npcs_here):
                             n = Character(load_json('characters', npc))
-                            if n.get('/conditional/orientation', 'friendly').strip() == 'aggressive':
-                                n.put('/core/location', {"map": mapname, "x": x, "y": y})
-                                n.set_index(len(chars))
-                                print npc, n.index
-                                chars.append(n)
+                            n.put('/core/location', {"map": mapname, "x": x, "y": y})
+                            n.set_index(len(chars))
+                            if not (x, y) in self.icons[mapname]:
+                                self.icons[mapname][(x, y)] = []
+                            self.icons[mapname][(x, y)].append(n)
+                            chars.append(n)
         self.characters = list(set(chars))
 
     def current_char(self):
