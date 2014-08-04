@@ -49,7 +49,7 @@
             "items":[]
         },
         "core.type=signpost":{
-            "canenter": false,
+            "canenter": true,
             "message":""
         }
 

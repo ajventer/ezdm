@@ -3,24 +3,38 @@ from math import hypot
 import frontend
 
 
-def range_mod(player, target):
+def range_mod(player, target, weapon):
     """
     Calculated the range modifier to misile attacks based on the
     ADnD manual's rules.
     """
+    ranges = {
+        "long": {"short": 0, "medium": -2, "long": -5},
+        "medium": {"short": 0, "medium": -2, "long": -999},
+        "short": {"short": 0, "medium": -5, "long": -999}
+    }
+    if weapon.get('/conditional/weapon_type', 'melee') == 'misile':
+        weaponrange = 'long'
+    else:
+        weaponrange = weapon.get('/conditional/range', 'short')
+        if not weaponrange:
+            weaponrange = 'short'
     ploc = player.get('/core/location', {})
     tloc = target.get('/core/location', {})
     xdiff = ploc['x'] - tloc['x']
-    ydiff = player['y'] - tloc['y']
+    ydiff = ploc['y'] - tloc['y']
     distance = hypot(xdiff, ydiff)
     if distance <= 1:
-        #Short range
-        return 0
-    if distance <= 3:
-        #Medium range
-        return -2
-    #long range
-    return -5
+        targetrange = 'short'
+    elif distance <= 3:
+        targetrange = 'medium'
+    else:
+        targetrange = 'long'
+    out = '%s is attacking %s from %s range with a %s-range weapon' % (player.displayname(), target.displayname(), targetrange, weaponrange)
+    if weaponrange in ["short", "medium"] and targetrange == "long":
+        out += '<br> This weapon cannot hit a target that far !'
+    frontend.campaign.message(out)
+    return ranges[weaponrange][targetrange]
 
 
 def calc_damage(player, target):
@@ -46,20 +60,19 @@ def attack(player, target, attack_modifiers):
     attack_number = 1
     attack_mods = load_json('adnd2e', 'attack_mods')
     num_attacks = player.num_attacks()
-    total_modifier = 0
-    for mod in attack_modifiers:
-        total_modifier += int(attack_mods[mod])
-        frontend.campaign.message('Applying modifier %s: %s' % (mod, attack_mods[mod]))
     print "COMBAT: num_attacks:", num_attacks
     while attack_number <= num_attacks and target_alive:
+        total_modifier = 0
+        for mod in attack_modifiers:
+            total_modifier += int(attack_mods[mod])
+            frontend.campaign.message('Applying modifier %s: %s' % (mod, attack_mods[mod]))
         print "Attack number", attack_number, "Out of", num_attacks, "Target alive", target_alive
         weapon = player.current_weapon()
         frontend.campaign.message('Attacking with weapon %s' % weapon.displayname())
-        if weapon.get('/conditional/weapon_type', 'melee') == 'misile':
-            range_modifier = range_mod(player, target)
-            if range_mod:
-                frontend.campaign.message('Applying range modifier %s to misile weapon' % range_modifier)
-                total_modifier += range_modifier
+        range_modifier = range_mod(player, target, weapon)
+        if range_modifier:
+            frontend.campaign.message('Applying range modifier %s' % range_modifier)
+            total_modifier += range_modifier
         frontend.campaign.message('Attack number %s out of %s' % (attack_number, num_attacks))
         attack_number += 1
         weaponmod = player.to_hit_mod()
@@ -82,11 +95,12 @@ def attack(player, target, attack_modifiers):
             target_alive = damage_result is True
             if not target_alive:
                 if target.character_type() == 'npc':
-                    for char in frontend.campaign.get('/core/players', []):
-                        frontend.message(char.give_xp(target.xp_worth()))
+                    for char in frontend.campaign.characters:
+                        if char.character_type() == 'player':
+                            frontend.campaign.message(char.give_xp(target.xp_worth()))
                 target.handle_death()
-    for char in [player, target]:
-        if char.character_type() == 'player':
-            char.save()
-        else:
-            char.save_to_tile()
+            for char in [player, target]:
+                if char.character_type() == 'player':
+                    char.save()
+                else:
+                    char.save_to_tile()

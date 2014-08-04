@@ -55,6 +55,10 @@ def template_dict(template, defaults=None):
             value = dfl[realkey(key).replace('core/', '')]
         if isinstance(value, str) and value.startswith('__['):
             value = ''
+        try:
+            value = dumps(value).strip('"')
+        except:
+            pass
         ret[name] = {'name': name, 'value': value, 'inputtype': inputtype, 'options': options}
     if not 'conditional' in ret:
         ret['conditional'] = 'placeholder'

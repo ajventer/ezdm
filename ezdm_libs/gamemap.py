@@ -8,7 +8,6 @@ class Tile(EzdmObject):
 
     def revealed(self):
         if frontend.mode == 'dm':
-            print "Showing as revealed in DM mode"
             return True
         return self.get('/core/revealed', False) is True
 
@@ -34,7 +33,7 @@ class Tile(EzdmObject):
         return save_json('tiles', name.lower().replace(' ', '_'), self.json)
 
     def add(self, name, objtype):
-        if not name.endswith('.json'):
+        if isinstance(name, str) and not name.endswith('.json'):
             name = '%s.json' % name
         current = self.get('/conditional/%s' % objtype, [])
         if objtype == 'npcs':
@@ -45,8 +44,11 @@ class Tile(EzdmObject):
         self.put('/conditional/%s' % objtype, current)
 
     def remove(self, name, objtype):
-        if not name.endswith('.json'):
+        if isinstance(name, str) and not name.endswith('.json'):
             name = '%s.json' % name
+        elif isinstance(name, int):
+            del(self()['conditional']['npcs'][name])
+            return
         current = self.get('/conditional/%s' % objtype, [])
         print "Trying to remove %s from %s objtype %s" % (name, current, objtype)
         if name in current:
@@ -114,12 +116,17 @@ class GameMap(EzdmObject):
         tile = self.tile(x, y)
         tile.add(name, objtype)
         self()['tiles'][y][x] = tile()
+        self.save()
+        frontend.campaign.chars_in_round()
 
     def removefromtile(self, x, y, name, objtype):
         tile = self.tile(x, y)
         print tile
         tile.remove(name, objtype)
         self()['tiles'][y][x] = tile()
+        self.save()
+        if frontend.campaign:
+            frontend.campaign.chars_in_round()
 
     def tile_icons(self, x, y, unique=False):
         tile = self.tile(x, y)

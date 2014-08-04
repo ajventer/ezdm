@@ -37,7 +37,7 @@
  
 <table border=0 width=100%>
 <tr>
-    <td>
+    <td valign=top>
 
 <table border=1, cellpadding=0, cellspacing=0>
     <tr>
@@ -75,7 +75,7 @@
         </td>
     </tr>
     <tr>
-        <td bgcolor=lightgray></td>
+        <td  bgcolor=lightgray></td>
         {% for a in range (0,map.max_x) %}
             <td bgcolor=lightgray>{{a}}</td>
         {% endfor %}
@@ -110,7 +110,7 @@
                         <img width=25 height=25 src="/icon/{{icon}}" title="{{title}}" onclick="clickHandler({{x}},{{y}})" align=left>
                     {% endfor %}
                     <br>
-                      {% if editmode or (mapobj.tile(x,y).canenter() and x >= min_x and x <= max_x and y >= min_y and y <= max_y )%}
+                      {% if editmode or mapobj.tile(x,y).canenter() %}
                         <img src="/icon/icons/page-zoom.png" width=20 height=20 align=top onclick="clickHandler({{x}},{{y}})">
                       {% endif %}
                 {% else %}
@@ -261,8 +261,8 @@
                         </form>
                     </td>
                 </tr>
-                {% else %}
-                {% if detailtype %}
+            {% else %}
+                {% if detailview %}
                 <tr>
                     <td bgcolor=lightblue>
                         <form method=post>
@@ -270,7 +270,7 @@
                             <input type=hidden name="clicked_y" id="clicked_y" value="{{zoom_y}}">
                             <input type=hidden name="detailtype" id="detailtype" value="{{detailtype}}">
                             <input type=hidden name="detailname" id="detailname" value="{{detailname}}">
-                            <input type=hidden name="detailindex" id="detailindex" value="{{detailindex}}"
+                            <input type=hidden name="detailindex" id="detailindex" value="{{detailindex}}">
                             {% if detailtype == 'item' %}
                                 {% if mapobj.tile(zoom_x,zoom_y).tiletype() == 'shop' %}
                                     <input type="submit" name="itemdetail" value="Buy">

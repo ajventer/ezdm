@@ -41,7 +41,7 @@ class XPTOOL(Session):
             page.add('simple_input.tpl', xpform)
             return page.render()
         for character in self.characters:
-            print "New XP", self.character.give_xp(int(self._data['xp_ammount']), page)
+            print "New XP", self.character.give_xp(int(self._data['xp_ammount']))
             character.save()
         self._data = {}
         self.characters = []

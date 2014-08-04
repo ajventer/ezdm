@@ -4,6 +4,7 @@ from objects import EzdmObject, event
 from gamemap import GameMap
 import copy
 from random import randrange
+import frontend
 
 
 class Character(EzdmObject):
@@ -19,7 +20,7 @@ class Character(EzdmObject):
 
     def __init__(self, json):
         self.json = json
-        try:
+        if self.json:
             self.weapons = self.load_weapons()
             self.armor = self.load_armor()
             self.put('core/combat/thac0', self.__get_thac0())
@@ -28,14 +29,18 @@ class Character(EzdmObject):
                 numdice = int(self.get('/core/combat/level-hitdice', '1'))
                 self.put('core/combat/hitpoints', rolldice(numdice=numdice, numsides=8)[0])
                 self.put('core/combat/max_hp', numdice * 8)
-        except:
-            pass
 
     def handle_death(self):
         loc = self.location()
         chartype = self.character_type()
+        if chartype == 'player':
+            chartype = 'players'
+            todel = self.name()
+        else:
+            chartype = 'npcs'
+            todel = self.get_tile_index()
         gamemap = GameMap(load_json('maps', loc['map']))
-        gamemap.removefromtile(loc['x'], loc['y'], self.name())
+        gamemap.removefromtile(loc['x'], loc['y'], todel, chartype)
         if chartype == 'npc':
             max_gold = self.get('/conditional/loot/gold', 0)
             max_silver = self.get('/conditional/loot/silver', 0)
@@ -52,6 +57,7 @@ class Character(EzdmObject):
                 gamemap.addtotile(loc['x'], loc['y'], item)
             gamemap.putmoney(loc['x'], loc['y'], gold, silver, copper)
         gamemap.save()
+        frontend.campaign.chars_in_round()
 
     def location(self):
         return self.get('/core/location', {})
@@ -129,8 +135,8 @@ class Character(EzdmObject):
 
     def save_to_tile(self):
         loc = self.location()
-        gamemap = GameMap(load_json('maps', loc['mapname']))
-        gamemap.tile(loc['x'], loc['y'])[self.get_tile_index()] = self()
+        gamemap = GameMap(load_json('maps', loc['map']))
+        gamemap.tile(loc['x'], loc['y'])()['conditional']['npcs'][self.get_tile_index()] = self()
 
     def get_tile_index(self):
         return self.get('/core/tileindex', -1)
@@ -148,7 +154,7 @@ class Character(EzdmObject):
         out = ''
         if damage >= self.get('/core/combat/hitpoints', 1):
             st = self.saving_throw('ppd')
-            out = st[1]
+            out = '<br>'.join(st[1])
             if not st[0]:
                 self.put('/core/combat/hitpoints', 0)
                 out += "<br>%s has died !" % self.displayname()
@@ -158,9 +164,9 @@ class Character(EzdmObject):
                 out += "<br>%s barely survives. %s hitpoints remaining" % (self.displayname(), self.get('/core/combat/hitpoints', 1))
                 return (True, out)
         else:
-            hp = int(self.get('/core/combat/hitpoins', 1))
+            hp = int(self.get('/core/combat/hitpoints', 1))
             hp -= damage
-            self.put('/core/combat/hitpoins', hp)
+            self.put('/core/combat/hitpoints', hp)
             out += "<br>%s takes %s damage. %s hitpoints remaining" % (self.displayname(), damage, self.get('/core/combat/hitpoints', 1))
             return (True, out)
 
@@ -229,7 +235,7 @@ class Character(EzdmObject):
             return (True, out)
         else:
             out.append("Did not save !")
-            return (False, '<br>'.join(out))
+            return (False, out)
 
     def hit_dice(self):
         if self.is_monster():
@@ -284,17 +290,17 @@ class Character(EzdmObject):
         self.__init__(self())
         return out
 
-    def give_xp(self, xp, page):
+    def give_xp(self, xp):
         current_xp = int(self.get('/core/personal/xp', 0))
         new_xp = current_xp + int(xp)
         self.put('/core/personal/xp', str(new_xp))
-        page.message('Character gains experience points. XP now: %s' % new_xp)
+        frontend.campaign.message('%s gains %s experience points. XP now: %s' % (self.displayname(), xp, new_xp))
         next_level = self.next_level()
         if new_xp >= next_level:
-            page.warning(self.level_up())
-            page.error('Check for and apply manual increases to other stats if needed !')
+            frontend.campaign.warning(self.level_up())
+            frontend.campaign.error('Check for and apply manual increases to other stats if needed !')
         else:
-            page.message('Next level at %s. %s experience points to go' % (next_level, next_level - new_xp))
+            frontend.campaign.message('Next level at %s. %s experience points to go' % (next_level, next_level - new_xp))
         return new_xp
 
     def next_level(self):
@@ -362,6 +368,8 @@ class Character(EzdmObject):
         del(self()['core']['inventory']['spells'][index])
 
     def acquire_item(self, item):
+        if not isinstance(self.get('/core/inventory/pack', []), list):
+            self.put('/core/inventory/pack', [])
         self()['core']['inventory']['pack'].insert(0, item())
 
     def equip_item(self, itemname):
@@ -616,7 +624,9 @@ class Character(EzdmObject):
         writekey('/conditional/abilities', self.abilities(), out)
         if not self.character_type() == 'player':
             out['XP Worth'] = self.xp_worth()
-        del out['core']['combat']['saving_throws']
+        if 'saving_throws' in out['core']['combat']:
+            del out['core']['combat']['saving_throws']
+        del (out['core']['icon'])
         for k, v in self.get('/core/combat/saving_throws', {}).items():
             prettyname = readkey('/names/%s' % k, prettynames, k)
             writekey('/core/combat/saving_throws/%s ' % prettyname, v, out)

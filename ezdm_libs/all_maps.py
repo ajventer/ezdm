@@ -40,7 +40,6 @@ class MAPS(Session):
                 character.moveto(self._map.name(), self._data['zoom_x'], self._data['zoom_y'])
                 character.save()
                 self._map = GameMap(load_json('maps', self._map.name()))
-                self._data['savemap'] = 'Save'
             if 'updatejson' in requestdata:
                 newjson = loads(requestdata['jsonbox'])
                 self._map.load_tile_from_json(self._data['zoom_x'], self._data['zoom_y'], newjson)
@@ -50,11 +49,21 @@ class MAPS(Session):
                 npc = Character(load_json('characters', cname))
                 npc.moveto(self._map.name(), self._data['zoom_x'], self._data['zoom_y'])
                 self._map.addtotile(self._data['zoom_x'], self._data['zoom_y'], npc, 'npcs')
-                self._map.save()
+                self._map = GameMap(load_json('maps', self._map.name()))
             if 'additemtotile' in requestdata:
                 self._map.addtotile(self._data['zoom_x'], self._data['zoom_y'], requestdata['itemname'], 'items')
             if 'removenpcfromtile' in requestdata:
-                self._map.removefromtile(self._data['zoom_x'], self._data['zoom_y'], requestdata['npcname'], 'npcs')
+                tile = self._map.tile(self._data['zoom_x'], self._data['zoom_y'])
+                npcs = tile.get('/conditional/npcs', [])
+                print "NPCs here", npcs
+                for npc in npcs:
+                    print "Testing npc"
+                    n = Character(npc)
+                    if n.name() == '%s.json' % requestdata['npcname']:
+                        print "    Match"
+                        break
+                self._map.removefromtile(self._data['zoom_x'], self._data['zoom_y'], n.get_tile_index(), 'npcs')
+                self._map.save()
             if 'removeitemfromtile' in requestdata:
                 self._map.removefromtile(self._data['zoom_x'], self._data['zoom_y'], requestdata['itemname'], 'items')
             if 'settargetmap' in requestdata:
@@ -130,8 +139,8 @@ class MAPS(Session):
                 print attackmods
                 target = frontend.campaign.characters[int(requestdata['detailindex'])]
                 attack(self._character, target, attackmods)
-                frontend.campaign.endround()
                 self._map = GameMap(load_json('maps', self._map.name()))
+                frontend.campaign.chars_in_round()
             if not 'savemap' in requestdata and not 'loadmap' in requestdata and self._data['editmode']:
                 page.warning('WARNING: Changes are not yet saved')
 
@@ -139,16 +148,12 @@ class MAPS(Session):
         page = Page()
         self._data['zoom_x'] = 0
         self._data['zoom_y'] = 0
+        if 'detailview' in self._data:
+            del(self._data['detailview'])
 
         self._data['attackmods'] = load_json('adnd2e', 'attack_mods')
         self._data['editmode'] = frontend.mode == 'dm'
         self._character = frontend.campaign.current_char()
-        loc = self._character.location()
-        self._data['min_x'] = int(loc['x']) - 1
-        self._data['max_x'] = int(loc['x']) + 1
-        self._data['min_y'] = int(loc['y']) - 1
-        self._data['max_y'] = int(loc['y']) + 1
-
         if not self._data['editmode']:
             self._data['packitems'] = self._character.for_sale()
 
