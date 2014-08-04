@@ -55,6 +55,9 @@ def calc_damage(player, target):
 
 
 def attack(player, target, attack_modifiers):
+    if player.is_casting:
+        player.interrupt_cast()
+        frontend.campaign.message('%s was casting but it was interrupted because you attacked %s' % (player.displayname(), target.displayname))
     frontend.campaign.message('%s is attacking %s' % (player.displayname(), target.displayname()))
     target_alive = True
     attack_number = 1

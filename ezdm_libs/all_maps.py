@@ -12,6 +12,7 @@ class MAPS(Session):
     def __init__(self):
         self._character = None
         Session.__init__(self)
+        self._map = None
 
     def inputhandler(self, requestdata, page):
         if 'loadmap' in requestdata and requestdata['loadmap'] == 'New Map':

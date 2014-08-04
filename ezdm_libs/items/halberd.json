@@ -1,28 +1,28 @@
 {
     "core": {
         "current_rounds_performed": 0,
-        "name": "Offhand_Dagger",
+        "name": "Halberd",
         "weight": "",
         "in_use": false,
         "charges": 0,
         "price": {
             "copper": "",
             "silver": "",
-            "gold": 2
+            "gold": 10
         },
-        "description": "A small dagger balanced for use in the offhand.",
+        "description": "A heavy halberd for significant damage at medium range.",
         "identified": false,
         "rounds_per_charge": 0,
-        "icon": "icons/dagger.png",
+        "icon": "icons/bardiche1.png",
         "type": "weapon",
-        "size": "small"
+        "size": "large"
     },
     "conditional": {
-        "slot": "lefthand",
+        "slot": "twohand",
         "to_hit": 0,
-        "dmg": 4,
-        "range": "",
-        "damage_type": "stab",
+        "dmg": 8,
+        "range": "medium",
+        "damage_type": "hack",
         "weapon_type": "melee",
         "save_against": "none"
     },
