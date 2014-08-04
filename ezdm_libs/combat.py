@@ -84,4 +84,4 @@ def attack(player, target, attack_modifiers):
                 if target.character_type() == 'npc':
                     for char in frontend.campaign.get('/core/players', []):
                         frontend.message(char.give_xp(target.xp_worth()))
-                #TODO: add loot drop support
+                target.handle_death()

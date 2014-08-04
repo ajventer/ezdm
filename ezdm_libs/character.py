@@ -3,6 +3,7 @@ from item import Item
 from objects import EzdmObject, event
 from gamemap import GameMap
 import copy
+from random import randrage
 
 
 class Character(EzdmObject):
@@ -29,6 +30,28 @@ class Character(EzdmObject):
                 self.put('core/combat/max_hp', numdice * 8)
         except:
             pass
+
+    def handle_death(self):
+        loc = self.location()
+        chartype = self.character_type()
+        gamemap = GameMap(load_json('maps', loc['map']))
+        gamemap.removefromtile(loc['x'], loc['y'], self.name())
+        if chartype == 'npc':
+            max_gold = self.get('/conditional/loot/gold', 0)
+            max_silver = self.get('/conditional/loot/silver', 0)
+            max_copper = self.get('/conditional/loot/copper', 0)
+            loot_items = self.get('/conditional/loot/items_possible', [])
+            gold = rolldice(1, max_gold, 0)[0]
+            silver = rolldice(1, max_silver, 0)[0]
+            copper = rolldice(1, max_copper, 0)[0]
+            drops_item = rolldice(1, 100, 0)[0]
+            item = None
+            if loot_items and drops_item > 50:
+                item = loot_items[randrage(0, len(loot_items) - 1)]
+            if item:
+                gamemap.addtotile(loc['x'], loc['y'], item)
+            gamemap.putmoney(loc['x'], loc['y'], gold, silver, copper)
+        gamemap.save()
 
     def location(self):
         return self.get('/core/location', {})
