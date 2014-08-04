@@ -27,7 +27,7 @@
         "save_against": "none"
     },
     "events": {
-        "ondrop": "page.warning('%s has dropped %s' % (player.displayname(), item.displayname()))",
+        "ondrop": "",
         "onround": "",
         "onequip": "",
         "onpickup": "",
