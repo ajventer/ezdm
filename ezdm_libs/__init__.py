@@ -7,7 +7,10 @@ def data_paths(path):
     for source in [get_user_data, get_settings_data, get_sys_data]:
         data = source(path)
         if data:
-            paths.append(data)
+            if isinstance(data, str):
+                paths.append(data)
+            else:
+                paths.extend(data)
     return paths
 
 
