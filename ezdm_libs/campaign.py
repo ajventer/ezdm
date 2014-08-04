@@ -52,7 +52,7 @@ class Campaign(EzdmObject):
                         print "Processing NPCs from %sx%s" % (x, y)
                         npcs_here = tile.get('/conditional/npcs', [])
                         for npc in sorted(npcs_here):
-                            n = Character(load_json('characters', npc))
+                            n = Character(npc)
                             print "   Found %s" % n.displayname()
                             n.put('/core/location', {"map": mapname, "x": x, "y": y})
                             n.set_index(len(chars))

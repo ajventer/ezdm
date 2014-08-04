@@ -124,6 +124,17 @@ class Character(EzdmObject):
     def set_index(self, index):
         self.index = index
 
+    def set_tile_index(self, index):
+        self.put('/core/tileindex', index)
+
+    def save_to_tile(self):
+        loc = self.location()
+        gamemap = GameMap(load_json('maps', loc['mapname']))
+        gamemap.tile(loc['x'], loc['y'])[self.get_tile_index()] = self()
+
+    def get_tile_index(self):
+        return self.get('/core/tileindex', -1)
+
     def heal(self, amount):
         hp = int(self.get('/core/combat/hitpoints', 1))
         hp += amount

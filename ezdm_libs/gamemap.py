@@ -37,6 +37,10 @@ class Tile(EzdmObject):
         if not name.endswith('.json'):
             name = '%s.json' % name
         current = self.get('/conditional/%s' % objtype, [])
+        if objtype == 'npcs':
+            index = len(current)
+            name.set_tile_index(index)
+            name = name()
         current.append(name)
         self.put('/conditional/%s' % objtype, current)
 

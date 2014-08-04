@@ -85,3 +85,8 @@ def attack(player, target, attack_modifiers):
                     for char in frontend.campaign.get('/core/players', []):
                         frontend.message(char.give_xp(target.xp_worth()))
                 target.handle_death()
+    for char in [player, target]:
+        if char.character_type() == 'player':
+            char.save()
+        else:
+            char.save_to_tile()

@@ -45,7 +45,12 @@ class MAPS(Session):
                 newjson = loads(requestdata['jsonbox'])
                 self._map.load_tile_from_json(self._data['zoom_x'], self._data['zoom_y'], newjson)
             if 'addnpctotile' in requestdata:
-                self._map.addtotile(self._data['zoom_x'], self._data['zoom_y'], requestdata['npcname'], 'npcs')
+                self._map.save()
+                cname = requestdata['npcname']
+                npc = Character(load_json('characters', cname))
+                npc.moveto(self._map.name(), self._data['zoom_x'], self._data['zoom_y'])
+                self._map.addtotile(self._data['zoom_x'], self._data['zoom_y'], npc, 'npcs')
+                self._map.save()
             if 'additemtotile' in requestdata:
                 self._map.addtotile(self._data['zoom_x'], self._data['zoom_y'], requestdata['itemname'], 'items')
             if 'removenpcfromtile' in requestdata:
@@ -126,6 +131,7 @@ class MAPS(Session):
                 target = frontend.campaign.characters[int(requestdata['detailindex'])]
                 attack(self._character, target, attackmods)
                 frontend.campaign.endround()
+                self._map = GameMap(load_json('maps', self._map.name()))
             if not 'savemap' in requestdata and not 'loadmap' in requestdata and self._data['editmode']:
                 page.warning('WARNING: Changes are not yet saved')
 
