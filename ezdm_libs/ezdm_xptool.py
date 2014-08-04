@@ -27,17 +27,20 @@ class XPTOOL(Session):
                         self.characters.append(Character(load_json('characters', character)))
                 else:
                     self.characters.append(Character(load_json('characters', self._data['character'])))
+
+        if not 'xp_ammount' in self._data:
+            page.message('Adding experience points for %s' % self.characters)
+            page.message('current XP/Level: ')
+            for characters in self.characters:
+                page.message('    %s/%s' % (character.get('/core/personal/xp', 0), character.next_level()))
+            xpform = {'action': '/EZDM_XPTOOL', 'name': 'Experience Points', 'default_value': 0}
+            xpform['question'] = 'How much experience points do you grant ?'
+            xpform['inputname'] = 'xp_ammount'
+            xpform['submitname'] = 'add_xp'
+            xpform['submitvalue'] = 'Give XP'
+            page.add('simple_input.tpl', xpform)
+            return page.render()
         for character in self.characters:
-            page.message('Adding experience points for %s' % character.displayname())
-            page.message('current XP/Level: %s/%s' % (character.get('/core/personal/xp', 0), character.next_level()))
-            if not 'xp_ammount' in self._data:
-                xpform = {'action': '/EZDM_XPTOOL', 'name': 'Experience Points', 'default_value': 0}
-                xpform['question'] = 'How much experience points do you grant ?'
-                xpform['inputname'] = 'xp_ammount'
-                xpform['submitname'] = 'add_xp'
-                xpform['submitvalue'] = 'Give XP to %s' % character.displayname()
-                page.add('simple_input.tpl', xpform)
-                return page.render()
             print "New XP", self.character.give_xp(int(self._data['xp_ammount']), page)
             character.save()
         self._data = {}
