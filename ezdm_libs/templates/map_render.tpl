@@ -104,11 +104,13 @@
                             <img width=25 height=25 src="/icon/{{v}}" title="{{k}}" onclick="clickHandler({{x}},{{y}})" align=left>
                         {% endif %}
                     {% endfor %}
+                    {% if charicons %}
                     {% for char in charicons[(x, y)] %}
                         {% set title = char.displayname() %}
                         {% set icon = char.get('/core/icon', '') %}
                         <img width=25 height=25 src="/icon/{{icon}}" title="{{title}}" onclick="clickHandler({{x}},{{y}})" align=left>
                     {% endfor %}
+                    {% endif %}
                     <br>
                       {% if editmode or mapobj.tile(x,y).canenter() %}
                         <img src="/icon/icons/page-zoom.png" width=20 height=20 align=top onclick="clickHandler({{x}},{{y}})">
@@ -147,6 +149,7 @@
                         {% set section = icontuple[2] %}
                         <img title="{{k}}" src="/icon/{{v}}" align=left onclick="itemclickHandler({{zoom_x}},{{zoom_y}}, '{{section}}', '{{k}}')">
                     {% endfor %}
+                    {% if charicons %}
                     {% for char in charicons[(zoom_x, zoom_y)] %}
                         {% set title = char.displayname() %}
                         {% set index = char.index %}
@@ -154,6 +157,7 @@
                         <img title="{{title}}" src="/icon/{{icon}}" align=left onclick="charclickHandler({{zoom_x}},{{zoom_y}}, '{{index}}')">
 
                     {% endfor %}
+                    {% endif %}
                 </td>
             </tr>
             <tr>

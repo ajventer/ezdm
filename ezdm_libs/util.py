@@ -158,8 +158,11 @@ def load_icon(icon='icons/blank.png'):
 def find_files(source, needle='', basename=False, strip=''):
     matches = []
     for path in data_paths(source):
+        print "Checking for %s in %s " % (needle, path)
         if path:
+            print "Path exists"
             matches += glob(os.path.join(path, needle))
+            print "matches:", matches
     if basename:
         matches = [os.path.basename(match) for match in matches]
     if strip:
@@ -169,6 +172,7 @@ def find_files(source, needle='', basename=False, strip=''):
         bname = os.path.basename(m)
         if not bname in unique:
             unique[bname] = m
+    print unique
     return unique.values()
 
 

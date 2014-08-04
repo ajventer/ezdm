@@ -30,6 +30,7 @@ class Campaign(EzdmObject):
         self.icons = {}
         chars = []
         players = self.players()
+        print players
         for player in sorted(players):
             if not player.endswith('.json'):
                 player = '%s.json' % player
@@ -47,6 +48,8 @@ class Campaign(EzdmObject):
                 self.icons[mapname][(loc['x'], loc['y'])].append(p)
         print self.get('/core/maps', [])
         for mapname in self.get('/core/maps', []):
+            if not mapname in self.icons:
+                    self.icons[mapname] = {}
             gamemap = GameMap(load_json('maps', mapname))
             for y in range(0, gamemap.get('/max_y', 1)):
                 for x in range(0, gamemap.get('/max_x', 1)):

@@ -68,6 +68,8 @@ class MAPS(Session):
                 self._map.removefromtile(self._data['zoom_x'], self._data['zoom_y'], requestdata['itemname'], 'items')
             if 'settargetmap' in requestdata:
                 target = requestdata['targetmap']
+                if not target.endswith('.json'):
+                    target = '%s.json' % target
                 target_x = int(requestdata['target_x'])
                 target_y = int(requestdata['target_y'])
                 self._map.tile(self._data['zoom_x'], self._data['zoom_y']).linktarget(target=target, x=target_x, y=target_y)
@@ -168,7 +170,10 @@ class MAPS(Session):
             self._map = GameMap(name='New Map')
         self._data['map'] = self._map()
         self._data['mapobj'] = self._map
-        self._data['charicons'] = frontend.campaign.icons[self._map.name()]
+        if self._map.name() in frontend.campaign.icons:
+            self._data['charicons'] = frontend.campaign.icons[self._map.name()]
+        elif 'charicons' in self._data:
+            del (self._data['charicons'])
         self._data['maplist'] = find_files('maps', '*.json', basename=True, strip='.json')
         self._data['tilelist'] = find_files('tiles', '*.json', basename=True, strip='.json')
         charlist = find_files('characters', '*.json', basename=True, strip='.json')
