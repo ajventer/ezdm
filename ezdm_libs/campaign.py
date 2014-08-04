@@ -24,10 +24,13 @@ class Campaign(EzdmObject):
         self.json['core']['maps'] = maps
         self.save()
 
+    def players(self):
+        return self.get('/core/players', [])
+
     def chars_in_round(self):
         self.icons = {}
         chars = []
-        players = self.get('/core/players', [])
+        players = self.players()
         for player in sorted(players):
             if not player.endswith('.json'):
                 player = '%s.json' % player
