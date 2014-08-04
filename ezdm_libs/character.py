@@ -626,7 +626,6 @@ class Character(EzdmObject):
             out['XP Worth'] = self.xp_worth()
         if 'saving_throws' in out['core']['combat']:
             del out['core']['combat']['saving_throws']
-        del (out['core']['icon'])
         for k, v in self.get('/core/combat/saving_throws', {}).items():
             prettyname = readkey('/names/%s' % k, prettynames, k)
             writekey('/core/combat/saving_throws/%s ' % prettyname, v, out)
