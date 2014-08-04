@@ -3,7 +3,7 @@ from item import Item
 from objects import EzdmObject, event
 from gamemap import GameMap
 import copy
-from random import randrage
+from random import randrange
 
 
 class Character(EzdmObject):
@@ -47,7 +47,7 @@ class Character(EzdmObject):
             drops_item = rolldice(1, 100, 0)[0]
             item = None
             if loot_items and drops_item > 50:
-                item = loot_items[randrage(0, len(loot_items) - 1)]
+                item = loot_items[randrange(0, len(loot_items) - 1)]
             if item:
                 gamemap.addtotile(loc['x'], loc['y'], item)
             gamemap.putmoney(loc['x'], loc['y'], gold, silver, copper)

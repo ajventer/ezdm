@@ -1,5 +1,5 @@
 import os
-from simplejson import loads
+import sys
 
 
 def data_paths(path):
@@ -29,20 +29,16 @@ def get_sys_data(path):
 
 
 def get_settings_data(path):
-    for p in get_user_data('settingss') or [] + get_sys_data('settingss') or []:
-        filename = os.path.join(p, 'settings.json')
-        if os.path.exists(filename):
-            break
-        else:
-            filename = None
-    if not filename:
-        return None
-    try:
-        json = loads(open(filename, 'r').read())
-        p = json['core']['extra_data_paths']
-        for pth in p:
-            pt = os.path.join(pth, path)
-            if os.path.exists(pt):
-                return pt
-    finally:
-        return None
+    paths = []
+    print "Custom settings for", path
+    if os.path.exists('/etc/ezdm/settings.py'):
+        print "Settings file exists"
+        sys.path.append('/etc/ezdm')
+        import settings
+        print "Extrapaths", settings.extrapaths
+        for pth in settings.extrapaths:
+            print "Checking path:", pth
+            if os.path.exists(os.path.join(pth, path)):
+                print "Found match!"
+                paths.append(os.path.join(pth, path))
+    return paths
