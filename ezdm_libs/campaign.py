@@ -9,10 +9,8 @@ class Campaign(EzdmObject):
     def __init__(self, json):
         self.rounds = 0
         self.json = json
-        self.put('/core/current_char', 0)
+        self.charcounter = -1
         self.chars_in_round()
-        if self.characters:
-            self.character = self.characters[0]
         self.messages = []
 
     def addmap(self, mapname):
@@ -70,6 +68,10 @@ class Campaign(EzdmObject):
     def current_char(self):
             return self.character
 
+    @property
+    def character(self):
+        return self.characters[self.charcounter]
+
     def roll_for_initiative(self):
         print "Before rolling initiative", self.characters
         initiative = []
@@ -91,12 +93,15 @@ class Campaign(EzdmObject):
         self.roll_for_initiative()
 
     def endround(self):
+        print "Charcounter - start:", self.charcounter, "Characters", self.characters
         self.rounds += 1
-        next_char = int(self.get('/core/current_char', 0))
+        next_char = self.charcounter
+        print "Next char:", next_char
         char_health = 0
         cycle = False
         while char_health == 0:
             next_char += 1
+            print "Next char in loop", next_char
             if next_char >= len(self.characters):
                 if not cycle:
                     cycle = True
@@ -104,16 +109,19 @@ class Campaign(EzdmObject):
                     self.error('All characters are dead !')
                     break
                 next_char = 0
+                print "Next char reset", next_char
                 self.endturn()
             char_health = int(self.characters[next_char].get('/core/combat/hitpoints', 0))
-        self.put('/core/current_char', next_char)
-        self.character = self.characters[next_char]
+        print "After loop nextchar", next_char, "charcounter", self.charcounter
+        self.charcounter = next_char
+        print "After loop nextchar", next_char, "charcounter", self.charcounter
         self.onround(self.character)
         loc = self.character.get('/core/location', {})
         print loc
         if loc:
             self.character.moveto(mapname=loc['map'], x=loc['x'], y=loc['y'])
         self.error('%s goes next' % self.character.displayname())
+        print "Charcounter - end:", self.charcounter
 
     def save(self):
         name = '%s.json' % self.get('/core/name', '')
