@@ -13,16 +13,12 @@ class Character(EzdmObject):
     auto = False
     index = -1
     weapon = 0
-    weapons = []
-    armor = []
     lightradius = 0
     is_casting = False
 
     def __init__(self, json):
         self.json = json
         if self.json:
-            self.weapons = self.load_weapons()
-            self.armor = self.load_armor()
             self.put('core/combat/thac0', self.__get_thac0())
             self.put('core/combat/saving_throws', self.get_saving_throws())
             if not self.character_type() == 'player':
@@ -504,7 +500,7 @@ class Character(EzdmObject):
 
     def armor_class(self):
         AC = 10.0
-        for item in self.armor:
+        for item in self.equiped_by_type('armor'):
             AC -= float(readkey('/conditionals/ac', item()), 0.0)
         return AC
 
@@ -517,8 +513,13 @@ class Character(EzdmObject):
                 arm.append(item)
         return arm
 
-    def load_armor(self):
+    @property
+    def armor(self):
         return self.equiped_by_type('armor')
+
+    @property
+    def weapons(self):
+        return self.equiped_by_type('weapon')
 
     def num_weapons(self):
         return len(self.weapons)
