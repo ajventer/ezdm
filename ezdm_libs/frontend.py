@@ -54,10 +54,11 @@ class Page:
         else:
             menuitems = self.make_menu(find_files('', 'campaign*.py', basename=True), 'campaign_')
         menuitems.update(self.make_menu(find_files('', 'all*.py', basename=True), 'all_'))
+        headerdict = {'title': title}
         if campaign:
-            title += "   - %s's round" % campaign.current_char().displayname()
+            headerdict['character'] = campaign.current_char()
         self._menuitems = {'menuitems': menuitems}
-        self.content = [('header.tpl', {'title': title}), ('menubar.tpl', self._menuitems)]
+        self.content = [('header.tpl', headerdict), ('menubar.tpl', self._menuitems)]
 
     def display_campaign_messages(self):
         if campaign:
