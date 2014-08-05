@@ -71,11 +71,12 @@
         "icon": "avatars/rat.png"
     },
     "conditional": {
-        "armor_types": "['cloth', 'leather', 'mail', 'plate']",
+        "armor_types": ["cloth", "leather", "mail", "plate"],
         "loot": {
             "copper": 99,
-            "items_possible": [],
-            "max_items": 1,
+            "items_possible": ["long_bow.json", "mainhand_dagger.json", "halberd_+1.json"],
+            "always_drops": ["health_potion.json"],
+            "max_items": 2,
             "gold": 10,
             "silver": 99
         },
