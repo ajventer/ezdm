@@ -19,8 +19,6 @@ class Character(EzdmObject):
     def __init__(self, json):
         self.json = json
         if self.json:
-            self.put('core/combat/thac0', self.__get_thac0())
-            self.put('core/combat/saving_throws', self.get_saving_throws())
             if not self.character_type() == 'player':
                 numdice = int(self.get('/core/combat/level-hitdice', '1'))
                 self.put('core/combat/hitpoints', rolldice(numdice=numdice, numsides=8)[0])
@@ -28,6 +26,7 @@ class Character(EzdmObject):
 
     def handle_death(self):
         loc = self.location()
+        print "Dead character was at %s" % loc
         chartype = self.character_type()
         if chartype == 'player':
             chartype = 'players'
@@ -37,20 +36,33 @@ class Character(EzdmObject):
             todel = self.get_tile_index()
         gamemap = GameMap(load_json('maps', loc['map']))
         gamemap.removefromtile(loc['x'], loc['y'], todel, chartype)
-        if chartype == 'npc':
+        print chartype
+        if chartype == 'npcs':
             max_gold = self.get('/conditional/loot/gold', 0)
             max_silver = self.get('/conditional/loot/silver', 0)
             max_copper = self.get('/conditional/loot/copper', 0)
             loot_items = self.get('/conditional/loot/items_possible', [])
+            max_items = self.get('/conditional/loot/max_items', 1)
+            always_drops = self.get('/conditional/loot/always_drops', [])
             gold = rolldice(1, max_gold, 0)[0]
             silver = rolldice(1, max_silver, 0)[0]
             copper = rolldice(1, max_copper, 0)[0]
-            drops_item = rolldice(1, 100, 0)[0]
-            item = None
-            if loot_items and drops_item > 50:
-                item = loot_items[randrange(0, len(loot_items) - 1)]
-            if item:
-                gamemap.addtotile(loc['x'], loc['y'], item)
+            print "Dropping money %s - %s - %s" % (gold, silver, copper)
+            for counter in range(0, max_items):
+                item = None
+                print "Potential drop: %s of %s" % (counter, max_items)
+                drops_item = rolldice(1, 100, 0)[0]
+                print "Drop-roll: %s" % drops_item
+                if loot_items and drops_item > 50:
+                    print "Select random item from to drop from %s" % loot_items
+                    item = loot_items[randrange(0, len(loot_items) - 1)]
+                if item:
+                    print "Item dropped %s" % item
+                    gamemap.addtotile(loc['x'], loc['y'], item, 'items')
+            print "Always drops: %s" % always_drops
+            for item in always_drops:
+                print "Dropping %s" % item
+                gamemap.addtotile(loc['x'], loc['y'], item, 'items')
             gamemap.putmoney(loc['x'], loc['y'], gold, silver, copper)
         gamemap.save()
         frontend.campaign.chars_in_round()
@@ -201,7 +213,8 @@ class Character(EzdmObject):
         dex = self.get('/core/abilities/dex', 0)
         return int(readkey('/dex/%s/defense' % dex, ability_mods, 0))
 
-    def get_saving_throws(self):
+    @property
+    def saving_throws(self):
         key = self.get('/core/class/parent', '')
         sts = load_json("adnd2e", "saving_throws")[key]
         hitdice = self.get('/core/combat/level-hitdice', 0)
@@ -222,8 +235,9 @@ class Character(EzdmObject):
                 if inrange(con, key):
                     mod = int(saving[race][key])
                     continue
-        target = int(self.get('/core/combat/saving_throws/%s' % against, 0))
-        out = ["%s Tries to roll a saving throw against %s" % (self.displayname(), prettyname), "%s needs to roll %s" % (self.displayname(), target)]
+        target = int(readkey(against, self.saving_throws, 0))
+        out = "%s Tries to roll a saving throw against %s" % (self.displayname(), prettyname)
+        out += "<br>%s needs to roll %s" % (self.displayname(), target)
         roll = rolldice(numdice=1, numsides=20, modifier=mod)
         out.append(roll[1])
         if roll[0] >= int(target):
@@ -324,7 +338,7 @@ class Character(EzdmObject):
         elif roll[0] - mod == 20:
             return (roll[0], "Critical Hit !", roll[1])
         else:
-            if roll[0] >= self.__get_thac0() - target.armor_class() - target.def_mod():
+            if roll[0] >= self.get_thac0() - target.armor_class() - target.def_mod():
                 return (roll[0], "Hit !", roll[1])
             else:
                 return (roll[0], "Miss !", roll[1])
@@ -609,7 +623,8 @@ class Character(EzdmObject):
         out = "[%s]" % out
         return out
 
-    def __get_thac0(self):
+    @property
+    def thac0(self):
         if self.get('/core/personal/race', '') == "creature":
             key = "creature"
         else:
@@ -627,10 +642,11 @@ class Character(EzdmObject):
             out['XP Worth'] = self.xp_worth()
         if 'saving_throws' in out['core']['combat']:
             del out['core']['combat']['saving_throws']
-        for k, v in self.get('/core/combat/saving_throws', {}).items():
+        for k, v in self.saving_throws.items():
             prettyname = readkey('/names/%s' % k, prettynames, k)
             writekey('/core/combat/saving_throws/%s ' % prettyname, v, out)
         self.reset_weapon()
+        out['core']['combat']['armor_class'] = self.armor_class()
         out['to_hit_mod'] = {}
         done = False
         if self.weapons:

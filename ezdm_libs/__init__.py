@@ -34,7 +34,6 @@ def get_sys_data(path):
 def get_settings_data(path):
     paths = []
     if os.path.exists('/etc/ezdm/settings.py'):
-        print "Settings exist"
         sys.path.append('/etc/ezdm')
         import settings
         for pth in settings.extrapaths:

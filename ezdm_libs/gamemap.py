@@ -47,8 +47,10 @@ class Tile(EzdmObject):
         if isinstance(name, str) and not name.endswith('.json'):
             name = '%s.json' % name
         elif isinstance(name, int):
-            del(self()['conditional']['npcs'][name])
-            return
+            try:
+                del(self()['conditional']['npcs'][name])
+            finally:
+                return
         current = self.get('/conditional/%s' % objtype, [])
         print "Trying to remove %s from %s objtype %s" % (name, current, objtype)
         if name in current:

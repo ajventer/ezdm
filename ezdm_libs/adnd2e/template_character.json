@@ -57,7 +57,8 @@
             "silver": 99,
             "copper": 99,
             "items_possible": [],
-            "max_items":1
+            "max_items":1,
+            "always_drops": []
         },
         "events": {
             "__Toninteract": "",
