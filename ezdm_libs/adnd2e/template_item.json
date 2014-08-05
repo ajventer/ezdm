@@ -1,4 +1,5 @@
 {"core":{
+    "lightradius":0,
     "icon":"",
     "name":"",
     "type":"__[weapon,armor,spell,other]",

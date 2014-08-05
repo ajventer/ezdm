@@ -13,7 +13,6 @@ class Character(EzdmObject):
     auto = False
     index = -1
     weapon = 0
-    lightradius = 0
     is_casting = False
 
     def __init__(self, json):
@@ -69,6 +68,14 @@ class Character(EzdmObject):
 
     def location(self):
         return self.get('/core/location', {})
+
+    @property
+    def lightradius(self):
+        base_radius = self.get('/core/lightradius', 0)
+        for item in self.inventory_generator():
+            if item[1].get('/core/in_use', False):
+                base_radius += item[1].get('/core/lightradius', 0)
+        return base_radius
 
     def moveto(self, mapname, x, y, page=None):
         if not mapname:
@@ -648,6 +655,7 @@ class Character(EzdmObject):
 
     def render(self):
         out = copy.deepcopy(self())
+        out['core']['lightradius'] = self.lightradius
         prettynames = load_json('adnd2e', 'saving_throws')
         writekey('/conditional/abilities', self.abilities(), out)
         if not self.character_type() == 'player':

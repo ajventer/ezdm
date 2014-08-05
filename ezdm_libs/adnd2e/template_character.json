@@ -1,5 +1,6 @@
 {
 "core":{
+"lightradius": 0,
 "location": {
     "map": "",
     "x": "",
