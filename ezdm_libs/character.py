@@ -503,9 +503,9 @@ class Character(EzdmObject):
         self.put('/core/inventory/money', convert_money(my_total))
 
     def armor_class(self):
-        AC = 10
+        AC = 10.0
         for item in self.armor:
-            AC -= int(readkey('/conditionals/ac', item()), 0)
+            AC -= float(readkey('/conditionals/ac', item()), 0.0)
         return AC
 
     def equiped_by_type(self, itemtype):
