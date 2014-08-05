@@ -191,9 +191,13 @@ class Character(EzdmObject):
         return name.lower()
 
     def save(self):
+        print "Saving %s to disk" % self.displayname()
         self.json = inflate(flatten(self.json))
         if 'temp' in self():
             del self()['temp']
+        if frontend.campaign:
+            print "Updating campaign"
+            frontend.campaign.chars_in_round()
         return save_json('characters', self.name(), self.json)
 
     def to_hit_mod(self):

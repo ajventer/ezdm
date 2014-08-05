@@ -13,6 +13,10 @@ class Campaign(EzdmObject):
         self.chars_in_round()
         self.messages = []
 
+    def list_chars(self):
+        for char in self.characters:
+            print char.displayname()
+
     def addmap(self, mapname):
         maps = self.get('/core/maps', [])
         if not isinstance(maps, list):
