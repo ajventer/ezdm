@@ -112,7 +112,7 @@
                     {% endfor %}
                     {% endif %}
                     <br>
-                      {% if editmode or mapobj.tile(x,y).canenter() %}
+                      {% if editmode or mapobj.tile(x,y).canenter() or mapobj.tile(x,y).tiletype() == 'signpost' %}
                         <img src="/icon/icons/page-zoom.png" width=20 height=20 align=top onclick="clickHandler({{x}},{{y}})">
                       {% endif %}
                 {% else %}
@@ -192,7 +192,7 @@
                             <input type=submit name="removenpcfromtile" value="Remove NPC">
                             <br>
                             <select name="itemname">
-                                {% for item in itemlist %}
+                                {% for item in itemlist|sort %}
                                     <option value="{{item}}">{{item}}</option>
                                 {% endfor %}
                             </select>                            

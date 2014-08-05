@@ -44,7 +44,7 @@
 			<br>
 			<form method=post>
 				<select name="acquire_item">
-					{%for item in items %}
+					{%for item in items|sort %}
 					<option value="{{item}}">{{item}}</option>
 					{%endfor%}
 				</select>

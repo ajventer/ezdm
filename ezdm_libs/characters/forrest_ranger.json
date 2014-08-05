@@ -36,9 +36,9 @@
             }
         },
         "location": {
-            "y": "",
-            "map": "",
-            "x": ""
+            "y": 8,
+            "map": "town_center.json",
+            "x": 8
         },
         "icon": "avatars/48x48_Faces_4th_Sheet_Update_CharlesGabriel_OGA_0-5-1.png",
         "type": "player",

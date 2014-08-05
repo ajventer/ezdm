@@ -8,6 +8,7 @@
         <tr>
         	<td width=10% bgcolor=lightblue>
                 <input type=button value="Campaign" onclick="window.location = '/mode/campaign'">
+                <input type=button value="Unload" onclick="window.location = '/switch_campaign'">
             </td>
             <td bgcolor=lightblue width=50%><center><strong>{{title}}</strong></center>
             {% if character %}   

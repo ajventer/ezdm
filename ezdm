@@ -67,6 +67,13 @@ def gethandler(action=None, item=None):
         return sessions[action_name(action)].view(item)
 
 
+@route('/switch_campaign', method='get')
+def switch_campaign():
+    frontend.campaign.save()
+    frontend.campaign = None
+    return gethandler(None, None)
+
+
 @route('/endround', method='get')
 def endround():
     if frontend.campaign:

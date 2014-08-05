@@ -71,6 +71,14 @@ class Character(EzdmObject):
         return self.get('/core/location', {})
 
     def moveto(self, mapname, x, y, page=None):
+        if not mapname:
+            return
+        if not isinstance(x, int) or not isinstance(y, int):
+            try:
+                x = int(x)
+                y = int(y)
+            except:
+                return
         current = self.location()
         print current
         if current.get('map'):
