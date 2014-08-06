@@ -147,14 +147,14 @@
                         {% set k = icontuple[0] %}
                         {% set v = icontuple[1] %}
                         {% set section = icontuple[2] %}
-                        <img title="{{k}}" src="/icon/{{v}}" align=left onclick="itemclickHandler({{zoom_x}},{{zoom_y}}, '{{section}}', '{{k}}')">
+                        <img title="{{k}}" src="/icon/{{v}}"  onclick="itemclickHandler({{zoom_x}},{{zoom_y}}, '{{section}}', '{{k}}')">
                     {% endfor %}
                     {% if charicons %}
                     {% for char in charicons[(zoom_x, zoom_y)] %}
                         {% set title = char.displayname() %}
                         {% set index = char.index %}
                         {% set icon = char.get('/core/icon', '') %}
-                        <img title="{{title}}" src="/icon/{{icon}}" align=left onclick="charclickHandler({{zoom_x}},{{zoom_y}}, '{{index}}')">
+                        <img title="{{title}}" src="/icon/{{icon}}"  onclick="charclickHandler({{zoom_x}},{{zoom_y}}, '{{index}}')">
 
                     {% endfor %}
                     {% endif %}

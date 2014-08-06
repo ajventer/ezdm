@@ -413,6 +413,10 @@ class Character(EzdmObject):
 
     def equip_item(self, itemname):
         slots = []
+        canwear = self.get('/conditional/armor_types', 0)
+        armor_types = load_json('adnd2e', 'armor_types.json')
+        shields = self.get('/conditional/shields', False)
+
         has_unequiped = False
         if isinstance(itemname, int):
             item = Item(self.get('/core/inventory/pack', [])[itemname])
@@ -423,7 +427,9 @@ class Character(EzdmObject):
         if not item.identified():
             item.identify()
         if item:
-            if item.itemtype() == 'armor' and not item.armortype() in self.get('/conditional/armor_types', ['cloth']):
+            if item.armortype() == 'shield' and not shields:
+                return (False, "%s cannot wear %s shields like %s" % (self.displayname(), item.armortype(), item.displayname()))
+            elif item.armortype() != 'shield' and item.itemtype() == 'armor' and not armor_types[item.armortype()] > canwear:
                 return (False, "%s cannot wear %s armor like %s" % (self.displayname(), item.armortype(), item.displayname()))
             if item.slot() == 'twohand':
                 slots = ['lefthand', 'righthand']
@@ -544,7 +550,7 @@ class Character(EzdmObject):
     def armor_class(self):
         AC = 10.0
         for item in self.equiped_by_type('armor'):
-            AC -= float(readkey('/conditionals/ac', item()), 0.0)
+            AC -= float(readkey('/conditional/ac', item(), 0.0))
         return AC
 
     def equiped_by_type(self, itemtype):

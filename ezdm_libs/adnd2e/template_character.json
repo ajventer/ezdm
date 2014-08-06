@@ -67,7 +67,8 @@
         }
     },
     "__1core.class.parent=rogue":{
-        "__Yarmor_types": ["cloth","leather"],
+        "armor_types": 3,
+        "shields": false,
         "abilities":{
             "pick pockets":15,
             "open locks": 10,
@@ -84,13 +85,16 @@
             "detect noise": 20,
             "pick pockets": 10,
             "read languages": 5
-        }
+        },
+        "__Yshields": true
     },
     "core.class.parent=warrior":{
-        "__Yarmor_types": ["cloth","leather","mail","plate"]
+        "armor_types": 4,
+        "__Yshields": true
     },
     "core.class.parent=wizard":{
-        "__Yarmor_types": ["cloth"]
+        "armor_types": 1,
+        "__Yshields": false
     },
     "core.class.class=paladin":{
         "abilities": {
@@ -102,7 +106,8 @@
 
     },
     "core.class.parent=priest":{
-        "__Yarmor_types": ["cloth"]
+        "armor_types": 1,
+        "__Yshields": false
     }
 }
 }

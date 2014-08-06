@@ -63,7 +63,9 @@ class INVENTORY(Session):
                     self._character.drop_item(idx)
                 if 'equipitem' in requestdata:
                     idx = int(requestdata['pack_index'])
-                    self._character.equip_item(idx)
+                    result = self._character.equip_item(idx)
+                    if not result[0]:
+                        page.error('ERROR: %s' % result[1])
                 if 'unequipitem' in requestdata:
                     print "Unequiping from %s" % requestdata['slot_name']
                     self._character.unequip_item(requestdata['slot_name'].strip())

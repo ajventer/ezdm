@@ -37,8 +37,8 @@
         },
     "core.type=armor":{
         "ac":0,
-        "material": "__[cloth,leather,mail,plate]",
-        "slot": "__[head,chest,legs,feet,wrists,hands,finger,neck]"
+        "material": "__[shield,cloth,leather,mail,plate]",
+        "slot": "__[head,chest,legs,feet,wrists,hands,finger,neck,lefthand]"
     }    
 }
 }
