@@ -67,7 +67,7 @@ class INVENTORY(Session):
                 if 'unequipitem' in requestdata:
                     print "Unequiping from %s" % requestdata['slot_name']
                     self._character.unequip_item(requestdata['slot_name'].strip())
-                if 'useitem' in requestdata:
+                if 'useitem' in requestdata or 'stopusing' in requestdata:
                     if 'pack_index' in requestdata:
                         section = 'pack'
                         item = Item(self._character.get('/core/inventory/pack', [])[int(requestdata['pack_index'])])
@@ -76,7 +76,10 @@ class INVENTORY(Session):
                         item = Item(self._character.get('/core/inventory/equiped/%s' % requestdata['slot_name'], {}))
                     print "Using item: Player: %s, item: %s" % (self._character.displayname(), item.displayname())
                     target = Character(load_json('characters', requestdata['useitem_target']))
-                    item.onuse(self._character, target)
+                    if 'useitem' in requestdata:
+                        item.onuse(self._character, target)
+                    elif 'stopusing' in requestdata:
+                        item.interrupt()
                     if section == 'equiped':
                         self._character.put('/core/inventory/%s/%s' % (section, requestdata['slot_name']), item())
                     else:

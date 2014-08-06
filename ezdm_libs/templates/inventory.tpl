@@ -109,6 +109,7 @@
 						<input type=submit name="useitem" value="Use Item">
 					{% endif %}
 					{% endif %}
+					<input type=submit name="stopusing" value="Stop using">
 				</form>
 			{% endif %}
 	</td>

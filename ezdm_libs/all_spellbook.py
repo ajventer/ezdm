@@ -52,11 +52,14 @@ class SPELLBOOK(Session):
                 self._data['detailview'] = None
                 self._character.unlearn_spell(int(requestdata['spellindex']))
                 page.warning('Spell has been unlearned')
-            if 'cast_spell' in requestdata:
+            if 'cast_spell' in requestdata or 'stopcasting' in requestdata:
                 print "Casting spell on %s" % requestdata['cast_spell_target']
                 item = Item(self._character.get('/core/inventory/spells', [])[int(requestdata['pack_index'])])
                 target = Character(load_json('characters', requestdata['cast_spell_target']))
-                item.onuse(self._character, target)
+                if 'stopcasting' in requestdata:
+                    item.interrupt()
+                else:
+                    item.onuse(self._character, target)
                 self._character()['core']['inventory']['spells'][int(requestdata['pack_index'])] = item()
 
             self._character.save()

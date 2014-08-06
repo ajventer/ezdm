@@ -116,3 +116,7 @@ class Item(EzdmObject):
 
     def ondrop(self, player):
         event(self, "/events/ondrop", {'item': self, 'player': player})
+
+    def interrupt(self):
+        self.put('/core/in_use', False)
+        

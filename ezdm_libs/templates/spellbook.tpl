@@ -64,6 +64,7 @@
                     </select>
                     <input type=submit name="cast_spell" value="Cast spell">                    
                     {% endif %}
+                    <input type=submit name="stopcasting" value="Stop casting">
                 </form>
             {% endif %}
 
