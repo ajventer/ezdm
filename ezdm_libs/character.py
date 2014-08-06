@@ -357,7 +357,7 @@ class Character(EzdmObject):
         elif roll[0] - mod == 20:
             return (roll[0], "Critical Hit !", roll[1])
         else:
-            if roll[0] >= self.get_thac0() - target.armor_class() - target.def_mod():
+            if roll[0] >= self.thac0() - target.armor_class() - target.def_mod():
                 return (roll[0], "Hit !", roll[1])
             else:
                 return (roll[0], "Miss !", roll[1])

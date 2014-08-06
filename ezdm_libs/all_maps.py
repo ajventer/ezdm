@@ -141,7 +141,7 @@ class MAPS(Session):
                 attackmods = requestdata.getall('attackmods')
                 print attackmods
                 target = frontend.campaign.characters[int(requestdata['detailindex'])]
-                attack(self._character, target, attackmods)
+                attack(self._character, target, attackmods, int(requestdata['custom_tohit']), int(requestdata['custom_dmg']))
                 self._map = GameMap(load_json('maps', self._map.name()))
                 frontend.campaign.chars_in_round()
             if not 'savemap' in requestdata and not 'loadmap' in requestdata and self._data['editmode']:

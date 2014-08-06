@@ -284,12 +284,20 @@
                             {% else %}  
                                 <fieldset>
                                     <legend>Attack options</legend>
-                                    {% for option in attackmods %}
+                                    {% for option in attackmods|sort %}
                                         <div>
                                             <input type=checkbox name=attackmods value="{{option}}">
                                             <label>{{option}}</label>
                                         </div>
                                     {% endfor %}
+                                    <div>
+                                        <input type=text name="custom_tohit" size=2 value="0">
+                                        <lable>Custom to-hit modifier</lable>
+                                    </div>
+                                    <div>
+                                        <input type=text name="custom_dmg" size=2 value="0">
+                                        <lable>Custom damage modifier</lable>
+                                    </div>                                    
                                     <input type=submit name="attack" value="Attack">
                                 </fieldset>
                             {% endif %}
