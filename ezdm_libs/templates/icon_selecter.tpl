@@ -1,7 +1,7 @@
 <strong>Icon Selector:</strong><br>
 Click an image to automatically set the icon field to it.<br>
 <table border=1 bordercolor=blue>
-{% for icon in icons %}
+{% for icon in icons|sort %}
 <tr><td>
 {% if selected == icon %}
 	Current:<br>
