@@ -103,7 +103,7 @@
                         "price": {
                             "copper": "",
                             "silver": "",
-                            "gold": ""
+                            "gold": 2
                         },
                         "identified": true,
                         "name": "Offhand_Dagger",
@@ -119,7 +119,7 @@
                         "range": "",
                         "damage_type": "stab",
                         "weapon_type": "melee",
-                        "save_against": "ppd"
+                        "save_against": "none"
                     },
                     "events": {
                         "ondrop": "campaign.warning('%s has dropped %s' % (player.displayname(), item.displayname()))",
@@ -140,7 +140,6 @@
             "pack": [
                 {
                     "core": {
-                        "size": "small",
                         "current_rounds_performed": 0,
                         "description": "Heals the target character for 1d6 hitpoints",
                         "weight": 0,
@@ -153,10 +152,11 @@
                             "gold": 10
                         },
                         "identified": true,
+                        "name": "Health Potion",
                         "rounds_per_charge": 1,
                         "icon": "icons/health_potion.png",
                         "target": null,
-                        "name": "Health Potion"
+                        "size": "small"
                     },
                     "events": {
                         "ondrop": "",
@@ -172,9 +172,9 @@
             "spells": [
                 {
                     "core": {
-                        "description": "Fires a bolt of arcane energy at the target, if it hits it does 1d4 damage.",
+                        "size": "small",
                         "current_rounds_performed": 0,
-                        "name": "Magic Misile",
+                        "description": "Fires a bolt of arcane energy at the target, if it hits it does 1d4 damage.",
                         "weight": 0,
                         "in_use": false,
                         "charges": -1,
@@ -188,7 +188,7 @@
                         "target": null,
                         "icon": "icons/magic_misile.png",
                         "type": "spell",
-                        "size": "small"
+                        "name": "Magic Misile"
                     },
                     "conditional": {
                         "spell_school": "Conjuration",

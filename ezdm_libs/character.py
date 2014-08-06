@@ -13,7 +13,6 @@ class Character(EzdmObject):
     auto = False
     index = -1
     weapon = 0
-    is_casting = False
 
     def __init__(self, json):
         self.json = json
@@ -120,8 +119,14 @@ class Character(EzdmObject):
             else:
                 self.put('/core/inventory/%s', [])
 
+    @property
+    def is_casting(self):
+        for item in self.inventory_generator():
+            if item[1].get('/core/in_use', False):
+                return True
+        return False
+
     def interrupt_cast(self):
-        self.is_casting = False
         for item in self.inventory_generator():
             if item[1].get('/core/in_use', False):
                 item[1].interrupt_cast()
@@ -258,12 +263,12 @@ class Character(EzdmObject):
         out = "%s Tries to roll a saving throw against %s" % (self.displayname(), prettyname)
         out += "<br>%s needs to roll %s" % (self.displayname(), target)
         roll = rolldice(numdice=1, numsides=20, modifier=mod)
-        out.append(roll[1])
+        out += '<br>%s' % roll[1]
         if roll[0] >= int(target):
-            out.append('Saved !')
+            out += '<br>Saved !'
             return (True, out)
         else:
-            out.append("Did not save !")
+            out += "<br>Did not save !"
             return (False, out)
 
     def hit_dice(self):
@@ -351,13 +356,18 @@ class Character(EzdmObject):
 
     def attack_roll(self, target, mod):
         self.next_weapon()
+        frontend.campaign.message('%s has THAC0 of: %s' % (self.displayname(), self.thac0))
+        target_stats = '%s has a defense modifier of %s and armor class %s' % (target.displayname(), target.def_mod(), target.armor_class())
+        frontend.campaign.message(target_stats)
+        target_roll = self.thac0 - target.armor_class() - target.def_mod()
+        frontend.campaign.message('%s needs to roll %s to hit %s' % (self.displayname(), target_roll, target.displayname()))
         roll = rolldice(numdice=1, numsides=20, modifier=mod)
         if roll[0] - mod == 1:
                 return (roll[0], "Critical Miss !", roll[1])
         elif roll[0] - mod == 20:
             return (roll[0], "Critical Hit !", roll[1])
         else:
-            if roll[0] >= self.thac0() - target.armor_class() - target.def_mod():
+            if roll[0] >= target_roll:
                 return (roll[0], "Hit !", roll[1])
             else:
                 return (roll[0], "Miss !", roll[1])

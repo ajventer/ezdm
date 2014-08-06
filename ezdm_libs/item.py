@@ -119,4 +119,3 @@ class Item(EzdmObject):
 
     def interrupt(self):
         self.put('/core/in_use', False)
-        

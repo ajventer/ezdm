@@ -39,6 +39,9 @@ def range_mod(player, target, weapon):
 
 def calc_damage(player, target, custom_dmg):
     dmg_mod = player.dmg_mod() + custom_dmg
+    if custom_dmg:
+        frontend.campaign.message('Applying custom damage modifier of %s' % custom_dmg)
+    frontend.campaign.message('Total damage modifier %s' % dmg_mod)
     weapon = player.current_weapon()
     dmg = weapon.get('/conditional/dmg', 1)
     save = weapon.get('/conditional/save_against', 'none')
@@ -56,6 +59,8 @@ def calc_damage(player, target, custom_dmg):
 
 def attack(player, target, attack_modifiers, custom_tohit, custom_dmg):
     custom_tohit = custom_tohit or 0
+    if custom_tohit:
+        frontend.campaign.message('Applying custom to-hit modifier of %s' % custom_tohit)
     custom_dmg = custom_dmg or 0
     if player.is_casting:
         player.interrupt_cast()
