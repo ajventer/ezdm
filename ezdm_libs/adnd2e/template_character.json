@@ -46,6 +46,7 @@
             "righthand": {}
     },
         "spells": [],
+        "spells_memorized": [],
         "pack":[],
         "money":{"gold":0,"silver":0,"copper":0}
     }

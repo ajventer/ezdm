@@ -2,7 +2,7 @@ from frontend import Session, Page
 import frontend
 from character import Character
 from item import Item
-from util import load_json, find_files
+from util import load_json, find_files, inrange
 import copy
 
 
@@ -16,9 +16,8 @@ class SPELLBOOK(Session):
         self._data['detailview'] = None
         self._data['targetlist'] = copy.deepcopy(frontend.campaign.characters)
         self._data['editmode'] = frontend.mode == 'dm'
-        if not self._data['editmode']:
-            self._character = frontend.campaign.current_char()
-        else:
+        self._character = frontend.campaign.current_char()
+        if self._data['editmode']:
             loadfrom = {}
             loadfrom['name'] = 'Character'
             loadfrom['keyname'] = 'loadfrom'
@@ -38,6 +37,13 @@ class SPELLBOOK(Session):
             if Item(load_json('items', spell)).itemtype() == 'spell':
                 self._data['spell_list'].append(spell)
         if requestdata:
+            if 'memorize_spells' in requestdata:
+                memorized = []
+                for index in requestdata.getall('memorize_spell'):
+                    if index != 'ignoreme':
+                        memorized.append(int(index))
+                self._character.put('/core/inventory/spells_memorized', memorized)
+                print memorized
             if 'learnspell' in requestdata:
                 self._character.learn_spell(Item(load_json('items', requestdata['learnspell'])))
                 page.message('Learned a new spell')
@@ -47,6 +53,7 @@ class SPELLBOOK(Session):
                 json = json[int(requestdata['selected'])]
                 item = Item(json)
                 self._data['detailidx'] = int(requestdata['selected'])
+                self._data['detailsection'] = requestdata['section']
                 self._data['detailview'] = item.render()
             if 'unlearn' in requestdata:
                 self._data['detailview'] = None
@@ -62,9 +69,28 @@ class SPELLBOOK(Session):
                     item.onuse(self._character, target)
                 self._character()['core']['inventory']['spells'][int(requestdata['pack_index'])] = item()
 
-            self._character.save()
+        self._character.save()
         for spell in self._character.inventory_generator(sections=['spells']):
             self._data['spells'].append(spell)
+        self._data['memorized'] = self._character.memorized_spells()
+        classclass = self._character.get('/core/class/class', '')
+        classparent = self._character.get('/core/class/parent', '')
+        spell_prog = load_json('adnd2e', 'various')["spell progression"]
+        found = False
+        for key in spell_prog:
+            if key == classparent or key == classclass:
+                spell_prog = spell_prog[key]
+                found = True
+                break
+        if found:
+            level = self._character.get('/core/combat/level-hitdice', 1)
+            for key in spell_prog:
+                if inrange(level, key):
+                    spell_prog = spell_prog[key]
+                    break
+            self._data['spellprog'] = spell_prog
+            if 'casting_level' in self._data['spellprog']:
+                del(self._data['spellprog']['casting_level'])
         page.add('spellbook.tpl', self._data)
 
         return page.render()

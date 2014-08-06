@@ -6,8 +6,9 @@
 	    "test4x4.json"
         ],
         "players": [
-            "tiny_tim",
-            "bardic_rogue"
+	    "wizard_mage.json",
+            "tiny_tim.json",
+            "bardic_rogue.json"
         ],
         "initiative": [],
         "incombat": false,

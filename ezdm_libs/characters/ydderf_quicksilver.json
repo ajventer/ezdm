@@ -1,32 +1,51 @@
 {
     "core": {
         "abilities": {
-            "dex": 16,
-            "cha": 15,
-            "int": 11,
-            "wis": 8,
-            "str": 20,
-            "con": 13
+            "dex": 25,
+            "cha": 25,
+            "int": 25,
+            "wis": 25,
+            "str": 25,
+            "con": 25
         },
-        "lightradius": 0,
         "combat": {
-            "level-hitdice": 1,
-            "hitpoints": 18,
-            "max_hp": 18
+            "hitpoints": 68,
+            "thac0": 8,
+            "level-hitdice": 19,
+            "saving_throws": {
+                "breath": 8,
+                "pp": 5,
+                "spell": 7,
+                "rod": 6,
+                "ppd": 6
+            },
+            "max_hp": 152
         },
         "personal": {
             "name": {
-                "last": "Ranger",
-                "first": "Forrest"
+                "last": "Quicksilver",
+                "first": "Ydderf"
             },
-            "backstory": "",
+            "backstory": "Her Royal Majesty Queen Quicksilver of Cinobubia.\\r\\nForced to marry the evil queen Dak Bleth against her will under duress as Dak Bleth held her people hostage with the plague.\\r\\n\\r\\nSecret leader of the resistance, she has asked your help in the war to end Dak Bleth's reign, there is very little love lost in her marriage.",
             "sex": "female",
-            "race": "half-elf",
+            "race": "human",
             "xp": "",
             "alignment": {
-                "law": "neutral",
+                "law": "lawful",
                 "social": "good"
             }
+        },
+        "tileindex": 1,
+        "location": {
+            "y": 1,
+            "map": "secret_cellar.json",
+            "x": 7
+        },
+        "icon": "avatars/48x48_Faces_4th_Sheet_Update_CharlesGabriel_OGA_0-4-2.png",
+        "type": "npc",
+        "class": {
+            "class": "cleric",
+            "parent": "priest"
         },
         "inventory": {
             "equiped": {
@@ -34,34 +53,33 @@
                 "righthand": {
                     "core": {
                         "current_rounds_performed": 0,
-                        "description": "To use:<br>Hold by blunt end.<br>Aim pointy end at person of unpleasant persona.<br>Attempt to thrust pointy end into person of unpleasant persona by means of a vigorous arm movement.",
+                        "name": "Fist",
                         "weight": 0,
                         "in_use": false,
                         "charges": 0,
                         "price": {
                             "copper": 0,
                             "silver": 0,
-                            "gold": 25
+                            "gold": 0
                         },
                         "identified": true,
-                        "name": "One Handed Bastard Sword",
                         "rounds_per_charge": 0,
-                        "icon": "icons/sword.png",
-                        "size": "medium",
+                        "icon": "",
+                        "size": "small",
                         "type": "weapon",
-                        "lightradius": 0
+                        "description": "Throw a barehanded punch with fist."
                     },
                     "conditional": {
-                        "slot": "righthand",
-                        "dmg": 8,
-                        "to_hit": "",
+                        "slot": "twohand",
+                        "to_hit": 0,
+                        "dmg": 2,
                         "range": "short",
-                        "damage_type": "slice",
+                        "damage_type": "stab",
                         "weapon_type": "melee",
                         "save_against": "none"
                     },
                     "events": {
-                        "ondrop": "campaign.warning('%s has dropped %s' % (player.displayname(), item.displayname()))",
+                        "ondrop": "",
                         "onround": "",
                         "onequip": "",
                         "onpickup": "",
@@ -78,31 +96,34 @@
                 "legs": {},
                 "lefthand": {
                     "core": {
-                        "lightradius": 0,
                         "current_rounds_performed": 0,
-                        "description": "This \"shield\" is little more than a battered piece of bronze plate, there are some dents and suspicious looking stains on it. You think it may be second hand and you doubt the original owner\r\nwas alive when he lost it.",
-                        "weight": 3,
+                        "description": "Throw a barehanded punch with fist.",
+                        "weight": 0,
                         "in_use": false,
                         "charges": 0,
                         "price": {
                             "copper": 0,
                             "silver": 0,
-                            "gold": 1
+                            "gold": 0
                         },
                         "identified": true,
-                        "name": "Small Bronze Shield",
+                        "name": "Fist",
                         "rounds_per_charge": 0,
                         "size": "small",
-                        "type": "armor",
-                        "icon": "icons/shield4.png"
+                        "type": "weapon",
+                        "icon": ""
                     },
                     "conditional": {
-                        "slot": "lefthand",
-                        "ac": 1,
-                        "material": "shield"
+                        "slot": "twohand",
+                        "dmg": 2,
+                        "to_hit": 0,
+                        "range": "short",
+                        "damage_type": "stab",
+                        "weapon_type": "melee",
+                        "save_against": "none"
                     },
                     "events": {
-                        "ondrop": "campaign.warning('%s has dropped %s' % (player.displayname(), item.displayname()))",
+                        "ondrop": "",
                         "onround": "",
                         "onequip": "",
                         "onpickup": "",
@@ -119,21 +140,21 @@
             },
             "pack": [],
             "spells": []
-        },
-        "icon": "avatars/48x48_Faces_4th_Sheet_Update_CharlesGabriel_OGA_0-5-1.png",
-        "type": "player",
-        "class": {
-            "class": "ranger",
-            "parent": "warrior"
-        },
-        "location": {
-            "y": 8,
-            "x": 8,
-            "map": "town_center.json"
         }
     },
     "conditional": {
-        "armor_types": 4,
-        "shields": true
+        "armor_types": "[",
+        "loot": {
+            "copper": "",
+            "items_possible": [],
+            "max_items": 1,
+            "gold": "",
+            "silver": ""
+        },
+        "events": {
+            "oninspect": "",
+            "oninteract": ""
+        },
+        "orientation": "friendly"
     }
 }

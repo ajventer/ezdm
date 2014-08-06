@@ -76,6 +76,21 @@ class Character(EzdmObject):
                 base_radius += item[1].get('/core/lightradius', 0)
         return base_radius
 
+    def memorized_spells(self):
+        result = {}
+        spells = self.get('/core/inventory/spells', [])
+        for idx in self.get('/core/inventory/spells_memorized', []):
+            try:
+                item = spells[idx]
+                level = item.get('/conditional/spell_level', 1)
+                if not level in result:
+                    result[level] = []
+                result[level].append(idx)
+            except:
+            # once inventory updates are reliable - remove this try/except
+                pass
+        return result
+
     def moveto(self, mapname, x, y, page=None):
         if not mapname:
             return

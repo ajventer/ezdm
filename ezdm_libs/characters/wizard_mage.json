@@ -1,0 +1,102 @@
+{
+    "core": {
+        "abilities": {
+            "dex": 20,
+            "cha": 20,
+            "int": 20,
+            "wis": 20,
+            "str": 20,
+            "con": 20
+        },
+        "lightradius": 0,
+        "combat": {
+            "level-hitdice": 20,
+            "hitpoints": 18,
+            "max_hp": 20
+        },
+        "personal": {
+            "name": {
+                "last": "Mage",
+                "first": "Wizard"
+            },
+            "backstory": "",
+            "sex": "male",
+            "race": "elf",
+            "xp": "",
+            "alignment": {
+                "law": "chaotic",
+                "social": "evil"
+            }
+        },
+        "location": {
+            "y": 5,
+            "x": 2,
+            "map": "simple_room.json"
+        },
+        "icon": "avatars/48x48_Faces_4th_Sheet_Update_CharlesGabriel_OGA_0-0-3.png",
+        "type": "player",
+        "class": {
+            "class": "mage",
+            "parent": "wizard"
+        },
+        "inventory": {
+            "equiped": {
+                "head": {},
+                "righthand": {},
+                "neck": {},
+                "wrists": {},
+                "rightfinger": {},
+                "chest": {},
+                "feet": {},
+                "leftfinger": {},
+                "gloves": {},
+                "legs": {},
+                "lefthand": {}
+            },
+            "money": {
+                "copper": 0,
+                "silver": 0,
+                "gold": 0
+            },
+            "spells_memorized": [
+                0,
+                0
+            ],
+            "pack": [],
+            "spells": [
+                {
+                    "core": {
+                        "current_rounds_performed": 0,
+                        "name": "Magic Misile",
+                        "weight": 0,
+                        "in_use": false,
+                        "charges": -1,
+                        "price": {
+                            "copper": 25,
+                            "silver": 50,
+                            "gold": 200
+                        },
+                        "description": "Fires a bolt of arcane energy at the target, if it hits it does 1d4 damage.",
+                        "identified": true,
+                        "rounds_per_charge": 2,
+                        "icon": "icons/magic_misile.png",
+                        "type": "spell",
+                        "size": "small"
+                    },
+                    "conditional": {
+                        "spell_school": "Conjuration",
+                        "spell_level": 1
+                    },
+                    "events": {
+                        "ondrop": "",
+                        "onround": "campaign.error('%s continues to cast Magic Misile at %s' % (player.displayname(), target.displayname()))",
+                        "onequip": "",
+                        "onpickup": "",
+                        "onuse": "campaign.error('%s is casting Magic Missile at %s' % (player.displayname(), target.displayname()))",
+                        "onfinish": "campaign.warning('%s has finished casting Magic Misile at %s'  % (player.displayname(), target.displayname()))\r\nfrom ezdm_libs.util import rolldice\r\nspell_success = player.spell_success()\r\nif not spell_success[1]:\r\n\tcampaign.error(spell_success[0])\r\nelse:\r\n\tdmg = rolldice(numdice=1, numsides=4, modifier=0)\r\n\tresult = target.take_damage(dmg)\r\n\tcampaign.error(result[1])"
+                    }
+                }
+            ]
+        }
+    }
+}

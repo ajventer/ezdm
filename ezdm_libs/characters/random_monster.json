@@ -9,7 +9,7 @@
             "con": 15
         },
         "combat": {
-            "hitpoints": 30,
+            "hitpoints": 22,
             "thac0": 16,
             "level-hitdice": 5,
             "saving_throws": {
@@ -35,8 +35,9 @@
                 "social": "evil"
             }
         },
+        "tileindex": 0,
         "location": {
-            "y": 4,
+            "y": 5,
             "x": 3,
             "map": "simple_room.json"
         },
@@ -71,13 +72,24 @@
         "icon": "avatars/rat.png"
     },
     "conditional": {
-        "armor_types": ["cloth", "leather", "mail", "plate"],
+        "armor_types": [
+            "cloth",
+            "leather",
+            "mail",
+            "plate"
+        ],
         "loot": {
             "copper": 99,
-            "items_possible": ["long_bow.json", "mainhand_dagger.json", "halberd_+1.json"],
-            "always_drops": ["health_potion.json"],
-            "max_items": 2,
+            "items_possible": [
+                "long_bow.json",
+                "mainhand_dagger.json",
+                "halberd_+1.json"
+            ],
             "gold": 10,
+            "max_items": 2,
+            "always_drops": [
+                "health_potion.json"
+            ],
             "silver": 99
         },
         "events": {
