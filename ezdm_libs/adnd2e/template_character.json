@@ -92,6 +92,15 @@
     "core.class.parent=wizard":{
         "__Yarmor_types": ["cloth"]
     },
+    "core.class.class=paladin":{
+        "abilities": {
+            "sense evil intent(must end turn)": 100,
+            "cure disease(weekly)": 100,
+            "lay on hands (daily)": 100,
+            "Turn undead (level 3+)": 100
+        }
+
+    },
     "core.class.parent=priest":{
         "__Yarmor_types": ["cloth"]
     }

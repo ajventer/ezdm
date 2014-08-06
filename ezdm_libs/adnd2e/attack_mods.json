@@ -4,5 +4,6 @@
     "Rear attack": 2,
     "Atacker on high ground": 1,
     "Defender surprized": 1,
-    "Defender stunned or prone": 999
+    "Defender stunned or prone": 999,
+    "Defender near Paladin": -1
 }
