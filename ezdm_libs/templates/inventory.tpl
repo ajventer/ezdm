@@ -76,7 +76,7 @@
  				{%endfor%}
 			</ul>
 		</td>
-		<td>
+		<td width=40%>
 			{% if detailview %}
 				<ul>
 				{%- for key, value in detailview.render().items() recursive %}                       
@@ -84,7 +84,7 @@
 				{%- if value is mapping %}                                                                                                
 				  <ul>{{ loop(value.items())}}</ul>
 				{% else %}
-				    = {{value}}
+				     = {{value}}
 				{%- endif %}                                                            
 				</li>                                                                     
 				{%- endfor %}   
@@ -109,7 +109,9 @@
 						<input type=submit name="useitem" value="Use Item">
 					{% endif %}
 					{% endif %}
+					{% if detailview.get('/core/in_use', False) %}
 					<input type=submit name="stopusing" value="Stop using">
+					{% endif %}
 				</form>
 			{% endif %}
 	</td>
