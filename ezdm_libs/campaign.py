@@ -38,9 +38,7 @@ class Campaign(EzdmObject):
                 player = '%s.json' % player
             p = Character(load_json('characters', player))
             if not p in chars and p.get('/core/combat/hitpoints', 0) > 0:
-                p.set_index(len(chars))
-                print "player", player, p.index
-                chars.append(p)
+                chars.append(('player',player))
                 loc = p.get('/core/location', {})
                 mapname = loc['map']
                 if not mapname in self.icons:
@@ -48,7 +46,6 @@ class Campaign(EzdmObject):
                 if not (loc['x'], loc['y']) in self.icons[mapname]:
                     self.icons[mapname][(loc['x'], loc['y'])] = []
                 self.icons[mapname][(loc['x'], loc['y'])].append(p)
-        print self.get('/core/maps', [])
         for mapname in self.get('/core/maps', []):
             if not mapname in self.icons:
                     self.icons[mapname] = {}
@@ -60,17 +57,24 @@ class Campaign(EzdmObject):
                         npcs_here = tile.get('/conditional/npcs', [])
                         for npc in sorted(npcs_here):
                             n = Character(npc)
-                            print "   Found %s" % n.displayname()
-                            n.put('/core/location', {"map": mapname, "x": x, "y": y})
-                            n.set_index(len(chars))
+                            idx = len(chars)
                             if not (x, y) in self.icons[mapname]:
                                 self.icons[mapname][(x, y)] = []
                             self.icons[mapname][(x, y)].append(n)
-                            chars.append(n)
+                            chars.append(('npc',n.name(),mapname,x,y))
         self.characters = chars
 
+    def get_char(self,index):
+        c = self.characters[index]
+        if c[0] == 'player':
+            char = Character(load_json('characters', c[1]))
+            char.set_index(index)
+        else:
+            gamemap = GameMap(load_json('maps',c[2]))
+            
+
     def current_char(self):
-            return self.character
+        return self.character
 
     @property
     def character(self):
@@ -144,7 +148,7 @@ class Campaign(EzdmObject):
         print "[DEBUG] Campaign.onround: character: %s" % character.displayname()
         for item in character.inventory_generator():
             if item[1].get('/core/in_use', False):
-                self.error('%s is being used' % (item[1].displayname()))
+                self.error('%s is being used by %s ' % (item[1].displayname(), character.displayname()))
                 item[1].onround(player=character)
                 if item[0] in character.get('/core/inventory/equiped', {}).keys():
                     print "[DEBUG] Campaign.onround: Equipped update: %s, %s" % (item[0], item[1])

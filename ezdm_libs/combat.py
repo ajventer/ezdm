@@ -37,8 +37,8 @@ def range_mod(player, target, weapon):
     return ranges[weaponrange][targetrange]
 
 
-def calc_damage(player, target):
-    dmg_mod = player.dmg_mod()
+def calc_damage(player, target, custom_dmg):
+    dmg_mod = player.dmg_mod() + custom_dmg
     weapon = player.current_weapon()
     dmg = weapon.get('/conditional/dmg', 1)
     save = weapon.get('/conditional/save_against', 'none')
@@ -54,7 +54,9 @@ def calc_damage(player, target):
     return taken[0]
 
 
-def attack(player, target, attack_modifiers):
+def attack(player, target, attack_modifiers, custom_tohit, custom_dmg):
+    custom_tohit = custom_tohit or 0
+    custom_dmg = custom_dmg or 0
     if player.is_casting:
         player.interrupt_cast()
         frontend.campaign.message('%s was casting but it was interrupted because you attacked %s' % (player.displayname(), target.displayname))
@@ -65,7 +67,7 @@ def attack(player, target, attack_modifiers):
     num_attacks = player.num_attacks()
     print "COMBAT: num_attacks:", num_attacks
     while attack_number <= num_attacks and target_alive:
-        total_modifier = 0
+        total_modifier = custom_tohit
         for mod in attack_modifiers:
             total_modifier += int(attack_mods[mod])
             frontend.campaign.message('Applying modifier %s: %s' % (mod, attack_mods[mod]))
@@ -94,7 +96,7 @@ def attack(player, target, attack_modifiers):
             if target.is_casting:
                 target.interrupt_cast()
                 frontend.campaign.message('%s was casting but it was interrupted by a successfull hit' % target.displayname)
-            damage_result = calc_damage(player, target)
+            damage_result = calc_damage(player, target, custom_dmg)
             target_alive = damage_result is True
             if not target_alive:
                 if target.character_type() == 'npc':
