@@ -54,6 +54,10 @@ class Page:
         else:
             menuitems = self.make_menu(find_files('', 'campaign*.py', basename=True), 'campaign_')
         menuitems.update(self.make_menu(find_files('', 'all*.py', basename=True), 'all_'))
+        if mode == 'dm':
+            title += ' DUNGEON MASTER MODE'
+        else:
+            title += ' CAMPAIGN MODE'
         headerdict = {'title': title}
         if campaign:
             headerdict['character'] = campaign.current_char()
