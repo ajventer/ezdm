@@ -94,7 +94,7 @@ class Campaign(EzdmObject):
     def endturn(self):
         self.error('End of turn. Starting new turn.')
         self.chars_in_round()
-        self.roll_for_initiative()
+        #self.roll_for_initiative()
 
     def endround(self):
         print "Charcounter - start:", self.charcounter, "Characters", self.characters
