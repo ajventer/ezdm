@@ -437,7 +437,7 @@ class Character(EzdmObject):
             item = Item(self.get('/core/inventory/pack', [])[itemname])
         else:
             for item in [Item(i) for i in self.get('/core/inventory/pack', [])]:
-                if item.displayname == itemname:
+                if item.displayname() == itemname:
                     break
         if not item.identified():
             item.identify()
