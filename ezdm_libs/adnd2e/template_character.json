@@ -67,7 +67,7 @@
         }
     },
     "__1core.class.parent=rogue":{
-        "armor_types": 3,
+        "__Yarmor_types": 3,
         "shields": false,
         "abilities":{
             "pick pockets":15,
@@ -89,11 +89,11 @@
         "__Yshields": true
     },
     "core.class.parent=warrior":{
-        "armor_types": 4,
+        "__Yarmor_types": 4,
         "__Yshields": true
     },
     "core.class.parent=wizard":{
-        "armor_types": 1,
+        "__Yarmor_types": 1,
         "__Yshields": false
     },
     "core.class.class=paladin":{
@@ -106,7 +106,7 @@
 
     },
     "core.class.parent=priest":{
-        "armor_types": 1,
+        "__Yarmor_types": 1,
         "__Yshields": false
     }
 }

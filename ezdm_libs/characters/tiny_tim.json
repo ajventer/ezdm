@@ -143,6 +143,6 @@
         }
     },
     "conditional": {
-        "armor_types": "['cloth', 'leather', 'mail', 'plate']"
+        "armor_types": 4
     }
 }

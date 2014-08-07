@@ -140,5 +140,8 @@
             "pack": [],
             "spells": []
         }
-    }
+    },
+    "conditional": {
+        "armor_types": 4
+    }    
 }

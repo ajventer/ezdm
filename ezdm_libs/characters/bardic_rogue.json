@@ -207,7 +207,7 @@
         }
     },
     "conditional": {
-        "armor_types": "['cloth', 'leather']",
+        "armor_types": 3,
         "abilities": {
             "find-remove traps": 5,
             "read languages": 5,
