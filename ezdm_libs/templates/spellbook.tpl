@@ -52,19 +52,16 @@
                             {% set ikey = key|int %}
                             <div style="background-color: #ccffcc; border: 3px solid; display: table-row;">
                                Level {{key}} spells:
-                            {% set count = 0 %}
                             {% for spell in memorized[ikey] %}
-                                {% set count = count + 1 %}
                                 <div onclick="clickHandler('{{spell}}','memory')" style="background-color: #aaffcc; border: 2px solid; display: table-cell;  ">
                                 {% set spellview = spells[spell] %}
                                   <!-- <a href=# onclick="clickHandler('{{spell}}','memory')"> -->
                                     {{spellview[1].displayname()}}
-                                    <input type=hidden name="memorize_spell" value="{{spell}}"
-                                <!-- </a> -->
-                                  <img width=25 align=top src="/icon/{{spellview[1].get('/core/icon','')}}">
+                                    <input type=hidden name="memorize_spell" value="{{spell}}">
+                                <img width=25 align=top src="/icon/{{spellview[1].get('/core/icon','')}}">
                                 </div>
                             {% endfor %}
-                            {% set available = spellprog[spelltype][key] - count %}    
+                            {% set available = spellprog[spelltype][key] - memorized[ikey]|length %}    
                             {% for count in range(0,available) %}
                             <div  style="background-color: #ccffcc; border: 2px solid; display: table-cell;">
                                     <select name="memorize_spell">
