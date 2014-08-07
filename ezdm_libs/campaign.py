@@ -42,16 +42,18 @@ class Campaign(EzdmObject):
                 print "player", player, p.index
                 chars.append(p)
                 loc = p.get('/core/location', {})
-                mapname = loc['map']
-                if not mapname in self.icons:
-                    self.icons[mapname] = {}
-                if not (loc['x'], loc['y']) in self.icons[mapname]:
-                    self.icons[mapname][(loc['x'], loc['y'])] = []
-                self.icons[mapname][(loc['x'], loc['y'])].append(p)
+                if 'map' in loc:
+                    mapname = loc['map']
+                    if not mapname in self.icons:
+                        self.icons[mapname] = {}
+                    if not (loc['x'], loc['y']) in self.icons[mapname]:
+                        self.icons[mapname][(loc['x'], loc['y'])] = []
+                    self.icons[mapname][(loc['x'], loc['y'])].append(p)
         print self.get('/core/maps', [])
         for mapname in self.get('/core/maps', []):
             if not mapname in self.icons:
                     self.icons[mapname] = {}
+            print mapname
             gamemap = GameMap(load_json('maps', mapname))
             for y in range(0, gamemap.get('/max_y', 1)):
                 for x in range(0, gamemap.get('/max_x', 1)):

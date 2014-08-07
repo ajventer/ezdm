@@ -687,8 +687,6 @@ class Character(EzdmObject):
 
     def render(self):
         out = copy.deepcopy(self())
-        print out
-        return
         out['core']['lightradius'] = self.lightradius
         prettynames = load_json('adnd2e', 'saving_throws')
         writekey('/conditional/abilities', self.abilities(), out)
