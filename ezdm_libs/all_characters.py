@@ -26,14 +26,14 @@ class CHARACTERS(JSON_Editor):
             page.error('No item specified')
             return page.render()
         try:
-            print 'try %s' % self._name
+            print 'try %s/%s' % (self._name, item)
             json = load_json('%ss' % self._name, item)
         except:
             print 'except'
             page.error('No files matching %s found in %s' % (item, self._name))
             return page.render()
         c = Character(json)
-        json = {"json": c.render()}
-        print json
-        page.add('json_viewer.tpl', json)
+        rendered = {}
+        rendered['json'] = c.render()
+        page.add('json_viewer.tpl', rendered)
         return page.render()
