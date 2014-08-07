@@ -145,17 +145,17 @@
                         "weight": 0,
                         "in_use": false,
                         "charges": 0,
-                        "type": "other",
                         "price": {
                             "copper": 0,
                             "silver": 0,
                             "gold": 10
                         },
+                        "rounds_per_charge": 1,
                         "identified": true,
                         "name": "Health Potion",
-                        "rounds_per_charge": 1,
-                        "icon": "icons/health_potion.png",
                         "target": null,
+                        "icon": "icons/health_potion.png",
+                        "type": "other",
                         "size": "small"
                     },
                     "events": {
@@ -183,9 +183,9 @@
                             "silver": 50,
                             "gold": 200
                         },
-                        "rounds_per_charge": 2,
                         "identified": true,
                         "target": null,
+                        "rounds_per_charge": 2,
                         "icon": "icons/magic_misile.png",
                         "type": "spell",
                         "name": "Magic Misile"

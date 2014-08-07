@@ -8,17 +8,10 @@
             "str": 20,
             "con": 13
         },
+        "lightradius": 0,
         "combat": {
-            "hitpoints": 18,
-            "thac0": 20,
             "level-hitdice": 1,
-            "saving_throws": {
-                "breath": 17,
-                "pp": 15,
-                "spell": 17,
-                "rod": 16,
-                "ppd": 14
-            },
+            "hitpoints": 18,
             "max_hp": 18
         },
         "personal": {
@@ -35,45 +28,35 @@
                 "social": "good"
             }
         },
-        "location": {
-            "y": 8,
-            "map": "town_center.json",
-            "x": 8
-        },
-        "icon": "avatars/48x48_Faces_4th_Sheet_Update_CharlesGabriel_OGA_0-5-1.png",
-        "type": "player",
-        "class": {
-            "class": "ranger",
-            "parent": "warrior"
-        },
         "inventory": {
             "equiped": {
                 "head": {},
                 "righthand": {
                     "core": {
                         "current_rounds_performed": 0,
-                        "name": "Long bow",
-                        "weight": "",
+                        "description": "To use:<br>Hold by blunt end.<br>Aim pointy end at person of unpleasant persona.<br>Attempt to thrust pointy end into person of unpleasant persona by means of a vigorous arm movement.",
+                        "weight": 0,
                         "in_use": false,
                         "charges": 0,
                         "price": {
-                            "copper": "",
-                            "silver": "",
+                            "copper": 0,
+                            "silver": 0,
                             "gold": 25
                         },
                         "identified": true,
+                        "name": "One Handed Bastard Sword",
                         "rounds_per_charge": 0,
-                        "icon": "icons/longbow.png",
-                        "size": "large",
+                        "icon": "icons/sword.png",
+                        "size": "medium",
                         "type": "weapon",
-                        "description": "A small dagger balanced for use in the main hand."
+                        "lightradius": 0
                     },
                     "conditional": {
-                        "slot": "twohand",
-                        "to_hit": 0,
+                        "slot": "righthand",
                         "dmg": 8,
-                        "range": "long",
-                        "damage_type": "hack",
+                        "to_hit": "",
+                        "range": "short",
+                        "damage_type": "slice",
                         "weapon_type": "melee",
                         "save_against": "none"
                     },
@@ -95,31 +78,28 @@
                 "legs": {},
                 "lefthand": {
                     "core": {
+                        "lightradius": 0,
                         "current_rounds_performed": 0,
-                        "description": "A small dagger balanced for use in the main hand.",
-                        "weight": "",
+                        "description": "This \"shield\" is little more than a battered piece of bronze plate, there are some dents and suspicious looking stains on it. You think it may be second hand and you doubt the original owner\r\nwas alive when he lost it.",
+                        "weight": 3,
                         "in_use": false,
                         "charges": 0,
                         "price": {
-                            "copper": "",
-                            "silver": "",
-                            "gold": 25
+                            "copper": 0,
+                            "silver": 0,
+                            "gold": 1
                         },
                         "identified": true,
-                        "name": "Long bow",
+                        "name": "Small Bronze Shield",
                         "rounds_per_charge": 0,
-                        "size": "large",
-                        "type": "weapon",
-                        "icon": "icons/longbow.png"
+                        "size": "small",
+                        "type": "armor",
+                        "icon": "icons/shield4.png"
                     },
                     "conditional": {
-                        "slot": "twohand",
-                        "dmg": 8,
-                        "to_hit": 0,
-                        "range": "long",
-                        "damage_type": "hack",
-                        "weapon_type": "melee",
-                        "save_against": "none"
+                        "slot": "lefthand",
+                        "ac": 1,
+                        "material": "shield"
                     },
                     "events": {
                         "ondrop": "campaign.warning('%s has dropped %s' % (player.displayname(), item.displayname()))",
@@ -139,9 +119,22 @@
             },
             "pack": [],
             "spells": []
+        },
+        "icon": "avatars/48x48_Faces_4th_Sheet_Update_CharlesGabriel_OGA_0-5-1.png",
+        "type": "player",
+        "class": {
+            "class": "ranger",
+            "parent": "warrior"
+        },
+        "location": {
+            "y": 8,
+            "x": 8,
+            "map": "town_center.json"
         }
     },
     "conditional": {
-        "armor_types": 4
-    }    
+        "armor_types": 4,
+        "shields": true
+    }
+
 }
