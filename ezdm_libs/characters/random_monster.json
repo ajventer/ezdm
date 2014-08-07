@@ -72,12 +72,7 @@
         "icon": "avatars/rat.png"
     },
     "conditional": {
-        "armor_types": [
-            "cloth",
-            "leather",
-            "mail",
-            "plate"
-        ],
+        "armor_types": 4,
         "loot": {
             "copper": 99,
             "items_possible": [
