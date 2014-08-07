@@ -23,9 +23,10 @@
             <ul>
                 {% for section,spell,index in spells %}
                 <li>
-                    <a href=# onclick="clickHandler('{{index}}','spellbook')">
-                        {{spell.displayname()}} </a>
-                    <img onclick="clickHandler('{{index}}','spellbook')" src="/icon/{{spell.get('/core/icon','')}}">
+                    <div onclick="clickHandler('{{index}}','spellbook')"  style="background-color: #aaffcc; border: 3px solid; box-shadow: 5px 5px 2px #888888;">
+                        {{spell.displayname()}}
+                    <img align=top height=25 src="/icon/{{spell.get('/core/icon','')}}">
+                </div>
                 </li>
                 {% endfor %}
             </ul><br>
@@ -54,11 +55,12 @@
                             {% set count = 0 %}
                             {% for spell in memorized[ikey] %}
                                 {% set count = count + 1 %}
-                                <div  style="background-color: #ccffcc; border: 2px solid; display: table-cell;">
+                                <div onclick="clickHandler('{{spell}}','memory')" style="background-color: #aaffcc; border: 2px solid; display: table-cell;  ">
                                 {% set spellview = spells[spell] %}
-                                  <a href=# onclick="clickHandler('{{spell}}','memory')">
-                                    {{spellview[1].displayname()}}</a>
-                                  <img  onclick="clickHandler('{{spell}}','memory')" src="/icon/{{spellview[1].get('/core/icon','')}}">
+                                  <!-- <a href=# onclick="clickHandler('{{spell}}','memory')"> -->
+                                    {{spellview[1].displayname()}}
+                                <!-- </a> -->
+                                  <img width=25 align=top src="/icon/{{spellview[1].get('/core/icon','')}}">
                                 </div>
                             {% endfor %}
                             {% set available = spellprog[spelltype][key] - count %}    
