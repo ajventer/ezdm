@@ -5,6 +5,7 @@ from gamemap import GameMap
 import copy
 from random import randrange
 import frontend
+import operator
 
 
 class Character(EzdmObject):
@@ -671,6 +672,8 @@ class Character(EzdmObject):
 
     def render(self):
         out = copy.deepcopy(self())
+        print out
+        return
         out['core']['lightradius'] = self.lightradius
         prettynames = load_json('adnd2e', 'saving_throws')
         writekey('/conditional/abilities', self.abilities(), out)
@@ -696,4 +699,11 @@ class Character(EzdmObject):
                     else:
                         done = True
         del(out['core']['inventory'])
+        del(out['conditional']['armor_types'])
+        armor_types = load_json('adnd2e', 'armor_types.json')
+        armor_types = sorted(armor_types.iteritems(), key=operator.itemgetter(1))
+        out['core']['combat']['Armor allowed'] = []
+        for atype in armor_types:
+            if atype[1] <= self.get('/conditional/armor_types', 0):
+                out['core']['combat']['Armor allowed'].append(atype[0])
         return out
