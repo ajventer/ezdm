@@ -219,7 +219,6 @@ class Character(EzdmObject):
         return name.lower()
 
     def save(self):
-        print "Saving %s to disk" % self.displayname()
         self.json = inflate(flatten(self.json))
         if 'temp' in self():
             del self()['temp']

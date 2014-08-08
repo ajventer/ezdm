@@ -55,7 +55,6 @@
                             {% for spell in memorized[ikey] %}
                                 <div onclick="clickHandler('{{spell}}','memory')" style="background-color: #aaffcc; border: 2px solid; display: table-cell;  ">
                                 {% set spellview = spells[spell] %}
-                                  <!-- <a href=# onclick="clickHandler('{{spell}}','memory')"> -->
                                     {{spellview[1].displayname()}}
                                     <input type=hidden name="memorize_spell" value="{{spell}}">
                                 <img width=25 align=top src="/icon/{{spellview[1].get('/core/icon','')}}">

@@ -31,13 +31,20 @@
 			<ul>
 				{% for item in inventory.pack %}
 				<li>
-					<a href="#" onclick="clickHandler('{{loop.index -1}}', 'pack')">{{item.core.name}}</a>
-					<img onclick="clickHandler('{{loop.index -1}}', 'pack')" src="/icon/{{item.core.icon}}"></li>
+					<div onclick="clickHandler('{{loop.index -1}}', 'pack')" style="background-color: #ccffcc; border: 3px solid;">
+						{{item.core.name}}
+						<img src="/icon/{{item.core.icon}}">
+					</div>
+				</li>
 				{% endfor %}
 			</ul>
 			<ul>
 				{% for k,v in inventory.money.items() %}
-				<li>{{k}}: {{v}}</li>
+				<li>
+					<div  style="background-color: #aaffcc; border: 3px solid;">
+						{{k}}: {{v}}
+					</div>	
+				</li>
 				{% endfor %}
 			</ul>			
 			{% if editmode %}
@@ -64,11 +71,10 @@
  					<li>{{slot}}
   						{% if 'core' in inventory.equiped[slot] %}
  						<ul>
- 							<li>
-								<a href="#" onclick="clickHandler('x', '{{slot}}')">{{inventory.equiped[slot].core.name}}</a>
- 							</li>
- 							<li>
- 							<img onclick="clickHandler('x', '{{slot}}')" src="/icon/{{inventory.equiped[slot].core.icon}}">
+ 							<li><div onclick="clickHandler('x', '{{slot}}')" style="background-color: #ccffcc; border: 3px solid;">
+								{{inventory.equiped[slot].core.name}}
+ 							<img src="/icon/{{inventory.equiped[slot].core.icon}}">
+ 						</div>
  						</li>
  						</ul>
  						{%endif%}
