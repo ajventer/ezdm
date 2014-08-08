@@ -24,12 +24,11 @@ class CharacterList(object):
         """
         character.set_index(len(self.characters))
         if character.character_type() == 'player':
-            character.save()
             load_tuple = ('player', character.name())
         else:
-            character.save_to_tile()
             loc = character.location()
-            load_tuple = ('npc', loc, character.get_tile_index())
+            load_tuple = ('npc', loc, character.get_hash())
+        character.autosave()
         return load_tuple
 
     def append(self, character):
@@ -60,9 +59,12 @@ class CharacterList(object):
             mapname = loc['map']
             x = loc['x']
             y = loc['y']
-            json = GameMap(mapname).tile(x, y).get('/npcs', [])
-            json = json[load_tuple[2]]
-            return Character(json)
+            gamemap = GameMap(load_json('maps', mapname))
+            tile = gamemap.tile(x, y)
+            for npcjson in tile.get('/conditional/npcs', []):
+                npc = Character(npcjson)
+                if npc.get_hash() == load_tuple[2]:
+                    return npc
 
     def __list__(self):
         """
@@ -154,13 +156,12 @@ class Campaign(EzdmObject):
     """
     For whatever reason doctests don't work in these classes
     """
-    characterlist = CharacterList()
-    json = {}
-    initiative = []
 
     def __init__(self, json):
-        self.current = self.get('/core/current_char', -1)
+        self.characterlist = CharacterList()
         self.json = json
+        self.initiative = []
+        self.current = self.get('/core/current_char', -1)
         self.messages = []
         self.chars_in_round()
 
@@ -176,36 +177,39 @@ class Campaign(EzdmObject):
         return self.get('/core/players', [])
 
     def chars_in_round(self):
-        self.icons = {}
+        icons = {}
+        self.characterlist = CharacterList()
         players = self.players()
         for player in sorted(players):
             if not player.endswith('.json'):
                 player = '%s.json' % player
             p = Character(load_json('characters', player))
-            if not p in self.characterlist and p.get('/core/combat/hitpoints', 0) > 0:
+            if p.get('/core/combat/hitpoints', 0) > 0:
                 p_idx = self.characterlist.append(p)
                 loc = p.location()
                 if 'map' in loc:
                     mapname = loc['map']
-                    if not mapname in self.icons:
-                        self.icons[mapname] = {}
-                    if not (loc['x'], loc['y']) in self.icons[mapname]:
-                        self.icons[mapname][(loc['x'], loc['y'])] = []
-                    self.icons[mapname][(loc['x'], loc['y'])].append(p_idx)
-        for mapname in self.icons:
+                    if not mapname in icons:
+                        icons[mapname] = {}
+                    if not (loc['x'], loc['y']) in icons[mapname]:
+                        icons[mapname][(loc['x'], loc['y'])] = []
+                    icons[mapname][(loc['x'], loc['y'])].append(p_idx)
+        for mapname in icons:
             gamemap = GameMap(load_json('maps', mapname))
             for y in range(0, gamemap.get('/max_y', 1)):
                 for x in range(0, gamemap.get('/max_x', 1)):
                     tile = gamemap.tile(x, y)
                     if tile.revealed():
                         npcs_here = tile.get('/conditional/npcs', [])
+
                         for npc in sorted(npcs_here):
                             n = Character(npc)
                             n.put('/core/location', {"map": mapname, "x": x, "y": y})
                             n_idx = self.characterlist.append(n)
-                            if not (x, y) in self.icons[mapname]:
-                                self.icons[mapname][(x, y)] = []
-                            self.icons[mapname][(x, y)].append(n_idx)
+                            if not (x, y) in icons[mapname]:
+                                icons[mapname][(x, y)] = []
+                            icons[mapname][(x, y)].append(n_idx)
+        return icons
 
     def roll_for_initiative(self):
         initiative = []
@@ -217,7 +221,7 @@ class Campaign(EzdmObject):
             initiative.append((roll[0], char.index))
         for char in sorted(initiative, reverse=True):
             self.initiative.append(char[1])
-        self.message('%s rolled the highest and goes first' % self.characters[0].displayname())
+        self.message('%s rolled the highest and goes first' % self.characterlist[0].displayname())
 
     def endturn(self):
         self.error('End of turn. Starting new turn.')
@@ -231,6 +235,7 @@ class Campaign(EzdmObject):
     def endround(self):
         if not self.initiative:
             self.roll_for_initiative()
+        print self.initiative
         cycle = False
         char_health = 0
         while char_health == 0:
@@ -245,11 +250,11 @@ class Campaign(EzdmObject):
                 self.endturn()
             char_health = int(self.current_char().get('/core/combat/hitpoints', 0))
         self.onround(self.characterlist[self.current])
-        loc = self.current_char.location()
+        loc = self.current_char().location()
         if loc:
-            self.character.moveto(mapname=loc['map'], x=loc['x'], y=loc['y'])
-        self.character.save()
-        self.error('%s goes next' % self.character.displayname())
+            self.current_char().moveto(mapname=loc['map'], x=loc['x'], y=loc['y'])
+        self.current_char().autosave()
+        self.error('%s goes next' % self.current_char().displayname())
         self.save()
 
     def save(self):
@@ -277,11 +282,7 @@ class Campaign(EzdmObject):
                 else:
                     print "[DEBUG] Campaign.onround: pack update: %s, %s" % (item[0], item[1])
                     character()['core']['inventory'][item[0]][item[2]] = item[1]()
-        if character.character_type() == 'player':
-            character.save()
-        else:
-            character.save_to_tile()
-
+        character.autosave()
 
 if __name__ == '__main__':
     import doctest

@@ -3,7 +3,6 @@ import frontend
 from character import Character
 from item import Item
 from util import load_json, find_files, inrange
-import copy
 
 
 class SPELLBOOK(Session):
@@ -14,7 +13,7 @@ class SPELLBOOK(Session):
     def render(self, requestdata):
         page = Page()
         self._data['detailview'] = None
-        self._data['targetlist'] = copy.deepcopy(frontend.campaign.characters)
+        self._data['targetlist'] = list(frontend.campaign.characterlist)
         self._data['editmode'] = frontend.mode == 'dm'
         self._character = frontend.campaign.current_char()
         if self._data['editmode']:
@@ -71,7 +70,7 @@ class SPELLBOOK(Session):
                 del (self._character()['core']['inventory']['spells_memorized'][idx])
                 self._character()['core']['inventory']['spells'][int(requestdata['pack_index'])] = item()
 
-        self._character.save()
+        self._character.autosave()
         for spell in self._character.inventory_generator(sections=['spells']):
             self._data['spells'].append(spell)
         self._data['memorized'] = self._character.memorized_spells()

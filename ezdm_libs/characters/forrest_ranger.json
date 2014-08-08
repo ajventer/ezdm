@@ -22,7 +22,7 @@
             "backstory": "",
             "sex": "female",
             "race": "half-elf",
-            "xp": "",
+            "xp": 0,
             "alignment": {
                 "law": "neutral",
                 "social": "good"

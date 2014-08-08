@@ -105,7 +105,8 @@
                         {% endif %}
                     {% endfor %}
                     {% if charicons %}
-                    {% for char in charicons[(x, y)] %}
+                    {% for idx in charicons[(x, y)] %}
+                        {% set char = campaign.characterlist[idx] %}
                         {% set title = char.displayname() %}
                         {% set icon = char.get('/core/icon', '') %}
                         <img width=25 height=25 src="/icon/{{icon}}" title="{{title}}" onclick="clickHandler({{x}},{{y}})" align=left>
@@ -150,7 +151,8 @@
                         <img title="{{k}}" src="/icon/{{v}}"  onclick="itemclickHandler({{zoom_x}},{{zoom_y}}, '{{section}}', '{{k}}')">
                     {% endfor %}
                     {% if charicons %}
-                    {% for char in charicons[(zoom_x, zoom_y)] %}
+                    {% for idx in charicons[(zoom_x, zoom_y)] %}
+                        {% set char = campaign.characterlist[idx] %}
                         {% set title = char.displayname() %}
                         {% set index = char.index %}
                         {% set icon = char.get('/core/icon', '') %}

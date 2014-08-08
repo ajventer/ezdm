@@ -1,4 +1,4 @@
-from util import inflate, flatten, rolldice, inrange, price_in_copper, convert_money, save_json, load_json, readkey, writekey
+from util import npc_hash, inflate, flatten, rolldice, inrange, price_in_copper, convert_money, save_json, load_json, readkey, writekey
 from item import Item
 from objects import EzdmObject, event
 from gamemap import GameMap
@@ -12,16 +12,15 @@ class Character(EzdmObject):
     removed = False
     json = {}
     auto = False
-    index = -1
     weapon = 0
 
     def __init__(self, json):
         self.json = json
-        if self.json:
-            if not self.character_type() == 'player':
-                numdice = int(self.get('/core/combat/level-hitdice', '1'))
-                self.put('core/combat/hitpoints', rolldice(numdice=numdice, numsides=8)[0])
-                self.put('core/combat/max_hp', numdice * 8)
+
+    def roll_hit_dice(self):
+        numdice = int(self.get('/core/combat/level-hitdice', '1'))
+        self.put('core/combat/hitpoints', rolldice(numdice=numdice, numsides=8)[0])
+        self.put('core/combat/max_hp', numdice * 8)
 
     def handle_death(self):
         loc = self.location()
@@ -34,7 +33,8 @@ class Character(EzdmObject):
             chartype = 'npcs'
             todel = self.get_tile_index()
         gamemap = GameMap(load_json('maps', loc['map']))
-        gamemap.removefromtile(loc['x'], loc['y'], todel, chartype)
+        if todel != -1:
+            gamemap.removefromtile(loc['x'], loc['y'], todel, chartype)
         print chartype
         if chartype == 'npcs':
             max_gold = self.get('/conditional/loot/gold', 0)
@@ -150,6 +150,7 @@ class Character(EzdmObject):
                 self()['core']['inventory'][item[0]][item[2]] = item[1]()
             else:
                 self.put('/core/inventory/equiped_by_type/%s' % item[0], item[1]())
+        self.autosave()
 
     def character_type(self):
         return self.get('/core/type', 'player')
@@ -172,18 +173,39 @@ class Character(EzdmObject):
         return int(xp)
 
     def set_index(self, index):
-        self.index = index
+        self.put('/index', index)
 
-    def set_tile_index(self, index):
-        self.put('/core/tileindex', index)
+    def set_hash(self):
+        myhash = npc_hash()
+        self.put('/hash', myhash)
+        return myhash
+
+    def get_hash(self):
+        return self.get('/hash', '')
+
+    def get_tile_index(self):
+        loc = self.location()
+        gamemap = GameMap(load_json('maps', loc['map']))
+        idx = -1
+        for charjson in gamemap.tile(loc['x'], loc['y']).get('/conditional/npcs', []):
+            idx += 1
+            if readkey('/hash', charjson, '') == self.get_hash:
+                break
+        return idx
+
+    @property
+    def index(self):
+        return self.get('/index', -1)
 
     def save_to_tile(self):
         loc = self.location()
         gamemap = GameMap(load_json('maps', loc['map']))
-        gamemap.tile(loc['x'], loc['y'])()['conditional']['npcs'][self.get_tile_index()] = self()
-
-    def get_tile_index(self):
-        return self.get('/core/tileindex', -1)
+        idx = self.get_tile_index()
+        if idx != -1:
+            gamemap.tile(loc['x'], loc['y'])()['conditional']['npcs'][idx] = self()
+        else:
+            gamemap.tile(loc['x'], loc['y'])()['conditional']['npcs'].append(self())
+        gamemap.save()
 
     def heal(self, amount):
         hp = int(self.get('/core/combat/hitpoints', 1))
@@ -198,7 +220,7 @@ class Character(EzdmObject):
         out = ''
         if damage >= self.get('/core/combat/hitpoints', 1):
             st = self.saving_throw('ppd')
-            out = '<br>'.join(st[1])
+            out = st[1]
             if not st[0]:
                 self.put('/core/combat/hitpoints', 0)
                 out += "<br>%s has died !" % self.displayname()
@@ -222,10 +244,13 @@ class Character(EzdmObject):
         self.json = inflate(flatten(self.json))
         if 'temp' in self():
             del self()['temp']
-        if frontend.campaign:
-            print "Updating campaign"
-            frontend.campaign.chars_in_round()
         return save_json('characters', self.name(), self.json)
+
+    def autosave(self):
+        if self.character_type() == 'player':
+            self.save()
+        else:
+            self.save_to_tile()
 
     def to_hit_mod(self):
         ability_mods = load_json('adnd2e', 'ability_scores')
@@ -444,7 +469,7 @@ class Character(EzdmObject):
         if item:
             if item.armortype() == 'shield' and not shields:
                 return (False, "%s cannot wear %s shields like %s" % (self.displayname(), item.armortype(), item.displayname()))
-            elif item.armortype() != 'shield' and item.itemtype() == 'armor' and not armor_types[item.armortype()] > canwear:
+            elif item.armortype() != 'shield' and item.itemtype() == 'armor' and canwear < armor_types[item.armortype()]:
                 return (False, "%s cannot wear %s armor like %s" % (self.displayname(), item.armortype(), item.displayname()))
             if item.slot() == 'twohand':
                 slots = ['lefthand', 'righthand']
@@ -583,6 +608,7 @@ class Character(EzdmObject):
 
     @property
     def weapons(self):
+        self.load_weapons()
         return self.equiped_by_type('weapon')
 
     def num_weapons(self):
@@ -687,6 +713,8 @@ class Character(EzdmObject):
 
     def render(self):
         out = copy.deepcopy(self())
+        if 'hash' in out:
+            del(out['hash'])
         out['core']['lightradius'] = self.lightradius
         prettynames = load_json('adnd2e', 'saving_throws')
         writekey('/conditional/abilities', self.abilities(), out)

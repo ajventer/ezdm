@@ -1,5 +1,5 @@
 <table border=1 width=60%>
-    <tr><td bgcolor=lightblue width=60%>
+<tr><td bgcolor=lightblue width=60%>
 {% if json.icon %}
 	<img align=right src="/icon/{{json.icon}}" border=0>
 {% endif %}    	

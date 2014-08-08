@@ -21,7 +21,6 @@ class CHARACTERS(JSON_Editor):
 
     def view(self, item):
         page = Page()
-        page.message(item)
         if not item:
             page.error('No item specified')
             return page.render()
@@ -35,5 +34,4 @@ class CHARACTERS(JSON_Editor):
         c = Character(json)
         rendered = {}
         rendered['json'] = c.render()
-        page.add('json_viewer.tpl', rendered)
-        return page.render()
+        return page.tplrender('json_viewer.tpl', rendered)

@@ -105,12 +105,9 @@ def attack(player, target, attack_modifiers, custom_tohit, custom_dmg):
             target_alive = damage_result is True
             if not target_alive:
                 if target.character_type() == 'npc':
-                    for char in frontend.campaign.characters:
+                    for char in list(frontend.campaign.characterlist):
                         if char.character_type() == 'player':
                             frontend.campaign.message(char.give_xp(target.xp_worth()))
                 target.handle_death()
             for char in [player, target]:
-                if char.character_type() == 'player':
-                    char.save()
-                else:
-                    char.save_to_tile()
+                char.autosave()

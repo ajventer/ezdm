@@ -3,7 +3,6 @@ import frontend
 from character import Character
 from item import Item
 from util import load_json, find_files
-import copy
 
 
 class INVENTORY(Session):
@@ -14,7 +13,7 @@ class INVENTORY(Session):
     def render(self, requestdata):
         page = Page()
         self._data['detailview'] = None
-        self._data['targetlist'] = copy.deepcopy(frontend.campaign.characters)
+        self._data['targetlist'] = list(frontend.campaign.characterlist)
         if requestdata and 'loadfrom' in requestdata:
             self._character = Character(load_json('characters', requestdata['loadfrom']))
         if frontend.mode == 'campaign' and frontend.campaign:
@@ -94,5 +93,5 @@ class INVENTORY(Session):
                     self._character.gain_money(gold, silver, copper)
 
             page.add('inventory.tpl', self._data)
-            self._character.save()
+            self._character.autosave()
         return page.render()

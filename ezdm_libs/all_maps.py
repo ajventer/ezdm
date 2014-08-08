@@ -39,7 +39,7 @@ class MAPS(Session):
                 cname = requestdata['charactername']
                 character = Character(load_json('characters', cname))
                 character.moveto(self._map.name(), self._data['zoom_x'], self._data['zoom_y'])
-                character.save()
+                character.autosave()
                 self._map = GameMap(load_json('maps', self._map.name()))
             if 'updatejson' in requestdata:
                 newjson = loads(requestdata['jsonbox'])
@@ -76,7 +76,7 @@ class MAPS(Session):
                 self._map.tile(self._data['zoom_x'], self._data['zoom_y']).linktarget(target=target, x=target_x, y=target_y)
             if 'movehere' in requestdata:
                 self._character.moveto(self._map.name(), self._data['zoom_x'], self._data['zoom_y'])
-                self._character.save()
+                self._character.autosave()
                 self._map = GameMap(load_json('maps', self._map.name()))
             if "followlink" in requestdata:
                 tile = self._map.tile(self._data['zoom_x'], self._data['zoom_y'])
@@ -84,7 +84,7 @@ class MAPS(Session):
                 new_x = tile.get('/conditional/newmap/x', 0)
                 new_y = tile.get('/conditional/newmap/y', 0)
                 self._character.moveto(mapname=newmap, x=new_x, y=new_y, page=page)
-                self._character.save()
+                self._character.autosave()
                 self._map = GameMap(load_json('maps', newmap))
                 self._data = {}
                 self._data['zoom_x'] = 0
@@ -93,7 +93,7 @@ class MAPS(Session):
             if 'sellitem' in requestdata:
                 idx = int(requestdata['itemtosell'])
                 self._character.sell_item(idx)
-                self._character.save()
+                self._character.autosave()
             if 'iconsection' in requestdata and requestdata['iconsection']:
                 print "Processing icon click"
                 iconsection = requestdata['iconsection']
@@ -113,7 +113,7 @@ class MAPS(Session):
                     self._data['detailtype'] = 'item'
             if 'iconindex' in requestdata and requestdata['iconindex']:
                 self._data['detailtype'] = 'character'
-                target = frontend.campaign.characters[int(requestdata['iconindex'])]
+                target = frontend.campaign.characterlist[int(requestdata['iconindex'])]
                 self._data['detailview'] = target.render()
                 self._data['detailindex'] = requestdata['iconindex']
             if 'itemdetail' in requestdata:
@@ -123,7 +123,7 @@ class MAPS(Session):
                     self._character.gain_money(*moneytuple)
                     self._map.putmoney(self._data['zoom_x'], self._data['zoom_y'], 0, 0, 0)
                     page.message('You picked up some money !')
-                    self._character.save()
+                    self._character.autosave()
                 elif requestdata['detailtype'] == 'item':
                     print "Processing item selection"
                     i = Item(load_json('items', requestdata['detailname']))
@@ -136,14 +136,13 @@ class MAPS(Session):
                         print "Buying item"
                         i.identify()
                         self._character.buy_item(i, page=page)
-                    self._character.save()
+                    self._character.autosave()
             if 'attack' in requestdata:
                 attackmods = requestdata.getall('attackmods')
                 print attackmods
-                target = frontend.campaign.characters[int(requestdata['detailindex'])]
+                target = frontend.campaign.characterlist[int(requestdata['detailindex'])]
                 attack(self._character, target, attackmods, int(requestdata['custom_tohit']), int(requestdata['custom_dmg']))
                 self._map = GameMap(load_json('maps', self._map.name()))
-                frontend.campaign.chars_in_round()
             if not 'savemap' in requestdata and not 'loadmap' in requestdata and self._data['editmode']:
                 page.warning('WARNING: Changes are not yet saved')
 
@@ -156,6 +155,7 @@ class MAPS(Session):
 
         self._data['attackmods'] = load_json('adnd2e', 'attack_mods')
         self._data['editmode'] = frontend.mode == 'dm'
+        self._data['campaign'] = frontend.campaign
         self._character = frontend.campaign.current_char()
         if not self._data['editmode']:
             self._data['packitems'] = self._character.for_sale()
@@ -171,10 +171,11 @@ class MAPS(Session):
             self._map = GameMap(name='New Map')
         self._data['map'] = self._map()
         self._data['mapobj'] = self._map
-        if self._map.name() in frontend.campaign.icons:
-            self._data['charicons'] = frontend.campaign.icons[self._map.name()]
-        elif 'charicons' in self._data:
-            del (self._data['charicons'])
+        charicons = frontend.campaign.chars_in_round()
+        if self._map.name() in charicons:
+            self._data['charicons'] = charicons[self._map.name()]
+        #elif 'charicons' in self._data:
+         #   del (self._data['charicons'])
         self._data['maplist'] = find_files('maps', '*.json', basename=True, strip='.json')
         self._data['tilelist'] = find_files('tiles', '*.json', basename=True, strip='.json')
         charlist = find_files('characters', '*.json', basename=True, strip='.json')

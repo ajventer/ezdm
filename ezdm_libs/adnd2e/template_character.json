@@ -15,14 +15,14 @@
         "__Ufirst": "", 
         "__Ulast":""},
     "race":"__[human,elf,dwarf,half-elf,halfling,monster,creature,gnome]",
-    "__Ixp":"",
+    "__Ixp":0,
     "sex": "__[male,female]",
     "__Tbackstory": ""
 },
 "combat":{
-    "__Ilevel-hitdice":"",
-    "__Ihitpoints":"",
-    "__Imax_hp":"",
+    "__Ilevel-hitdice":1,
+    "__Ihitpoints":0,
+    "__Imax_hp":0,
     "__Xatacks_per_round": "",
     "__Xarmor_class": "",
     "__Xweapons": {"__Idmg": "", "type": "__[melee,magic,misile]", "__Ito_hit": "","save_against":"__[ppd,rod,pp,breath,spell,none]"}
@@ -68,7 +68,7 @@
         }
     },
     "__1core.class.parent=rogue":{
-        "__Yarmor_types": 3,
+        "armor_types": 3,
         "shields": false,
         "abilities":{
             "pick pockets":15,
@@ -90,12 +90,12 @@
         "__Yshields": true
     },
     "core.class.parent=warrior":{
-        "__Yarmor_types": 4,
-        "__Yshields": true
+        "Yarmor_types": 4,
+        "shields": true
     },
     "core.class.parent=wizard":{
-        "__Yarmor_types": 1,
-        "__Yshields": false
+        "armor_types": 1,
+        "shields": false
     },
     "core.class.class=paladin":{
         "abilities": {
@@ -107,7 +107,7 @@
 
     },
     "core.class.parent=priest":{
-        "__Yarmor_types": 1,
+        "armor_types": 1,
         "__Yshields": false
     }
 }

@@ -71,9 +71,11 @@ class Item(EzdmObject):
 
     def onpickup(self, player):
         event(self, "/events/onpickup", {'item': self, 'player': player})
+        player.autosave()
 
     def onequip(self, player):
         event(self, "/events/onequip", {'item': self, 'player': player})
+        player.autosave()
 
     def onuse(self, player, target):
         print "[DEBUG] Item.onuse: player %s, target %s" % (player.displayname(), target.displayname())
@@ -86,7 +88,7 @@ class Item(EzdmObject):
 
     def onround(self, player):
         target = self.get('/core/target', 0)
-        target = frontend.campaign.characters[target]
+        target = frontend.campaign.characterlist[target]
         print "[DEBUG] Item.onround: self: %s, player: %s, target: %s" % (self.displayname(), player.displayname(), target)
         if self.get('/core/in_use', False):
             rounds = self.get('/core/rounds_per_charge', 0)
@@ -101,10 +103,12 @@ class Item(EzdmObject):
             else:
                 print "[DEBUG] item.onround: running onfinish"
                 self.onfinish(player=player)
+        player.autosave()
+        target.autosave()
 
     def onfinish(self, player):
         target = self.get('/core/target', 0)
-        target = frontend.campaign.characters[target]
+        target = frontend.campaign.characterlist[target]
         self.put('/core/in_use', False)
         self.put('/core/target', None)
         charges = self.get('/core/charges', 0)
@@ -113,9 +117,12 @@ class Item(EzdmObject):
             self.put('/core/charges', charges)
         self.put('/core/current_rounds_performed', 0)
         event(self, "/events/onfinish", {'item': self, 'player': player, 'target': target})
+        player.autosave()
+        target.autosave()
 
     def ondrop(self, player):
         event(self, "/events/ondrop", {'item': self, 'player': player})
+        player.autosave()
 
     def interrupt(self):
         self.put('/core/in_use', False)

@@ -3,6 +3,11 @@ from ezdm_libs import get_user_data, data_paths
 from simplejson import loads, dumps
 from glob import glob
 from random import randrange
+import binascii
+
+
+def npc_hash():
+    return binascii.b2a_hex(os.urandom(64))
 
 
 def json_editor(tpldict, name, action):
@@ -238,5 +243,5 @@ def rolldice(numdice=1, numsides=20, modifier=0):
                 roll = randrange(0, numsides, 1)
             else:
                 roll = randrange(1, numsides, 1)
-            total = total + roll
+            total = total + roll + modifier
     return (total, 'Rolled a %s-sided dice %s times with modifier %s: result %s' % (numsides, numdice, modifier, total))

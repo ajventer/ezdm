@@ -37,8 +37,8 @@ class Tile(EzdmObject):
             name = '%s.json' % name
         current = self.get('/conditional/%s' % objtype, [])
         if objtype == 'npcs':
-            index = len(current)
-            name.set_tile_index(index)
+            name.set_hash()
+            name.roll_hit_dice()
             name = name()
         current.append(name)
         self.put('/conditional/%s' % objtype, current)
@@ -119,7 +119,6 @@ class GameMap(EzdmObject):
         tile.add(name, objtype)
         self()['tiles'][y][x] = tile()
         self.save()
-        frontend.campaign.chars_in_round()
 
     def removefromtile(self, x, y, name, objtype):
         tile = self.tile(x, y)
@@ -127,8 +126,6 @@ class GameMap(EzdmObject):
         tile.remove(name, objtype)
         self()['tiles'][y][x] = tile()
         self.save()
-        if frontend.campaign:
-            frontend.campaign.chars_in_round()
 
     def tile_icons(self, x, y, unique=False):
         tile = self.tile(x, y)
