@@ -113,10 +113,10 @@
                             </select>
                                 <input type=submit name="cast_spell" value="Cast spell">                    
                             {% endif %}
+                        {% endif %}
                             {% if detailview.get('/core/in_use', false) %}
                                 <input type=submit name="stopcasting" value="Stop casting">
                             {% endif %}
-                        {% endif %}
                     </form>
                     {% endif %}
 

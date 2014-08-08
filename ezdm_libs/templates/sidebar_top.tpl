@@ -1,4 +1,2 @@
-<table border=0 width=100%>
-	<tr>
-		<td width=90%>
-			<center>
+<div style="display: table-row; width: 100%;">
+    <div style="display: table-cell; width: 90%;">

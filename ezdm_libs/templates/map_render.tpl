@@ -34,18 +34,13 @@
 
 </center>
 
- 
-<table border=0 width=100%>
-<tr>
-    <td valign=top>
+<div style="vertical-align: top; background-color: #ccffcc; border: 3px solid; display: table-row;"> 
 
-<table border=1, cellpadding=0, cellspacing=0>
-    <tr>
-        <td colspan="{{map.max_x + 1}}" bgcolor=lightblue align=center>
+<div style="vertical-align: top; background-color: #ccffcc; border: 3px solid; display: table-cell">        
             {% if editmode %}
-            <table border=1 width=100%>
-            <tr>
-                <td align=center width=50%>
+    <div style="vertical-align: top; background-color: #ccffcc; border: 3px solid;">
+        <div style="vertical-align: top; background-color: #ccffcc; border: 3px solid; display: table-row;">
+            <div style="background-color: #aaffcc; border: 2px solid; display: table-cell;  ">
                 <form method=post id="mapload">
                     <select name="loadmap">
                         <option value="New Map">New Map</option>
@@ -55,7 +50,8 @@
                     </select>
                     <input type=submit value="Load Map">
                 </form>
-                </td><td align=center>
+            </div>
+            <div style="vertical-align: top; background-color: #aaffcc; border: 2px solid; display: table-cell;  ">
                 <form method=post id="mapsave">Map name:
                     <input type=text name="mapname" value="{{map.name}}">
                     {% if map.name == 'New Map' %}
@@ -65,43 +61,36 @@
                     {%endif%}
                     <input type=submit name="savemap" value="Save Map">
                 </form>
-                </td>
-            </tr>
-            </table>
+            </div>
+        </div>
+    </div>
             {% else %}
-                <center><strong>{{map.name}}
-                </strong></center>
+                <lable><strong>{{map.name}}
+                </strong></lable>
             {%endif %}
-        </td>
-    </tr>
-    <tr>
-        <td  bgcolor=lightgray></td>
+<div style="vertical-align: top; background-color: #ADD6FF; border: 3px solid; display: table-row;">            
+        <div style="background-color: #ADD6FF; display: table-cell;"></div>
         {% for a in range (0,map.max_x) %}
-            <td bgcolor=lightgray>{{a}}</td>
+            <div style="background-color: #ADD6FF; display: table-cell;">{{a}}</div>
         {% endfor %}
-    </tr>
+</div>
     {% for row in map.tiles%}
         {% set y = loop.index - 1 %}
-        <tr>
-            <td bgcolor=lightgray>{{y}}</td>
+        <div  style="vertical-align: top; background-color: #ccffcc; border: 3px solid; display: table-row;">    
+            <div style="vertical-align: top; background-color: #ccffcc; display: table-cell;">{{y}}</div>
             {% for col in row %}
                 {% set x = loop.index - 1%}
                 {% if editmode or (col.core and col.core.revealed) %}
                     {% if col.core and col.core.icon %}
-                    <td valign=bottom style="background-image:url(/icon/{{col.core.icon}});background-repeat:repeat;background-size:50px 50px; width:50; height:50" >
-                        {% if mapobj.tile(x,y).tiletype() == 'signpost' %}
-                        <img src=/icon/icons/blank.png width=50 height=20 align=top
-                        title="{{mapobj.tile(x,y).get('/conditional/message', '') }}"
-                        onclick="clickHandler({{x}},{{y}})">
-                        {% endif %}                           
+                    <div onclick="clickHandler({{x}},{{y}})" style="border: 1px solid; display: table-cell; background-image:url(/icon/{{col.core.icon}});background-repeat:repeat;background-size:50px 50px; width:50; height:50" >                         
                     {% else %}
-                    <td valign=bottom style="background-image:url(/icon/icons/blank.png);background-repeat:no-repeat;background-size:50px 50px; width:50; height:50" >
+                    <div onclick="clickHandler({{x}},{{y}})" style="border: 1px solid;  display: table-cell; background-image:url(/icon/icons/blank.png);background-repeat:no-repeat;background-size:50px 50px; width:50; height:50" >
                     {% endif %}
                     {% for icontuple in mapobj.tile_icons(x,y,True) %}
                         {% set k = icontuple[0] %}
                         {% set v = icontuple[1] %}
                         {% if not mapobj.tile(x,y).tiletype() == 'shop' %}
-                            <img width=25 height=25 src="/icon/{{v}}" title="{{k}}" onclick="clickHandler({{x}},{{y}})" align=left>
+                            <img width=25 height=25 src="/icon/{{v}}" title="{{k}}" align=left>
                         {% endif %}
                     {% endfor %}
                     {% if charicons %}
@@ -109,40 +98,37 @@
                         {% set char = campaign.characterlist[idx] %}
                         {% set title = char.displayname() %}
                         {% set icon = char.get('/core/icon', '') %}
-                        <img width=25 height=25 src="/icon/{{icon}}" title="{{title}}" onclick="clickHandler({{x}},{{y}})" align=left>
+                        <img width=25 height=25 src="/icon/{{icon}}" title="{{title}}"align=left>
                     {% endfor %}
                     {% endif %}
-                    <br>
-                      {% if editmode or mapobj.tile(x,y).canenter() or mapobj.tile(x,y).tiletype() == 'signpost' %}
-                        <img src="/icon/icons/page-zoom.png" width=20 height=20 align=top onclick="clickHandler({{x}},{{y}})">
-                      {% endif %}
                 {% else %}
-                    <td valign=top style="background-image:url(/icon/backgrounds/unrevealed.png);background-repeat:repeat;background-size:50px 50px; width:50; height:50" >
+                    <div  style="vertical-align: top; border: 1px solid;  display: table-cell; background-image:url(/icon/backgrounds/unrevealed.png);background-repeat:repeat;background-size:50px 50px; width:50; height:50" >
                 {% endif %}
-                    </td>
+                    </div>
             {% endfor %}
-        </tr>
+        </div>
     {% endfor %}
-</table>
+</div>
 
-</td><td valign=top>
-    <center>
-        <table border=1 width=500>
-            <tr>
-                <td bgcolor=lightblue align=center>Zoom  {{zoom_x}}x{{zoom_y}}</td>
-            </tr>
-            <tr>
+
+ <div style="vertical-align: top; border: 3px solid; #ccffcc; display: table-cell;">
+    <div style="vertical-align: top; background-color: #ADD6FF; display: table-row;">
+         <div style="vertical-align: top; border: 1px solid; background-color: #ADD6FF; display: table-cell;">
+            <strong>Zoom  {{zoom_x}}x{{zoom_y}}</strong>
+        </div>
+    </div>
+    <div style="vertical-align: top; border: 1px solid; background-color:#ccffcc; display: table-row;">
                 {% set tile = map.tiles[zoom_y][zoom_x] %}
                 {% if tile.core %}
                     {% set icon = tile.core.icon %}
-                    <td height=500 valign=middle style="background-image:url(/icon/{{icon}});background-repeat:repeat;background-size:500px 500px; width:500; height:500">
+                    <div style="vertical-align: top; border: 1px solid; background-image:url(/icon/{{icon}});background-repeat:repeat;background-size:500px 500px; width:500; height:500 ; display:table-cell">
                      {% if mapobj.tile(zoom_x,zoom_y).tiletype() == 'signpost' %}
                        <strong><center><font color=red size=12>
                         {{mapobj.tile(zoom_x,zoom_y).get('/conditional/message', '') }}
                        </font></strong></center>
                     {% endif %}    
                 {% else %}
-                    <td height=500 valign=bottom style="background-image:url(/icon/icons/blank.png;background-repeat:repeat;background-size:500px 500px; width:500; height:500">
+                    <div style="vertical-align: top; border: 1px solid; background-image:url(/icon/icons/blank.png;background-repeat:repeat;background-size:500px 500px; width:500; height:500; display:table-cell">
                 {% endif %}
                     {% for icontuple in mapobj.tile_icons(zoom_x,zoom_y) %}
                         {% set k = icontuple[0] %}
@@ -157,17 +143,17 @@
                         {% set index = char.index %}
                         {% set icon = char.get('/core/icon', '') %}
                         <img title="{{title}}" src="/icon/{{icon}}"  onclick="charclickHandler({{zoom_x}},{{zoom_y}}, '{{index}}')">
-
                     {% endfor %}
                     {% endif %}
-                </td>
-            </tr>
-            <tr>
-                <td>
+                </div>
+            </div> 
+        </div> 
+                <div style="vertical-align: top; border: 1px solid; background-color:#ccffcc; display: table-cell;">
                     <form method=post>
                         <input type=hidden name="clicked_x" id="clicked_x" value="{{zoom_x}}">
                         <input type=hidden name="clicked_y" id="clicked_y" value="{{zoom_y}}">
                     {% if editmode %}
+                        <strong>Tile Editor</strong><br>
                             <select name="load_tile_from_file">
                                 {% for tile in tilelist %}
                                     <option value="{{tile}}">{{tile}}</option>
@@ -216,6 +202,7 @@
                                 {% endif %}
                             {% endif %}
                     {% else %}
+                        <strong>Tile actions</strong><br>
                        {% if mapobj.tile(zoom_x,zoom_y).canenter() %}
                             <input type=submit name="movehere" value="Move Here">
                             <br>
@@ -235,12 +222,10 @@
                        {% endif %}
                     {% endif %}
                     </form>
-                </td>
-            </tr>
             {% if editmode %}
-                <tr>
-                <script language="javascript" type="text/javascript" src="/js?path=editarea_0_8_2/edit_area/edit_area_full.js"></script>
-                    <td>
+                <div style="vertical-align: top; background-color: #ccffcc; display: table-cell;">
+                <script language="javascript" type="text/javascript" src="/js?path=editarea_0_8_2/edit_area/edit_area_full.js">
+                </script>
                         <form method=post>
                             <textarea id="pythonconsole" cols=60 rows=10 name="pythonconsole">#python console</textarea><br>
                             <script language="javascript" type="text/javascript">
@@ -265,12 +250,11 @@
                             </script>
                             <input type=submit value="Update tile JSON" name="updatejson">
                         </form>
-                    </td>
-                </tr>
+                    </div>
+                </div>
             {% else %}
                 {% if detailview %}
-                <tr>
-                    <td bgcolor=lightblue>
+                <div style="vertical-align: top; background-color: #ccffcc; display: table-cell;">
                         <form method=post>
                             <input type=hidden name="clicked_x" id="clicked_x" value="{{zoom_x}}">
                             <input type=hidden name="clicked_y" id="clicked_y" value="{{zoom_y}}">
@@ -315,14 +299,9 @@
                           </li>                                                                     
                         {%- endfor %}   
                         </ul>
-                    </td>
-                </tr>
+                </div>
                 {% endif %}
                 {%endif%}
-            </table>
-        </table>
-
-    </center>
-</td></tr>
-
-<center>
+            </div>
+        </div>
+</div>

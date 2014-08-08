@@ -105,14 +105,13 @@ class Page:
 
     def render(self):
         self.display_campaign_messages()
+        if self._sidebar:
+            self.content.insert(1, ('sidebar_top.tpl', {}))
+            self.content.append(('sidebar.tpl', {'content': self._sidebar}))
         if not ('footer.tpl', {}) in self.content:
-            self.content.append(('menubar.tpl', self._menuitems))
             self.content.append(('footer.tpl', {}))
         if self._has_message():
             self.content.insert(2, ('messagebox.tpl', self._messages))
-        if self._sidebar:
-            self.content.insert(2, ('sidebar_top.tpl', {}))
-            self.content.insert(-2, ('sidebar.tpl', {'content': self._sidebar}))
         page_content = ''
         for item in self.content:
             page_content += self.tplrender(item[0], item[1])

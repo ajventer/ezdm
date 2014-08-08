@@ -1,14 +1,16 @@
+</div>
+<div style="display: table-cell">
 <strong>Icon Selector:</strong><br>
 Click an image to automatically set the icon field to it.<br>
-<table border=1 bordercolor=blue>
 {% for icon in icons|sort %}
-<tr><td>
 {% if selected == icon %}
-	Current:<br>
+	<div style="box-shadow: 5px 5px 2px #888888; background-color: #aaffcc;  border: 1px solid" onclick="document.getElementById('core/icon').value = '{{icon}}';">
+{% else %}
+    <div style="box-shadow: 5px 5px 2px #888888; background-color: #ccffcc; border: 1px solid" onclick="document.getElementById('core/icon').value = '{{icon}}';">
 {% endif %}
-	<img align=left height=50 src=/icon/{{icon}} onclick="document.getElementById('core/icon').value = '{{icon}}';" >
-    </td><td valign=middle><input type=button onclick="document.getElementById('core/icon').value = '{{icon}}';" value={{icon}}>
-</td></tr>
+	<img height=50 src=/icon/{{icon}} >
+    {{icon}}
+</div>
 {% endfor %}
-
-</table>
+</div>
+</div>
