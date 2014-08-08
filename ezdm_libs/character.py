@@ -6,6 +6,7 @@ import copy
 from random import randrange
 import frontend
 import operator
+import simplejson
 
 
 class Character(EzdmObject):
@@ -32,6 +33,7 @@ class Character(EzdmObject):
         else:
             chartype = 'npcs'
             todel = self.get_tile_index()
+        print "Removing %s" % todel
         gamemap = GameMap(load_json('maps', loc['map']))
         if todel != -1:
             gamemap.removefromtile(loc['x'], loc['y'], todel, chartype)
@@ -46,6 +48,11 @@ class Character(EzdmObject):
             gold = rolldice(1, max_gold, 0)[0]
             silver = rolldice(1, max_silver, 0)[0]
             copper = rolldice(1, max_copper, 0)[0]
+            if isinstance(loot_items, str):
+                try:
+                    loot_items = simplejson.loads(loot_items)
+                except:
+                    loot_items = []
             print "Dropping money %s - %s - %s" % (gold, silver, copper)
             for counter in range(0, max_items):
                 item = None
@@ -59,12 +66,17 @@ class Character(EzdmObject):
                     print "Item dropped %s" % item
                     gamemap.addtotile(loc['x'], loc['y'], item, 'items')
             print "Always drops: %s" % always_drops
+            if isinstance(always_drops, str):
+                try:
+                    always_drops = simplejson.loads(always_drops)
+                except:
+                    always_drops = []
             for item in always_drops:
                 print "Dropping %s" % item
                 gamemap.addtotile(loc['x'], loc['y'], item, 'items')
             gamemap.putmoney(loc['x'], loc['y'], gold, silver, copper)
         gamemap.save()
-        frontend.campaign.chars_in_round()
+        self.autosave()
 
     def location(self):
         return self.get('/core/location', {})
@@ -344,7 +356,7 @@ class Character(EzdmObject):
         xp_levels = load_json('adnd2e', 'xp_levels')
         pclass = self.get('/core/class/parent', '')
         xp_levels = readkey('%s' % (pclass), xp_levels)
-        hitdice = readkey('/%s/hit_dice' % (level), xp_levels, 1)
+        hitdice = str(readkey('/%s/hit_dice' % (level), xp_levels, 1))
         print "Read hitdice as ", hitdice
         if not '+' in hitdice:
             hitdice = hitdice + '+0'
@@ -370,7 +382,7 @@ class Character(EzdmObject):
         self.put('/core/personal/xp', str(new_xp))
         frontend.campaign.message('%s gains %s experience points. XP now: %s' % (self.displayname(), xp, new_xp))
         next_level = self.next_level()
-        if new_xp >= next_level:
+        if new_xp >= next_level and next_level != -1:
             frontend.campaign.warning(self.level_up())
             frontend.campaign.error('Check for and apply manual increases to other stats if needed !')
         else:
@@ -381,6 +393,8 @@ class Character(EzdmObject):
         parentclass = self.get('/core/class/parent', '')
         childclass = self.get('/core/class/class', '')
         nl = int(self.get('/core/combat/level-hitdice', '')) + 1
+        if nl > 20:
+            return -1
         xp_levels = readkey('/%s/%s' % (parentclass, str(nl)), load_json('adnd2e', 'xp_levels'), {})
         if 'all' in xp_levels:
             next_xp = int(xp_levels['all'])
@@ -402,9 +416,9 @@ class Character(EzdmObject):
         target_roll = self.thac0 - target.armor_class() - target.def_mod()
         frontend.campaign.message('%s needs to roll %s to hit %s' % (self.displayname(), target_roll, target.displayname()))
         roll = rolldice(numdice=1, numsides=20, modifier=mod)
-        if roll[0] - mod == 1:
+        if roll[0] == 1:
                 return (roll[0], "Critical Miss !", roll[1])
-        elif roll[0] - mod == 20:
+        elif roll[0] >= 20:
             return (roll[0], "Critical Hit !", roll[1])
         else:
             if roll[0] >= target_roll:
@@ -534,11 +548,14 @@ class Character(EzdmObject):
         out = []
         pack = self.get('/core/inventory/pack', [])
         for i in pack:
-            item = Item(i)
-            if item.name() != '.json':
-                gold, silver, copper = self.sell_price(*item.price_tuple())
-                moneystr = 'Gold %s, Silver %s, Copper %s' % (gold, silver, copper)
-                out.append((pack.index(i), item.displayname(), moneystr))
+            try:
+                item = Item(i)
+                if item.name() != '.json':
+                    gold, silver, copper = self.sell_price(*item.price_tuple())
+                    moneystr = 'Gold %s, Silver %s, Copper %s' % (gold, silver, copper)
+                    out.append((pack.index(i), item.displayname(), moneystr))
+            except Exception as e:
+                raise Exception('Error loading %s - %s' % (self.displayname(), e))
         return out
 
     def drop_item(self, itemname, section='pack'):

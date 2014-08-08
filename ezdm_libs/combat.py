@@ -72,6 +72,7 @@ def attack(player, target, attack_modifiers, custom_tohit, custom_dmg):
     num_attacks = player.num_attacks()
     print "COMBAT: num_attacks:", num_attacks
     while attack_number <= num_attacks and target_alive:
+        frontend.campaign.message('<br><Br><strong>Attack %s of %s</strong><br>' % (attack_number, num_attacks))
         total_modifier = custom_tohit
         for mod in attack_modifiers:
             total_modifier += int(attack_mods[mod])

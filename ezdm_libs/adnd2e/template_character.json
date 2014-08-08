@@ -90,7 +90,7 @@
         "__Yshields": true
     },
     "core.class.parent=warrior":{
-        "Yarmor_types": 4,
+        "armor_types": 4,
         "shields": true
     },
     "core.class.parent=wizard":{

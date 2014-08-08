@@ -48,7 +48,7 @@ class Tile(EzdmObject):
             name = '%s.json' % name
         elif isinstance(name, int):
             try:
-                del(self()['conditional']['npcs'][name])
+                del(self()['conditional'][objtype][name])
             finally:
                 return
         current = self.get('/conditional/%s' % objtype, [])
@@ -117,14 +117,13 @@ class GameMap(EzdmObject):
     def addtotile(self, x, y, name, objtype):
         tile = self.tile(x, y)
         tile.add(name, objtype)
-        self()['tiles'][y][x] = tile()
+        self.load_tile_from_json(x, y, tile())
         self.save()
 
     def removefromtile(self, x, y, name, objtype):
         tile = self.tile(x, y)
-        print tile
         tile.remove(name, objtype)
-        self()['tiles'][y][x] = tile()
+        self.load_tile_from_json(x, y, tile())
         self.save()
 
     def tile_icons(self, x, y, unique=False):

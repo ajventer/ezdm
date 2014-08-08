@@ -201,14 +201,14 @@ class Campaign(EzdmObject):
                     tile = gamemap.tile(x, y)
                     if tile.revealed():
                         npcs_here = tile.get('/conditional/npcs', [])
-
                         for npc in sorted(npcs_here):
                             n = Character(npc)
-                            n.put('/core/location', {"map": mapname, "x": x, "y": y})
-                            n_idx = self.characterlist.append(n)
-                            if not (x, y) in icons[mapname]:
-                                icons[mapname][(x, y)] = []
-                            icons[mapname][(x, y)].append(n_idx)
+                            if n.get('/core/combat/hitpoints', 1) > 0:
+                                n.put('/core/location', {"map": mapname, "x": x, "y": y})
+                                n_idx = self.characterlist.append(n)
+                                if not (x, y) in icons[mapname]:
+                                    icons[mapname][(x, y)] = []
+                                icons[mapname][(x, y)].append(n_idx)
         return icons
 
     def roll_for_initiative(self):
