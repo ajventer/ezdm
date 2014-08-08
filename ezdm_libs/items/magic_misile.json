@@ -11,7 +11,7 @@
             "silver": 50,
             "gold": 200
         },
-        "description": "Fires a bolt of arcane energy at the target, if it hits it does 1d4 damage.",
+        "description": "Fires a bolt of arcane energy at the target, if it hits it does 1d6 damage.",
         "identified": "",
         "rounds_per_charge": 2,
         "icon": "icons/magic_misile.png",
@@ -28,6 +28,6 @@
         "onequip": "",
         "onpickup": "",
         "onuse": "campaign.error('%s is casting Magic Missile at %s' % (player.displayname(), target.displayname()))",
-        "onfinish": "campaign.warning('%s has finished casting Magic Misile at %s'  % (player.displayname(), target.displayname()))\r\nfrom ezdm_libs.util import rolldice\r\nspell_success = player.spell_success()\r\nif not spell_success[1]:\r\n\tcampaign.error(spell_success[0])\r\nelse:\r\n\tdmg = rolldice(numdice=1, numsides=4, modifier=1)\r\n\tresult = target.take_damage(dmg)\r\n\tcampaign.error(result[1])"
+        "onfinish": "campaign.warning('%s has finished casting Magic Misile at %s'  % (player.displayname(), target.displayname()))\r\nfrom ezdm_libs.util import rolldice\r\nspell_success = player.spell_success()\r\nif not spell_success[1]:\r\n\tcampaign.error(spell_success[0])\r\nelse:\r\n\tdmg = rolldice(numdice=1, numsides=6, modifier=1)\r\n\tresult = target.take_damage(dmg)\r\n\tcampaign.error(result[1])\r\nplayer.autosave()\r\ntarget.autosave()"
     }
 }
