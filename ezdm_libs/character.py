@@ -652,15 +652,16 @@ class Character(EzdmObject):
                 conditionals[ability] = base
         for key in conditionals:
             racial_bonus = 0
-            if "racial_bonus" in various['abilities'][key] and race in various['abilities'][key]["racial_bonus"]:
-                racial_bonus = int(various['abilities'][key]["racial_bonus"][race])
-            dex = int(self.get('/abilities/dex', 0))
             dex_bonus = 0
-            if "dexterity bonus" in various['abilities'][key]:
-                for d in various['abilities'][key]["dexterity bonus"]:
-                    if inrange(dex, d):
-                        dex_bonus = int(various['abilities'][key]["dexterity bonus"][d])
-                        continue
+            if key in various['abilities']:
+                if "racial_bonus" in various['abilities'][key] and race in various['abilities'][key]["racial_bonus"]:
+                    racial_bonus = int(various['abilities'][key]["racial_bonus"][race])
+                dex = int(self.get('/abilities/dex', 0))
+                if "dexterity bonus" in various['abilities'][key]:
+                    for d in various['abilities'][key]["dexterity bonus"]:
+                        if inrange(dex, d):
+                            dex_bonus = int(various['abilities'][key]["dexterity bonus"][d])
+                            continue
             if isinstance(conditionals[key], str) and len(conditionals[key]) == 0:
                 conditionals[key] = 0
             if int(conditionals[key]) > 0:

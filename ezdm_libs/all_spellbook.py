@@ -67,6 +67,8 @@ class SPELLBOOK(Session):
                     item.interrupt()
                 else:
                     item.onuse(self._character, target)
+                idx = self._character()['core']['inventory']['spells_memorized'].index(int(requestdata['pack_index']))
+                del (self._character()['core']['inventory']['spells_memorized'][idx])
                 self._character()['core']['inventory']['spells'][int(requestdata['pack_index'])] = item()
 
         self._character.save()
