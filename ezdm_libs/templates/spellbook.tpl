@@ -105,13 +105,15 @@
                     {% endif %}
                     {% if not editmode %}
                         <input type=hidden name="pack_index" value="{{detailidx}}">
-                        {% if detailsection == 'memory' %}
                             <select name="cast_spell_target">
                                 {% for target in targetlist %}
                                     <option value="{{target.name()}}">{{target.displayname()}}</option>
                                 {% endfor %}
                             </select>
+                            {% if detailsection == 'memory' %}                            
                                 <input type=submit name="cast_spell" value="Cast spell">                    
+                            {% else %}
+                                <input type=submit name="teach_spell" value="Teach spell">
                             {% endif %}
                         {% endif %}
                             {% if detailview.get('/core/in_use', false) %}

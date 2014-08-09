@@ -63,11 +63,12 @@
                 0
             ],
             "pack": [],
-            "spells": "[{'core': {'current_rounds_performed': 0, 'name': 'Magic Misile', 'weight': 0, 'in_use': False, 'charges': -1, 'price': {'copper': 25, 'silver': 50, 'gold': 200}, 'description': 'Fires a bolt of arcane energy at the target, if it hits it does 1d4 damage.', 'identified': True, 'rounds_per_charge': 2, 'icon': 'icons/magic_misile.png', 'type': 'spell', 'size': 'small'}, 'conditional': {'spell_school': 'Conjuration', 'spell_level': 1}, 'events': {'ondrop': u'', 'onround': "
+            "spells": []
         }
     },
     "conditional": {
         "armor_types": 1,
         "shields": false
-    }
+    },
+    "index": 2
 }

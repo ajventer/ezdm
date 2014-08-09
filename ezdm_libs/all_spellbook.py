@@ -57,17 +57,19 @@ class SPELLBOOK(Session):
                 self._data['detailview'] = None
                 self._character.unlearn_spell(int(requestdata['spellindex']))
                 page.warning('Spell has been unlearned')
-            if 'cast_spell' in requestdata or 'stopcasting' in requestdata:
-                print "Casting spell on %s" % requestdata['cast_spell_target']
+            if 'cast_spell' in requestdata or 'stopcasting' in requestdata or 'teach_spell' in requestdata:
                 item = Item(self._character.get('/core/inventory/spells', [])[int(requestdata['pack_index'])])
                 target = Character(load_json('characters', requestdata['cast_spell_target']))
                 if 'stopcasting' in requestdata:
                     item.interrupt()
-                else:
+                elif 'stopcasting' in requestdata:
                     item.onuse(self._character, target)
-                idx = self._character()['core']['inventory']['spells_memorized'].index(int(requestdata['pack_index']))
-                del (self._character()['core']['inventory']['spells_memorized'][idx])
-                self._character()['core']['inventory']['spells'][int(requestdata['pack_index'])] = item()
+                    idx = self._character()['core']['inventory']['spells_memorized'].index(int(requestdata['pack_index']))
+                    del (self._character()['core']['inventory']['spells_memorized'][idx])
+                    self._character()['core']['inventory']['spells'][int(requestdata['pack_index'])] = item()
+                elif 'teach_spell' in requestdata:
+                    page.message(target.learn_spell(item))
+                    target.autosave()
 
         self._character.autosave()
         for spell in self._character.inventory_generator(sections=['spells']):
