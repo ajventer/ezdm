@@ -156,7 +156,7 @@ class Character(EzdmObject):
     def interrupt_cast(self):
         for item in self.inventory_generator():
             if item[1].get('/core/in_use', False):
-                item[1].interrupt_cast()
+                item[1].interrupt()
             if item[0] in ['spells', 'pack']:
                 self()['core']['inventory'][item[0]][item[2]] = item[1]()
             else:

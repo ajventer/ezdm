@@ -74,6 +74,12 @@ def switch_campaign():
     return gethandler(None, None)
 
 
+@route('/interrupt', method='get')
+def interrupt():
+    frontend.campaign.current_char().interrupt_cast()
+    return redirect('/action/ALL_MAPS', 302)
+
+
 @route('/endround', method='get')
 def endround():
     if frontend.campaign:

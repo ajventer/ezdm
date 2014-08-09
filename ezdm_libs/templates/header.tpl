@@ -40,20 +40,28 @@
 
                 <div  style="display: table-cell; background-color: #aaffcc; border: 2px solid; padding: 5px;  border-radius: 25px; text-align: center; box-shadow: 5px 5px 2px #888888; " onclick="document.getElementById('light').style.display='none';document.getElementById('fade').style.display='none'">Close</div>
 
-            </div>
-              
-                {% for message in messages.messages %}
-                    {{message}}<br>
-                {% endfor %}
-                {% for message in messages.warnings %}
-                    <font color=orange>{{message}}</font><br>
-                {% endfor %}
-                {% for message in messages.errors %}
-                    <font color=red>{{message}}</font><br>
-                {% endfor %}
+                </div>
+                <div>
+                    {% for message in messages.messages %}
+                        {{message}}<br>
+                    {% endfor %}
+                    {% for message in messages.warnings %}
+                        <font color=orange>{{message}}</font><br>
+                    {% endfor %}
+                    {% for message in messages.errors %}
+                        <font color=red>{{message}}</font><br>
+                    {% endfor %}
+                </div>
+                {% if character and character.is_casting %}
+                    <strong>{{character.displayname()}} is casting a spell</strong><br>
+                        <a href="/endround">Continue casting (skip round)</a>
+                        <a href="/interrupt">Stop casting and do something else</a>
+                {% endif %}
+
              </div>
             <div id="fade" class="black_overlay"></div>
         {% endif %}    
+<center>        
         <div style="display: table-row; border: 1px solid;; background-color: #ADADFF; ">
             <div style="display: table-cell; border: 1px solid; ">
                 <input type=button value="Campaign" onclick="window.location = '/mode/campaign'">
@@ -73,4 +81,5 @@
             </div>
         </div>
     </div>
+<center>
 
