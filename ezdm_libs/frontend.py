@@ -47,7 +47,8 @@ class Page:
     def __init__(self, title=None, menu=True):
         self._sidebar = ''
         self._messages = {'messages': [], 'warnings': [], 'errors': []}
-        title = title or 'EZDM'
+        self.title = title or 'EZDM'
+        self.headerdict = {}
         global mode
         if mode == 'dm':
             menuitems = self.make_menu(find_files('', 'ezdm*.py', basename=True), 'ezdm_')
@@ -55,14 +56,13 @@ class Page:
             menuitems = self.make_menu(find_files('', 'campaign*.py', basename=True), 'campaign_')
         menuitems.update(self.make_menu(find_files('', 'all*.py', basename=True), 'all_'))
         if mode == 'dm':
-            title += ' DUNGEON MASTER MODE'
+            self.title += ' DUNGEON MASTER MODE'
         else:
-            title += ' CAMPAIGN MODE'
-        headerdict = {'title': title}
+            self.title += ' CAMPAIGN MODE'
         if campaign:
-            headerdict['character'] = campaign.current_char()
+            self.headerdict['character'] = campaign.current_char()
         self._menuitems = {'menuitems': menuitems}
-        self.content = [('header.tpl', headerdict), ('menubar.tpl', self._menuitems)]
+        self.content = [('menubar.tpl', self._menuitems)]
 
     def display_campaign_messages(self):
         if campaign:
@@ -105,13 +105,15 @@ class Page:
 
     def render(self):
         self.display_campaign_messages()
+        self.headerdict['title'] = self.title
+        if self._has_message():
+            self.headerdict['messages'] = self._messages
+        self.content.insert(0, ('header.tpl', self.headerdict))
         if self._sidebar:
             self.content.insert(1, ('sidebar_top.tpl', {}))
             self.content.append(('sidebar.tpl', {'content': self._sidebar}))
         if not ('footer.tpl', {}) in self.content:
             self.content.append(('footer.tpl', {}))
-        if self._has_message():
-            self.content.insert(2, ('messagebox.tpl', self._messages))
         page_content = ''
         for item in self.content:
             page_content += self.tplrender(item[0], item[1])

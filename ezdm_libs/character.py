@@ -33,7 +33,6 @@ class Character(EzdmObject):
         else:
             chartype = 'npcs'
             todel = self.get_tile_index()
-        print "Removing %s" % todel
         gamemap = GameMap(load_json('maps', loc['map']))
         if todel != -1:
             gamemap.removefromtile(loc['x'], loc['y'], todel, chartype)
