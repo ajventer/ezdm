@@ -459,11 +459,8 @@ class Character(EzdmObject):
             self.put('/core/inventory/spells', [])
         spelltype = spellitem.get('/conditional/spell_type', 'wizard spells')
         parentclass = self.get('/core/class/parent', '')
-        print parentclass
         childclass = self.get('/core/class/class', '')
-        print childclass
         canlearn = load_json('adnd2e', 'various.json')["spell progression"]
-        print canlearn
         found = False
         for key in canlearn:
             if key == parentclass or key == childclass:
@@ -473,7 +470,6 @@ class Character(EzdmObject):
         if not found:
             return "%s cannot learn spells" % self.displayname()
         oneline = canlearn[key].keys()[0]
-        print canlearn
         if not spelltype in canlearn[key][oneline]:
             return "%s cannot learn %s, failed to learn spell %s" % (self.displayname(), spelltype, spellitem.displayname())
         spellitem.identify()

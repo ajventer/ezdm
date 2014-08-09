@@ -1,5 +1,6 @@
 from jinja2 import Template
-from util import readfile, find_files, template_dict, json_editor, list_icons, inflate
+from util import readfile, find_files, template_dict, json_editor, list_icons, inflate, load_json
+from simplejson import dumps, loads
 
 mode = 'campaign'
 campaign = None
@@ -135,7 +136,8 @@ class JSON_Editor(Session):
         loadfrom['name'] = self._name
         loadfrom['keyname'] = 'loadfrom'
         if new:
-            loadfrom['allow_new'] = 'True'
+            loadfrom['allow_new'] = True
+        loadfrom['allow_raw'] = True
         source = '%ss' % self._name
         loadfrom['items'] = find_files(source, '*.json', basename=True, strip='.json')
         return ('load_defaults_from.tpl', loadfrom)
@@ -154,6 +156,14 @@ class JSON_Editor(Session):
 
         return page.render()
 
+    def rawedit(self, default, page):
+        if not default.endswith('.json'):
+            default = '%s.json' % default
+        json = load_json('%ss' % self._name, default)
+        outdata = {'json': dumps(json, indent=4)}
+        page.add('json_raw_editor.tpl', outdata)
+        return page.render()
+
     def newform(self):
         page = Page()
         if self._icons:
@@ -162,7 +172,9 @@ class JSON_Editor(Session):
         page.add(lf[0], lf[1])
         default = self._data.get('loadfrom', None)
         if default and not default == 'New %s' % self._name:
-            self._data = readfile('%ss' % self._name, '%s.json' % default, json=True)
+            if 'raw_mode' in self._data:
+                return self.rawedit(default, page)
+            self._data = load_json('%ss' % self._name, '%s.json' % default)
         print "Using template file: template_%s.json" % self._name
         template = readfile('adnd2e', 'template_%s.json' % self._name, json=True)
         print 'data:'
@@ -196,6 +208,15 @@ class JSON_Editor(Session):
             return page.render()
         if not requestdata:
             return self.welcomeform()
+        if 'saveraw' in requestdata:
+            page = Page()
+            try:
+                json = loads(requestdata['json'])
+                self._obj.update(json)
+                page.message('%s saved to %s' % (self._name, self._obj.save()))
+            except Exception as e:
+                page.error("Invalid json: %s" % e)
+            return self.rawedit(self._obj.name(), page)
         self._data = dict(requestdata)
         if 'LoadDefaultFrom' in self._data:
             del(self._data['LoadDefaultFrom'])

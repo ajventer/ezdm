@@ -226,8 +226,8 @@
                 <div style="vertical-align: top; background-color: #ccffcc; display: table-cell;">
                 <script language="javascript" type="text/javascript" src="/js?path=editarea_0_8_2/edit_area/edit_area_full.js">
                 </script>
-                        <form method=post>
-                            <textarea id="pythonconsole" cols=60 rows=10 name="pythonconsole">#python console</textarea><br>
+                        <strong>Python Console:</strong>Current map object: self._map<form method=post>
+                            <textarea id="pythonconsole" cols=100 rows=30 name="pythonconsole"></textarea><br>
                             <script language="javascript" type="text/javascript">
                                 editAreaLoader.init({
                                     id : "pythonconsole"       // textarea id
@@ -237,10 +237,10 @@
                             </script>
                             <input type=submit value="Run code">
                         </form><br>
-                        jsonbox<form method=post>
+                        <strong>Raw JSON:</strong><form method=post>
                             <input type=hidden name="clicked_x" id="clicked_x" value="{{zoom_x}}">
                             <input type=hidden name="clicked_y" id="clicked_y" value="{{zoom_y}}">
-                            <textarea id="jsonbox" cols=60 rows=10 name="jsonbox">{{mapobj.tile(zoom_x,zoom_y)}}</textarea><br>
+                            <textarea id="jsonbox" cols=100 rows=30 name="jsonbox">{{mapobj.tile(zoom_x,zoom_y)}}</textarea><br>
                             <script language="javascript" type="text/javascript">
                                 editAreaLoader.init({
                                     id : "jsonbox"       // textarea id
