@@ -35,7 +35,6 @@ class INVENTORY(Session):
             itemlist = find_files('items', '*.json', basename=True, strip='.json')
             self._data['items'] = []
             for item in itemlist:
-                if Item(load_json('items', item)).itemtype() != 'spell':
                     self._data['items'].append(item)
 
             if requestdata:
@@ -57,8 +56,22 @@ class INVENTORY(Session):
                     if self._data['editmode']:
                         item.identify()
                     self._data['detailview'] = item
+                if 'sellitem' in requestdata:
+                    buyer = Character(load_json('characters', requestdata['buyer']))
+                    g = int(requestdata['price_in_gold'])
+                    s = int(requestdata['price_in_silver'])
+                    c = int(requestdata['price_in_copper'])
+                    idx = int(requestdata['pack_index'])
+                    item = Item(self._character.get('/core/inventory/pack', [])[idx])
+                    self._character.sell_item(itemname=idx, buyer=buyer, gold=g, silver=s, copper=c)
+                    page.message('%s sold %s to %s' % (self._character.displayname(), item.displayname(), buyer.displayname()))
                 if 'dropitem' in requestdata:
                     idx = int(requestdata['pack_index'])
+                    self._character.drop_item(idx)
+                if "learnspell" in requestdata:
+                    idx = int(requestdata['pack_index'])
+                    spellitem = Item(self._character.get('/core/inventory/pack', [])[idx])
+                    page.message(self._character.learn_spell(spellitem))
                     self._character.drop_item(idx)
                 if 'equipitem' in requestdata:
                     idx = int(requestdata['pack_index'])

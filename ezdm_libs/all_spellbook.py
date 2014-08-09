@@ -44,8 +44,7 @@ class SPELLBOOK(Session):
                 self._character.put('/core/inventory/spells_memorized', memorized)
                 print memorized
             if 'learnspell' in requestdata:
-                self._character.learn_spell(Item(load_json('items', requestdata['learnspell'])))
-                page.message('Learned a new spell')
+                page.message(self._character.learn_spell(Item(load_json('items', requestdata['learnspell']))))
             if 'selected' in requestdata:
                 print "Handling selection"
                 json = self._character.get('/core/inventory/spells', [])
@@ -74,6 +73,7 @@ class SPELLBOOK(Session):
         for spell in self._character.inventory_generator(sections=['spells']):
             self._data['spells'].append(spell)
         self._data['memorized'] = self._character.memorized_spells()
+        self._data['character'] = self._character
         classclass = self._character.get('/core/class/class', '')
         classparent = self._character.get('/core/class/parent', '')
         spell_prog = load_json('adnd2e', 'various')["spell progression"]
@@ -81,9 +81,11 @@ class SPELLBOOK(Session):
         for key in spell_prog:
             if key == classparent or key == classclass:
                 spell_prog = spell_prog[key]
+                print key
                 found = True
                 break
         if found:
+            print "Finding spell progression"
             level = self._character.get('/core/combat/level-hitdice', 1)
             for key in spell_prog:
                 if inrange(level, key):

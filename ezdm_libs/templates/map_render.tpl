@@ -36,7 +36,7 @@
 
 <div style="vertical-align: top; background-color: #ccffcc; border: 3px solid; display: table-row;"> 
 
-<div style="vertical-align: top; background-color: #ccffcc; border: 3px solid; display: table-cell">        
+<div style="vertical-align: top; background-color: #ADD6FF;; border: 3px solid; display: table-cell">        
             {% if editmode %}
     <div style="vertical-align: top; background-color: #ccffcc; border: 3px solid;">
         <div style="vertical-align: top; background-color: #ccffcc; border: 3px solid; display: table-row;">
@@ -69,15 +69,15 @@
                 </strong></lable>
             {%endif %}
 <div style="vertical-align: top; background-color: #ADD6FF; border: 3px solid; display: table-row;">            
-        <div style="background-color: #ADD6FF; display: table-cell;"></div>
+        <div style="background-color:#ccffcc; border: 1px solid; display: table-cell;"></div>
         {% for a in range (0,map.max_x) %}
-            <div style="background-color: #ADD6FF; display: table-cell;">{{a}}</div>
+            <div style="background-color: #ccffcc;  border: 1px solid; display: table-cell;">{{a}}</div>
         {% endfor %}
 </div>
     {% for row in map.tiles%}
         {% set y = loop.index - 1 %}
         <div  style="vertical-align: top; background-color: #ccffcc; border: 3px solid; display: table-row;">    
-            <div style="vertical-align: top; background-color: #ccffcc; display: table-cell;">{{y}}</div>
+            <div style="border: 1px solid; vertical-align: top; background-color: #ccffcc; display: table-cell;">{{y}}</div>
             {% for col in row %}
                 {% set x = loop.index - 1%}
                 {% if editmode or (col.core and col.core.revealed) %}
@@ -148,7 +148,7 @@
                 </div>
             </div> 
         </div> 
-                <div style="vertical-align: top; border: 1px solid; background-color:#ccffcc; display: table-cell;">
+                <div style="vertical-align: top; border: 3px solid; background-color:#ccffcc; display: table-cell;">
                     <form method=post>
                         <input type=hidden name="clicked_x" id="clicked_x" value="{{zoom_x}}">
                         <input type=hidden name="clicked_y" id="clicked_y" value="{{zoom_y}}">
@@ -286,6 +286,29 @@
                                     </div>                                    
                                     <input type=submit name="attack" value="Attack">
                                 </fieldset>
+                                <fieldset>
+                                    <label>Tactical Items</lable>
+                                    <select name="tact_item">
+                                     {% for item in current_char.inventory_generator(sections=['pack']) %}
+                                        {% if item[1].itemtype() != 'spell' and item[1].itemtype() != 'weapon'
+                                         and item[1].itemtype() != 'armor' and item[1].get('/core/charges', 0) != 0 %}
+                                            <option value="{{item[2]}}">{{item[1].displayname()}}
+                                        {% endif %}
+                                     {% endfor %}   
+                                     <select>
+                                    <input type=submit name="useitem" value="Use item">
+                                </fieldset>
+                                <fieldset>
+                                    <label>Tactical Spells</lable>
+                                    <select name="tact_spell">
+                                     {% for idx, spell in tactical_spells %}
+                                        <option value="{{idx}}">{{spell.displayname()}}
+                                     {% endfor %}   
+                                     <select>
+                                    <input type=submit name="castspell" value="Cast Spell">
+                                <fieldset>
+
+
                             {% endif %}
                         <br>
                         <ul>

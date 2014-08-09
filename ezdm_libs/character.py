@@ -437,7 +437,6 @@ class Character(EzdmObject):
             return (True, out)
         else:
             out.append('Spell fails !')
-            self.spell_complete()
             return(False, out)
 
     def load_weapons(self):
@@ -451,10 +450,36 @@ class Character(EzdmObject):
 
     def learn_spell(self, spellitem):
         spells = self.get('/core/inventory/spells', [])
+        if isinstance(spells, str):
+            try:
+                spells = simplejson.loads(spells)
+            except:
+                spells = []
         if not isinstance(spells, list):
             self.put('/core/inventory/spells', [])
+        spelltype = spellitem.get('/conditional/spell_type', 'wizard spells')
+        parentclass = self.get('/core/class/parent', '')
+        print parentclass
+        childclass = self.get('/core/class/class', '')
+        print childclass
+        canlearn = load_json('adnd2e', 'various.json')["spell progression"]
+        print canlearn
+        found = False
+        for key in canlearn:
+            if key == parentclass or key == childclass:
+                print key
+                found = True
+                break
+        if not found:
+            return "%s cannot learn spells" % self.displayname()
+        oneline = canlearn[key].keys()[0]
+        print canlearn
+        if not spelltype in canlearn[key][oneline]:
+            return "%s cannot learn %s, failed to learn spell %s" % (self.displayname(), spelltype, spellitem.displayname())
         spellitem.identify()
         self()['core']['inventory']['spells'].append(spellitem())
+        self.autosave()
+        return "%s has learned %s" % (self.displayname(), spellitem.displayname())
 
     def unlearn_spell(self, index):
         del(self()['core']['inventory']['spells'][index])
@@ -535,8 +560,10 @@ class Character(EzdmObject):
                     tosell = Item(item)
                     break
         if buyer != 'shop':
+            print tosell.displayname()
             buyer.spend_money(gold, silver, copper)
-            buyer.acquire_item(tosell())
+            buyer.acquire_item(tosell)
+            buyer.autosave()
         else:
             gold, silver, copper = self.sell_price(*tosell.price_tuple())
 

@@ -139,10 +139,25 @@ class MAPS(Session):
                     self._character.autosave()
             if 'attack' in requestdata:
                 attackmods = requestdata.getall('attackmods')
-                print attackmods
                 target = frontend.campaign.characterlist[int(requestdata['detailindex'])]
                 attack(self._character, target, attackmods, int(requestdata['custom_tohit']), int(requestdata['custom_dmg']))
                 self._map = GameMap(load_json('maps', self._map.name()))
+            if 'useitem' in requestdata:
+                target = frontend.campaign.characterlist[int(requestdata['detailindex'])]
+                idx = int(requestdata['tact_item'])
+                item = Item(self._character.get('/core/inventory/pack', [])[idx])
+                item.onuse(self._character, target)
+                self._character()['core']['inventory']['pack'][idx] = item()
+                self._character.autosave()
+            if 'castspell' in requestdata:
+                target = frontend.campaign.characterlist[int(requestdata['detailindex'])]
+                idx = int(requestdata['tact_spell'])
+                item = Item(self._character.get('/core/inventory/spells', [])[idx])
+                item.onuse(self._character, target)
+                del (self._character()['core']['inventory']['spells_memorized'][idx])
+                self._character()['core']['inventory']['spells'][idx] = item()
+                self._character.autosave()
+
             if not 'savemap' in requestdata and not 'loadmap' in requestdata and self._data['editmode']:
                 page.warning('WARNING: Changes are not yet saved')
 
@@ -188,7 +203,15 @@ class MAPS(Session):
                 self._data['playerlist'].append(c)
             else:
                 self._data['npclist'].append(c)
-        print self._data['tilelist']
+        self._data['current_char'] = self._character
+        added = []
+        for idx in self._character.get('/core/inventory/spells_memorized', []):
+            added.append(idx)
+        added = list(set(added))
+        tactical_spells = []
+        for idx in added:
+            tactical_spells.append((idx, Item(self._character.get('/core/inventory/spells', [])[idx])))
+        self._data['tactical_spells'] = tactical_spells
         page.add('map_render.tpl', self._data)
         if not self._data['editmode']:
             self._map.save()

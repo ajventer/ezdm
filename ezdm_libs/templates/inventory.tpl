@@ -98,14 +98,28 @@
 				<form method=post>
 					{% if not itemslot %}
 					<input type=hidden name="pack_index" value="{{packindex}}">
+					Price: Gold<input type=text name="price_in_gold" size=3 value=0>
+					Silver<input type=text name="price_in_silver" size=3 value=0>
+					Copper<input type=text name="price_in_copper" size=3 value=0>
+					<select name="buyer">
+						{% for target in targetlist %}
+							<option value="{{target.name()}}">{{target.displayname()}}</option>
+						{% endfor %}
+					</select>					
+					<input type=submit name="sellitem" value="Sell Item"><br>
 					<input type=submit name="dropitem" value="Drop Item">
-					<input type=submit name="equipitem" value="Equip Item">
+					{% if detailview.itemtype() != 'spell' %}
+						<input type=submit name="equipitem" value="Equip Item">
+					{% endif %}
 					{% else %}
 					<input type=hidden name="slot_name" value="{{itemslot}}">
 					<input type=submit name="unequipitem" value="Unequip Item">
 					{% endif%}
 					<br/>
 					{% if not editmode %}
+					{% if detailview.itemtype() == 'spell' %}
+						<input type=submit name="learnspell" value="Learn Spell">
+					{% else %}
 					{% if detailview.get('/core/charges',0) != 0 %}
 						<select name="useitem_target">
 							{% for target in targetlist %}
@@ -114,6 +128,7 @@
 						</select>
 						<input type=submit name="useitem" value="Use Item">
 					{% endif %}
+					{%endif %}
 					{% endif %}
 					{% if detailview.get('/core/in_use', False) %}
 					<input type=submit name="stopusing" value="Stop using">

@@ -54,7 +54,7 @@
                 </div>
                 {% if character and character.is_casting %}
                     <strong>{{character.displayname()}} is casting a spell</strong><br>
-                        <a href="/endround">Continue casting (skip round)</a>
+                        <a href="/endround">Continue casting (skip round)</a><br>
                         <a href="/interrupt">Stop casting and do something else</a>
                 {% endif %}
 

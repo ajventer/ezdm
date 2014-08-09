@@ -33,7 +33,8 @@
     },
     "core.type=spell":{
         "spell_level": 1,
-        "spell_school": "__[Abjuration,Alteration,Conjuration,Enchantment,Divination,Illusion,Invocation,Necromancy]"
+        "spell_school": "__[Abjuration,Alteration,Conjuration,Enchantment,Divination,Illusion,Invocation,Necromancy]",
+        "spell_type": "__[priest spells,wizard spells]"
         },
     "core.type=armor":{
         "ac":0,

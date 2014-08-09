@@ -11,7 +11,7 @@
 </script>
 <table witdh=100% border=1>
     <tr>
-        <td bgcolor=lightblue colspan=3><strong><center>Spellbook</center></strong></spellbook>
+        <td bgcolor=lightblue colspan=3><strong><center>Spellbook for {{character.displayname()}}</center></strong></spellbook>
     </tr>
     <tr>
         <td bgcolor=lightgray>Spell Book</td>
