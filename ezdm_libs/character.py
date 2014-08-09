@@ -472,10 +472,19 @@ class Character(EzdmObject):
         oneline = canlearn[key].keys()[0]
         if not spelltype in canlearn[key][oneline]:
             return "%s cannot learn %s, failed to learn spell %s" % (self.displayname(), spelltype, spellitem.displayname())
+        intelect = str(self.get('/core/abilities/int', 1))
+        chance = load_json('adnd2e', 'ability_scores.json')
+        chance = readkey('/int/%s/spell_learn' % intelect, chance)
+        out = "<strong>%s has a %s chance to learn a new spell</strong>" % (self.displayname(), chance)
+        chance = int(chance.replace('%', ''))
+        roll = rolldice(numdice=1, numsides=100, modifier=0)
+        out += '<br>%s' % roll[1]
+        if roll[0] > chance:
+            return '%s<br><strong>%s has failed to learn %s!</strong>' % (out, self.displayname(), spellitem.displayname())
         spellitem.identify()
         self()['core']['inventory']['spells'].append(spellitem())
         self.autosave()
-        return "%s has learned %s" % (self.displayname(), spellitem.displayname())
+        return "%s<br><strong>%s has learned %s</strong>" % (out, self.displayname(), spellitem.displayname())
 
     def unlearn_spell(self, index):
         del(self()['core']['inventory']['spells'][index])
