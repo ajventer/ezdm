@@ -16,6 +16,7 @@ class MAPS(Session):
 
     def inputhandler(self, requestdata, page):
         if 'loadmap' in requestdata and requestdata['loadmap'] == 'New Map':
+            self._data['charicons'] = {}
             self._map = GameMap(name='New Map')
         else:
             if requestdata and 'loadmap' in requestdata and requestdata['loadmap'] != 'New Map':

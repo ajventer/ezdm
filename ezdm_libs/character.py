@@ -76,6 +76,7 @@ class Character(EzdmObject):
             gamemap.putmoney(loc['x'], loc['y'], gold, silver, copper)
         gamemap.save()
         self.autosave()
+        frontend.campaign.roll_for_initiative()
 
     def location(self):
         return self.get('/core/location', {})
@@ -501,7 +502,6 @@ class Character(EzdmObject):
         armor_types = load_json('adnd2e', 'armor_types.json')
         shields = self.get('/conditional/shields', False)
 
-        has_unequiped = False
         if isinstance(itemname, int):
             item = Item(self.get('/core/inventory/pack', [])[itemname])
         else:
@@ -530,22 +530,24 @@ class Character(EzdmObject):
             else:
                 slots = [item.slot()]
             for slot in slots:
-                if self.get('/core/inventory/equipped/%s' % item.slot().strip(), {}) and not has_unequiped:
-                    self.unequip(slot)
-                    #Prevent equipping over a twohander from duplicatng it
-                    has_unequiped = True
+                self.unequip_item(slot)
+                #Prevent equipping over a twohander from duplicatng it
                 self.put('/core/inventory/equiped/%s' % slot.strip(), item())
-                self.drop_item(item.displayname())
+            self.drop_item(item.displayname())
         return (True, "%s has equiped %s" % (self.displayname(), item.displayname()))
 
     def unequip_item(self, slot):
         slot = slot.strip()
         print slot
-        current = self.get('/core/inventory/equiped/%s' % slot, {})
-        print current
-        if current:
-            self.json['core']['inventory']['pack'].append(current)
-        self.put('/core/inventory/equiped/%s' % slot, {})
+        current = Item(self.get('/core/inventory/equiped/%s' % slot, {}))
+        if current():
+            print "unequip_item: in if"
+            self.acquire_item(current)
+            if current.get('/conditional/slot', '') == 'twohand':
+                for slot in ['lefthand', 'righthand']:
+                    self.put('/core/inventory/equiped/%s' % slot, {})
+            else:
+                self.put('/core/inventory/equiped/%s' % slot, {})
 
     def sell_price(self, gold, copper, silver):
             price = price_in_copper(gold, silver, copper)
@@ -658,7 +660,10 @@ class Character(EzdmObject):
     @property
     def weapons(self):
         self.load_weapons()
-        return self.equiped_by_type('weapon')
+        equipedweapons = self.equiped_by_type('weapon')
+        if equipedweapons and equipedweapons[0].get('/conditional/slot', "") == 'twohand':
+            return equipedweapons[1:]
+        return equipedweapons
 
     def num_weapons(self):
         return len(self.weapons)
