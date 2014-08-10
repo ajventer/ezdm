@@ -503,6 +503,7 @@ class Character(EzdmObject):
     def acquire_item(self, item):
         if not isinstance(self.get('/core/inventory/pack', []), list):
             self.put('/core/inventory/pack', [])
+        item.onpickup(self)
         self()['core']['inventory']['pack'].insert(0, item())
 
     def equip_item(self, itemname):
