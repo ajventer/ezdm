@@ -108,7 +108,7 @@
 					</select>					
 					<input type=submit name="sellitem" value="Sell Item"><br>
 					<input type=submit name="dropitem" value="Drop Item">
-					{% if detailview.itemtype() != 'spell' %}
+					{% if detailview.itemtype() != 'spell' and detailview.get('/conditional/slot', False) %}
 						<input type=submit name="equipitem" value="Equip Item">
 					{% endif %}
 					{% else %}

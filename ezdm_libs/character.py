@@ -428,7 +428,7 @@ class Character(EzdmObject):
         roll = rolldice(numdice=1, numsides=20, modifier=mod)
         if roll[0] == 1:
                 return (roll[0], "Critical Miss !", roll[1])
-        elif roll[0] >= 20:
+        elif roll[0] == 20:
             return (roll[0], "Critical Hit !", roll[1])
         else:
             if roll[0] >= target_roll:
