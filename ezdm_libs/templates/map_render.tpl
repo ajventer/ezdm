@@ -159,7 +159,7 @@
                     {% if editmode %}
                         <strong>Tile Editor</strong><br>
                             <select name="load_tile_from_file">
-                                {% for tile in tilelist %}
+                                {% for tile in tilelist |sort %}
                                     <option value="{{tile}}">{{tile}}</option>
                                 {% endfor %}
                             </select>
