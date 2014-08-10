@@ -22,7 +22,6 @@
         document.getElementById('maprender').submit();
     }
 </script>
-
 <script>
     function charclickHandler(x,y, index) {
         document.getElementById('clicked_x').value = x;
@@ -33,47 +32,48 @@
 </script>
 
 </center>
+{% set minwidth = (map.max_x + 2) * 50 %}
 
 <div style="vertical-align: top; background-color: #ccffcc; border: 3px solid; display: table-row;"> 
 
-<div style="vertical-align: top; background-color: #ADD6FF;; border: 3px solid; display: table-cell">        
-            {% if editmode %}
-    <div style="vertical-align: top; background-color: #ccffcc; border: 3px solid;">
-        <div style="vertical-align: top; background-color: #ccffcc; border: 3px solid; display: table-row;">
-            <div style="background-color: #aaffcc; border: 2px solid; display: table-cell;  ">
-                <form method=post id="mapload">
-                    <select name="loadmap">
-                        <option value="New Map">New Map</option>
-                        {% for mapitem in maplist %}
-                            <option value="{{mapitem}}">{{mapitem}}</option>
-                        {% endfor %}
-                    </select>
-                    <input type=submit value="Load Map">
-                </form>
-            </div>
-            <div style="vertical-align: top; background-color: #aaffcc; border: 2px solid; display: table-cell;  ">
-                <form method=post id="mapsave">Map name:
-                    <input type=text name="mapname" value="{{map.name}}">
-                    {% if map.name == 'New Map' %}
-                        Max X:<input type=text size=2 name="max_x" value="{{map.max_x}}">
-                        Max Y:<input type=text size=2 name="max_y" value="{{map.max_y}}">
-                        Lightradius:<input type=text size=2 name="lightradius" value="{{map.lightradius}}">
-                    {%endif%}
-                    <input type=submit name="savemap" value="Save Map">
-                </form>
+<div style="vertical-align: top; background-color: #ADD6FF; border: 3px solid; display: table-cell; min-width: {{minwidth}}">        
+    {% if editmode %}
+        <div style="vertical-align: top; background-color: #ccffcc; border: 3px solid;">
+            <div style="vertical-align: top; background-color: #ccffcc; border: 3px solid; display: table-row;">
+                <div style="background-color: #aaffcc; border: 2px solid; display: table-cell;  ">
+                    <form method=post id="mapload">
+                        <select name="loadmap">
+                            <option value="New Map">New Map</option>
+                            {% for mapitem in maplist %}
+                                <option value="{{mapitem}}">{{mapitem}}</option>
+                            {% endfor %}
+                        </select>
+                        <input type=submit value="Load Map">
+                    </form>
+                </div>
+                <div style="vertical-align: top; background-color: #aaffcc; border: 2px solid; display: table-cell;  ">
+                    <form method=post id="mapsave">Map name:
+                        <input type=text name="mapname" value="{{map.name}}">
+                        {% if map.name == 'New Map' %}
+                            Max X:<input type=text size=2 name="max_x" value="{{map.max_x}}">
+                            Max Y:<input type=text size=2 name="max_y" value="{{map.max_y}}">
+                            Lightradius:<input type=text size=2 name="lightradius" value="{{map.lightradius}}">
+                        {%endif%}
+                        <input type=submit name="savemap" value="Save Map">
+                    </form>
+                </div>
             </div>
         </div>
-    </div>
-            {% else %}
-                <lable><strong>{{map.name}}
-                </strong></lable>
-            {%endif %}
-<div style="vertical-align: top; background-color: #ADD6FF; border: 3px solid; display: table-row;">            
-        <div style="background-color:#ccffcc; border: 1px solid; display: table-cell;"></div>
+    {% else %}
+        <lable><strong>{{map.name}}
+        </strong></lable>
+    {%endif %}
+    <div style="vertical-align: top; background-color: #ADD6FF; border: 3px solid; display: table-row">            
+        <div style="background-color:#ccffcc; border: 1px solid; display: table-cell"></div>
         {% for a in range (0,map.max_x) %}
-            <div style="background-color: #ccffcc;  border: 1px solid; display: table-cell;">{{a}}</div>
+            <div style="background-color: #ccffcc;  border: 1px solid; display: inline; float:left; width: 50px">{{a}}</div>
         {% endfor %}
-</div>
+    </div>
     {% for row in map.tiles%}
         {% set y = loop.index - 1 %}
         <div  style="vertical-align: top; background-color: #ccffcc; border: 3px solid; display: table-row;">    
@@ -82,27 +82,27 @@
                 {% set x = loop.index - 1%}
                 {% if editmode or (col.core and col.core.revealed) %}
                     {% if col.core and col.core.icon %}
-                    <div onclick="clickHandler({{x}},{{y}})" style="border: 1px solid; display: table-cell; background-image:url(/icon/{{col.core.icon}});background-repeat:repeat;background-size:50px 50px; width:50; height:50" >                         
+                        <div onclick="clickHandler({{x}},{{y}})" style="overflow: hidden; border: 1px solid; display: inline; background-image:url(/icon/{{col.core.icon}});background-size:50px 50px; width:50px; height:50px; max-height: 50px; max-width: 50px; float: left" >                         
                     {% else %}
-                    <div onclick="clickHandler({{x}},{{y}})" style="border: 1px solid;  display: table-cell; background-image:url(/icon/icons/blank.png);background-repeat:no-repeat;background-size:50px 50px; width:50; height:50" >
+                        <div onclick="clickHandler({{x}},{{y}})" style="overflow: hidden; border: 1px solid;  display: inline; background-image:url(/icon/icons/blank.png);background-size:50px 50px; width:50px; height:50px; max-height: 50px; max-width: 50px; float: left" >
                     {% endif %}
                     {% for icontuple in mapobj.tile_icons(x,y,True) %}
                         {% set k = icontuple[0] %}
                         {% set v = icontuple[1] %}
                         {% if not mapobj.tile(x,y).tiletype() == 'shop' %}
-                            <img width=25 height=25 src="/icon/{{v}}" title="{{k}}" align=left>
+                            <img  width=22 height=22 src="/icon/{{v}}" title="{{k}}" >
                         {% endif %}
                     {% endfor %}
                     {% if charicons %}
-                    {% for idx in charicons[(x, y)] %}
-                        {% set char = campaign.characterlist[idx] %}
-                        {% set title = char.displayname() %}
-                        {% set icon = char.get('/core/icon', '') %}
-                        <img width=25 height=25 src="/icon/{{icon}}" title="{{title}}"align=left>
-                    {% endfor %}
+                        {% for idx in charicons[(x, y)] %}
+                            {% set char = campaign.characterlist[idx] %}
+                            {% set title = char.displayname() %}
+                            {% set icon = char.get('/core/icon', '') %}
+                            <img width=22 height=22 src="/icon/{{icon}}" title="{{title}}" >
+                        {% endfor %}
                     {% endif %}
                 {% else %}
-                    <div  style="vertical-align: top; border: 1px solid;  display: table-cell; background-image:url(/icon/backgrounds/unrevealed.png);background-repeat:repeat;background-size:50px 50px; width:50; height:50" >
+                    <div  style="vertical-align: top; border: 1px solid;  display: table-cell; background-image:url(/icon/backgrounds/unrevealed.png);background-repeat:repeat;background-size:50px 50px; width:50px; height:50px; max-width: 50px; max-height: 50px" >
                 {% endif %}
                     </div>
             {% endfor %}
@@ -111,22 +111,26 @@
 </div>
 
 
- <div style="vertical-align: top; border: 3px solid; #ccffcc; display: table-cell;">
+ <div style="vertical-align: top; border: 3px solid; #ccffcc; min-width: 500;">
     <div style="vertical-align: top; background-color: #ADD6FF; display: table-row;">
          <div style="vertical-align: top; border: 1px solid; background-color: #ADD6FF; display: table-cell;">
             <strong>Zoom  {{zoom_x}}x{{zoom_y}}</strong>
         </div>
     </div>
     <div style="vertical-align: top; border: 1px solid; background-color:#ccffcc; display: table-row;">
-                {% set tile = map.tiles[zoom_y][zoom_x] %}
-                {% if tile.core %}
-                    {% set icon = tile.core.icon %}
-                    <div style="vertical-align: top; border: 1px solid; background-image:url(/icon/{{icon}});background-repeat:repeat;background-size:500px 500px; width:500; height:500 ; display:table-cell">
-                     {% if mapobj.tile(zoom_x,zoom_y).tiletype() == 'signpost' %}
-                       <strong><center><font color=red size=12>
+        {% set tile = map.tiles[zoom_y][zoom_x] %}
+        {% if tile.core %}
+        {% set icon = tile.core.icon %}
+        <div style="vertical-align: top; border: 1px solid; background-image:url(/icon/{{icon}});background-repeat:repeat;background-size:500px 500px; width:500; height:500 ; display:table-cell">
+        {% if mapobj.tile(zoom_x,zoom_y).tiletype() == 'signpost' %}
+            <strong>
+                <center>
+                    <font color=red size=12>
                         {{mapobj.tile(zoom_x,zoom_y).get('/conditional/message', '') }}
-                       </font></strong></center>
-                    {% endif %}    
+                    </font>
+                </center>
+            </strong>
+        {% endif %}    
                 {% else %}
                     <div style="vertical-align: top; border: 1px solid; background-image:url(/icon/icons/blank.png;background-repeat:repeat;background-size:500px 500px; width:500; height:500; display:table-cell">
                 {% endif %}
@@ -134,7 +138,7 @@
                         {% set k = icontuple[0] %}
                         {% set v = icontuple[1] %}
                         {% set section = icontuple[2] %}
-                        <img title="{{k}}" src="/icon/{{v}}"  onclick="itemclickHandler({{zoom_x}},{{zoom_y}}, '{{section}}', '{{k}}')">
+                        <img title="{{k}}" src="/icon/{{v}}" width=100 onclick="itemclickHandler({{zoom_x}},{{zoom_y}}, '{{section}}', '{{k}}')">
                     {% endfor %}
                     {% if charicons %}
                     {% for idx in charicons[(zoom_x, zoom_y)] %}
@@ -142,7 +146,7 @@
                         {% set title = char.displayname() %}
                         {% set index = char.index %}
                         {% set icon = char.get('/core/icon', '') %}
-                        <img title="{{title}}" src="/icon/{{icon}}"  onclick="charclickHandler({{zoom_x}},{{zoom_y}}, '{{index}}')">
+                        <img title="{{title}}" src="/icon/{{icon}}" width=100 onclick="charclickHandler({{zoom_x}},{{zoom_y}}, '{{index}}')">
                     {% endfor %}
                     {% endif %}
                 </div>
@@ -323,7 +327,7 @@
                         {%- endfor %}   
                         </ul>
                 </div>
-                {% endif %}
+                    {% endif %}
                 {%endif%}
             </div>
         </div>
