@@ -106,5 +106,5 @@ class INVENTORY(Session):
                     self._character.gain_money(gold, silver, copper)
 
             page.add('inventory.tpl', self._data)
-            self._character.autosave()
+            self._character.save()
         return page.render()

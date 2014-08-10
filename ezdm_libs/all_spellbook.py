@@ -71,7 +71,7 @@ class SPELLBOOK(Session):
                     page.message(target.learn_spell(item))
                     target.autosave()
 
-        self._character.autosave()
+        self._character.save()
         for spell in self._character.inventory_generator(sections=['spells']):
             self._data['spells'].append(spell)
         self._data['memorized'] = self._character.memorized_spells()

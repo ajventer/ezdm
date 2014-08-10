@@ -197,9 +197,9 @@ class Character(EzdmObject):
 
     def get_tile_index(self):
         loc = self.location()
-        gamemap = GameMap(load_json('maps', loc['map']))
         idx = -1
-        if isinstance(loc['x'], int):
+        if isinstance(loc['x'], int) and isinstance(loc['y'], int) and loc['map']:
+            gamemap = GameMap(load_json('maps', loc['map']))
             for charjson in gamemap.tile(loc['x'], loc['y']).get('/conditional/npcs', []):
                 idx += 1
                 if readkey('/hash', charjson, '') == self.get_hash:
@@ -504,7 +504,8 @@ class Character(EzdmObject):
     def acquire_item(self, item):
         if not isinstance(self.get('/core/inventory/pack', []), list):
             self.put('/core/inventory/pack', [])
-        item.onpickup(self)
+        if self.character_type() == 'player':
+            item.onpickup(self)
         self()['core']['inventory']['pack'].insert(0, item())
 
     def equip_item(self, itemname):
@@ -521,7 +522,8 @@ class Character(EzdmObject):
                     break
         if not item.identified():
             item.identify()
-        item.onequip(self)
+        if self.character_type() == 'player':
+            item.onequip(self)
         if item:
             if item.armortype() == 'shield' and not shields:
                 return (False, "%s cannot wear %s shields like %s" % (self.displayname(), item.armortype(), item.displayname()))
