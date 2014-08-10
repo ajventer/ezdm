@@ -618,7 +618,8 @@ class Character(EzdmObject):
         if todrop is None:
             return
         item = Item(self.json['core']['inventory']['pack'][todrop])
-        item.ondrop(player=self)
+        if self.character_type() == 'player':
+            item.ondrop(player=self)
         del(self.json['core']['inventory']['pack'][todrop])
 
     def money_tuple(self):
