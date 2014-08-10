@@ -235,6 +235,7 @@ class Character(EzdmObject):
             if not st[0]:
                 self.put('/core/combat/hitpoints', 0)
                 out += "<br>%s has died !" % self.displayname()
+                self.handle_death()
                 return (False, out)
             else:
                 self.put('/core/combat/hitpoints', 1)

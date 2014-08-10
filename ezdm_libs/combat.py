@@ -109,6 +109,5 @@ def attack(player, target, attack_modifiers, custom_tohit, custom_dmg):
                     for char in list(frontend.campaign.characterlist):
                         if char.character_type() == 'player':
                             frontend.campaign.message(char.give_xp(target.xp_worth()))
-                target.handle_death()
             for char in [player, target]:
                 char.autosave()
