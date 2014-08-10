@@ -96,13 +96,15 @@
                     {% if charicons %}
                         {% for idx in charicons[(x, y)] %}
                             {% set char = campaign.characterlist[idx] %}
-                            {% set title = char.displayname() %}
-                            {% set icon = char.get('/core/icon', '') %}
-                            <img width=22 height=22 src="/icon/{{icon}}" title="{{title}}" >
+                            {% if char %}   
+                                {% set title = char.displayname() %}
+                                {% set icon = char.get('/core/icon', '') %}
+                                <img width=22 height=22 src="/icon/{{icon}}" title="{{title}}" >
+                            {% endif %}
                         {% endfor %}
                     {% endif %}
                 {% else %}
-                    <div  style="vertical-align: top; border: 1px solid;  display: inline; background-image:url(/icon/backgrounds/unrevealed.png);background-repeat:repeat;background-size:50px 50px; width:50px; height:50px; max-width: 50px; max-height: 50px; float: left"" >
+                    <div  style="vertical-align: top; border: 1px solid;  display: inline; background-image:url(/icon/backgrounds/unrevealed.png);background-repeat:repeat;background-size:50px 50px; width:50px; height:50px; max-width: 50px; max-height: 50px; float: left" >
                 {% endif %}
                     </div>
             {% endfor %}
@@ -143,10 +145,12 @@
                     {% if charicons %}
                     {% for idx in charicons[(zoom_x, zoom_y)] %}
                         {% set char = campaign.characterlist[idx] %}
-                        {% set title = char.displayname() %}
-                        {% set index = char.index %}
-                        {% set icon = char.get('/core/icon', '') %}
-                        <img title="{{title}}" src="/icon/{{icon}}" width=100 onclick="charclickHandler({{zoom_x}},{{zoom_y}}, '{{index}}')">
+                        {% if char %}
+                            {% set title = char.displayname() %}
+                            {% set index = char.index %}
+                            {% set icon = char.get('/core/icon', '') %}
+                            <img title="{{title}}" src="/icon/{{icon}}" width=100 onclick="charclickHandler({{zoom_x}},{{zoom_y}}, '{{index}}')">
+                        {% endif %}
                     {% endfor %}
                     {% endif %}
                 </div>

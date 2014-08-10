@@ -199,10 +199,11 @@ class Character(EzdmObject):
         loc = self.location()
         gamemap = GameMap(load_json('maps', loc['map']))
         idx = -1
-        for charjson in gamemap.tile(loc['x'], loc['y']).get('/conditional/npcs', []):
-            idx += 1
-            if readkey('/hash', charjson, '') == self.get_hash:
-                break
+        if isinstance(loc['x'], int):
+            for charjson in gamemap.tile(loc['x'], loc['y']).get('/conditional/npcs', []):
+                idx += 1
+                if readkey('/hash', charjson, '') == self.get_hash:
+                    break
         return idx
 
     @property

@@ -180,5 +180,4 @@ class GameMap(EzdmObject):
                 self.load_tile_from_json(pt_x, pt_y, tile())
         if has_revealed:
             frontend.campaign.chars_in_round()
-            frontend.campaign.roll_for_initiative()
         self.save()

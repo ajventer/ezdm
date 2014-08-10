@@ -194,11 +194,15 @@ class Campaign(EzdmObject):
                     if not (loc['x'], loc['y']) in icons[mapname]:
                         icons[mapname][(loc['x'], loc['y'])] = []
                     icons[mapname][(loc['x'], loc['y'])].append(p_idx)
-        for mapname in icons:
+        for mapname in self.get('/core/maps', []):
+            if not mapname in icons:
+                icons[mapname] = {}
             gamemap = GameMap(load_json('maps', mapname))
             for y in range(0, gamemap.get('/max_y', 1)):
                 for x in range(0, gamemap.get('/max_x', 1)):
                     tile = gamemap.tile(x, y)
+                    if not (x, y) in icons[mapname]:
+                        icons[mapname][(x, y)] = []
                     if tile.revealed():
                         npcs_here = tile.get('/conditional/npcs', [])
                         for npc in sorted(npcs_here):
