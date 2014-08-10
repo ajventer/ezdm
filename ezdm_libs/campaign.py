@@ -226,18 +226,14 @@ class Campaign(EzdmObject):
     def endturn(self):
         self.error('End of turn. Starting new turn.')
         self.chars_in_round()
-        self.roll_for_initiative()
+        #self.roll_for_initiative()
 
     def current_char(self):
-        if len(self.initiative) >= self.current:
-            idx = self.initiative[self.current]
-            return self.characterlist[idx]
-        else:
-            return self.characterlist[0]
+        return self.characterlist[self.current]
 
     def endround(self):
-        if not self.initiative:
-            self.roll_for_initiative()
+        # if not self.initiative:
+        #     self.roll_for_initiative()
         print self.initiative
         self.error('Campaign saves %s' % self.current_char().autosave())
         cycle = False

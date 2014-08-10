@@ -69,7 +69,8 @@ def gethandler(action=None, item=None):
 
 @route('/switch_campaign', method='get')
 def switch_campaign():
-    frontend.campaign.save()
+    if frontend.campaign:
+        frontend.campaign.save()
     frontend.campaign = None
     return gethandler(None, None)
 

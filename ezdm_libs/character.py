@@ -76,7 +76,7 @@ class Character(EzdmObject):
             gamemap.putmoney(loc['x'], loc['y'], gold, silver, copper)
         gamemap.save()
         self.autosave()
-        frontend.campaign.roll_for_initiative()
+        #frontend.campaign.roll_for_initiative()
 
     def location(self):
         return self.get('/core/location', {})
