@@ -86,10 +86,8 @@ class MAPS(Session):
                 self._character.moveto(mapname=newmap, x=new_x, y=new_y, page=page)
                 self._character.autosave()
                 self._map = GameMap(load_json('maps', newmap))
-                self._data = {}
                 self._data['zoom_x'] = 0
                 self._data['zoom_y'] = 0
-                self._data['editmode'] = frontend.mode == 'dm'
             if 'sellitem' in requestdata:
                 idx = int(requestdata['itemtosell'])
                 self._character.sell_item(idx)
