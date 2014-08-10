@@ -178,6 +178,7 @@ class Campaign(EzdmObject):
 
     def chars_in_round(self):
         icons = {}
+        self.playermaps = []
         self.characterlist = CharacterList()
         players = self.players()
         for player in sorted(players):
@@ -194,6 +195,7 @@ class Campaign(EzdmObject):
                     if not (loc['x'], loc['y']) in icons[mapname]:
                         icons[mapname][(loc['x'], loc['y'])] = []
                     icons[mapname][(loc['x'], loc['y'])].append(p_idx)
+                    self.playermaps.append(mapname)
         for mapname in self.get('/core/maps', []):
             if not mapname in icons:
                 icons[mapname] = {}
@@ -242,7 +244,8 @@ class Campaign(EzdmObject):
         self.error('Campaign saves %s' % self.current_char().autosave())
         cycle = False
         char_health = 0
-        while char_health == 0:
+        loc = {'map': None}
+        while char_health == 0 or not loc['map'] in self.playermaps:
             self.current += 1
             if self.current >= len(self.characterlist):
                 if not cycle:
@@ -253,8 +256,8 @@ class Campaign(EzdmObject):
                 self.current = 0
                 self.endturn()
             char_health = int(self.current_char().get('/core/combat/hitpoints', 0))
+            loc = self.current_char().location()
         self.onround(self.characterlist[self.current])
-        loc = self.current_char().location()
         if loc:
             self.current_char().moveto(mapname=loc['map'], x=loc['x'], y=loc['y'])
         self.current_char().autosave()
