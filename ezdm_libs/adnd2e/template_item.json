@@ -16,10 +16,11 @@
 "events": {
     "__Tonpickup" : "",
     "__Tonequip": "",
+    "__Tonunequip": "",
     "__Tonuse": "",
     "__Tonround": "",
     "__Tonfinish": "",
-    "__Tondrop": "campaign.warning('%s has dropped %s' % (player.displayname(), item.displayname()))"
+    "__Tondrop": ""
 },
 "conditional":{
     "core.type=weapon":{

@@ -520,6 +520,7 @@ class Character(EzdmObject):
                     break
         if not item.identified():
             item.identify()
+        item.onequip(self)
         if item:
             if item.armortype() == 'shield' and not shields:
                 return (False, "%s cannot wear %s shields like %s" % (self.displayname(), item.armortype(), item.displayname()))
