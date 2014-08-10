@@ -19,6 +19,7 @@
             }
         },
         "core.type=link": {
+            "npcs":[],
             "newmap":{
                 "mapname":"",
                 "x":0,
@@ -27,6 +28,7 @@
             "canenter": true
         },
         "core.type=door": {
+            "npcs":[],
             "background_alternate": "",
             "locked": true,
             "canenter": false,
@@ -45,10 +47,12 @@
             "events":""
         },
         "core.type=shop":{
+            "npcs":[],
             "canenter": true,
             "items":[]
         },
         "core.type=signpost":{
+            "npcs":[],
             "canenter": true,
             "message":""
         }
