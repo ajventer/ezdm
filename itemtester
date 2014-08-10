@@ -1,0 +1,86 @@
+#!/usr/bin/env python
+from ezdm_libs.util import load_json
+from ezdm_libs.item import Item
+import sys
+from ezdm_libs import frontend
+from ezdm_libs.campaign import Campaign
+from pprint import pprint
+
+if len(sys.argv) < 2:
+    print "Usage %s <itemname>" % sys.argv[0]
+    sys.exit()
+
+item = Item(load_json('items', sys.argv[1]))
+item.identify()
+frontend.campaign = Campaign(load_json('campaigns', 'test_campaign.json'))
+player = frontend.campaign.characterlist[0]
+target = frontend.campaign.characterlist[1]
+
+print "Testing onpickup"
+item.onpickup(player)
+print "PLAYER",
+pprint(player.render())
+print "\n\n\n"
+if item.itemtype() == 'armor':
+    print "Testing onequip"
+    print "ITEM",
+    player.equip(item.name())
+    print "PLAYER",
+    pprint(player.render())
+    print "\n\n\n"
+    print "Testing onunequip"
+    player.unequip(item.name())
+    print 'PLAYER',
+    pprint(player.render())
+
+print "\n\n\n"
+print "Testing onuse"
+item.onuse(player, target)
+player()['core']['inventory']['pack'][0] = item()
+print 'MESSAGES ',
+pprint(frontend.campaign.messages)
+print 'ITEM',
+pprint(item.render())
+print '\n'
+print 'PLAYER',
+pprint(player.render())
+print '\n'
+print 'TARGET',
+pprint(target.render())
+
+
+maxrounds = 300
+rounds = 0
+while item.get('/core/in_use', False) and rounds < maxrounds:
+    print "Testing onround"
+    item.onround(player)
+    player()['core']['inventory']['pack'][0] = item()
+    print 'MESSAGES ',
+    pprint(frontend.campaign.messages)
+    print 'ITEM',
+    pprint(item.render())
+    print '\n'
+    print 'PLAYER',
+    pprint(player.render())
+    print '\n'
+    print 'TARGET',
+    pprint(target.render())
+    rounds += 1
+
+print "\n\n\n"
+if rounds >= maxrounds:
+    print "Test failure: item never finished"
+    sys.exit()
+player()['core']['inventory']['pack'][0] = item()
+print 'ITEM',
+pprint(item.render())
+print 'PLAYER',
+pprint(player.render())
+print 'TARGET',
+pprint(target.render())
+print 'MESSAGES ',
+pprint(frontend.campaign.messages)
+
+print "Testing ondrop"
+player.drop_item(item.name())
+pprint(player.render())
