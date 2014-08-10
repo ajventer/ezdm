@@ -209,7 +209,10 @@ class MAPS(Session):
         added = list(set(added))
         tactical_spells = []
         for idx in added:
-            tactical_spells.append((idx, Item(self._character.get('/core/inventory/spells', [])[idx])))
+            toadd = self._character.get('/core/inventory/spells', [])
+            if len(toadd) > idx:
+                toadd = toadd[idx]
+            tactical_spells.append((idx, Item(toadd)))
         self._data['tactical_spells'] = tactical_spells
         page.add('map_render.tpl', self._data)
         if not self._data['editmode']:

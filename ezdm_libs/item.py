@@ -75,7 +75,6 @@ class Item(EzdmObject):
 
     def onequip(self, player):
         event(self, "/events/onequip", {'item': self, 'player': player})
-        player.autosave()
 
     def onuse(self, player, target):
         print "[DEBUG] Item.onuse: player %s, target %s" % (player.displayname(), target.displayname())
@@ -85,10 +84,11 @@ class Item(EzdmObject):
         self.put('/core/in_use', True)
         self.put('/core/target', target.index)
         event(self, "/events/onuse", {'item': self, 'player': player, 'target': target})
+        print "Item.onuse save: %s" % target.autosave()
 
     def onround(self, player):
-        target = self.get('/core/target', 0)
-        target = frontend.campaign.characterlist[target]
+        targetindex = self.get('/core/target', 0)
+        target = frontend.campaign.characterlist[targetindex]
         print "[DEBUG] Item.onround: self: %s, player: %s, target: %s" % (self.displayname(), player.displayname(), target)
         if self.get('/core/in_use', False):
             rounds = self.get('/core/rounds_per_charge', 0)
@@ -103,22 +103,27 @@ class Item(EzdmObject):
             else:
                 print "[DEBUG] item.onround: running onfinish"
                 self.onfinish(player=player)
-        player.autosave()
-        target.autosave()
+        target = frontend.campaign.characterlist[targetindex]
+        print "Item.onround save: %s" % target.autosave()
 
     def onfinish(self, player):
-        target = self.get('/core/target', 0)
-        target = frontend.campaign.characterlist[target]
+        print "[DEBUG] item.onfinish player %s" % player.displayname()
+        targetindex = self.get('/core/target', 0)
+        print "[DEBUG] item.onfinish target %s" % targetindex
+        target = frontend.campaign.characterlist[targetindex]
+        print "[DEBUG] item.onfinish target %s" % target.displayname()
         self.put('/core/in_use', False)
         self.put('/core/target', None)
         charges = self.get('/core/charges', 0)
+        print "[DEBUG] item.onfinish charges %s" % charges
         if charges > 0:
             charges -= 1
             self.put('/core/charges', charges)
         self.put('/core/current_rounds_performed', 0)
+        print "[DEBUG] item.onfinish before event"
         event(self, "/events/onfinish", {'item': self, 'player': player, 'target': target})
-        player.autosave()
-        target.autosave()
+        target = frontend.campaign.characterlist[targetindex]
+        print "Item.onfinish save: %s" % target.autosave()
 
     def ondrop(self, player):
         event(self, "/events/ondrop", {'item': self, 'player': player})

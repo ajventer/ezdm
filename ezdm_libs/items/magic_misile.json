@@ -20,7 +20,8 @@
     },
     "conditional": {
         "spell_school": "Conjuration",
-        "spell_level": 1
+        "spell_level": 1,
+        "spell_type": "wizard spells"
     },
     "events": {
         "ondrop": "",
@@ -28,6 +29,6 @@
         "onequip": "",
         "onpickup": "",
         "onuse": "campaign.error('%s is casting Magic Missile at %s' % (player.displayname(), target.displayname()))",
-        "onfinish": "campaign.warning('%s has finished casting Magic Misile at %s'  % (player.displayname(), target.displayname()))\r\nfrom ezdm_libs.util import rolldice\r\nspell_success = player.spell_success()\r\nif not spell_success[1]:\r\n\tcampaign.error(spell_success[0])\r\nelse:\r\n\tdmg = rolldice(numdice=1, numsides=6, modifier=1)\r\n\tresult = target.take_damage(dmg)\r\n\tcampaign.error(result[1])\r\nplayer.autosave()\r\ntarget.autosave()"
+        "onfinish": "campaign.warning('%s has finished casting Magic Misile at %s'  % (player.displayname(), target.displayname()))\r\nfrom ezdm_libs.util import rolldice\r\nspell_success = player.spell_success()\r\nif not spell_success[1]:\r\n\tcampaign.error(spell_success)\r\nelse:\r\n\tdmg = rolldice(numdice=1, numsides=6, modifier=1)\r\n\tcampaign.error(dmg[1])\r\n\tresult = target.take_damage(dmg[0])\r\n\tcampaign.error(result[1])\r\n"
     }
 }

@@ -229,13 +229,17 @@ class Campaign(EzdmObject):
         self.roll_for_initiative()
 
     def current_char(self):
-        idx = self.initiative[self.current]
-        return self.characterlist[idx]
+        if len(self.initiative) >= self.current:
+            idx = self.initiative[self.current]
+            return self.characterlist[idx]
+        else:
+            return self.characterlist[0]
 
     def endround(self):
         if not self.initiative:
             self.roll_for_initiative()
         print self.initiative
+        self.error('Campaign saves %s' % self.current_char().autosave())
         cycle = False
         char_health = 0
         while char_health == 0:
@@ -282,7 +286,8 @@ class Campaign(EzdmObject):
                 else:
                     print "[DEBUG] Campaign.onround: pack update: %s, %s" % (item[0], item[1])
                     character()['core']['inventory'][item[0]][item[2]] = item[1]()
-        character.autosave()
+        self.error("Campaign.onround: player=%s, %s" % (character.displayname(), character.autosave()))
+
 
 if __name__ == '__main__':
     import doctest

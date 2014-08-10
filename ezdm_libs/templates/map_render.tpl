@@ -102,7 +102,7 @@
                         {% endfor %}
                     {% endif %}
                 {% else %}
-                    <div  style="vertical-align: top; border: 1px solid;  display: table-cell; background-image:url(/icon/backgrounds/unrevealed.png);background-repeat:repeat;background-size:50px 50px; width:50px; height:50px; max-width: 50px; max-height: 50px" >
+                    <div  style="vertical-align: top; border: 1px solid;  display: inline; background-image:url(/icon/backgrounds/unrevealed.png);background-repeat:repeat;background-size:50px 50px; width:50px; height:50px; max-width: 50px; max-height: 50px; float: left"" >
                 {% endif %}
                     </div>
             {% endfor %}

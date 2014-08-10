@@ -217,7 +217,7 @@ class Character(EzdmObject):
             gamemap.tile(loc['x'], loc['y'])()['conditional']['npcs'][idx] = self()
         else:
             gamemap.tile(loc['x'], loc['y'])()['conditional']['npcs'].append(self())
-        gamemap.save()
+        return gamemap.save()
 
     def heal(self, amount):
         hp = int(self.get('/core/combat/hitpoints', 1))
@@ -229,24 +229,32 @@ class Character(EzdmObject):
         return self.get('/core/combat/hitpoints', 1)
 
     def take_damage(self, damage):
+        frontend.campaign.error('%s takes %s damage' % (self.displayname(), damage))
+        print "[DEBUG] character.take_damage: damage - %s, player - %s" % (damage, self.displayname())
         out = ''
-        if damage >= self.get('/core/combat/hitpoints', 1):
+        currenthitpoints = self.get('/core/combat/hitpoints', 1)
+        if damage >= currenthitpoints:
+            print "[DEBUG] character.take_damage, damage MORE than hitpoints: %s, %s" % (damage, currenthitpoints)
             st = self.saving_throw('ppd')
             out = st[1]
             if not st[0]:
                 self.put('/core/combat/hitpoints', 0)
                 out += "<br>%s has died !" % self.displayname()
                 self.handle_death()
+                frontend.campaign.error(self.autosave())
                 return (False, out)
             else:
                 self.put('/core/combat/hitpoints', 1)
                 out += "<br>%s barely survives. %s hitpoints remaining" % (self.displayname(), self.get('/core/combat/hitpoints', 1))
+                frontend.campaign.error(self.autosave())
                 return (True, out)
         else:
-            hp = int(self.get('/core/combat/hitpoints', 1))
+            print "[DEBUG] character take damage, LESS than hitpoints: damage=%s, player=%s, hitpoints=%s" % (damage, self.displayname(), currenthitpoints)
+            hp = int(currenthitpoints)
             hp -= damage
             self.put('/core/combat/hitpoints', hp)
             out += "<br>%s takes %s damage. %s hitpoints remaining" % (self.displayname(), damage, self.get('/core/combat/hitpoints', 1))
+            frontend.campaign.error(self.autosave())
             return (True, out)
 
     def name(self):
@@ -260,10 +268,11 @@ class Character(EzdmObject):
         return save_json('characters', self.name(), self.json)
 
     def autosave(self):
+        print "Current hitpoints = %s for player - %s" % (self.get('/core/combat/hitpoints', -1), self.displayname())
         if self.character_type() == 'player':
-            self.save()
+            return self.save()
         else:
-            self.save_to_tile()
+            return self.save_to_tile()
 
     def to_hit_mod(self):
         ability_mods = load_json('adnd2e', 'ability_scores')
@@ -431,14 +440,14 @@ class Character(EzdmObject):
         ability_scores = load_json('adnd2e', 'ability_scores')
         wis = str(self.get('/core/abilities/wis', 0))
         failrate = int(ability_scores["wis"][wis]["spell_failure"].split('%')[0])
-        out = ["Spell failure rate: %s percent" % failrate]
+        out = "Spell failure rate: %s percent" % failrate
         roll = rolldice(numdice=1, numsides=100)
-        out.append(roll[1])
+        out += '<br>%s' % roll[1]
         if roll[0] > failrate:
-            out.append('Spell succeeds !')
+            out += '<br>Spell succeeds !'
             return (True, out)
         else:
-            out.append('Spell fails !')
+            out += '<br>Spell fails !'
             return(False, out)
 
     def load_weapons(self):
