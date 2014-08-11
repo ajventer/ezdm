@@ -3,6 +3,8 @@
 from setuptools import setup
 
 setup(name='ezdm',
+      setup_requires=['nose'],
+      test_suite='nose.collector',
       depends=['simplejson', 'bottle', 'jinja2', 'setuptools'],
       version='2.0.0',
       description='Simple tools for helping dungeon masters with ADN&D games',

@@ -10,15 +10,38 @@ import simplejson
 
 
 class Character(EzdmObject):
+    """
+    >>> char = Character(load_json('characters', 'bardic_rogue.json'))
+    >>> char.displayname()
+    '[BARDIC ROGUE]'
+    """
     removed = False
     json = {}
     auto = False
     weapon = 0
 
     def __init__(self, json):
+        """
+        >>> json = load_json('characters', 'bardic_rogue.json')
+        >>> char = Character(json)
+        >>> char.json == json
+        True
+
+        """
         self.json = json
 
     def roll_hit_dice(self):
+        """
+        >>> json = load_json('characters', 'bardic_rogue.json')
+        >>> char = Character(json)
+        >>> hitdice = int(char()['core']['combat']['level-hitdice'])
+        >>> max = int(hitdice * 8)
+        >>> char.roll_hit_dice()
+        >>> char.get('/core/combat/hitpoints', 0) <= max
+        True
+        >>> char.get('/core/combat/max_hp', 0) == max
+        True
+        """
         numdice = int(self.get('/core/combat/level-hitdice', '1'))
         self.put('core/combat/hitpoints', rolldice(numdice=numdice, numsides=8)[0])
         self.put('core/combat/max_hp', numdice * 8)
@@ -817,3 +840,8 @@ class Character(EzdmObject):
             if atype[1] <= self.get('/conditional/armor_types', 0):
                 out['core']['combat']['Armor allowed'].append(atype[0])
         return out
+
+if __name__ == '__main__':
+    import doctest
+    doctest.ELLIPSIS
+    doctest.testmod(optionflags=doctest.ELLIPSIS)
