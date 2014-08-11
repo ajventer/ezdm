@@ -2,7 +2,7 @@ from frontend import Session, Page
 import frontend
 from character import Character
 from item import Item
-from util import load_json, find_files, debug
+from util import load_json, find_files, debug, price_in_copper
 
 
 class INVENTORY(Session):
@@ -65,6 +65,21 @@ class INVENTORY(Session):
                     item = Item(self._character.get('/core/inventory/pack', [])[idx])
                     self._character.sell_item(itemname=idx, buyer=buyer, gold=g, silver=s, copper=c)
                     page.message('%s sold %s to %s' % (self._character.displayname(), item.displayname(), buyer.displayname()))
+                if 'sendmoney' in requestdata:
+                    recipient = Character(load_json('characters', requestdata['recipient']))
+                    g = int(requestdata['gold'])
+                    s = int(requestdata['silver'])
+                    c = int(requestdata['copper'])
+                    total = price_in_copper(g, s, c)
+                    mymoney = price_in_copper(*self._character.money_tuple())
+                    if total <= mymoney:
+                        recipient.gain_money(g, s, c)
+                        recipient.save()
+                        self._character.spend_money(g, s, c)
+                        page.message('You have sent %s gold, %s silver and %s copper to %s' % (g, s, c, recipient.displayname()))
+                    else:
+                        page.error('ERROR:You cannot give away more money than you have')
+
                 if 'dropitem' in requestdata:
                     idx = int(requestdata['pack_index'])
                     self._character.drop_item(idx)

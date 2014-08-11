@@ -64,6 +64,17 @@
 				<input type=submit name="givemoney" value="Give Money">
 			</form>
 			{% endif %}
+			<form method=post>
+				Gold:<input name="gold" type=text size=3 value="0"> 
+				Silver:<input name="silver" type=text size=3 value="0"> 
+				Copper:<input name="copper" type=text size=3 value="0"> 
+				<select name="recipient">
+					{% for target in targetlist %}
+						<option value="{{target.name()}}">{{target.displayname()}}</option>
+					{% endfor %}
+				</select>				
+				<input type=submit name="sendmoney" value="Send Money">
+			</form>			
 		</td>
 		<td>
 			<ul>
