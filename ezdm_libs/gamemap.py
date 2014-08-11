@@ -1,5 +1,5 @@
 from objects import EzdmObject, event
-from util import save_json, load_json, readkey
+from util import save_json, load_json, readkey, debug
 import frontend
 
 
@@ -52,7 +52,7 @@ class Tile(EzdmObject):
             finally:
                 return
         current = self.get('/conditional/%s' % objtype, [])
-        print "Trying to remove %s from %s objtype %s" % (name, current, objtype)
+        debug("Trying to remove %s from %s objtype %s" % (name, current, objtype))
         if name in current:
             del(current[current.index(name)])
         self.put('/conditional/%s' % objtype, current)
@@ -156,8 +156,8 @@ class GameMap(EzdmObject):
         max_x = int(self.get('max_x', 1))
         max_y = int(self.get('max_y', 1))
         has_revealed = False
-        print "x", x, "max_x", max_x, "y", y, "max_y", max_y
-        print max_x
+        debug("x", x, "max_x", max_x, "y", y, "max_y", max_y)
+        debug(max_x)
         left = x - radius
         if left < 0:
             left = 0
@@ -170,7 +170,7 @@ class GameMap(EzdmObject):
         bottom = y + radius + 1
         if bottom > max_y:
             bottom = max_y
-        print "left", left, "top", top, "right", right, "bottom", bottom
+        debug("left", left, "top", top, "right", right, "bottom", bottom)
         for pt_y in range(top, bottom):
             for pt_x in range(left, right):
                 tile = self.tile(pt_x, pt_y)

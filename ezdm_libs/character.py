@@ -1,4 +1,4 @@
-from util import npc_hash, inflate, flatten, rolldice, inrange, price_in_copper, convert_money, save_json, load_json, readkey, writekey
+from util import npc_hash, inflate, flatten, rolldice, inrange, price_in_copper, convert_money, save_json, load_json, readkey, writekey, debug
 from item import Item
 from objects import EzdmObject, event
 from gamemap import GameMap
@@ -48,7 +48,7 @@ class Character(EzdmObject):
 
     def handle_death(self):
         loc = self.location()
-        print "Dead character was at %s" % loc
+        debug("Dead character was at %s" % loc)
         chartype = self.character_type()
         if chartype == 'player':
             chartype = 'players'
@@ -59,7 +59,7 @@ class Character(EzdmObject):
         gamemap = GameMap(load_json('maps', loc['map']))
         if todel != -1:
             gamemap.removefromtile(loc['x'], loc['y'], todel, chartype)
-        print chartype
+        debug(chartype)
         if chartype == 'npcs':
             max_gold = self.get('/conditional/loot/gold', 0)
             max_silver = self.get('/conditional/loot/silver', 0)
@@ -75,26 +75,26 @@ class Character(EzdmObject):
                     loot_items = simplejson.loads(loot_items)
                 except:
                     loot_items = []
-            print "Dropping money %s - %s - %s" % (gold, silver, copper)
+            debug("Dropping money %s - %s - %s" % (gold, silver, copper))
             for counter in range(0, max_items):
                 item = None
-                print "Potential drop: %s of %s" % (counter, max_items)
+                debug("Potential drop: %s of %s" % (counter, max_items))
                 drops_item = rolldice(1, 100, 0)[0]
-                print "Drop-roll: %s" % drops_item
+                debug("Drop-roll: %s" % drops_item)
                 if loot_items and drops_item > 50:
-                    print "Select random item from to drop from %s" % loot_items
+                    debug("Select random item from to drop from %s" % loot_items)
                     item = loot_items[randrange(0, len(loot_items) - 1)]
                 if item:
-                    print "Item dropped %s" % item
+                    debug("Item dropped %s" % item)
                     gamemap.addtotile(loc['x'], loc['y'], item, 'items')
-            print "Always drops: %s" % always_drops
+            debug("Always drops: %s" % always_drops)
             if isinstance(always_drops, str):
                 try:
                     always_drops = simplejson.loads(always_drops)
                 except:
                     always_drops = []
             for item in always_drops:
-                print "Dropping %s" % item
+                debug("Dropping %s" % item)
                 gamemap.addtotile(loc['x'], loc['y'], item, 'items')
             gamemap.putmoney(loc['x'], loc['y'], gold, silver, copper)
         gamemap.save()
@@ -137,11 +137,11 @@ class Character(EzdmObject):
             except:
                 return
         current = self.location()
-        print current
+        debug(current)
         if current.get('map'):
             gamemap = GameMap(load_json('maps', current['map']))
             gamemap.removefromtile(current['x'], current['y'], self.name(), 'players')
-            print "Saving", gamemap.save()
+            debug("Saving", gamemap.save())
         self.put('/core/location/x', x)
         self.put('/core/location/y', y)
         self.put('/core/location/map', mapname)
@@ -154,7 +154,7 @@ class Character(EzdmObject):
             gamemap.load_tile_from_json(x, y, tile())
         if self.character_type() == 'player':
             gamemap.reveal(x, y, self.lightradius)
-        print "Saving", gamemap.save()
+        debug("Saving", gamemap.save())
 
     def inventory_generator(self, sections=['pack', 'equiped', 'spells']):
         for section in sections:
@@ -198,9 +198,9 @@ class Character(EzdmObject):
 
     def xp_worth(self):
         xpkey = self.get('core/combat/level-hitdice', 1)
-        print xpkey
+        debug(xpkey)
         xpvalues = load_json('adnd2e', 'creature_xp.json')
-        print xpvalues
+        debug(xpvalues)
         if str(xpkey) in xpvalues.keys():
             xp = xpvalues[str(xpkey)]
         elif int(xpkey) > 12:
@@ -254,11 +254,11 @@ class Character(EzdmObject):
 
     def take_damage(self, damage):
         frontend.campaign.error('%s takes %s damage' % (self.displayname(), damage))
-        print "[DEBUG] character.take_damage: damage - %s, player - %s" % (damage, self.displayname())
+        debug("[DEBUG] character.take_damage: damage - %s, player - %s" % (damage, self.displayname()))
         out = ''
         currenthitpoints = self.get('/core/combat/hitpoints', 1)
         if damage >= currenthitpoints:
-            print "[DEBUG] character.take_damage, damage MORE than hitpoints: %s, %s" % (damage, currenthitpoints)
+            debug("[DEBUG] character.take_damage, damage MORE than hitpoints: %s, %s" % (damage, currenthitpoints))
             st = self.saving_throw('ppd')
             out = st[1]
             if not st[0]:
@@ -273,7 +273,7 @@ class Character(EzdmObject):
                 frontend.campaign.error(self.autosave())
                 return (True, out)
         else:
-            print "[DEBUG] character take damage, LESS than hitpoints: damage=%s, player=%s, hitpoints=%s" % (damage, self.displayname(), currenthitpoints)
+            debug("[DEBUG] character take damage, LESS than hitpoints: damage=%s, player=%s, hitpoints=%s" % (damage, self.displayname(), currenthitpoints))
             hp = int(currenthitpoints)
             hp -= damage
             self.put('/core/combat/hitpoints', hp)
@@ -292,7 +292,7 @@ class Character(EzdmObject):
         return save_json('characters', self.name(), self.json)
 
     def autosave(self):
-        print "Current hitpoints = %s for player - %s" % (self.get('/core/combat/hitpoints', -1), self.displayname())
+        debug("Current hitpoints = %s for player - %s" % (self.get('/core/combat/hitpoints', -1), self.displayname()))
         if self.character_type() == 'player':
             return self.save()
         else:
@@ -391,7 +391,7 @@ class Character(EzdmObject):
         pclass = self.get('/core/class/parent', '')
         xp_levels = readkey('%s' % (pclass), xp_levels)
         hitdice = str(readkey('/%s/hit_dice' % (level), xp_levels, 1))
-        print "Read hitdice as ", hitdice
+        debug("Read hitdice as ", hitdice)
         if not '+' in hitdice:
             hitdice = hitdice + '+0'
         hitdice, bonus = hitdice.split('+')
@@ -499,7 +499,7 @@ class Character(EzdmObject):
         found = False
         for key in canlearn:
             if key == parentclass or key == childclass:
-                print key
+                debug(key)
                 found = True
                 break
         if not found:
@@ -575,10 +575,8 @@ class Character(EzdmObject):
 
     def unequip_item(self, slot):
         slot = slot.strip()
-        print slot
         current = Item(self.get('/core/inventory/equiped/%s' % slot, {}))
         if current():
-            print "unequip_item: in if"
             self.acquire_item(current)
             if current.get('/conditional/slot', '') == 'twohand':
                 for slot in ['lefthand', 'righthand']:
@@ -588,12 +586,10 @@ class Character(EzdmObject):
 
     def sell_price(self, gold, copper, silver):
             price = price_in_copper(gold, silver, copper)
-            print price
+
             cha = int(self.get('/core/abilities/cha', 1))
             price = (price / 2) + ((price / 100) * cha)
-            print price
             money = convert_money(price)
-            print money
             return (money['gold'], money['silver'], money['copper'])
 
     def sell_item(self, itemname, buyer='shop', gold=0, silver=0, copper=0):
@@ -605,7 +601,6 @@ class Character(EzdmObject):
                     tosell = Item(item)
                     break
         if buyer != 'shop':
-            print tosell.displayname()
             buyer.spend_money(gold, silver, copper)
             buyer.acquire_item(tosell)
             buyer.autosave()
@@ -709,19 +704,13 @@ class Character(EzdmObject):
     def num_attacks(self):
         atr_json = load_json('adnd2e', 'various')
         atr = readkey('/various/attacks_per_round', atr_json)
-        print atr
         parentclass = self.get('/core/class/parent', '')
-        print "Parent class:", parentclass
         if not parentclass in atr:
             ATR = 1
         else:
             for key in atr[parentclass].keys():
-                print "Checking", key
                 if inrange(self.get('/core/combat/level-hitdice', 1), key):
-                    print "Matched !"
                     ATR = int(atr[parentclass][key])
-                    print "Base ATR", ATR
-        print "Num weapons", self.num_weapons()
         return self.num_weapons() * int(ATR)
 
     def current_xp(self):
@@ -746,7 +735,6 @@ class Character(EzdmObject):
         various = load_json('adnd2e', 'various')
         abilities = various['abilities']
         conditionals = self.get('/conditional/abilities', {})
-        print conditionals
         race = self.get('/core/personal/race', self())
         for ability in abilities:
             base = 0
@@ -840,8 +828,3 @@ class Character(EzdmObject):
             if atype[1] <= self.get('/conditional/armor_types', 0):
                 out['core']['combat']['Armor allowed'].append(atype[0])
         return out
-
-if __name__ == '__main__':
-    import doctest
-    doctest.ELLIPSIS
-    doctest.testmod(optionflags=doctest.ELLIPSIS)

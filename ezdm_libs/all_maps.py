@@ -1,7 +1,7 @@
 from frontend import Session, Page
 import frontend
 from gamemap import GameMap
-from util import find_files, load_json
+from util import find_files, load_json, debug
 from simplejson import loads
 from character import Character
 from item import Item
@@ -57,12 +57,12 @@ class MAPS(Session):
             if 'removenpcfromtile' in requestdata:
                 tile = self._map.tile(self._data['zoom_x'], self._data['zoom_y'])
                 npcs = tile.get('/conditional/npcs', [])
-                print "NPCs here", npcs
+                debug("NPCs here", npcs)
                 for npc in npcs:
-                    print "Testing npc"
+                    debug("Testing npc")
                     n = Character(npc)
                     if n.name() == '%s.json' % requestdata['npcname']:
-                        print "    Match"
+                        debug("    Match")
                         break
                 self._map.removefromtile(self._data['zoom_x'], self._data['zoom_y'], n.get_tile_index(), 'npcs')
                 self._map.save()
@@ -94,7 +94,7 @@ class MAPS(Session):
                 self._character.sell_item(idx)
                 self._character.autosave()
             if 'iconsection' in requestdata and requestdata['iconsection']:
-                print "Processing icon click"
+                debug("Processing icon click")
                 iconsection = requestdata['iconsection']
                 self._data['detailname'] = requestdata['iconname']
                 if iconsection == 'money':
@@ -106,7 +106,7 @@ class MAPS(Session):
                 elif iconsection == 'items':
                     i = Item(load_json('items', requestdata['iconname']))
                     if self._map.tile(self._data['zoom_x'], self._data['zoom_y']).tiletype() == 'shop':
-                        print "Pre-identifying item from shop"
+                        debug("Pre-identifying item from shop")
                         i.identify()
                     self._data['detailview'] = i.render()
                     self._data['detailtype'] = 'item'
@@ -124,15 +124,15 @@ class MAPS(Session):
                     page.message('You picked up some money !')
                     self._character.autosave()
                 elif requestdata['detailtype'] == 'item':
-                    print "Processing item selection"
+                    debug("Processing item selection")
                     i = Item(load_json('items', requestdata['detailname']))
                     if requestdata['itemdetail'] == 'Pick up':
-                        print "Pickin up item"
+                        debug("Pickin up item")
                         self._character.acquire_item(i)
                         self._map.removefromtile(self._data['zoom_x'], self._data['zoom_y'], requestdata['detailname'], 'items')
                         page.message('You picked up a %s' % requestdata['detailname'])
                     else:
-                        print "Buying item"
+                        debug("Buying item")
                         i.identify()
                         self._character.buy_item(i, page=page)
                     self._character.autosave()
@@ -178,7 +178,7 @@ class MAPS(Session):
             self.inputhandler(requestdata, page)
         else:
             if not self._data['editmode']:
-                print "reloading map"
+                debug("reloading map")
                 mapname = self._character.get('/core/location/map', '')
                 self._map = GameMap(load_json('maps', mapname))
         if self._data['editmode'] and not self._map:

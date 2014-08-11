@@ -2,7 +2,7 @@
 from gevent import monkey
 monkey.patch_all()
 from bottle import route, run, request, static_file, redirect
-from ezdm_libs.util import load_icon, find_files, load_json
+from ezdm_libs.util import load_icon, find_files, load_json, debug
 from ezdm_libs import get_sys_data
 from ezdm_libs import frontend
 from ezdm_libs.frontend import Page
@@ -21,18 +21,18 @@ def posthandler(action=None):
     global sessions
     if not frontend.campaign:
         return gethandler(None, None)
-    print "Posthandler", sessions
+    debug("Posthandler", sessions)
     if not action_name(action) in sessions:
-        print "Session reset %s" % action_name(action)
+        debug("Session reset %s" % action_name(action))
         return gethandler(action)
-    print sessions[action_name(action)]
+    debug(sessions[action_name(action)])
     return sessions[action_name(action)].render(request.POST)
 
 
 def gethandler(action=None, item=None):
     global sessions
-    print "GetHandler", sessions, action, item
-    print action
+    debug("GetHandler", sessions, action, item)
+    debug(action)
     if frontend.campaign is None and not action == 'EZDM_CAMPAIGNS':
         page = Page()
         out = page.tplrender('header.tpl', {'title': 'Load Campaign'})
@@ -47,20 +47,20 @@ def gethandler(action=None, item=None):
     action = action or 'ALL_HOME'
     if '_' in action:
         to_import = 'from ezdm_libs.%s import %s as ActionSession' % (action.lower(), action_name(action))
-        print to_import
+        debug(to_import)
         exec to_import
     else:
         for prefix in ['all', 'ezdm', 'campaign']:
             try:
                 to_import = 'from ezdm_libs.%s_%s import %s as ActionSession' % (prefix, action.lower(), action_name(action))
-                print to_import
+                debug(to_import)
                 exec to_import
                 break
             except:
                 pass
     if not action_name(action) in sessions:
         sessions[action_name(action)] = ActionSession()
-    print sessions
+    debug(sessions)
     if not item:
         return sessions[action_name(action)].render(None)
     else:
@@ -110,14 +110,14 @@ def serve_js():
 @route('/icon/<source>/<filename>', method='get')
 def icon(source, filename):
     icon = load_icon(os.path.join(source, filename))
-    print "Serving %s" % icon
+    debug("Serving %s" % icon)
     extension = icon.split('.')[-1]
     return static_file(os.path.basename(icon), root=os.path.dirname(icon), mimetype='image/%s' % extension)
 
 
 @route('/view/<action>/<item>', method='get')
 def view(action, item):
-    print "View %s %s" % (action, item)
+    debug("View %s %s" % (action, item))
     return gethandler(action, item)
 
 
@@ -138,7 +138,7 @@ def reset(action=None):
 @route('/action/<action>', method='post')
 def main_page(action=None):
     global sessions
-    print request
+    debug(str(request))
     if request.POST:
         return posthandler(action)
     else:

@@ -2,7 +2,7 @@ from frontend import Session, Page
 import frontend
 from character import Character
 from item import Item
-from util import load_json, find_files
+from util import load_json, find_files, debug
 
 
 class INVENTORY(Session):
@@ -42,7 +42,7 @@ class INVENTORY(Session):
                     item = Item(load_json('items', requestdata['acquire_item']))
                     self._character.acquire_item(item)
                 if 'selected' in requestdata:
-                    print "Item selected"
+                    debug("Item selected")
                     if requestdata['section'] == 'pack':
                         item = Item(self._character.get('/core/inventory/pack', [])[int(requestdata['selected'])])
                         self._data['packindex'] = int(requestdata['selected'])
@@ -79,7 +79,7 @@ class INVENTORY(Session):
                     if not result[0]:
                         page.error('ERROR: %s' % result[1])
                 if 'unequipitem' in requestdata:
-                    print "Unequiping from %s" % requestdata['slot_name']
+                    debug("Unequiping from %s" % requestdata['slot_name'])
                     self._character.unequip_item(requestdata['slot_name'].strip())
                 if 'useitem' in requestdata or 'stopusing' in requestdata:
                     if 'pack_index' in requestdata:
@@ -88,7 +88,7 @@ class INVENTORY(Session):
                     else:
                         section = 'equiped'
                         item = Item(self._character.get('/core/inventory/equiped/%s' % requestdata['slot_name'], {}))
-                    print "Using item: Player: %s, item: %s" % (self._character.displayname(), item.displayname())
+                    debug("Using item: Player: %s, item: %s" % (self._character.displayname(), item.displayname()))
                     target = Character(load_json('characters', requestdata['useitem_target']))
                     if 'useitem' in requestdata:
                         item.onuse(self._character, target)

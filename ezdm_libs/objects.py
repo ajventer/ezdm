@@ -65,15 +65,10 @@ class EzdmObject(object):
         """
         >>> o = EzdmObject({'a': {'b': 1, 'c': 2}})
         >>> o.put('/f/g', 16)
-        >>> o['f']['g']
+        >>> o()['f']['g']
         16
         """
         return writekey(key, value, self.json)
 
     def save(self):
         pass
-
-if __name__ == '__main__':
-    import doctest
-    doctest.ELLIPSIS
-    doctest.testmod(optionflags=doctest.ELLIPSIS)

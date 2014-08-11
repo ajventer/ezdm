@@ -2,7 +2,7 @@ from frontend import JSON_Editor
 import frontend
 from character import Character
 from frontend import Page
-from util import load_json
+from util import load_json, debug
 
 
 class CHARACTERS(JSON_Editor):
@@ -25,10 +25,10 @@ class CHARACTERS(JSON_Editor):
             page.error('No item specified')
             return page.render()
         try:
-            print 'try %s/%s' % (self._name, item)
+            debug('try %s/%s' % (self._name, item))
             json = load_json('%ss' % self._name, item)
         except:
-            print 'except'
+            debug('except')
             page.error('No files matching %s found in %s' % (item, self._name))
             return page.render()
         c = Character(json)

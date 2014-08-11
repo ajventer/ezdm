@@ -1,4 +1,4 @@
-from util import save_json, load_json, rolldice
+from util import save_json, load_json, rolldice, debug
 from character import Character
 from gamemap import GameMap
 from objects import EzdmObject
@@ -8,7 +8,7 @@ class CharacterList(object):
     """
     >>> c = CharacterList()
     >>> c
-    <__main__.CharacterList object...>
+    <ezdm_libs.campaign.CharacterList object...>
     """
     characters = []
 
@@ -74,7 +74,7 @@ class CharacterList(object):
         >>> c.append(Character(load_json('characters','bardic_rogue.json')))
         1
         >>> list(c)
-        [<character.Character object at ...>, <character.Character object at ...>]
+        [<ezdm_libs.character.Character object at ...>, <ezdm_libs.character.Character object at ...>]
 
         """
         tempchars = []
@@ -95,7 +95,7 @@ class CharacterList(object):
         >>> c.append(Character(load_json('characters', 'tiny_tim.json')))
         0
         >>> c[0]
-        <character.Character object at ...>
+        <ezdm_libs.character.Character object at ...>
         >>> c[0].displayname() == Character(load_json('characters', 'tiny_tim.json')).displayname()
         True
 
@@ -154,10 +154,20 @@ class CharacterList(object):
 
 class Campaign(EzdmObject):
     """
-    For whatever reason doctests don't work in these classes
+    >>> json = load_json('campaigns','test_campaign.json')
+    >>> campaign = Campaign(json)
+    >>> campaign()['core']['name']
+    'Test Campaign'
     """
 
     def __init__(self, json):
+        """
+        >>> json = load_json('campaigns','test_campaign.json')
+        >>> campaign = Campaign(json)
+        >>> campaign.messages == []
+        True
+        """
+
         self.characterlist = CharacterList()
         self.json = json
         self.initiative = []
@@ -174,9 +184,21 @@ class Campaign(EzdmObject):
         self.save()
 
     def players(self):
+        """
+        >>> json = load_json('campaigns','test_campaign.json')
+        >>> campaign = Campaign(json)
+        >>> campaign.players()
+        ['wizard_mage.json', 'tiny_tim.json', 'bardic_rogue.json']
+        """
         return self.get('/core/players', [])
 
     def chars_in_round(self):
+        """
+        >>> json = load_json('campaigns','test_campaign.json')
+        >>> campaign = Campaign(json)
+        >>> isinstance(campaign.chars_in_round(), dict)
+        True
+        """
         icons = {}
         self.playermaps = []
         self.characterlist = CharacterList()
@@ -235,12 +257,31 @@ class Campaign(EzdmObject):
         #self.roll_for_initiative()
 
     def current_char(self):
+        """
+        >>> json = load_json('campaigns','test_campaign.json')
+        >>> campaign = Campaign(json)
+        >>> campaign.current_char()
+        <ezdm_libs.character.Character object at ...>
+        """
         return self.characterlist[self.current]
 
     def endround(self):
+        """
+        >>> json = load_json('campaigns','test_campaign.json')
+        >>> campaign = Campaign(json)
+        >>> from ezdm_libs import frontend
+        >>> frontend.campaign = campaign
+        >>> n1 = campaign.current_char().displayname()
+        >>> campaign.endround()
+        >>> campaign.current_char().displayname() != n1
+        True
+        >>> campaign.endround()
+        >>> campaign.endround()
+        >>> campaign.current_char().displayname() == n1
+        True
+        """
         # if not self.initiative:
         #     self.roll_for_initiative()
-        print self.initiative
         self.error('Campaign saves %s' % self.current_char().autosave())
         cycle = False
         char_health = 0
@@ -278,21 +319,15 @@ class Campaign(EzdmObject):
         self.messages.append((s, 'errors'))
 
     def onround(self, character):
-        print "[DEBUG] Campaign.onround: character: %s" % character.displayname()
+        debug("[DEBUG] Campaign.onround: character: %s" % character.displayname())
         for item in character.inventory_generator():
             if item[1].get('/core/in_use', False):
                 self.error('%s is being used' % (item[1].displayname()))
                 item[1].onround(player=character)
                 if item[0] in character.get('/core/inventory/equiped', {}).keys():
-                    print "[DEBUG] Campaign.onround: Equipped update: %s, %s" % (item[0], item[1])
+                    debug("[DEBUG] Campaign.onround: Equipped update: %s, %s" % (item[0], item[1]))
                     character.put('/core/inventory/equiped/%s' % item[0], item[1]())
                 else:
-                    print "[DEBUG] Campaign.onround: pack update: %s, %s" % (item[0], item[1])
+                    debug("[DEBUG] Campaign.onround: pack update: %s, %s" % (item[0], item[1]))
                     character()['core']['inventory'][item[0]][item[2]] = item[1]()
         self.error("Campaign.onround: player=%s, %s" % (character.displayname(), character.autosave()))
-
-
-if __name__ == '__main__':
-    import doctest
-    doctest.ELLIPSIS
-    doctest.testmod(optionflags=doctest.ELLIPSIS)

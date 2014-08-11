@@ -4,9 +4,25 @@ from simplejson import loads, dumps
 from glob import glob
 from random import randrange
 import binascii
+import sys
+
+
+def debug(*args):
+    out = '[DEBUG]:'
+    for arg in args:
+        out += ' ' + str(arg)
+    sys.stderr.write('%s\n' % out)
 
 
 def npc_hash():
+    """
+    >>> hashes = []
+    >>> for i in range(1,1000):
+    ...     hashes.append(npc_hash())
+    ...
+    >>> len(hashes) == len(list(set(hashes)))
+    True
+    """
     return binascii.b2a_hex(os.urandom(64))
 
 
@@ -221,19 +237,34 @@ def dice_list():
 
 
 def inrange(key1, key2):
-        if '-' in key2:
-            minimum = int(key2.split('-')[0])
-            maximum = int(key2.split('-')[1])
-        else:
-            minimum = int(key2)
-            maximum = minimum
-        if int(key1) >= minimum and int(key1) <= maximum:
-            return True
-        else:
-            return False
+    """
+    >>> inrange(5,'6-7')
+    False
+    >>> inrange(5,'5')
+    True
+    >>> inrange(5,'4-7')
+    True
+    """
+    if '-' in key2:
+        minimum = int(key2.split('-')[0])
+        maximum = int(key2.split('-')[1])
+    else:
+        minimum = int(key2)
+        maximum = minimum
+    if int(key1) >= minimum and int(key1) <= maximum:
+        return True
+    else:
+        return False
 
 
 def rolldice(numdice=1, numsides=20, modifier=0):
+    """
+    >>> x = rolldice(numdice=5, numsides=20, modifier=0)
+    >>> x[0] >= 1
+    True
+    >>> x[0] <= 100
+    True
+    """
     total = 0
     numdice = int(numdice)
     numsides = int(numsides)

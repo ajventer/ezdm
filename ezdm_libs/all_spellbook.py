@@ -2,7 +2,7 @@ from frontend import Session, Page
 import frontend
 from character import Character
 from item import Item
-from util import load_json, find_files, inrange
+from util import load_json, find_files, inrange, debug
 
 
 class SPELLBOOK(Session):
@@ -42,11 +42,11 @@ class SPELLBOOK(Session):
                     if index != 'ignoreme':
                         memorized.append(int(index))
                 self._character.put('/core/inventory/spells_memorized', memorized)
-                print memorized
+                debug(memorized)
             if 'learnspell' in requestdata:
                 page.message(self._character.learn_spell(Item(load_json('items', requestdata['learnspell']))))
             if 'selected' in requestdata:
-                print "Handling selection"
+                debug("Handling selection")
                 json = self._character.get('/core/inventory/spells', [])
                 json = json[int(requestdata['selected'])]
                 item = Item(json)
@@ -83,11 +83,11 @@ class SPELLBOOK(Session):
         for key in spell_prog:
             if key == classparent or key == classclass:
                 spell_prog = spell_prog[key]
-                print key
+                debug(key)
                 found = True
                 break
         if found:
-            print "Finding spell progression"
+            debug("Finding spell progression")
             level = self._character.get('/core/combat/level-hitdice', 1)
             for key in spell_prog:
                 if inrange(level, key):
