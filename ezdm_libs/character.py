@@ -976,6 +976,9 @@ class Character(EzdmObject):
         >>> char = Character(load_json('characters','tiny_tim.json'))
         >>> char.render()
         {...}
+        >>> char = Character({})
+        >>> char.render()
+        {}
         """
         out = copy.deepcopy(self())
         if 'hash' in out:

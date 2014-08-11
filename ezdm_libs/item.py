@@ -25,6 +25,11 @@ class Item(EzdmObject):
         return self.get('/core/identified', '')
 
     def render(self):
+        """
+        >>> item = Item({})
+        >>> item.render()
+        {}
+        """
         if self.identified():
             out = copy.deepcopy(self())
             print "Self charges", self().get('/core/charges', '')
