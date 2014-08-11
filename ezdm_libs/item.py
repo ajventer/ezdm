@@ -28,7 +28,7 @@ class Item(EzdmObject):
         """
         >>> item = Item({})
         >>> item.render()
-        {}
+        {...}
         """
         if self.identified():
             out = copy.deepcopy(self())

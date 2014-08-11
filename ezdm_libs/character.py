@@ -983,36 +983,37 @@ class Character(EzdmObject):
         out = copy.deepcopy(self())
         if 'hash' in out:
             del(out['hash'])
-        out['core']['lightradius'] = self.lightradius
-        prettynames = load_json('adnd2e', 'saving_throws')
-        writekey('/conditional/abilities', self.abilities(), out)
-        if not self.character_type() == 'player':
-            out['XP Worth'] = self.xp_worth()
-        if 'saving_throws' in out['core']['combat']:
-            del out['core']['combat']['saving_throws']
-        for k, v in self.saving_throws.items():
-            prettyname = readkey('/names/%s' % k, prettynames, k)
-            writekey('/core/combat/saving_throws/%s ' % prettyname, v, out)
-        self.reset_weapon()
-        out['core']['combat']['armor_class'] = self.armor_class()
-        out['to_hit_mod'] = {}
-        done = False
-        if self.weapons:
-            for I in range(0, len(self.weapons)):
-                self.next_weapon()
-                name = self.weapons[self.weapon].get('/core/name', '')
-                writekey('/to_hit_mod/%s' % name, self.to_hit_mod(), out)
-                if self.weapon == 0:
-                    if done:
-                        break
-                    else:
-                        done = True
-        del(out['core']['inventory'])
-        del(out['conditional']['armor_types'])
-        armor_types = load_json('adnd2e', 'armor_types.json')
-        armor_types = sorted(armor_types.iteritems(), key=operator.itemgetter(1))
-        out['core']['combat']['Armor allowed'] = []
-        for atype in armor_types:
-            if atype[1] <= self.get('/conditional/armor_types', 0):
-                out['core']['combat']['Armor allowed'].append(atype[0])
+        if 'core' in out:
+            out['core']['lightradius'] = self.lightradius
+            if 'saving_throws' in out['core']['combat']:
+                del out['core']['combat']['saving_throws']
+            prettynames = load_json('adnd2e', 'saving_throws')
+            writekey('/conditional/abilities', self.abilities(), out)
+            if not self.character_type() == 'player':
+                out['XP Worth'] = self.xp_worth()
+            for k, v in self.saving_throws.items():
+                prettyname = readkey('/names/%s' % k, prettynames, k)
+                writekey('/core/combat/saving_throws/%s ' % prettyname, v, out)
+            self.reset_weapon()
+            out['core']['combat']['armor_class'] = self.armor_class()
+            del(out['core']['inventory'])
+            del(out['conditional']['armor_types'])
+            out['to_hit_mod'] = {}
+            done = False
+            if self.weapons:
+                for I in range(0, len(self.weapons)):
+                    self.next_weapon()
+                    name = self.weapons[self.weapon].get('/core/name', '')
+                    writekey('/to_hit_mod/%s' % name, self.to_hit_mod(), out)
+                    if self.weapon == 0:
+                        if done:
+                            break
+                        else:
+                            done = True
+            armor_types = load_json('adnd2e', 'armor_types.json')
+            armor_types = sorted(armor_types.iteritems(), key=operator.itemgetter(1))
+            out['core']['combat']['Armor allowed'] = []
+            for atype in armor_types:
+                if atype[1] <= self.get('/conditional/armor_types', 0):
+                    out['core']['combat']['Armor allowed'].append(atype[0])
         return out
