@@ -1,5 +1,6 @@
 from util import rolldice, load_json
 from math import hypot
+from character import Character
 import frontend
 
 
@@ -103,6 +104,7 @@ def attack(player, target, attack_modifiers, custom_tohit, custom_dmg):
                 target.interrupt_cast()
                 frontend.campaign.message('%s was casting but it was interrupted by a successfull hit' % target.displayname)
             player.current_weapon().onstrike(player, target)
+            target = Character(load_json('characters', target.name()))
             damage_result = calc_damage(player, target, custom_dmg)
             target_alive = damage_result is True
             if not target_alive:

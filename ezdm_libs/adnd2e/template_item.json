@@ -30,7 +30,10 @@
         "__Ito_hit": "",
         "range": "__[short,medium,long]",
         "slot": "__[lefthand,righthand,twohand]",
-        "save_against":"__[ppd,rod,pp,breath,spell,none]"
+        "save_against":"__[ppd,rod,pp,breath,spell,none]",
+        "events": {
+            "__Tonstrike": ""
+        }
     },
     "core.type=spell":{
         "spell_level": 1,

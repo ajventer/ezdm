@@ -1,5 +1,6 @@
 {
     "core": {
+        "lightradius": 0,
         "current_rounds_performed": 0,
         "name": "Scroll of Identify",
         "weight": 1,
@@ -13,16 +14,17 @@
         "description": "This scroll is inscribed with powerful magic that can identify the hidden properties of unknown items. It will always identify the first unknown item in your pack.",
         "identified": true,
         "rounds_per_charge": 0,
-        "size": "small",
+        "icon": "icons/scrolloflove.png",
         "type": "other",
-        "icon": "icons/scrolloflove.png"
+        "size": "small"
     },
     "events": {
         "ondrop": "campaign.warning('%s has dropped %s' % (player.displayname(), item.displayname()))",
         "onround": "",
+        "onunequip": "",
         "onequip": "",
         "onpickup": "",
-        "onuse": "for pitem in player.inventory_generator(sections=['pack']):\r\n\tif not pitem[1].identified():\r\n   \t\tpitem[1].identify()\r\n\t   \tplayer()['core']['inventory']['pack'][pitem[2]] = pitem[1]()\r\n\t   \tbreak\r\ncampaign.error('%s has identified %s' % (player.displayname(), pitem[1].displayname()))\r\nplayer.drop_item(item.name())\r\nplayer.save()\r\n\r\n   ",
+        "onuse": "for pitem in player.inventory_generator(sections=['pack']):\r\n\tif not pitem[1].identified():\r\n   \t\tpitem[1].identify()\r\n\t   \tplayer()['core']['inventory']['pack'][pitem[2]] = pitem[1]()\r\n\t   \tbreak\r\ncampaign.error('%s has identified %s' % (player.displayname(), pitem[1].displayname()))\r\n\r\n\r\n   ",
         "onfinish": ""
     }
 }
