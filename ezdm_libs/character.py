@@ -100,6 +100,7 @@ class Character(EzdmObject):
                 debug("Dropping %s" % item)
                 gamemap.addtotile(loc['x'], loc['y'], item, 'items')
             gamemap.putmoney(loc['x'], loc['y'], gold, silver, copper)
+        self.autosave()
         gamemap.save()
         frontend.campaign.chars_in_round()
 
@@ -312,7 +313,7 @@ class Character(EzdmObject):
         >>> end < start
         True
         """
-        frontend.campaign.error('%s takes %s damage' % (self.displayname(), damage))
+        frontend.campaign.message('%s takes %s damage' % (self.displayname(), damage))
         debug("[DEBUG] character.take_damage: damage - %s, player - %s" % (damage, self.displayname()))
         out = ''
         currenthitpoints = self.get('/core/combat/hitpoints', 1)
@@ -324,12 +325,12 @@ class Character(EzdmObject):
                 self.put('/core/combat/hitpoints', 0)
                 out += "<br>%s has died !" % self.displayname()
                 self.handle_death()
-                frontend.campaign.error(self.autosave())
+                frontend.campaign.message(self.autosave())
                 return (False, out)
             else:
                 self.put('/core/combat/hitpoints', 1)
                 out += "<br>%s barely survives. %s hitpoints remaining" % (self.displayname(), self.get('/core/combat/hitpoints', 1))
-                frontend.campaign.error(self.autosave())
+                frontend.campaign.message(self.autosave())
                 return (True, out)
         else:
             debug("[DEBUG] character take damage, LESS than hitpoints: damage=%s, player=%s, hitpoints=%s" % (damage, self.displayname(), currenthitpoints))

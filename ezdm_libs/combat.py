@@ -107,10 +107,5 @@ def attack(player, target, attack_modifiers, custom_tohit, custom_dmg):
             target = Character(load_json('characters', target.name()))
             damage_result = calc_damage(player, target, custom_dmg)
             target_alive = damage_result is True
-            if not target_alive:
-                if target.character_type() == 'npc':
-                    for char in list(frontend.campaign.characterlist):
-                        if char.character_type() == 'player':
-                            frontend.campaign.message(char.give_xp(target.xp_worth()))
             for char in [player, target]:
                 char.autosave()

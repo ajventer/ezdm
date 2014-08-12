@@ -36,17 +36,16 @@ class MAPS(Session):
             if 'pythonconsole' in requestdata:
                 exec requestdata['pythonconsole']
             if 'addchartotile' in requestdata:
-                self._map.save()
                 cname = requestdata['charactername']
                 character = Character(load_json('characters', cname))
                 character.moveto(self._map.name(), self._data['zoom_x'], self._data['zoom_y'])
                 character.autosave()
+                self._map.save()
                 self._map = GameMap(load_json('maps', self._map.name()))
             if 'updatejson' in requestdata:
                 newjson = loads(requestdata['jsonbox'])
                 self._map.load_tile_from_json(self._data['zoom_x'], self._data['zoom_y'], newjson)
             if 'addnpctotile' in requestdata:
-                self._map.save()
                 cname = requestdata['npcname']
                 npc = Character(load_json('characters', cname))
                 npc.moveto(self._map.name(), self._data['zoom_x'], self._data['zoom_y'])
@@ -121,6 +120,8 @@ class MAPS(Session):
                     moneytuple = self._map.getmoney(self._data['zoom_x'], self._data['zoom_y'])
                     self._character.gain_money(*moneytuple)
                     self._map.putmoney(self._data['zoom_x'], self._data['zoom_y'], 0, 0, 0)
+                    self._map.save()
+                    self._map = GameMap(load_json('maps', self._map.name()))
                     page.message('You picked up some money !')
                     self._character.autosave()
                 elif requestdata['detailtype'] == 'item':
@@ -136,6 +137,7 @@ class MAPS(Session):
                         i.identify()
                         self._character.buy_item(i, page=page)
                     self._character.autosave()
+                self._map = GameMap(load_json('maps', self._map.name()))
             if 'attack' in requestdata:
                 attackmods = requestdata.getall('attackmods')
                 target = frontend.campaign.characterlist[int(requestdata['detailindex'])]
@@ -178,11 +180,11 @@ class MAPS(Session):
 
         if requestdata:
             self.inputhandler(requestdata, page)
-        else:
-            if not self._data['editmode']:
-                debug("reloading map")
-                mapname = self._character.get('/core/location/map', '')
-                self._map = GameMap(load_json('maps', mapname))
+
+        if not self._data['editmode']:
+            debug("reloading map")
+            mapname = self._character.get('/core/location/map', '')
+            self._map = GameMap(load_json('maps', mapname))
         if self._data['editmode'] and not self._map:
             self._map = GameMap(name='New Map')
         self._data['map'] = self._map()
@@ -217,6 +219,5 @@ class MAPS(Session):
             tactical_spells.append((idx, Item(toadd)))
         self._data['tactical_spells'] = tactical_spells
         page.add('map_render.tpl', self._data)
-        if not self._data['editmode']:
-            self._map.save()
+        self._map = GameMap(load_json('maps', self._map.name()))
         return page.render()
