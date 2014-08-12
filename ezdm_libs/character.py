@@ -56,6 +56,9 @@ class Character(EzdmObject):
         else:
             chartype = 'npcs'
             todel = self.get_tile_index()
+            for char in list(frontend.campaign.characterlist):
+                if char.character_type() == 'player':
+                    frontend.campaign.message(char.give_xp(self.xp_worth()))
         gamemap = GameMap(load_json('maps', loc['map']))
         if todel != -1:
             gamemap.removefromtile(loc['x'], loc['y'], todel, chartype)
