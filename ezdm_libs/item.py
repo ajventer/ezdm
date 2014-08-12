@@ -90,6 +90,11 @@ class Item(EzdmObject):
         charges = self.get('/core/charges', 0)
         if charges == 0:
             return
+        if self.itemtype() == 'spell':
+            success = player.spell_success()
+            frontend.campaign.message(success[1])
+            if not success[0]:
+                return
         self.put('/core/in_use', True)
         self.put('/core/target', target.index)
         event(self, "/events/onuse", {'item': self, 'player': player, 'target': target})

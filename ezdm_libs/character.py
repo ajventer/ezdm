@@ -99,7 +99,7 @@ class Character(EzdmObject):
             gamemap.putmoney(loc['x'], loc['y'], gold, silver, copper)
         gamemap.save()
         self.autosave()
-        #frontend.campaign.roll_for_initiative()
+        frontend.campaign.chars_in_round()
 
     def location(self):
         """

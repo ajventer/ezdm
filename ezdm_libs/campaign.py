@@ -263,8 +263,14 @@ class Campaign(EzdmObject):
         >>> campaign.current_char()
         <ezdm_libs.character.Character object at ...>
         """
-        if self.current >= len(self.characterlist):
-            return None
+        if len(self.characterlist) == 0:
+            self.error('All players are dead !')
+            self.error('Here comes the resurrection fairy !')
+            for player in self.players():
+                char = Character('characters', player)
+                char.put('/core/combat/hitpoints', 1)
+                char.save()
+            self.chars_in_round()
         return self.characterlist[self.current]
 
     def endround(self):
