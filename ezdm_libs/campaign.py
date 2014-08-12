@@ -263,6 +263,8 @@ class Campaign(EzdmObject):
         >>> campaign.current_char()
         <ezdm_libs.character.Character object at ...>
         """
+        if self.current >= len(self.characterlist):
+            return None
         return self.characterlist[self.current]
 
     def endround(self):
