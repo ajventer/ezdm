@@ -98,7 +98,6 @@ class Character(EzdmObject):
                 gamemap.addtotile(loc['x'], loc['y'], item, 'items')
             gamemap.putmoney(loc['x'], loc['y'], gold, silver, copper)
         gamemap.save()
-        self.autosave()
         frontend.campaign.chars_in_round()
 
     def location(self):
@@ -345,7 +344,7 @@ class Character(EzdmObject):
         'tiny_tim.json'
         """
         name = '%s_%s.json' % (self.get('/core/personal/name/first', ''), self.get('/core/personal/name/last', ''))
-        return name.lower()
+        return name.lower().replace(' ', '_')
 
     def save(self):
         self.json = inflate(flatten(self.json))

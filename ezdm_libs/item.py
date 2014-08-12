@@ -98,7 +98,7 @@ class Item(EzdmObject):
         self.put('/core/in_use', True)
         self.put('/core/target', target.index)
         event(self, "/events/onuse", {'item': self, 'player': player, 'target': target})
-        debug("Item.onuse save: %s" % target.autosave())
+        frontend.campaign.error("Item.onuse save: %s" % target.autosave())
 
     def onround(self, player):
         targetindex = self.get('/core/target', 0)

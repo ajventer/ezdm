@@ -204,6 +204,7 @@ class Campaign(EzdmObject):
         self.characterlist = CharacterList()
         players = self.players()
         for player in sorted(players):
+            debug(player)
             if not player.endswith('.json'):
                 player = '%s.json' % player
             p = Character(load_json('characters', player))
@@ -230,6 +231,7 @@ class Campaign(EzdmObject):
                     if tile.revealed():
                         npcs_here = tile.get('/conditional/npcs', [])
                         for npc in sorted(npcs_here):
+                            debug(npc)
                             n = Character(npc)
                             if n.get('/core/combat/hitpoints', 1) > 0:
                                 n.put('/core/location', {"map": mapname, "x": x, "y": y})

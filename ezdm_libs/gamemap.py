@@ -82,6 +82,8 @@ class GameMap(EzdmObject):
                     for player in players:
                         j = EzdmObject(load_json('characters', player))
                         loc = j.get('/core/location', {})
+                        if not 'map' in loc:
+                            continue
                         if not '.json' in loc['map']:
                             loc['map'] = '%s.json' % loc['map']
                         if not loc['map'] == self.name() or not int(loc['x']) == x or not int(loc['y']) == y:

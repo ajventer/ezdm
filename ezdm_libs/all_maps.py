@@ -148,6 +148,7 @@ class MAPS(Session):
                 item.onuse(self._character, target)
                 self._character()['core']['inventory']['pack'][idx] = item()
                 self._character.autosave()
+                self._map = GameMap(load_json('maps', self._map.name()))
             if 'castspell' in requestdata:
                 target = frontend.campaign.characterlist[int(requestdata['detailindex'])]
                 idx = int(requestdata['tact_spell'])
@@ -156,6 +157,7 @@ class MAPS(Session):
                 del (self._character()['core']['inventory']['spells_memorized'][idx])
                 self._character()['core']['inventory']['spells'][idx] = item()
                 self._character.autosave()
+                self._map = GameMap(load_json('maps', self._map.name()))
 
             if not 'savemap' in requestdata and not 'loadmap' in requestdata and self._data['editmode']:
                 page.warning('WARNING: Changes are not yet saved')
