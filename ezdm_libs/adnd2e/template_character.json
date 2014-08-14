@@ -31,7 +31,7 @@
     {"parent": "__[warrior,wizard,rogue,priest]",
     "class":"__[fighter,bard,ranger,thief,druid,mage,illusionist,cleric,paladin]"},
 "abilities":{"__Iwis": "","__Idex": "", "__Icha": "", "__Istr": "","__Icon": "","__Iint": ""},
-"inventory":{
+"__Tinventory":{
         "equiped":{
             "leftfinger": {},
             "rightfinger": {},

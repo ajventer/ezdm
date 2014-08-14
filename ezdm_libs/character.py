@@ -1016,6 +1016,11 @@ class Character(EzdmObject):
                             break
                         else:
                             done = True
+            if 'index' in out:
+                del (out['index'])
+            xp = self.get('/core/personal/xp')
+            nl = self.next_level()
+            out['core']['personal']['xp'] = '%s/%s (%s to go)' % (xp, nl, nl - xp)
             armor_types = load_json('adnd2e', 'armor_types.json')
             armor_types = sorted(armor_types.iteritems(), key=operator.itemgetter(1))
             out['core']['combat']['Armor allowed'] = []
