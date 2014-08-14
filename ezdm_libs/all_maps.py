@@ -219,5 +219,6 @@ class MAPS(Session):
             tactical_spells.append((idx, Item(toadd)))
         self._data['tactical_spells'] = tactical_spells
         page.add('map_render.tpl', self._data)
-        self._map = GameMap(load_json('maps', self._map.name()))
+        if not self._data['editmode']:
+            self._map = GameMap(load_json('maps', self._map.name()))
         return page.render()

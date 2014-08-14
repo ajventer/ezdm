@@ -1,11 +1,13 @@
 from frontend import Session, Page
-from util import load_json
+from util import load_json, debug
 from character import Character
 import frontend
 
 
 class XPTOOL(Session):
-    characters = []
+    def __init__(self):
+        Session.__init__(self)
+        self.characters = []
 
     def render(self, requestdata):
         page = Page()
@@ -23,15 +25,22 @@ class XPTOOL(Session):
                 return page.render()
             else:
                 if self._data['character'] == 'Campaign':
+                    debug('XP for whole campaign')
                     for character in frontend.campaign.players():
-                        self.characters.append(Character(load_json('characters', character)))
+                        self.characters.append(character)
                 else:
-                    self.characters.append(Character(load_json('characters', self._data['character'])))
+                    debug('XP For %s' % self._data['character'])
+                    self.characters.append(requestdata['character'])
 
-        if not 'xp_ammount' in self._data:
+        if self.characters and not 'xp_ammount' in self._data:
             page.message('Adding experience points for %s' % self.characters)
             page.message('current XP/Level: ')
-            for characters in self.characters:
+            debug('Character list', self.characters)
+            for charname in self.characters:
+                if charname == 'Campaign':
+                    continue
+                character = Character(load_json('characters', charname))
+                debug('Character: ' + str(character) + character.displayname())
                 page.message('    %s/%s' % (character.get('/core/personal/xp', 0), character.next_level()))
             xpform = {'action': '/EZDM_XPTOOL', 'name': 'Experience Points', 'default_value': 0}
             xpform['question'] = 'How much experience points do you grant ?'
@@ -40,8 +49,11 @@ class XPTOOL(Session):
             xpform['submitvalue'] = 'Give XP'
             page.add('simple_input.tpl', xpform)
             return page.render()
-        for character in self.characters:
-            print "New XP", self.character.give_xp(int(self._data['xp_ammount']))
+        for charname in self.characters:
+            if charname == 'Campaign':
+                continue
+            character = Character(load_json('characters', charname))
+            print "New XP", character.give_xp(int(self._data['xp_ammount']))
             character.save()
         self._data = {}
         self.characters = []

@@ -71,6 +71,7 @@
         "armor_types": 3,
         "shields": false,
         "abilities":{
+            "hide in shadows": 5,
             "pick pockets":15,
             "open locks": 10,
             "find-remove traps":5,

@@ -16,7 +16,7 @@ class Item(EzdmObject):
 
     def name(self):
         name = '%s.json' % self.get('/core/name', '')
-        return name.lower().replace(' ', '_')
+        return name.lower().replace(' ', '_').replace("'", "")
 
     def slot(self):
         return self.get('/conditional/slot', '')

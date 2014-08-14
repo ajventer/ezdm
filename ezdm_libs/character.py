@@ -533,7 +533,10 @@ class Character(EzdmObject):
     def next_level(self):
         parentclass = self.get('/core/class/parent', '')
         childclass = self.get('/core/class/class', '')
-        nl = int(self.get('/core/combat/level-hitdice', '')) + 1
+        if childclass == 'paladin':
+            childclass = 'ranger'
+        debug('Checking next level for %s' % self.displayname())
+        nl = int(self.get('/core/combat/level-hitdice', 1)) + 1
         if nl > 20:
             return -1
         xp_levels = readkey('/%s/%s' % (parentclass, str(nl)), load_json('adnd2e', 'xp_levels'), {})
