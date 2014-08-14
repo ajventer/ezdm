@@ -348,7 +348,7 @@ class Character(EzdmObject):
         'tiny_tim.json'
         """
         name = '%s_%s.json' % (self.get('/core/personal/name/first', ''), self.get('/core/personal/name/last', ''))
-        return name.lower().replace(' ', '_')
+        return name.lower().replace(' ', '_').replace("'", "")
 
     def save(self):
         self.json = inflate(flatten(self.json))
