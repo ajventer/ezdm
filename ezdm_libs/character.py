@@ -1018,7 +1018,7 @@ class Character(EzdmObject):
                             done = True
             if 'index' in out:
                 del (out['index'])
-            xp = self.get('/core/personal/xp')
+            xp = self.get('/core/personal/xp', 0)
             nl = self.next_level()
             out['core']['personal']['xp'] = '%s/%s (%s to go)' % (xp, nl, nl - xp)
             armor_types = load_json('adnd2e', 'armor_types.json')
