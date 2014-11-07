@@ -278,6 +278,7 @@
                             {% else %}  
                                 <fieldset>
                                     <legend>Attack options</legend>
+
                                     {% for option in attackmods|sort %}
                                         <div>
                                             <input type=checkbox name=attackmods value="{{option}}">

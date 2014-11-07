@@ -105,6 +105,10 @@ class CharacterList(object):
         load_tuple = self.characters[key]
         return self.__loaditem(load_tuple)
 
+    def index(self, key):
+        return self.characters.index(self.__charitem(key))
+        
+
     def __setitem__(self, key, value):
         """
         >>> c = CharacterList()
@@ -204,7 +208,6 @@ class Campaign(EzdmObject):
         self.characterlist = CharacterList()
         players = self.players()
         for player in sorted(players):
-            debug(player)
             if not player.endswith('.json'):
                 player = '%s.json' % player
             p = Character(load_json('characters', player))
@@ -221,7 +224,8 @@ class Campaign(EzdmObject):
                     self.playermaps.append(mapname)
         for mapname in self.get('/core/maps', []):
             if not mapname in icons:
-                icons[mapname] = {}
+                continue
+                #icons[mapname] = {}
             gamemap = GameMap(load_json('maps', mapname))
             for y in range(0, gamemap.get('/max_y', 1)):
                 for x in range(0, gamemap.get('/max_x', 1)):
@@ -231,7 +235,6 @@ class Campaign(EzdmObject):
                     if tile.revealed():
                         npcs_here = tile.get('/conditional/npcs', [])
                         for npc in sorted(npcs_here):
-                            debug(npc)
                             n = Character(npc)
                             if n.get('/core/combat/hitpoints', 1) > 0:
                                 n.put('/core/location', {"map": mapname, "x": x, "y": y})
@@ -265,14 +268,14 @@ class Campaign(EzdmObject):
         >>> campaign.current_char()
         <ezdm_libs.character.Character object at ...>
         """
-        if len(self.characterlist) == 0:
-            self.error('All players are dead !')
-            self.error('Here comes the resurrection fairy !')
-            for player in self.players():
-                char = Character('characters', player)
-                char.put('/core/combat/hitpoints', 1)
-                char.save()
-            self.chars_in_round()
+        # if len(self.characterlist) == 0:
+        #     self.error('All players are dead !')
+        #     self.error('Here comes the resurrection fairy !')
+        #     for player in self.players():
+        #         char = Character('characters', player)
+        #         char.put('/core/combat/hitpoints', 1)
+        #         char.save()
+        #     self.chars_in_round()
         return self.characterlist[self.current]
 
     def endround(self):
@@ -292,28 +295,30 @@ class Campaign(EzdmObject):
         """
         # if not self.initiative:
         #     self.roll_for_initiative()
-        self.error('Campaign saves %s' % self.current_char().autosave())
-        cycle = False
-        char_health = 0
-        loc = {'map': None}
-        while char_health == 0 or not loc['map'] in self.playermaps:
-            self.current += 1
-            if self.current >= len(self.characterlist):
-                if not cycle:
-                    cycle = True
-                else:
-                    self.error('All characters are dead !')
-                    break
-                self.current = 0
-                self.endturn()
-            char_health = int(self.current_char().get('/core/combat/hitpoints', 0))
-            loc = self.current_char().location()
-        self.onround(self.characterlist[self.current])
-        if loc:
-            self.current_char().moveto(mapname=loc['map'], x=loc['x'], y=loc['y'])
-        self.current_char().autosave()
-        self.error('%s goes next' % self.current_char().displayname())
-        self.save()
+        # self.error('Campaign saves %s' % self.current_char().autosave())
+        # cycle = False
+        # char_health = 0
+        # loc = {'map': None}
+        # while char_health == 0 or not loc['map'] in self.playermaps:
+        #     self.current += 1
+        #     if self.current >= len(self.characterlist):
+        #         if not cycle:
+        #             cycle = True
+        #         else:
+        #             self.error('All characters are dead !')
+        #             break
+        #         self.current = 0
+        #         self.endturn()
+        #     char_health = int(self.current_char().get('/core/combat/hitpoints', 0))
+        # if self.current >= len(self.characterlist):
+        #     self.current = 0
+        # loc = self.current_char().location()
+        # self.onround(self.current_char())
+        # if loc:
+        #     self.current_char().moveto(mapname=loc['map'], x=loc['x'], y=loc['y'])
+        # self.current_char().autosave()
+        # self.error('%s goes next' % self.current_char().displayname())
+        # self.save()
 
     def save(self):
         name = '%s.json' % self.get('/core/name', '')

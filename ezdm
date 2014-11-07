@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 from gevent import monkey
 monkey.patch_all()
 from bottle import route, run, request, static_file, redirect
@@ -73,6 +73,14 @@ def switch_campaign():
         frontend.campaign.save()
     frontend.campaign = None
     return gethandler(None, None)
+
+
+@route('/newchar', method='post')
+def switch_character():
+    newchar = request.POST['newchar']
+    frontend.campaign.current = int(request.POST['newchar'])
+    frontend.campaign.chars_in_round()
+    return redirect('/action/ALL_MAPS', 302)
 
 
 @route('/interrupt', method='get')

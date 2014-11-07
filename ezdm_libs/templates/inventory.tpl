@@ -55,6 +55,7 @@
 					<option value="{{item}}">{{item}}</option>
 					{%endfor%}
 				</select>
+				<input type=text size=4 name="num_new_items" value="1">
 				<input type=submit value="Acquire Item">
 			</form>
 			<form method=post>
@@ -63,6 +64,13 @@
 				Copper:<input name="copper" type=text size=3 value="0"> 
 				<input type=submit name="givemoney" value="Give Money">
 			</form>
+			<form method=post>
+				Gold:<input name="gold" type=text size=3 value="0"> 
+				Silver:<input name="silver" type=text size=3 value="0"> 
+				Copper:<input name="copper" type=text size=3 value="0"> 
+				<input type=submit name="spendmoney" value="Remove Money">
+			</form>
+
 			{% endif %}
 			<form method=post>
 				Gold:<input name="gold" type=text size=3 value="0"> 

@@ -62,6 +62,7 @@ class Page:
             self.title += ' CAMPAIGN MODE'
         if campaign:
             self.headerdict['character'] = campaign.current_char()
+            self.headerdict['characters'] = campaign.characterlist
         self._menuitems = {'menuitems': menuitems}
         self.content = [('menubar.tpl', self._menuitems)]
 

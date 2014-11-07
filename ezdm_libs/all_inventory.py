@@ -40,7 +40,9 @@ class INVENTORY(Session):
             if requestdata:
                 if 'acquire_item' in requestdata:
                     item = Item(load_json('items', requestdata['acquire_item']))
-                    self._character.acquire_item(item)
+                    num_items = int( requestdata['num_new_items'])
+                    for i in range(0,num_items):
+                        self._character.acquire_item(item)
                 if 'selected' in requestdata:
                     debug("Item selected")
                     if requestdata['section'] == 'pack':
@@ -119,6 +121,11 @@ class INVENTORY(Session):
                     silver = int(requestdata['silver'])
                     copper = int(requestdata['copper'])
                     self._character.gain_money(gold, silver, copper)
+                if 'spendmoney' in requestdata:
+                    gold = int(requestdata['gold'])
+                    silver = int(requestdata['silver'])
+                    copper = int(requestdata['copper'])
+                    self._character.spend_money(gold, silver, copper)                    
 
             page.add('inventory.tpl', self._data)
             self._character.save()

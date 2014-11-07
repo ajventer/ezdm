@@ -86,7 +86,8 @@ class Character(EzdmObject):
                 debug("Drop-roll: %s" % drops_item)
                 if loot_items and drops_item > 50:
                     debug("Select random item from to drop from %s" % loot_items)
-                    item = loot_items[randrange(0, len(loot_items) - 1)]
+                    if len(loot_items) >= 2:
+                        item = loot_items[randrange(0, len(loot_items) - 1)]
                 if item:
                     debug("Item dropped %s" % item)
                     gamemap.addtotile(loc['x'], loc['y'], item, 'items')
@@ -1002,6 +1003,7 @@ class Character(EzdmObject):
                 writekey('/core/combat/saving_throws/%s ' % prettyname, v, out)
             self.reset_weapon()
             out['core']['combat']['armor_class'] = self.armor_class()
+            out['core']['combat']['thac0'] = self.thac0
             del(out['core']['inventory'])
             del(out['conditional']['armor_types'])
             out['to_hit_mod'] = {}

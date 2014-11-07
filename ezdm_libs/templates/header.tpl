@@ -68,12 +68,24 @@
                 <input type=button value="Unload" onclick="window.location = '/switch_campaign'">
             </div>
             <div style="display: table-cell; border: 1px solid;">
-            <td bgcolor=lightblue width=50%><center><strong>{{title}}</strong></center>
+            <center><strong>{{title}}</strong></center>
             {% if character %}   
                 </div><div style="display: table-cell; border: 1px solid;">
                 Current character:
                     <img src="/icon/{{character.get('/core/icon','')}}" height=25>{{character.displayname()}}
                     <input type=button value="End Round" onclick="window.location = '/endround'">
+            {% endif %}
+            </div>
+            <div style="display: table-cell; border: 1px solid;">
+            {% if characters %}
+                <form method=post action="/newchar">
+                <select name="newchar">
+                {% for character in characters %}
+                    <option value="{{characters.index(character)}}">{{character.name()}}</option>
+                {% endfor %}
+                </select>
+                <input type=submit value="Switch Character">
+                </form>
             {% endif %}
             </div>
             <div style="display: table-cell; border: 1px solid;">
