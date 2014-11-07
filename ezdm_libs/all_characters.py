@@ -13,7 +13,7 @@ class CHARACTERS(JSON_Editor):
         self._obj = Character({})
 
     def render(self, requestdata):
-        if frontend.mode == 'dm':
+        if frontend.mode() == 'dm':
             return JSON_Editor.render(self, requestdata)
         else:
             char = frontend.campaign.current_char()

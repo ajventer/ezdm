@@ -172,7 +172,7 @@ class MAPS(Session):
             del(self._data['detailview'])
 
         self._data['attackmods'] = load_json('adnd2e', 'attack_mods')
-        self._data['editmode'] = frontend.mode == 'dm'
+        self._data['editmode'] = frontend.mode() == 'dm'
         self._data['campaign'] = frontend.campaign
         self._character = frontend.campaign.current_char()
         if not self._data['editmode']:

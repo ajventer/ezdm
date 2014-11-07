@@ -42,7 +42,7 @@ def gethandler(action=None, item=None):
         out += page.tplrender('footer.tpl', {})
         return out
     elif action == 'EZDM_CAMPAIGNS':
-        frontend.mode = 'dm'
+        setmode('dm')
     from ezdm_libs.frontend import Session as ActionSession
     action = action or 'ALL_HOME'
     if '_' in action:
@@ -105,7 +105,7 @@ def load_campaign(campaign):
 
 @route('/mode/<newmode>', method='get')
 def setmode(newmode):
-    frontend.mode = newmode
+    frontend.modevar = newmode
     return redirect('/action/ALL_MAPS', 302)
 
 

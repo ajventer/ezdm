@@ -2,8 +2,13 @@ from jinja2 import Template
 from util import readfile, find_files, template_dict, json_editor, list_icons, inflate, load_json
 from simplejson import dumps, loads
 
-mode = 'campaign'
+modevar = 'campaign'
 campaign = None
+
+
+def mode():
+    global modevar
+    return modevar
 
 
 class Session:
@@ -50,13 +55,12 @@ class Page:
         self._messages = {'messages': [], 'warnings': [], 'errors': []}
         self.title = title or 'EZDM'
         self.headerdict = {}
-        global mode
-        if mode == 'dm':
+        if mode() == 'dm':
             menuitems = self.make_menu(find_files('', 'ezdm*.py', basename=True), 'ezdm_')
         else:
             menuitems = self.make_menu(find_files('', 'campaign*.py', basename=True), 'campaign_')
         menuitems.update(self.make_menu(find_files('', 'all*.py', basename=True), 'all_'))
-        if mode == 'dm':
+        if mode() == 'dm':
             self.title += ' DUNGEON MASTER MODE'
         else:
             self.title += ' CAMPAIGN MODE'

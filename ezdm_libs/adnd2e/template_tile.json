@@ -12,7 +12,7 @@
             "gold":0,
             "silver":0,
             "copper":0,
-            "npcs":[],
+            "npcs":{},
             "players":[],
             "events": {
                 "onenter": ""

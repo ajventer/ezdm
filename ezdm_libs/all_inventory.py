@@ -16,9 +16,9 @@ class INVENTORY(Session):
         self._data['targetlist'] = list(frontend.campaign.characterlist)
         if requestdata and 'loadfrom' in requestdata:
             self._character = Character(load_json('characters', requestdata['loadfrom']))
-        if frontend.mode == 'campaign' and frontend.campaign:
+        if frontend.mode() == 'campaign' and frontend.campaign:
                 self._character = frontend.campaign.current_char()
-        self._data['editmode'] = frontend.mode == 'dm'
+        self._data['editmode'] = frontend.mode() == 'dm'
         if self._data['editmode']:
             loadfrom = {}
             loadfrom['name'] = 'Character'

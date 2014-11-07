@@ -55,7 +55,7 @@ class Character(EzdmObject):
             todel = self.name()
         else:
             chartype = 'npcs'
-            todel = self.get_tile_index()
+            todel = self.get_hash()
             for char in list(frontend.campaign.characterlist):
                 if char.character_type() == 'player':
                     frontend.campaign.message(char.give_xp(self.xp_worth()))
@@ -243,9 +243,6 @@ class Character(EzdmObject):
             xp = 3000 + ((int(xpkey) - 13) * 1000)
         return int(xp)
 
-    def set_index(self, index):
-        self.put('/index', index)
-
     def set_hash(self):
         myhash = npc_hash()
         self.put('/hash', myhash)
@@ -254,29 +251,12 @@ class Character(EzdmObject):
     def get_hash(self):
         return self.get('/hash', '')
 
-    def get_tile_index(self):
-        loc = self.location()
-        idx = -1
-        if isinstance(loc['x'], int) and isinstance(loc['y'], int) and loc['map']:
-            gamemap = GameMap(load_json('maps', loc['map']))
-            for charjson in gamemap.tile(loc['x'], loc['y']).get('/conditional/npcs', []):
-                idx += 1
-                if readkey('/hash', charjson, '') == self.get_hash:
-                    break
-        return idx
-
-    @property
-    def index(self):
-        return self.get('/index', -1)
-
     def save_to_tile(self):
         loc = self.location()
         gamemap = GameMap(load_json('maps', loc['map']))
-        idx = self.get_tile_index()
-        if idx != -1:
-            gamemap.tile(loc['x'], loc['y'])()['conditional']['npcs'][idx] = self()
-        else:
-            gamemap.tile(loc['x'], loc['y'])()['conditional']['npcs'].append(self())
+        if isinstance(gamemap.tile(loc['x'], loc['y'])()['conditional']['npcs'], list):
+            gamemap.tile(loc['x'], loc['y'])()['conditional']['npcs'] = {}
+        gamemap.tile(loc['x'], loc['y'])()['conditional']['npcs'][self.get_hash()] = self()
         return gamemap.save()
 
     def heal(self, amount):
@@ -358,7 +338,6 @@ class Character(EzdmObject):
         return save_json('characters', self.name(), self.json)
 
     def autosave(self):
-        debug("Current hitpoints = %s for player - %s" % (self.get('/core/combat/hitpoints', -1), self.displayname()))
         if self.character_type() == 'player':
             return self.save()
         else:
@@ -962,7 +941,11 @@ class Character(EzdmObject):
 
     def displayname(self):
         out = "%s %s" % (self.get('/core/personal/name/first', ''), self.get('/core/personal/name/last', ''))
-        if self.index > -1 and self.character_type() == 'npc':
+        try:
+            index = frontend.campaign.characters.index(self)
+        except:
+            index = -1
+        if index > -1 and self.character_type() == 'npc':
             out = "%s (%s)" % (out, self.index)
         out = "[%s]" % out
         return out

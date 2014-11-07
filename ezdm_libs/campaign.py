@@ -22,7 +22,8 @@ class CharacterList(object):
         >>> CharacterList()._CharacterList__charitem(char)
         ('player', 'tiny_tim.json')
         """
-        character.set_index(len(self.characters))
+        if not character:
+            return
         if character.character_type() == 'player':
             load_tuple = ('player', character.name())
         else:
@@ -61,7 +62,9 @@ class CharacterList(object):
             y = loc['y']
             gamemap = GameMap(load_json('maps', mapname))
             tile = gamemap.tile(x, y)
-            for npcjson in tile.get('/conditional/npcs', []):
+            npcs_here = tile.get('/conditional/npcs', {})
+            for npc in npcs_here:
+                npcjson = npcs_here[npc]
                 npc = Character(npcjson)
                 if npc.get_hash() == load_tuple[2]:
                     return npc
@@ -233,9 +236,11 @@ class Campaign(EzdmObject):
                     if not (x, y) in icons[mapname]:
                         icons[mapname][(x, y)] = []
                     if tile.revealed():
-                        npcs_here = tile.get('/conditional/npcs', [])
-                        for npc in sorted(npcs_here):
-                            n = Character(npc)
+                        npcs_here = tile.get('/conditional/npcs', {})
+                        if isinstance(npcs_here, list):
+                            continue
+                        for npc in npcs_here:
+                            n = Character(npcs_here[npc])
                             if n.get('/core/combat/hitpoints', 1) > 0:
                                 n.put('/core/location', {"map": mapname, "x": x, "y": y})
                                 n_idx = self.characterlist.append(n)

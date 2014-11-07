@@ -147,7 +147,7 @@
                         {% set char = campaign.characterlist[idx] %}
                         {% if char %}
                             {% set title = char.displayname() %}
-                            {% set index = char.index %}
+                            {% set index = idx %}
                             {% set icon = char.get('/core/icon', '') %}
                             <img title="{{title}}" src="/icon/{{icon}}" width=100 onclick="charclickHandler({{zoom_x}},{{zoom_y}}, '{{index}}')">
                         {% endif %}

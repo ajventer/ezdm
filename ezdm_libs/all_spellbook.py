@@ -14,7 +14,7 @@ class SPELLBOOK(Session):
         page = Page()
         self._data['detailview'] = None
         self._data['targetlist'] = list(frontend.campaign.characterlist)
-        self._data['editmode'] = frontend.mode == 'dm'
+        self._data['editmode'] = frontend.mode() == 'dm'
         self._character = frontend.campaign.current_char()
         if self._data['editmode']:
             loadfrom = {}

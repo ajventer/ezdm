@@ -7,7 +7,7 @@ class Tile(EzdmObject):
     json = {}
 
     def revealed(self):
-        if frontend.mode == 'dm':
+        if frontend.mode() == 'dm':
             return True
         return self.get('/core/revealed', False) is True
 
@@ -39,11 +39,17 @@ class Tile(EzdmObject):
         if objtype == 'npcs':
             name.set_hash()
             name.roll_hit_dice()
-            name = name()
-        current.append(name)
+            if isinstance(current, list):
+                current = {}
+            current[name.get_hash()] = name()
+        else:
+            current.append(name)
         self.put('/conditional/%s' % objtype, current)
 
     def remove(self, name, objtype):
+        if objtype == 'npcs':
+            del self()['conditional']['npcs'][name]
+            return
         if isinstance(name, str) and not name.endswith('.json'):
             name = '%s.json' % name
         elif isinstance(name, int):

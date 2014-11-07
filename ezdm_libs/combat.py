@@ -104,7 +104,7 @@ def attack(player, target, attack_modifiers, custom_tohit, custom_dmg):
                 target.interrupt_cast()
                 frontend.campaign.message('%s was casting but it was interrupted by a successfull hit' % target.displayname)
             player.current_weapon().onstrike(player, target)
-            target = Character(load_json('characters', target.name()))
+            #target = Character(load_json('characters', target.name()))
             damage_result = calc_damage(player, target, custom_dmg)
             target_alive = damage_result is True
             for char in [player, target]:

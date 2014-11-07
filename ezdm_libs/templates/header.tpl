@@ -81,7 +81,7 @@
                 <form method=post action="/newchar">
                 <select name="newchar">
                 {% for character in characters %}
-                    <option value="{{characters.index(character)}}">{{character.name()}}</option>
+                    <option value="{{characters.index(character)}}">{{character.name()}} ({{characters.index(character)}})</option>
                 {% endfor %}
                 </select>
                 <input type=submit value="Switch Character">
