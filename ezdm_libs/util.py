@@ -5,6 +5,15 @@ from glob import glob
 from random import randrange
 import binascii
 import sys
+import bottle
+import hashlib
+
+
+def user_hash():
+    user_string = '%s%s%s' % (bottle.request.environ.get('REMOTE_ADDR'), bottle.request.environ.get('REMOTE_PORT'), bottle.request.environ.get('HTTP_USER_AGENT'))
+    debug('User string: %s' % user_string)
+    return hashlib.sha224(user_string).hexdigest()
+
 
 
 def debug(*args):

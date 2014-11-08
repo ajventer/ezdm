@@ -1,14 +1,18 @@
 from jinja2 import Template
-from util import readfile, find_files, template_dict, json_editor, list_icons, inflate, load_json
+from util import readfile, find_files, template_dict, json_editor, list_icons, inflate, load_json, user_hash
 from simplejson import dumps, loads
 
-modevar = 'campaign'
+
+modevar = {}
 campaign = None
 
 
 def mode():
     global modevar
-    return modevar
+    myhash = user_hash()
+    if myhash in modevar:
+        return modevar[myhash]
+    return 'campaign'
 
 
 class Session:
