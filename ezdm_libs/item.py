@@ -1,8 +1,8 @@
 from .util import save_json, debug
 from .objects import EzdmObject, event
 import copy
-from .frontend import mode, campaign
-
+from .frontend import mode
+from . import frontend
 
 class Item(EzdmObject):
 
@@ -75,14 +75,14 @@ class Item(EzdmObject):
         return self.get('/conditional/material', 'plate')
 
     def onpickup(self, player):
-        event(self, "/events/onpickup", {'item': self, 'player': player, 'campaign': campaign})
+        event(self, "/events/onpickup", {'item': self, 'player': player, 'campaign': frontend.campaign})
         player.autosave()
 
     def onequip(self, player):
-        event(self, "/events/onequip", {'item': self, 'player': player, 'campaign': campaign})
+        event(self, "/events/onequip", {'item': self, 'player': player, 'campaign': frontend.campaign})
 
     def onstrike(self, player, target):
-        event(self, "/conditional/events/onstrike", {'item': self, 'player': player, 'target': target, 'campaign': campaign})
+        event(self, "/conditional/events/onstrike", {'item': self, 'player': player, 'target': target, 'campaign': frontend.campaign})
         debug("Item.onstrike save: %s" % target.autosave())
 
     def onuse(self, player, target):
@@ -92,23 +92,23 @@ class Item(EzdmObject):
             return
         if self.itemtype() == 'spell':
             success = player.spell_success()
-            campaign.message(success[1])
+            frontend.campaign.message(success[1])
             if not success[0]:
                 return
         self.put('/core/in_use', True)
-        self.put('/core/target', campaign.characters.index(target))
-        event(self, "/events/onuse", {'item': self, 'player': player, 'target': target, 'campaign': campaign})
+        self.put('/core/target', frontend.campaign.characters.index(target))
+        event(self, "/events/onuse", {'item': self, 'player': player, 'target': target, 'campaign': frontend.campaign})
         try:
-            target = campaign.characterlist[target.index]
+            target = frontend.campaign.characterlist[target.index]
             debug("Item.onround save: %s" % target.autosave())
         except:
             return
-        campaign.error("Item.onuse save: %s" % target.autosave())
+        frontend.campaign.error("Item.onuse save: %s" % target.autosave())
 
     def onround(self, player):
         targetindex = self.get('/core/target', 0)
         try:
-            target = campaign.characterlist[targetindex]
+            target = frontend.campaign.characterlist[targetindex]
         except:
             return
         debug("[DEBUG] Item.onround: self: %s, player: %s, target: %s" % (self.displayname(), player.displayname(), target))
@@ -121,12 +121,12 @@ class Item(EzdmObject):
             self.put('/core/current_rounds_performed', current_rounds_performed)
             if current_rounds_performed < rounds:
                 debug("[DEBUG] item.onround: run onround event")
-                event(self, "/events/onround", {'item': self, 'player': player, 'target': target, 'campaign': campaign})
+                event(self, "/events/onround", {'item': self, 'player': player, 'target': target, 'campaign': frontend.campaign})
             else:
                 debug("[DEBUG] item.onround: running onfinish")
                 self.onfinish(player=player)
         try:
-            target = campaign.characterlist[targetindex]
+            target = frontend.campaign.characterlist[targetindex]
             debug("Item.onround save: %s" % target.autosave())
         except:
             return
@@ -136,7 +136,7 @@ class Item(EzdmObject):
         targetindex = self.get('/core/target', 0)
         debug("[DEBUG] item.onfinish target %s" % targetindex)
         try:
-            target = campaign.characterlist[targetindex]
+            target = frontend.campaign.characterlist[targetindex]
         except:
             return
         debug("[DEBUG] item.onfinish target %s" % target.displayname())
@@ -149,15 +149,15 @@ class Item(EzdmObject):
             self.put('/core/charges', charges)
         self.put('/core/current_rounds_performed', 0)
         debug("[DEBUG] item.onfinish before event")
-        event(self, "/events/onfinish", {'item': self, 'player': player, 'target': target, 'campaign': campaign})
+        event(self, "/events/onfinish", {'item': self, 'player': player, 'target': target, 'campaign': frontend.campaign})
         try:
-            target = campaign.characterlist[targetindex]
+            target = frontend.campaign.characterlist[targetindex]
             debug("Item.onfinish save: %s" % target.autosave())
         except:
             return
 
     def ondrop(self, player):
-        event(self, "/events/ondrop", {'item': self, 'player': player, 'campaign': campaign})
+        event(self, "/events/ondrop", {'item': self, 'player': player, 'campaign': frontend.campaign})
         player.autosave()
 
     def interrupt(self):

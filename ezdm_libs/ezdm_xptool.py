@@ -1,4 +1,5 @@
-from .frontend import Session, Page, campaign, mode
+from .frontend import Session, Page, mode
+from . import frontend
 from .util import load_json, debug
 from .character import Character
 
@@ -18,15 +19,15 @@ class XPTOOL(Session):
         loadform = {'action': '/EZDM_XPTOOL', 'name': 'Character', 'keyname': 'character', 'allow_new': 'False'}
         if not self.characters:
             if not 'character' in self._data:
-                loadform['items'] = campaign.players()
-                loadform['items'].insert(0, 'Campaign')
-                loadform['items'].insert(1, campaign.current_char().name())
+                loadform['items'] = frontend.campaign.players()
+                loadform['items'].insert(0, 'campaign')
+                loadform['items'].insert(1, frontend.campaign.current_char().name())
                 page.add('load_defaults_from.tpl', loadform)
                 return page.render()
             else:
-                if self._data['character'] == 'Campaign':
+                if self._data['character'] == 'frontend.campaign':
                     debug('XP for whole campaign')
-                    for character in campaign.players():
+                    for character in frontend.campaign.players():
                         self.characters.append(character)
                 else:
                     debug('XP For %s' % self._data['character'])
@@ -37,7 +38,7 @@ class XPTOOL(Session):
             page.message('current XP/Level: ')
             debug('Character list', self.characters)
             for charname in self.characters:
-                if charname == 'Campaign':
+                if charname == 'frontend.campaign':
                     continue
                 character = Character(load_json('characters', charname))
                 debug('Character: ' + str(character) + character.displayname())
@@ -50,7 +51,7 @@ class XPTOOL(Session):
             page.add('simple_input.tpl', xpform)
             return page.render()
         for charname in self.characters:
-            if charname == 'Campaign':
+            if charname == 'frontend.campaign':
                 continue
             character = Character(load_json('characters', charname))
             debug("New XP", character.give_xp(int(self._data['xp_ammount'])))

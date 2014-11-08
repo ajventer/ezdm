@@ -1,4 +1,5 @@
-from .frontend import Session, Page, campaign, mode
+from .frontend import Session, Page, mode
+from . import frontend
 from .character import Character
 from .item import Item
 from .util import load_json, find_files, debug, price_in_copper
@@ -12,11 +13,12 @@ class INVENTORY(Session):
     def render(self, requestdata):
         page = Page()
         self._data['detailview'] = None
-        self._data['targetlist'] = list(campaign.characterlist)
+        if frontend.campaign.real():
+            self._data['targetlist'] = list(frontend.campaign.characterlist)
         if requestdata and 'loadfrom' in requestdata:
             self._character = Character(load_json('characters', requestdata['loadfrom']))
-        if mode() == 'campaign' and campaign:
-                self._character = campaign.current_char()
+        if mode() == 'campaign' and frontend.campaign.real():
+                self._character = frontend.campaign.current_char()
         self._data['editmode'] = mode() == 'dm'
         if self._data['editmode']:
             loadfrom = {}
@@ -27,6 +29,7 @@ class INVENTORY(Session):
             loadfrom['items'] = find_files(source, '*.json', basename=True, strip='.json')
             page.add('load_defaults_from.tpl', loadfrom)
         if self._character:
+            self._character.weapons
             self._data['targetlist'].insert(0, self._character)
             self._data['inventory'] = self._character.get('/core/inventory', {})
 
@@ -125,7 +128,9 @@ class INVENTORY(Session):
                     silver = int(requestdata['silver'])
                     copper = int(requestdata['copper'])
                     self._character.spend_money(gold, silver, copper)                    
-
+            
+            self._character.weapons
+            self._data['inventory'] = self._character.get('/core/inventory', {})
             page.add('inventory.tpl', self._data)
             self._character.save()
         return page.render()

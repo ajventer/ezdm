@@ -165,6 +165,7 @@ class MAPS(Session):
                 page.warning('WARNING: Changes are not yet saved')
 
     def render(self, requestdata):
+        debug('Map Render method')
         page = Page()
         self._data['zoom_x'] = 0
         self._data['zoom_y'] = 0

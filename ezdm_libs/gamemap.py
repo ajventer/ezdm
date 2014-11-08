@@ -1,6 +1,7 @@
 from .objects import EzdmObject, event
 from .util import save_json, load_json, readkey, debug
-from .frontend import mode, campaign
+from .frontend import mode
+from . import frontend
 
 
 class Tile(EzdmObject):
@@ -187,5 +188,5 @@ class GameMap(EzdmObject):
                 tile.put('/core/revealed', True)
                 self.load_tile_from_json(pt_x, pt_y, tile())
         if has_revealed:
-            campaign.chars_in_round()
+            frontend.campaign.chars_in_round()
         self.save()

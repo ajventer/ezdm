@@ -12,7 +12,6 @@ import hashlib
 def user_hash():
     user_string = '%s%s%s' % (bottle.request.environ.get('REMOTE_ADDR'), bottle.request.environ.get('REMOTE_PORT'), bottle.request.environ.get('HTTP_USER_AGENT'))
     user_string = user_string.encode('utf-8')
-    debug('User string: %s' % user_string)
     return hashlib.sha224(user_string).hexdigest()
 
 

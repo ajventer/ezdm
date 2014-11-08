@@ -4,7 +4,7 @@ from .objects import EzdmObject, event
 from .gamemap import GameMap
 import copy
 from random import randrange
-from .frontend import campaign
+from . import frontend
 import operator
 import json as simplejson
 
@@ -56,9 +56,9 @@ class Character(EzdmObject):
         else:
             chartype = 'npcs'
             todel = self.get_hash()
-            for char in list(campaign.characterlist):
+            for char in list(frontend.campaign.characterlist):
                 if char.character_type() == 'player':
-                    campaign.message(char.give_xp(self.xp_worth()))
+                    frontend.campaign.message(char.give_xp(self.xp_worth()))
         gamemap = GameMap(load_json('maps', loc['map']))
         if todel != -1:
             gamemap.removefromtile(loc['x'], loc['y'], todel, chartype)
@@ -103,7 +103,7 @@ class Character(EzdmObject):
             gamemap.putmoney(loc['x'], loc['y'], gold, silver, copper)
         self.autosave()
         gamemap.save()
-        campaign.chars_in_round()
+        frontend.campaign.chars_in_round()
 
     def location(self):
         """
@@ -294,7 +294,7 @@ class Character(EzdmObject):
         >>> end < start
         True
         """
-        campaign.message('%s takes %s damage' % (self.displayname(), damage))
+        frontend.campaign.message('%s takes %s damage' % (self.displayname(), damage))
         debug("[DEBUG] character.take_damage: damage - %s, player - %s" % (damage, self.displayname()))
         out = ''
         currenthitpoints = self.get('/core/combat/hitpoints', 1)
@@ -306,12 +306,12 @@ class Character(EzdmObject):
                 self.put('/core/combat/hitpoints', 0)
                 out += "<br>%s has died !" % self.displayname()
                 self.handle_death()
-                campaign.message(self.autosave())
+                frontend.campaign.message(self.autosave())
                 return (False, out)
             else:
                 self.put('/core/combat/hitpoints', 1)
                 out += "<br>%s barely survives. %s hitpoints remaining" % (self.displayname(), self.get('/core/combat/hitpoints', 1))
-                campaign.message(self.autosave())
+                frontend.campaign.message(self.autosave())
                 return (True, out)
         else:
             debug("[DEBUG] character take damage, LESS than hitpoints: damage=%s, player=%s, hitpoints=%s" % (damage, self.displayname(), currenthitpoints))
@@ -319,7 +319,7 @@ class Character(EzdmObject):
             hp -= damage
             self.put('/core/combat/hitpoints', hp)
             out += "<br>%s takes %s damage. %s hitpoints remaining" % (self.displayname(), damage, self.get('/core/combat/hitpoints', 1))
-            campaign.error(self.autosave())
+            frontend.campaign.error(self.autosave())
             return (True, out)
 
     def name(self):
@@ -501,13 +501,13 @@ class Character(EzdmObject):
         current_xp = int(self.get('/core/personal/xp', 0))
         new_xp = current_xp + int(xp)
         self.put('/core/personal/xp', str(new_xp))
-        campaign.message('%s gains %s experience points. XP now: %s' % (self.displayname(), xp, new_xp))
+        frontend.campaign.message('%s gains %s experience points. XP now: %s' % (self.displayname(), xp, new_xp))
         next_level = self.next_level()
         if new_xp >= next_level and next_level != -1:
-            campaign.warning(self.level_up())
-            campaign.error('Check for and apply manual increases to other stats if needed !')
+            frontend.campaign.warning(self.level_up())
+            frontend.campaign.error('Check for and apply manual increases to other stats if needed !')
         else:
-            campaign.message('Next level at %s. %s experience points to go' % (next_level, next_level - new_xp))
+            frontend.campaign.message('Next level at %s. %s experience points to go' % (next_level, next_level - new_xp))
         return new_xp
 
     def next_level(self):
@@ -534,13 +534,13 @@ class Character(EzdmObject):
 
     def attack_roll(self, target, mod):
         self.next_weapon()
-        campaign.message('%s has THAC0 of: %s' % (self.displayname(), self.thac0))
+        frontend.campaign.message('%s has THAC0 of: %s' % (self.displayname(), self.thac0))
         target_stats = '%s has a defense modifier of %s and armor class %s' % (target.displayname(), target.def_mod(), target.armor_class())
         
-        campaign.message(target_stats)
+        frontend.campaign.message(target_stats)
         target_roll = self.thac0 - target.armor_class() - target.def_mod()
         
-        campaign.message('%s needs to roll %s to hit %s' % (self.displayname(), target_roll, target.displayname()))
+        frontend.campaign.message('%s needs to roll %s to hit %s' % (self.displayname(), target_roll, target.displayname()))
         roll = rolldice(numdice=1, numsides=20, modifier=mod)
         if roll[0] == 1:
                 return (roll[0], "Critical Miss !", roll[1])
@@ -718,7 +718,8 @@ class Character(EzdmObject):
         current = Item(self.get('/core/inventory/equiped/%s' % slot, {}))
         debug(current)
         if current():
-            self.acquire_item(current)
+            if current.name() != 'fist.json':
+                self.acquire_item(current)
             if current.get('/conditional/slot', '') == 'twohand':
                 debug('Unequipping a twohanded weapon')
                 for slot in ['lefthand', 'righthand']:
@@ -944,11 +945,11 @@ class Character(EzdmObject):
     def displayname(self):
         out = "%s %s" % (self.get('/core/personal/name/first', ''), self.get('/core/personal/name/last', ''))
         try:
-            index = campaign.characters.index(self)
+            index = frontend.campaign.characters.index(self)
         except:
             index = -1
         if index > -1 and self.character_type() == 'npc':
-            out = "%s (%s)" % (out, campaign.characters.index(self))
+            out = "%s (%s)" % (out, frontend.campaign.characters.index(self))
         out = "[%s]" % out
         return out
 

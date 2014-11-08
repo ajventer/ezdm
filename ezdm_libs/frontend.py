@@ -5,6 +5,7 @@ from .mockclasses import MockCampaign
 import glob
 
 modevar = {}
+campaign = MockCampaign()
 
 
 def mode():
@@ -13,8 +14,6 @@ def mode():
     if myhash in modevar:
         return modevar[myhash]
     return 'campaign'
-
-campaign = MockCampaign()
 
 
 class Session:
@@ -212,8 +211,7 @@ class JSON_Editor(Session):
         return page.render()
 
     def render(self, requestdata):
-        global mode
-        if mode != 'dm':
+        if mode() != 'dm':
             page = Page()
             page.error('Sorry, this feature cannot be used in campaign mode')
             return page.render()

@@ -6,10 +6,30 @@ from ezdm_libs import frontend
 from ezdm_libs.frontend import Page
 from ezdm_libs.campaign import Campaign
 from ezdm_libs.mockclasses import MockCampaign
+from ezdm_libs.all_characters import CHARACTERS
+from ezdm_libs.all_maps import MAPS
+from ezdm_libs.all_home import HOME
+from ezdm_libs.all_inventory import INVENTORY
+from ezdm_libs.all_license import LICENSE
+from ezdm_libs.all_spellbook import SPELLBOOK
+from ezdm_libs.ezdm_campaigns import CAMPAIGNS
+from ezdm_libs.ezdm_items import ITEMS
+from ezdm_libs.ezdm_tiles import TILES
+from ezdm_libs.ezdm_xptool import XPTOOL
+
 import os
 
-
-sessions = {}
+sessions = {'MAPS': MAPS(),
+            'CHARACTERS': CHARACTERS(),
+            'HOME': HOME(),
+            'INVENTORY': INVENTORY(),
+            'LICENSE': LICENSE(),
+            'SPELLBOOK': SPELLBOOK(),
+            'CAMPAIGNS': CAMPAIGNS(),
+            'ITEMS': ITEMS(),
+            'TILES': TILES(),
+            'XPTOOL': XPTOOL()
+           }
 
 
 def action_name(action):
@@ -43,28 +63,15 @@ def gethandler(action=None, item=None):
         return out
     elif action == 'EZDM_CAMPAIGNS':
         setmode('dm')
-    from ezdm_libs.frontend import Session as ActionSession
-    action = action or 'ALL_HOME'
-    if '_' in action:
-        to_import = 'from ezdm_libs.%s import %s as ActionSession' % (action.lower(), action_name(action))
-        debug(to_import)
-        exec (to_import)
+    if action_name(action) in sessions:
+        debug('SESSION LOADED')
+        if item:
+            return sessions[action_name(action)].view(item)
+        else:
+            return sessions[action_name(action)].render(None)
     else:
-        for prefix in ['all', 'ezdm', 'campaign']:
-            try:
-                to_import = 'from ezdm_libs.%s_%s import %s as ActionSession' % (prefix, action.lower(), action_name(action))
-                debug(to_import)
-                exec (to_import)
-                break
-            except:
-                pass
-    if not action_name(action) in sessions:
-        sessions[action_name(action)] = ActionSession()
-    debug(sessions)
-    if not item:
-        return sessions[action_name(action)].render(None)
-    else:
-        return sessions[action_name(action)].view(item)
+        debug('SESSION UNKNOWN')
+        return HOME().view(None)
 
 
 @route('/switch_campaign', method='get')
