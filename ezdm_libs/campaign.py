@@ -182,6 +182,9 @@ class Campaign(EzdmObject):
         self.messages = []
         self.chars_in_round()
 
+    def real(self):
+        return True
+
     def addmap(self, mapname):
         maps = self.get('/core/maps', [])
         if not isinstance(maps, list):

@@ -5,6 +5,7 @@ from ezdm_libs import get_sys_data
 from ezdm_libs import frontend
 from ezdm_libs.frontend import Page
 from ezdm_libs.campaign import Campaign
+from ezdm_libs.mockclasses import MockCampaign
 import os
 
 
@@ -32,7 +33,7 @@ def gethandler(action=None, item=None):
     global sessions
     debug("GetHandler", sessions, action, item)
     debug(action)
-    if frontend.campaign is None and not action == 'EZDM_CAMPAIGNS':
+    if not frontend.campaign.real() and not action == 'EZDM_CAMPAIGNS':
         page = Page()
         out = page.tplrender('header.tpl', {'title': 'Load Campaign'})
         campaigns = find_files('campaigns', '*.json', basename=True, strip=".json")
@@ -68,9 +69,9 @@ def gethandler(action=None, item=None):
 
 @route('/switch_campaign', method='get')
 def switch_campaign():
-    if frontend.campaign:
+    if frontend.campaign.real():
         frontend.campaign.save()
-    frontend.campaign = None
+    frontend.campaign = MockCampaign()
     return gethandler(None, None)
 
 

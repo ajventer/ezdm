@@ -70,14 +70,14 @@ class Page:
             self.title += ' DUNGEON MASTER MODE'
         else:
             self.title += ' CAMPAIGN MODE'
-        if campaign:
+        if campaign.real():
             self.headerdict['character'] = campaign.current_char()
             self.headerdict['characters'] = campaign.characterlist
         self._menuitems = {'menuitems': menuitems}
         self.content = [('menubar.tpl', self._menuitems)]
 
     def display_campaign_messages(self):
-        if campaign:
+        if campaign.real():
             for message in campaign.messages:
                 self._add_message(*message)
             campaign.messages = []
