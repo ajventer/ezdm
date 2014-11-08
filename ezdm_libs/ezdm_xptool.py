@@ -1,7 +1,7 @@
-from frontend import Session, Page
-from util import load_json, debug
-from character import Character
-import frontend
+from .frontend import Session, Page, campaign, mode
+from .util import load_json, debug
+from .character import Character
+
 
 
 class XPTOOL(Session):
@@ -18,15 +18,15 @@ class XPTOOL(Session):
         loadform = {'action': '/EZDM_XPTOOL', 'name': 'Character', 'keyname': 'character', 'allow_new': 'False'}
         if not self.characters:
             if not 'character' in self._data:
-                loadform['items'] = frontend.campaign.players()
+                loadform['items'] = campaign.players()
                 loadform['items'].insert(0, 'Campaign')
-                loadform['items'].insert(1, frontend.campaign.current_char().name())
+                loadform['items'].insert(1, campaign.current_char().name())
                 page.add('load_defaults_from.tpl', loadform)
                 return page.render()
             else:
                 if self._data['character'] == 'Campaign':
                     debug('XP for whole campaign')
-                    for character in frontend.campaign.players():
+                    for character in campaign.players():
                         self.characters.append(character)
                 else:
                     debug('XP For %s' % self._data['character'])
@@ -53,7 +53,7 @@ class XPTOOL(Session):
             if charname == 'Campaign':
                 continue
             character = Character(load_json('characters', charname))
-            print "New XP", character.give_xp(int(self._data['xp_ammount']))
+            debug("New XP", character.give_xp(int(self._data['xp_ammount'])))
             character.save()
         self._data = {}
         self.characters = []

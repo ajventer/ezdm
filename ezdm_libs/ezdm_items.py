@@ -1,5 +1,5 @@
-from frontend import JSON_Editor
-from item import Item
+from .frontend import JSON_Editor
+from .item import Item
 
 
 class ITEMS(JSON_Editor):

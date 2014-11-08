@@ -1,8 +1,7 @@
-from frontend import Session, Page
-import frontend
-from character import Character
-from item import Item
-from util import load_json, find_files, debug, price_in_copper
+from .frontend import Session, Page, campaign, mode
+from .character import Character
+from .item import Item
+from .util import load_json, find_files, debug, price_in_copper
 
 
 class INVENTORY(Session):
@@ -13,12 +12,12 @@ class INVENTORY(Session):
     def render(self, requestdata):
         page = Page()
         self._data['detailview'] = None
-        self._data['targetlist'] = list(frontend.campaign.characterlist)
+        self._data['targetlist'] = list(campaign.characterlist)
         if requestdata and 'loadfrom' in requestdata:
             self._character = Character(load_json('characters', requestdata['loadfrom']))
-        if frontend.mode() == 'campaign' and frontend.campaign:
-                self._character = frontend.campaign.current_char()
-        self._data['editmode'] = frontend.mode() == 'dm'
+        if mode() == 'campaign' and campaign:
+                self._character = campaign.current_char()
+        self._data['editmode'] = mode() == 'dm'
         if self._data['editmode']:
             loadfrom = {}
             loadfrom['name'] = 'Character'

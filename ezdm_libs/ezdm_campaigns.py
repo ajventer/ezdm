@@ -1,5 +1,5 @@
-from frontend import JSON_Editor
-from campaign import Campaign
+from .frontend import JSON_Editor
+from .campaign import Campaign
 
 
 class CAMPAIGNS(JSON_Editor):

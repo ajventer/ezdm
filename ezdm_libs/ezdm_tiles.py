@@ -1,5 +1,5 @@
-from frontend import JSON_Editor
-from gamemap import Tile
+from .frontend import JSON_Editor
+from .gamemap import Tile
 
 
 class TILES(JSON_Editor):

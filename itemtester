@@ -7,7 +7,7 @@ from ezdm_libs.campaign import Campaign
 from pprint import pprint
 
 if len(sys.argv) < 2:
-    print "Usage %s <itemname>" % sys.argv[0]
+    print ("Usage %s <itemname>" % sys.argv[0])
     sys.exit()
 
 item = Item(load_json('items', sys.argv[1]))
@@ -16,71 +16,71 @@ frontend.campaign = Campaign(load_json('campaigns', 'test_campaign.json'))
 player = frontend.campaign.characterlist[0]
 target = frontend.campaign.characterlist[1]
 
-print "Testing onpickup"
+print("Testing onpickup")
 item.onpickup(player)
-print "PLAYER",
+print ("PLAYER",)
 pprint(player.render())
-print "\n\n\n"
+print ("\n\n\n")
 if item.itemtype() == 'armor':
-    print "Testing onequip"
-    print "ITEM",
+    print("Testing onequip")
+    print("ITEM",)
     player.equip(item.name())
-    print "PLAYER",
+    print("PLAYER",)
     pprint(player.render())
-    print "\n\n\n"
-    print "Testing onunequip"
+    print("\n\n\n")
+    print("Testing onunequip")
     player.unequip(item.name())
-    print 'PLAYER',
+    print('PLAYER',)
     pprint(player.render())
 
-print "\n\n\n"
-print "Testing onuse"
+print ("\n\n\n")
+print ("Testing onuse")
 item.onuse(player, target)
 player()['core']['inventory']['pack'][0] = item()
-print 'MESSAGES ',
+print ('MESSAGES ',)
 pprint(frontend.campaign.messages)
-print 'ITEM',
+print ('ITEM',)
 pprint(item.render())
-print '\n'
-print 'PLAYER',
+print ('\n')
+print ('PLAYER',)
 pprint(player.render())
-print '\n'
-print 'TARGET',
+print ('\n')
+print ('TARGET',)
 pprint(target.render())
 
 
 maxrounds = 300
 rounds = 0
 while item.get('/core/in_use', False) and rounds < maxrounds:
-    print "Testing onround"
+    print ("Testing onround")
     item.onround(player)
     player()['core']['inventory']['pack'][0] = item()
-    print 'MESSAGES ',
+    print ('MESSAGES ',)
     pprint(frontend.campaign.messages)
-    print 'ITEM',
+    print ('ITEM',)
     pprint(item.render())
-    print '\n'
-    print 'PLAYER',
+    print ('\n')
+    print ('PLAYER',)
     pprint(player.render())
-    print '\n'
-    print 'TARGET',
+    print ('\n')
+    print ('TARGET',)
     pprint(target.render())
     rounds += 1
 
-print "\n\n\n"
+print ("\n\n\n")
 if rounds >= maxrounds:
-    print "Test failure: item never finished"
+    print ("Test failure: item never finished")
     sys.exit()
 player()['core']['inventory']['pack'][0] = item()
-print 'ITEM',
+print ('ITEM',)
 pprint(item.render())
-print 'PLAYER',
+print ('PLAYER',)
 pprint(player.render())
-print 'TARGET',
+print ('TARGET',)
 pprint(target.render())
-print 'MESSAGES ',
+print ('MESSAGES ',)
 pprint(frontend.campaign.messages)
 
-print "Testing ondrop"
+print ("Testing ondrop")
 player.drop_item(item.name())
 pprint(player.render())

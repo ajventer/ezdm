@@ -1,4 +1,4 @@
-from frontend import Session, Page
+from .frontend import Session, Page
 
 
 class LICENSE(Session):

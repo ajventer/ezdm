@@ -1,7 +1,7 @@
-from util import save_json, load_json, rolldice, debug
-from character import Character
-from gamemap import GameMap
-from objects import EzdmObject
+from .util import save_json, load_json, rolldice, debug
+from .character import Character
+from .gamemap import GameMap
+from .objects import EzdmObject
 
 
 class CharacterList(object):
@@ -284,46 +284,7 @@ class Campaign(EzdmObject):
         return self.characterlist[self.current]
 
     def endround(self):
-        """
-        >>> json = load_json('campaigns','test_campaign.json')
-        >>> campaign = Campaign(json)
-        >>> from ezdm_libs import frontend
-        >>> frontend.campaign = campaign
-        >>> n1 = campaign.current_char().displayname()
-        >>> campaign.endround()
-        >>> campaign.current_char().displayname() != n1
-        True
-        >>> campaign.endround()
-        >>> campaign.endround()
-        >>> campaign.current_char().displayname() == n1
-        True
-        """
-        # if not self.initiative:
-        #     self.roll_for_initiative()
-        # self.error('Campaign saves %s' % self.current_char().autosave())
-        # cycle = False
-        # char_health = 0
-        # loc = {'map': None}
-        # while char_health == 0 or not loc['map'] in self.playermaps:
-        #     self.current += 1
-        #     if self.current >= len(self.characterlist):
-        #         if not cycle:
-        #             cycle = True
-        #         else:
-        #             self.error('All characters are dead !')
-        #             break
-        #         self.current = 0
-        #         self.endturn()
-        #     char_health = int(self.current_char().get('/core/combat/hitpoints', 0))
-        # if self.current >= len(self.characterlist):
-        #     self.current = 0
-        # loc = self.current_char().location()
-        # self.onround(self.current_char())
-        # if loc:
-        #     self.current_char().moveto(mapname=loc['map'], x=loc['x'], y=loc['y'])
-        # self.current_char().autosave()
-        # self.error('%s goes next' % self.current_char().displayname())
-        # self.save()
+        pass
 
     def save(self):
         name = '%s.json' % self.get('/core/name', '')
@@ -344,7 +305,7 @@ class Campaign(EzdmObject):
             if item[1].get('/core/in_use', False):
                 self.error('%s is being used' % (item[1].displayname()))
                 item[1].onround(player=character)
-                if item[0] in character.get('/core/inventory/equiped', {}).keys():
+                if item[0] in list(character.get('/core/inventory/equiped', {}).keys()):
                     debug("[DEBUG] Campaign.onround: Equipped update: %s, %s" % (item[0], item[1]))
                     character.put('/core/inventory/equiped/%s' % item[0], item[1]())
                 else:

@@ -1,14 +1,16 @@
-from util import readkey, writekey
-from simplejson import dumps
-import frontend
+from .util import readkey, writekey, debug
+from json import dumps
+from .frontend import mode
 
 
 def event(obj, key, localvars):
+    debug('Getting code for %s from %s' % (key, obj.name()))
     code = obj.get(key, '')
-    localvars['campaign'] = frontend.campaign
+    debug('Got code %s' % code)
+    #localvars['campaign'] = campaign()
     if code:
         try:
-            exec code in {}, localvars
+            exec (code, {}, localvars)
         except Exception as e:
             raise Exception("Exception %s, while running event code, key: %s, object: %s, localvars: %s\n%s" % (e, key, obj.displayname(), localvars, code))
 

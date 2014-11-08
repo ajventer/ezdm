@@ -1,8 +1,7 @@
-from frontend import Session, Page
-import frontend
-from character import Character
-from item import Item
-from util import load_json, find_files, inrange, debug
+from .frontend import Session, Page, campaign, mode
+from .character import Character
+from .item import Item
+from .util import load_json, find_files, inrange, debug
 
 
 class SPELLBOOK(Session):
@@ -13,9 +12,9 @@ class SPELLBOOK(Session):
     def render(self, requestdata):
         page = Page()
         self._data['detailview'] = None
-        self._data['targetlist'] = list(frontend.campaign.characterlist)
-        self._data['editmode'] = frontend.mode() == 'dm'
-        self._character = frontend.campaign.current_char()
+        self._data['targetlist'] = list(campaign.characterlist)
+        self._data['editmode'] = mode() == 'dm'
+        self._character = campaign.current_char()
         if self._data['editmode']:
             loadfrom = {}
             loadfrom['name'] = 'Character'

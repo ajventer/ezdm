@@ -1,6 +1,6 @@
 import os
 from ezdm_libs import get_user_data, data_paths
-from simplejson import loads, dumps
+from json import loads, dumps
 from glob import glob
 from random import randrange
 import binascii
@@ -11,6 +11,7 @@ import hashlib
 
 def user_hash():
     user_string = '%s%s%s' % (bottle.request.environ.get('REMOTE_ADDR'), bottle.request.environ.get('REMOTE_PORT'), bottle.request.environ.get('HTTP_USER_AGENT'))
+    user_string = user_string.encode('utf-8')
     debug('User string: %s' % user_string)
     return hashlib.sha224(user_string).hexdigest()
 
@@ -93,7 +94,7 @@ def template_dict(template, defaults=None):
 
 def flatten(init, lkey=''):
     ret = {}
-    for rkey, val in init.items():
+    for rkey, val in list(init.items()):
         key = lkey + rkey
         if isinstance(val, dict) and val:
             ret.update(flatten(val, key + '/'))
@@ -155,10 +156,10 @@ def writekey(key, value, json):
     for k in key.strip('/').split('/'):
         k = k.replace('/', '')
         new_parse = '%s["%s"]' % (parse, k)
-        exec 'if not "%s" in %s: %s = {}' % (k, parse, new_parse)
+        exec ('if not "%s" in %s: %s = {}' % (k, parse, new_parse))
         parse = new_parse
     parse = '%s = value' % (parse)
-    exec parse
+    exec (parse)
 
 
 def list_icons(source='icons'):
@@ -195,7 +196,10 @@ def find_files(source, needle='', basename=False, strip=''):
         bname = os.path.basename(m)
         if not bname in unique:
             unique[bname] = m
-    return unique.values()
+    result = []
+    for k,v in list(unique.items()):
+        result.append(v)
+    return result
 
 
 def readfile(source='', name='', filename='', json=False, default=None):

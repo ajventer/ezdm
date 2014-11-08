@@ -1,8 +1,6 @@
-from frontend import JSON_Editor
-import frontend
-from character import Character
-from frontend import Page
-from util import load_json, debug
+from .frontend import JSON_Editor, campaign, mode, Page
+from .character import Character
+from .util import load_json, debug
 
 
 class CHARACTERS(JSON_Editor):
@@ -13,10 +11,10 @@ class CHARACTERS(JSON_Editor):
         self._obj = Character({})
 
     def render(self, requestdata):
-        if frontend.mode() == 'dm':
+        if mode() == 'dm':
             return JSON_Editor.render(self, requestdata)
         else:
-            char = frontend.campaign.current_char()
+            char = campaign.current_char()
             return self.view(char.name())
 
     def view(self, item):

@@ -1,12 +1,12 @@
-from util import npc_hash, inflate, flatten, rolldice, inrange, price_in_copper, convert_money, save_json, load_json, readkey, writekey, debug
-from item import Item
-from objects import EzdmObject, event
-from gamemap import GameMap
+from .util import npc_hash, inflate, flatten, rolldice, inrange, price_in_copper, convert_money, save_json, load_json, readkey, writekey, debug
+from .item import Item
+from .objects import EzdmObject, event
+from .gamemap import GameMap
 import copy
 from random import randrange
-import frontend
+from .frontend import campaign
 import operator
-import simplejson
+import json as simplejson
 
 
 class Character(EzdmObject):
@@ -56,9 +56,9 @@ class Character(EzdmObject):
         else:
             chartype = 'npcs'
             todel = self.get_hash()
-            for char in list(frontend.campaign.characterlist):
+            for char in list(campaign.characterlist):
                 if char.character_type() == 'player':
-                    frontend.campaign.message(char.give_xp(self.xp_worth()))
+                    campaign.message(char.give_xp(self.xp_worth()))
         gamemap = GameMap(load_json('maps', loc['map']))
         if todel != -1:
             gamemap.removefromtile(loc['x'], loc['y'], todel, chartype)
@@ -103,7 +103,7 @@ class Character(EzdmObject):
             gamemap.putmoney(loc['x'], loc['y'], gold, silver, copper)
         self.autosave()
         gamemap.save()
-        frontend.campaign.chars_in_round()
+        campaign.chars_in_round()
 
     def location(self):
         """
@@ -176,7 +176,7 @@ class Character(EzdmObject):
                     idx += 1
                     yield (section, Item(item), idx)
             elif isinstance(items, dict):
-                for k, v in items.items():
+                for k, v in list(items.items()):
                     yield (k, Item(v), 0)
             else:
                 self.put('/core/inventory/%s', [])
@@ -201,7 +201,7 @@ class Character(EzdmObject):
         >>> spell = Item(char.get('/core/inventory/pack', [])[0])
         >>> spell.onuse(char, tar)
         >>> char()['core']['inventory']['pack'][0] = spell()
-        >>> print char.get('/core/inventory/pack', [])
+        >>> print (char.get('/core/inventory/pack', []))
         [...]
         >>> char.is_casting
         True
@@ -237,7 +237,7 @@ class Character(EzdmObject):
         debug(xpkey)
         xpvalues = load_json('adnd2e', 'creature_xp.json')
         debug(xpvalues)
-        if str(xpkey) in xpvalues.keys():
+        if str(xpkey) in list(xpvalues.keys()):
             xp = xpvalues[str(xpkey)]
         elif int(xpkey) > 12:
             xp = 3000 + ((int(xpkey) - 13) * 1000)
@@ -294,7 +294,7 @@ class Character(EzdmObject):
         >>> end < start
         True
         """
-        frontend.campaign.message('%s takes %s damage' % (self.displayname(), damage))
+        campaign.message('%s takes %s damage' % (self.displayname(), damage))
         debug("[DEBUG] character.take_damage: damage - %s, player - %s" % (damage, self.displayname()))
         out = ''
         currenthitpoints = self.get('/core/combat/hitpoints', 1)
@@ -306,12 +306,12 @@ class Character(EzdmObject):
                 self.put('/core/combat/hitpoints', 0)
                 out += "<br>%s has died !" % self.displayname()
                 self.handle_death()
-                frontend.campaign.message(self.autosave())
+                campaign.message(self.autosave())
                 return (False, out)
             else:
                 self.put('/core/combat/hitpoints', 1)
                 out += "<br>%s barely survives. %s hitpoints remaining" % (self.displayname(), self.get('/core/combat/hitpoints', 1))
-                frontend.campaign.message(self.autosave())
+                campaign.message(self.autosave())
                 return (True, out)
         else:
             debug("[DEBUG] character take damage, LESS than hitpoints: damage=%s, player=%s, hitpoints=%s" % (damage, self.displayname(), currenthitpoints))
@@ -319,7 +319,7 @@ class Character(EzdmObject):
             hp -= damage
             self.put('/core/combat/hitpoints', hp)
             out += "<br>%s takes %s damage. %s hitpoints remaining" % (self.displayname(), damage, self.get('/core/combat/hitpoints', 1))
-            frontend.campaign.error(self.autosave())
+            campaign.error(self.autosave())
             return (True, out)
 
     def name(self):
@@ -398,7 +398,7 @@ class Character(EzdmObject):
         key = self.get('/core/class/parent', '')
         sts = load_json("adnd2e", "saving_throws")[key]
         hitdice = self.get('/core/combat/level-hitdice', 0)
-        for key2 in sts.keys():
+        for key2 in list(sts.keys()):
             if inrange(hitdice, key2):
                 st = sts[key2]
                 st['ppd'] = int(st['ppd']) + self.ppd_mod()
@@ -410,8 +410,8 @@ class Character(EzdmObject):
         race = self.get('/core/personal/race', '')
         con = int(self.get('/core/abilities/con', 0))
         mod = 0
-        if race in saving.keys():
-            for key in saving[race].keys():
+        if race in list(saving.keys()):
+            for key in list(saving[race].keys()):
                 if inrange(con, key):
                     mod = int(saving[race][key])
                     continue
@@ -501,13 +501,13 @@ class Character(EzdmObject):
         current_xp = int(self.get('/core/personal/xp', 0))
         new_xp = current_xp + int(xp)
         self.put('/core/personal/xp', str(new_xp))
-        frontend.campaign.message('%s gains %s experience points. XP now: %s' % (self.displayname(), xp, new_xp))
+        campaign.message('%s gains %s experience points. XP now: %s' % (self.displayname(), xp, new_xp))
         next_level = self.next_level()
         if new_xp >= next_level and next_level != -1:
-            frontend.campaign.warning(self.level_up())
-            frontend.campaign.error('Check for and apply manual increases to other stats if needed !')
+            campaign.warning(self.level_up())
+            campaign.error('Check for and apply manual increases to other stats if needed !')
         else:
-            frontend.campaign.message('Next level at %s. %s experience points to go' % (next_level, next_level - new_xp))
+            campaign.message('Next level at %s. %s experience points to go' % (next_level, next_level - new_xp))
         return new_xp
 
     def next_level(self):
@@ -534,11 +534,13 @@ class Character(EzdmObject):
 
     def attack_roll(self, target, mod):
         self.next_weapon()
-        frontend.campaign.message('%s has THAC0 of: %s' % (self.displayname(), self.thac0))
+        campaign.message('%s has THAC0 of: %s' % (self.displayname(), self.thac0))
         target_stats = '%s has a defense modifier of %s and armor class %s' % (target.displayname(), target.def_mod(), target.armor_class())
-        frontend.campaign.message(target_stats)
+        
+        campaign.message(target_stats)
         target_roll = self.thac0 - target.armor_class() - target.def_mod()
-        frontend.campaign.message('%s needs to roll %s to hit %s' % (self.displayname(), target_roll, target.displayname()))
+        
+        campaign.message('%s needs to roll %s to hit %s' % (self.displayname(), target_roll, target.displayname()))
         roll = rolldice(numdice=1, numsides=20, modifier=mod)
         if roll[0] == 1:
                 return (roll[0], "Critical Miss !", roll[1])
@@ -585,7 +587,7 @@ class Character(EzdmObject):
                 break
         if not found:
             return "%s cannot learn spells" % self.displayname()
-        oneline = canlearn[key].keys()[0]
+        oneline = list(canlearn[key].keys())[0]
         if not spelltype in canlearn[key][oneline]:
             return "%s cannot learn %s, failed to learn spell %s" % (self.displayname(), spelltype, spellitem.displayname())
         intelect = str(self.get('/core/abilities/int', 1))
@@ -767,7 +769,7 @@ class Character(EzdmObject):
                 item = Item(i)
                 if item.name() != '.json':
                     gold, silver, copper = self.sell_price(*item.price_tuple())
-                    moneystr = 'Gold %s, Silver %s, Copper %s' % (gold, silver, copper)
+                    moneystr = 'Gold %s, Silver %s, Copper %s' % (int(gold), int(silver), int(copper))
                     out.append((pack.index(i), item.displayname(), moneystr))
             except Exception as e:
                 raise Exception('Error loading %s - %s' % (self.displayname(), e))
@@ -886,7 +888,7 @@ class Character(EzdmObject):
         if not parentclass in atr:
             ATR = 1
         else:
-            for key in atr[parentclass].keys():
+            for key in list(atr[parentclass].keys()):
                 if inrange(self.get('/core/combat/level-hitdice', 1), key):
                     ATR = int(atr[parentclass][key])
         return self.num_weapons() * int(ATR)
@@ -942,11 +944,11 @@ class Character(EzdmObject):
     def displayname(self):
         out = "%s %s" % (self.get('/core/personal/name/first', ''), self.get('/core/personal/name/last', ''))
         try:
-            index = frontend.campaign.characters.index(self)
+            index = campaign.characters.index(self)
         except:
             index = -1
         if index > -1 and self.character_type() == 'npc':
-            out = "%s (%s)" % (out, self.index)
+            out = "%s (%s)" % (out, campaign.characters.index(self))
         out = "[%s]" % out
         return out
 
@@ -957,7 +959,7 @@ class Character(EzdmObject):
         else:
             key = self.get('/core/class/parent', '')
         thac0s = load_json("adnd2e", "thac0")[key]
-        for key2 in thac0s.keys():
+        for key2 in list(thac0s.keys()):
             if inrange(self.get('/core/combat/level-hitdice', 1), key2):
                 return int(thac0s[key2])
 
@@ -981,7 +983,7 @@ class Character(EzdmObject):
             writekey('/conditional/abilities', self.abilities(), out)
             if not self.character_type() == 'player':
                 out['XP Worth'] = self.xp_worth()
-            for k, v in self.saving_throws.items():
+            for k, v in list(self.saving_throws.items()):
                 prettyname = readkey('/names/%s' % k, prettynames, k)
                 writekey('/core/combat/saving_throws/%s ' % prettyname, v, out)
             self.reset_weapon()
@@ -1007,7 +1009,7 @@ class Character(EzdmObject):
             nl = self.next_level()
             out['core']['personal']['xp'] = '%s/%s (%s to go)' % (xp, nl, nl - xp)
             armor_types = load_json('adnd2e', 'armor_types.json')
-            armor_types = sorted(armor_types.iteritems(), key=operator.itemgetter(1))
+            armor_types = sorted(iter(armor_types.items()), key=operator.itemgetter(1))
             out['core']['combat']['Armor allowed'] = []
             for atype in armor_types:
                 if atype[1] <= self.get('/conditional/armor_types', 0):

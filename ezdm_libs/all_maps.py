@@ -1,11 +1,11 @@
-from frontend import Session, Page
-import frontend
-from gamemap import GameMap
-from util import find_files, load_json, debug
-from simplejson import loads
-from character import Character
-from item import Item
-from combat import attack
+from .frontend import Session, Page
+from . import frontend
+from .gamemap import GameMap
+from .util import find_files, load_json, debug
+from .character import Character
+from .item import Item
+from .combat import attack
+import json as simplejson
 
 
 class MAPS(Session):
@@ -34,7 +34,7 @@ class MAPS(Session):
             if "loadtilefromfile" in requestdata:
                 self._map.load_tile(self._data['zoom_x'], self._data['zoom_y'], '%s.json' % requestdata["load_tile_from_file"])
             if 'pythonconsole' in requestdata:
-                exec requestdata['pythonconsole']
+                exec (requestdata['pythonconsole'])
             if 'addchartotile' in requestdata:
                 cname = requestdata['charactername']
                 character = Character(load_json('characters', cname))
