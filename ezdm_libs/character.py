@@ -732,6 +732,8 @@ class Character(EzdmObject):
                     self.put('/core/inventory/equiped/%s' % slot, {})
             else:
                 self.put('/core/inventory/equiped/%s' % slot, {})
+            if self.character_type() == 'player':
+                current.onunequip(self)
 
     def sell_price(self, gold, copper, silver):
             price = price_in_copper(gold, silver, copper)

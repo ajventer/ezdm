@@ -81,6 +81,9 @@ class Item(EzdmObject):
     def onequip(self, player):
         event(self, "/events/onequip", {'item': self, 'player': player, 'campaign': frontend.campaign})
 
+    def onunequip(self, player):
+        event(self, "/events/onunequip", {'item': self, 'player': player, 'campaign': frontend.campaign})
+
     def onstrike(self, player, target):
         event(self, "/conditional/events/onstrike", {'item': self, 'player': player, 'target': target, 'campaign': frontend.campaign})
         debug("Item.onstrike save: %s" % target.autosave())

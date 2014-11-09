@@ -214,6 +214,7 @@ class Campaign(EzdmObject):
         """
         icons = {}
         self.playermaps = []
+        npcmaps = []
         self.characterlist = CharacterList()
         players = self.players()
         for player in sorted(players):
@@ -231,24 +232,26 @@ class Campaign(EzdmObject):
                 icons[mapname][(loc['x'], loc['y'])].append(p_idx)
                 self.playermaps.append(mapname)
         for mapname in self.playermaps:
-            gamemap = GameMap(load_json('maps', mapname))
-            for y in range(0, gamemap.get('/max_y', 1)):
-                for x in range(0, gamemap.get('/max_x', 1)):
-                    tile = gamemap.tile(x, y)
-                    if not (x, y) in icons[mapname]:
-                        icons[mapname][(x, y)] = []
-                    if tile.revealed() or editmode:
-                        npcs_here = tile.get('/conditional/npcs', {})
-                        if isinstance(npcs_here, list):
-                            continue
-                        for npc in npcs_here:
-                            n = Character(npcs_here[npc])
-                            if n.get('/core/combat/hitpoints', 1) > 0:
-                                n.put('/core/location', {"map": mapname, "x": x, "y": y})
-                                n_idx = self.characterlist.append(n)
-                                if not (x, y) in icons[mapname]:
-                                    icons[mapname][(x, y)] = []
-                                icons[mapname][(x, y)].append(n_idx)
+            if not mapname in npcmaps:
+                npcmaps.append(mapname)
+                gamemap = GameMap(load_json('maps', mapname))
+                for y in range(0, gamemap.get('/max_y', 1)):
+                    for x in range(0, gamemap.get('/max_x', 1)):
+                        tile = gamemap.tile(x, y)
+                        if not (x, y) in icons[mapname]:
+                            icons[mapname][(x, y)] = []
+                        if tile.revealed() or editmode:
+                            npcs_here = tile.get('/conditional/npcs', {})
+                            if isinstance(npcs_here, list):
+                                continue
+                            for npc in npcs_here:
+                                n = Character(npcs_here[npc])
+                                if n.get('/core/combat/hitpoints', 1) > 0:
+                                    n.put('/core/location', {"map": mapname, "x": x, "y": y})
+                                    n_idx = self.characterlist.append(n)
+                                    if not (x, y) in icons[mapname]:
+                                        icons[mapname][(x, y)] = []
+                                    icons[mapname][(x, y)].append(n_idx)
         return icons
 
     def roll_for_initiative(self):
