@@ -1,6 +1,6 @@
 EZDM is a free/open-source toolkit for dungeons and dragons dungeon-masters
 
-![EZDM Screenshot](screenshot.png?raw=true "EZDM2.0 in Campaign mode")
+![EZDM Screenshot](screenshot.png?raw=true "EZDM2.0")
 
 Version 2.0 is a near-complete rewrite of the original code with massive improvements and much
 higher code quality in a truly elegant design.
