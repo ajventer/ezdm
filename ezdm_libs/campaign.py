@@ -109,7 +109,10 @@ class CharacterList(object):
         return self.__loaditem(load_tuple)
 
     def index(self, key):
-        return self.characters.index(self.__charitem(key))
+        try:
+            return self.characters.index(self.__charitem(key))
+        except:
+            return -1
         
 
     def __setitem__(self, key, value):
@@ -202,7 +205,7 @@ class Campaign(EzdmObject):
         """
         return self.get('/core/players', [])
 
-    def chars_in_round(self):
+    def chars_in_round(self, editmode=False):
         """
         >>> json = load_json('campaigns','test_campaign.json')
         >>> campaign = Campaign(json)
@@ -217,28 +220,24 @@ class Campaign(EzdmObject):
             if not player.endswith('.json'):
                 player = '%s.json' % player
             p = Character(load_json('characters', player))
-            if p.get('/core/combat/hitpoints', 0) > 0:
-                p_idx = self.characterlist.append(p)
-                loc = p.location()
-                if 'map' in loc:
-                    mapname = loc['map']
-                    if not mapname in icons:
-                        icons[mapname] = {}
-                    if not (loc['x'], loc['y']) in icons[mapname]:
-                        icons[mapname][(loc['x'], loc['y'])] = []
-                    icons[mapname][(loc['x'], loc['y'])].append(p_idx)
-                    self.playermaps.append(mapname)
-        for mapname in self.get('/core/maps', []):
-            if not mapname in icons:
-                continue
-                #icons[mapname] = {}
+            p_idx = self.characterlist.append(p)
+            loc = p.location()
+            if 'map' in loc:
+                mapname = loc['map']
+                if not mapname in icons:
+                    icons[mapname] = {}
+                if not (loc['x'], loc['y']) in icons[mapname]:
+                    icons[mapname][(loc['x'], loc['y'])] = []
+                icons[mapname][(loc['x'], loc['y'])].append(p_idx)
+                self.playermaps.append(mapname)
+        for mapname in self.playermaps:
             gamemap = GameMap(load_json('maps', mapname))
             for y in range(0, gamemap.get('/max_y', 1)):
                 for x in range(0, gamemap.get('/max_x', 1)):
                     tile = gamemap.tile(x, y)
                     if not (x, y) in icons[mapname]:
                         icons[mapname][(x, y)] = []
-                    if tile.revealed():
+                    if tile.revealed() or editmode:
                         npcs_here = tile.get('/conditional/npcs', {})
                         if isinstance(npcs_here, list):
                             continue
@@ -314,4 +313,4 @@ class Campaign(EzdmObject):
                 else:
                     debug("[DEBUG] Campaign.onround: pack update: %s, %s" % (item[0], item[1]))
                     character()['core']['inventory'][item[0]][item[2]] = item[1]()
-        self.error("Campaign.onround: player=%s, %s" % (character.displayname(), character.autosave()))
+

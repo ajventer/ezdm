@@ -1,4 +1,4 @@
-from .util import rolldice, load_json
+from .util import rolldice, load_json, debug
 from math import hypot
 from .character import Character
 from .frontend import mode

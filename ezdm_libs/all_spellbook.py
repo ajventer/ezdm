@@ -36,6 +36,8 @@ class SPELLBOOK(Session):
             if Item(load_json('items', spell)).itemtype() == 'spell':
                 self._data['spell_list'].append(spell)
         if requestdata:
+            if 'sleep' in requestdata:
+                self._character.put('/core/inventory/spells_memorized', [])
             if 'memorize_spells' in requestdata:
                 memorized = []
                 for index in requestdata.getall('memorize_spell'):
@@ -96,6 +98,7 @@ class SPELLBOOK(Session):
             self._data['spellprog'] = spell_prog
             if 'casting_level' in self._data['spellprog']:
                 del(self._data['spellprog']['casting_level'])
+        self._data['spelltype'] = list(spell_prog.keys())[0]
         page.add('spellbook.tpl', self._data)
 
         return page.render()

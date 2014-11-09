@@ -96,7 +96,7 @@ class Item(EzdmObject):
             if not success[0]:
                 return
         self.put('/core/in_use', True)
-        self.put('/core/target', frontend.campaign.characters.index(target))
+        self.put('/core/target', frontend.campaign.characterlist.index(target))
         event(self, "/events/onuse", {'item': self, 'player': player, 'target': target, 'campaign': frontend.campaign})
         try:
             target = frontend.campaign.characterlist[target.index]

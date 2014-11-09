@@ -4,7 +4,6 @@ from .frontend import mode
 
 
 def event(obj, key, localvars):
-    debug('Getting code for %s from %s' % (key, obj.name()))
     code = obj.get(key, '')
     debug('Got code %s' % code)
     #localvars['campaign'] = campaign()

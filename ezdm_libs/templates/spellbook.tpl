@@ -43,7 +43,6 @@
         </td>
         <td valign=top>
             {% if spellprog %}
-                {% set spelltype = spellprog.keys()[0] %}
                 <form method=post>
                 <fieldset>
                         <legend><strong>{{spelltype.upper()}}</strong></legend>
@@ -78,6 +77,7 @@
                             </div>   
                         {% endfor %}
                         <input type=submit value="Memorize Spells" name="memorize_spells">
+                        <input type=submit value="Sleep (Forget spells)" name="sleep">
                     </div>
                </fieldset> 
                 </form>

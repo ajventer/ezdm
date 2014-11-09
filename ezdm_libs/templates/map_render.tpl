@@ -214,6 +214,8 @@
                        {% if mapobj.tile(zoom_x,zoom_y).canenter() %}
                             <input type=submit name="movehere" value="Move Here">
                             <br>
+                            <input type=submit name="moveallhere" value="Party Move Here">
+                            <br>
                        {% endif %}
                        {% if mapobj.tile(zoom_x,zoom_y).tiletype() == 'link' %}
                             <input type=submit name="followlink" value="Go to next map"><br>

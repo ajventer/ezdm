@@ -69,12 +69,14 @@ class Character(EzdmObject):
             max_copper = self.get('/conditional/loot/copper', 0)
             loot_items = self.get('/conditional/loot/items_possible', [])
             max_items = self.get('/conditional/loot/max_items', 1)
+            debug('Max Items:', max_items)
             always_drops = self.get('/conditional/loot/always_drops', [])
             gold = rolldice(1, max_gold, 0)[0]
             silver = rolldice(1, max_silver, 0)[0]
             copper = rolldice(1, max_copper, 0)[0]
             if isinstance(loot_items, str):
                 try:
+                    debug ('Trying to convert loot_items from string')
                     loot_items = simplejson.loads(loot_items)
                 except:
                     loot_items = []
@@ -84,10 +86,13 @@ class Character(EzdmObject):
                 debug("Potential drop: %s of %s" % (counter, max_items))
                 drops_item = rolldice(1, 100, 0)[0]
                 debug("Drop-roll: %s" % drops_item)
+                debug('Loot items:', loot_items)
                 if loot_items and drops_item > 50:
                     debug("Select random item from to drop from %s" % loot_items)
                     if len(loot_items) >= 2:
                         item = loot_items[randrange(0, len(loot_items) - 1)]
+                    else:
+                        item = loot_items[0]
                 if item:
                     debug("Item dropped %s" % item)
                     gamemap.addtotile(loc['x'], loc['y'], item, 'items')

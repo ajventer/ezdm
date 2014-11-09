@@ -54,7 +54,16 @@
                 </div>
                 {% if character and character.is_casting %}
                     <strong>{{character.displayname()}} is casting a spell</strong><br>
-                        <a href="/endround">Continue casting (skip round)</a><br>
+                    {% if characters %}
+                        <form method=post action="/newchar">
+                        <select name="newchar">
+                        {% for character in characters %}
+                            <option value="{{characters.index(character)}}">{{character.name()}} ({{characters.index(character)}})</option>
+                        {% endfor %}
+                        </select>
+                        <input type=submit value="End round and continue casting">
+                        </form>
+                    {% endif %}                        
                         <a href="/interrupt">Stop casting and do something else</a>
                 {% endif %}
 
@@ -73,7 +82,6 @@
                 </div><div style="display: table-cell; border: 1px solid;">
                 Current character:
                     <img src="/icon/{{character.get('/core/icon','')}}" height=25>{{character.displayname()}}
-                    <input type=button value="End Round" onclick="window.location = '/endround'">
             {% endif %}
             </div>
             <div style="display: table-cell; border: 1px solid;">

@@ -86,6 +86,7 @@ def switch_campaign():
 def switch_character():
     newchar = request.POST['newchar']
     frontend.campaign.current = int(request.POST['newchar'])
+    frontend.campaign.onround(frontend.campaign.current_char())
     frontend.campaign.chars_in_round()
     return redirect('/action/ALL_MAPS', 302)
 
@@ -93,13 +94,6 @@ def switch_character():
 @route('/interrupt', method='get')
 def interrupt():
     frontend.campaign.current_char().interrupt_cast()
-    return redirect('/action/ALL_MAPS', 302)
-
-
-@route('/endround', method='get')
-def endround():
-    if frontend.campaign:
-        frontend.campaign.endround()
     return redirect('/action/ALL_MAPS', 302)
 
 

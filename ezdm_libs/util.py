@@ -10,7 +10,7 @@ import hashlib
 
 
 def user_hash():
-    user_string = '%s%s%s' % (bottle.request.environ.get('REMOTE_ADDR'), bottle.request.environ.get('REMOTE_PORT'), bottle.request.environ.get('HTTP_USER_AGENT'))
+    user_string = '%s%s' % (bottle.request.environ.get('REMOTE_ADDR'), bottle.request.environ.get('HTTP_USER_AGENT'))
     user_string = user_string.encode('utf-8')
     return hashlib.sha224(user_string).hexdigest()
 
@@ -32,7 +32,7 @@ def npc_hash():
     >>> len(hashes) == len(list(set(hashes)))
     True
     """
-    return binascii.b2a_hex(os.urandom(64))
+    return str(binascii.b2a_hex(os.urandom(64)))
 
 
 def json_editor(tpldict, name, action):

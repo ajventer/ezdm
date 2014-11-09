@@ -5,7 +5,7 @@ from .util import find_files, load_json, debug
 from .character import Character
 from .item import Item
 from .combat import attack
-import json as simplejson
+from json import loads
 
 
 class MAPS(Session):
@@ -56,14 +56,13 @@ class MAPS(Session):
             if 'removenpcfromtile' in requestdata:
                 tile = self._map.tile(self._data['zoom_x'], self._data['zoom_y'])
                 npcs = tile.get('/conditional/npcs', [])
-                debug("NPCs here", npcs)
                 for npc in npcs:
                     debug("Testing npc")
-                    n = Character(npc)
+                    n = Character(npcs[npc])
                     if n.name() == '%s.json' % requestdata['npcname']:
                         debug("    Match")
                         break
-                self._map.removefromtile(self._data['zoom_x'], self._data['zoom_y'], n.get_tile_index(), 'npcs')
+                self._map.removefromtile(self._data['zoom_x'], self._data['zoom_y'], n.get_hash(), 'npcs')
                 self._map.save()
             if 'removeitemfromtile' in requestdata:
                 self._map.removefromtile(self._data['zoom_x'], self._data['zoom_y'], requestdata['itemname'], 'items')
@@ -78,6 +77,12 @@ class MAPS(Session):
                 self._character.moveto(self._map.name(), self._data['zoom_x'], self._data['zoom_y'])
                 self._character.autosave()
                 self._map = GameMap(load_json('maps', self._map.name()))
+            if 'moveallhere' in requestdata:
+                for player in frontend.campaign.players():
+                    p = Character(load_json('characters', player))
+                    p.moveto(self._map.name(), self._data['zoom_x'], self._data['zoom_y'])
+                    p.autosave()
+                self._map = GameMap(load_json('maps', self._map.name()))
             if "followlink" in requestdata:
                 tile = self._map.tile(self._data['zoom_x'], self._data['zoom_y'])
                 newmap = tile.get('/conditional/newmap/mapname', '')
@@ -85,9 +90,9 @@ class MAPS(Session):
                 new_y = tile.get('/conditional/newmap/y', 0)
                 self._character.moveto(mapname=newmap, x=new_x, y=new_y, page=page)
                 self._character.autosave()
-                self._map = GameMap(load_json('maps', newmap))
                 self._data['zoom_x'] = new_x
                 self._data['zoom_y'] = new_y
+                self._map.save()
             if 'sellitem' in requestdata:
                 idx = int(requestdata['itemtosell'])
                 self._character.sell_item(idx)
@@ -190,11 +195,9 @@ class MAPS(Session):
             self._map = GameMap(name='New Map')
         self._data['map'] = self._map()
         self._data['mapobj'] = self._map
-        charicons = frontend.campaign.chars_in_round()
+        charicons = frontend.campaign.chars_in_round(self._data['editmode'])
         if self._map.name() in charicons:
             self._data['charicons'] = charicons[self._map.name()]
-        #elif 'charicons' in self._data:
-         #   del (self._data['charicons'])
         self._data['maplist'] = find_files('maps', '*.json', basename=True, strip='.json')
         self._data['tilelist'] = find_files('tiles', '*.json', basename=True, strip='.json')
         charlist = find_files('characters', '*.json', basename=True, strip='.json')
