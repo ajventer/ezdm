@@ -202,6 +202,7 @@ def find_files(source, needle='', basename=False, strip=''):
 
 
 def readfile(source='', name='', filename='', json=False, default=None):
+    debug('%s - %s: %s' % (source, name, filename))
     if not filename:
         filenames = find_files(source, name)
         if filenames:

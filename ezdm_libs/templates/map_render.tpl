@@ -264,7 +264,8 @@
                 </div>
             {% else %}
                 {% if detailview %}
-                <div style="vertical-align: top; background-color: #ccffcc; display: table-cell;">
+                <div id="detailview" class="detail" style="vertical-align: top; background-color: #ccffcc; display: table-cell;">
+                     <div  style="display: table-cell; background-color: #aaffcc; border: 2px solid; padding: 5px;  border-radius: 25px; text-align: center; box-shadow: 5px 5px 2px #888888; " onclick="document.getElementById('detailview').style.display='none';document.getElementById('fade').style.display='none'">Close</div>
                         <form method=post>
                             <input type=hidden name="clicked_x" id="clicked_x" value="{{zoom_x}}">
                             <input type=hidden name="clicked_y" id="clicked_y" value="{{zoom_y}}">
@@ -333,7 +334,8 @@
                           </li>                                                                     
                         {%- endfor %}   
                         </ul>
-                </div>
+                    </div>
+                    <div id="fade" class="black_overlay"></div>
                     {% endif %}
                 {%endif%}
             </div>

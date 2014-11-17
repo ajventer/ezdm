@@ -30,6 +30,20 @@
             overflow: auto;
             border-color: #ADADFF;
         }
+        .detail {
+            display: block;
+            position: absolute;
+            top: 5%;
+            left: 25%;
+            width: 50%;
+            height: 85%;
+            padding: 16px;
+            border: 16px solid orange;
+            background-color: white;
+            z-index:1002;
+            overflow: auto;
+            border-color: #ADADFF;
+        }        
     </style>    
 </head>
 <body>
