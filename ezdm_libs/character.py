@@ -305,19 +305,9 @@ class Character(EzdmObject):
         currenthitpoints = self.get('/core/combat/hitpoints', 1)
         if damage >= currenthitpoints:
             debug("[DEBUG] character.take_damage, damage MORE than hitpoints: %s, %s" % (damage, currenthitpoints))
-            st = self.saving_throw('ppd')
-            out = st[1]
-            if not st[0]:
-                self.put('/core/combat/hitpoints', 0)
-                out += "<br>%s has died !" % self.displayname()
-                self.handle_death()
-                frontend.campaign.message(self.autosave())
-                return (False, out)
-            else:
-                self.put('/core/combat/hitpoints', 1)
-                out += "<br>%s barely survives. %s hitpoints remaining" % (self.displayname(), self.get('/core/combat/hitpoints', 1))
-                frontend.campaign.message(self.autosave())
-                return (True, out)
+            self.put('/core/combat/hitpoints', 0)
+            self.handle_death()
+            return (False, '%s has died !' % self.displayname())
         else:
             debug("[DEBUG] character take damage, LESS than hitpoints: damage=%s, player=%s, hitpoints=%s" % (damage, self.displayname(), currenthitpoints))
             hp = int(currenthitpoints)
@@ -357,10 +347,10 @@ class Character(EzdmObject):
         ability_mods = load_json('adnd2e', 'ability_scores')
         strength = self.get('/core/abilities/str', 1)
         base = int(readkey('/str/%s/hit' % strength, ability_mods, 0))
+        bonus = 0
         if len(self.weapons) > 0:
-            bonus = int(readkey('/conditionals/to_hit', self.weapons[self.weapon](), 0))
-        else:
-            bonus = 0
+            for weapon in self.weapons:
+                bonus += int(readkey('/conditionals/to_hit', weapon(), 0))
         return base + bonus
 
     def ppd_mod(self):

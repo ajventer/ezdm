@@ -58,15 +58,42 @@ def calc_damage(player, target, custom_dmg):
     frontend.campaign.message(taken[1])
     return taken[0]
 
+def attack_roll(player, target, attack_modifiers, custom_tohit):
+    custom_tohit = custom_tohit or 0
+    if custom_tohit:
+        frontend.campaign.message('Applying custom to-hit modifier of %s' % custom_tohit)    
+    if player.is_casting:
+        player.interrupt_cast()
+        frontend.campaign.message('%s is casting. Cast will be interrupted if you attack %s' % (player.displayname(), target.displayname))
+    attack_mods = load_json('adnd2e', 'attack_mods')
+    total_modifier = custom_tohit
+    for mod in attack_modifiers:
+        total_modifier += int(attack_mods[mod])
+        frontend.campaign.message('Applying modifier %s: %s' % (mod, attack_mods[mod]))
+    range_modifier = range_mod(player, target, player.current_weapon())
+    if range_modifier:
+        frontend.campaign.message('Applying range modifier %s' % range_modifier)
+        total_modifier += range_modifier        
+    weaponmod = player.to_hit_mod()
+    frontend.campaign.message('Applying weapon modifier %s' % weaponmod)
+    total_modifier += weaponmod
+    frontend.campaign.message('Total modifier: %s<br><br>' % total_modifier)
+    frontend.campaign.message('%s has a defense modifier of %s and armor class %s' % (target.displayname(), target.def_mod(), target.armor_class()))
+    target_roll = int(player.thac0 - target.armor_class() - target.def_mod())
+    target_roll = target_roll - total_modifier
+    if target_roll <= 0:
+        frontend.campaign.error('%s is guaranteed to hit %s - no need to roll' % (player.displayname(), target_roll, target.displayname()))
+    else:
+        frontend.campaign.error('%s needs to roll %s to hit %s' % (player.displayname(), target_roll, target.displayname()))    
+
+
+
 
 def attack(player, target, attack_modifiers, custom_tohit, custom_dmg):
     custom_tohit = custom_tohit or 0
     if custom_tohit:
         frontend.campaign.message('Applying custom to-hit modifier of %s' % custom_tohit)
-    custom_dmg = custom_dmg or 0
-    if player.is_casting:
-        player.interrupt_cast()
-        frontend.campaign.message('%s was casting but it was interrupted because you attacked %s' % (player.displayname(), target.displayname))
+
     frontend.campaign.message('%s is attacking %s' % (player.displayname(), target.displayname()))
     target_alive = True
     attack_number = 1

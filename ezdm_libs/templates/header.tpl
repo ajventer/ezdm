@@ -34,8 +34,8 @@
             display: block;
             position: absolute;
             top: 5%;
-            left: 25%;
-            width: 50%;
+            left: 30%;
+            width: 30%;
             height: 85%;
             padding: 16px;
             border: 16px solid orange;

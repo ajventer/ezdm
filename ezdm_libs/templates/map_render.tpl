@@ -291,13 +291,21 @@
                                     <div>
                                         <input type=text name="custom_tohit" size=2 value="0">
                                         <lable>Custom to-hit modifier</lable>
-                                    </div>
-                                    <div>
-                                        <input type=text name="custom_dmg" size=2 value="0">
-                                        <lable>Custom damage modifier</lable>
-                                    </div>                                    
-                                    <input type=submit name="attack" value="Attack">
+                                    </div>                                
+                                    <input type=submit name="attack" value="Calculate attack roll">
                                 </fieldset>
+                                <fieldset>
+                                    <legend>Combat results</legend>
+                                    <div>
+                                        <input type=text name="damage_amt" size=2 value="0">
+                                        <lable>Take Damage</lable>
+                                    </div>                                
+                                    <div>
+                                        <input type=text name="heal_amt" size=2 value="0">
+                                        <lable>Heal for</lable>
+                                    </div>             
+                                      <input type=submit name="combatresult" value="Apply combat result">   
+                                </fieldset>               
                                 <fieldset>
                                     <label>Tactical Items</lable>
                                     <select name="tact_item">
@@ -318,11 +326,11 @@
                                      {% endfor %}   
                                      <select>
                                     <input type=submit name="castspell" value="Cast Spell">
-                                <fieldset>
-
+                                </fieldset>
 
                             {% endif %}
-                        <br>
+                        <fieldset>
+                            <legend>Details</legend>
                         <ul>
                         {%- for key, value in detailview.items() recursive  %}                       
                           <li>{{ key }}                                                           
@@ -334,6 +342,8 @@
                           </li>                                                                     
                         {%- endfor %}   
                         </ul>
+                    </fieldset>
+                    <div  style="display: table-cell; background-color: #aaffcc; border: 2px solid; padding: 5px;  border-radius: 25px; text-align: center; box-shadow: 5px 5px 2px #888888; " onclick="document.getElementById('detailview').style.display='none';document.getElementById('fade').style.display='none'">Close</div>
                     </div>
                     <div id="fade" class="black_overlay"></div>
                     {% endif %}

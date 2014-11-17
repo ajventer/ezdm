@@ -4,7 +4,7 @@ from .gamemap import GameMap
 from .util import find_files, load_json, debug
 from .character import Character
 from .item import Item
-from .combat import attack
+from .combat import attack_roll
 from json import loads
 
 
@@ -146,8 +146,19 @@ class MAPS(Session):
             if 'attack' in requestdata:
                 attackmods = requestdata.getall('attackmods')
                 target = frontend.campaign.characterlist[int(requestdata['detailindex'])]
-                attack(self._character, target, attackmods, int(requestdata['custom_tohit']), int(requestdata['custom_dmg']))
-                self._map = GameMap(load_json('maps', self._map.name()))
+                attack_roll(self._character, target, attackmods, int(requestdata['custom_tohit']))
+                #attack(self._character, target, attackmods, int(requestdata['custom_tohit']), int(requestdata['custom_dmg']))
+                #self._map = GameMap(load_json('maps', self._map.name()))
+            if 'combatresult' in requestdata:
+                target = frontend.campaign.characterlist[int(requestdata['detailindex'])]
+                damage = int(requestdata['damage_amt'])
+                healing = int(requestdata['heal_amt'])
+                if healing:
+                    frontend.campaign.message('%s healed for %s. Hitpoints now %s' % (target.displayname(), healing, target.heal(healing)))
+                if damage:
+                    alive, display = target.take_damage(damage)
+                    frontend.campaign.message(display)
+                target.autosave()
             if 'useitem' in requestdata:
                 target = frontend.campaign.characterlist[int(requestdata['detailindex'])]
                 idx = int(requestdata['tact_item'])
