@@ -107,6 +107,7 @@ class MAPS(Session):
                     self._data['detailview']['silver'] = self._map.tile(self._data['zoom_x'], self._data['zoom_y']).get('/conditional/silver', 0)
                     self._data['detailview']['copper'] = self._map.tile(self._data['zoom_x'], self._data['zoom_y']).get('/conditional/copper', 0)
                     self._data['detailtype'] = 'item'
+                    self._data['detailicon'] = 'icons/money.png'
                 elif iconsection == 'items':
                     i = Item(load_json('items', requestdata['iconname']))
                     if self._map.tile(self._data['zoom_x'], self._data['zoom_y']).tiletype() == 'shop':
@@ -114,11 +115,13 @@ class MAPS(Session):
                         i.identify()
                     self._data['detailview'] = i.render()
                     self._data['detailtype'] = 'item'
+                    self._data['detailicon'] = i.get('/core/icon', None)
             if 'iconindex' in requestdata and requestdata['iconindex']:
                 self._data['detailtype'] = 'character'
                 target = frontend.campaign.characterlist[int(requestdata['iconindex'])]
                 self._data['detailview'] = target.render()
                 self._data['detailindex'] = requestdata['iconindex']
+                self._data['detailicon'] = target.get('/core/icon', None)
             if 'itemdetail' in requestdata:
                 del(self._data['detailtype'])
                 if requestdata['detailname'] == 'money':
@@ -187,6 +190,8 @@ class MAPS(Session):
         self._data['zoom_y'] = 0
         if 'detailview' in self._data:
             del(self._data['detailview'])
+        if 'detailicon' in self._data:
+            del(self._data['detailicon'])            
 
         self._data['attackmods'] = load_json('adnd2e', 'attack_mods')
         self._data['editmode'] = frontend.mode() == 'dm'

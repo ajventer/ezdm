@@ -331,6 +331,9 @@
                             {% endif %}
                         <fieldset>
                             <legend>Details</legend>
+                            {% if detailicon %}
+                            <img src=/icon/{{detailicon}} align=right>
+                            {% endif %}
                         <ul>
                         {%- for key, value in detailview.items() recursive  %}                       
                           <li>{{ key }}                                                           
