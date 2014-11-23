@@ -259,7 +259,7 @@ class Character(EzdmObject):
     def save_to_tile(self):
         loc = self.location()
         gamemap = GameMap(load_json('maps', loc['map']))
-        if isinstance(gamemap.tile(loc['x'], loc['y'])()['conditional']['npcs'], list):
+        if isinstance(gamemap.tile(loc['x'], loc['y'])().get('conditional',{}).get('npcs'), list):
             gamemap.tile(loc['x'], loc['y'])()['conditional']['npcs'] = {}
         gamemap.tile(loc['x'], loc['y'])()['conditional']['npcs'][self.get_hash()] = self()
         return gamemap.save()

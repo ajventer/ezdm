@@ -236,7 +236,7 @@
                 <div style="vertical-align: top; background-color: #ccffcc; display: table-cell;">
                 <script language="javascript" type="text/javascript" src="/js?path=editarea_0_8_2/edit_area/edit_area_full.js">
                 </script>
-                        <strong>Python Console:</strong>Current map object: self._map<form method=post>
+                        <strong>Python Console:</strong>Current map object: map<form method=post>
                             <textarea id="pythonconsole" cols=100 rows=30 name="pythonconsole"></textarea><br>
                             <script language="javascript" type="text/javascript">
                                 editAreaLoader.init({

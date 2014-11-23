@@ -106,7 +106,10 @@ class CharacterList(object):
         if not isinstance(key, int):
             raise TypeError('Index must be integer')
         load_tuple = self.characters[key]
-        return self.__loaditem(load_tuple)
+        try:        
+            return self.__loaditem(load_tuple)
+        except:
+            return None
 
     def index(self, key):
         try:
@@ -246,7 +249,7 @@ class Campaign(EzdmObject):
                                 continue
                             for npc in npcs_here:
                                 n = Character(npcs_here[npc])
-                                if n.get('/core/combat/hitpoints', 1) > 0:
+                                if n.get('/core/combat/hitpoints', 1) > 0 and not n in self.characterlist:
                                     n.put('/core/location', {"map": mapname, "x": x, "y": y})
                                     n_idx = self.characterlist.append(n)
                                     if not (x, y) in icons[mapname]:
@@ -286,7 +289,13 @@ class Campaign(EzdmObject):
         #         char.put('/core/combat/hitpoints', 1)
         #         char.save()
         #     self.chars_in_round()
-        return self.characterlist[self.current]
+        c = self.characterlist[self.current]
+        if not c:
+            self.chars_in_round()
+            c = self.characterlist[self.current]
+        if not c:
+            c = self.characterlist[-1]
+        return c
 
     def endround(self):
         pass

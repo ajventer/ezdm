@@ -34,7 +34,7 @@ class MAPS(Session):
             if "loadtilefromfile" in requestdata:
                 self._map.load_tile(self._data['zoom_x'], self._data['zoom_y'], '%s.json' % requestdata["load_tile_from_file"])
             if 'pythonconsole' in requestdata:
-                exec (requestdata['pythonconsole'])
+                exec (requestdata['pythonconsole'], {'map': self._map})
             if 'addchartotile' in requestdata:
                 cname = requestdata['charactername']
                 character = Character(load_json('characters', cname))
