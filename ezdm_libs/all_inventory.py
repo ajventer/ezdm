@@ -69,6 +69,10 @@ class INVENTORY(Session):
                     item = Item(self._character.get('/core/inventory/pack', [])[idx])
                     self._character.sell_item(itemname=idx, buyer=buyer, gold=g, silver=s, copper=c)
                     page.message('%s sold %s to %s' % (self._character.displayname(), item.displayname(), buyer.displayname()))
+                if 'shopsellitem' in requestdata:
+                    idx = int(requestdata['pack_index'])
+                    item = Item(self._character.get('/core/inventory/pack', [])[idx])
+                    self._character.sell_item(itemname=idx)
                 if 'sendmoney' in requestdata:
                     recipient = Character(load_json('characters', requestdata['recipient']))
                     g = int(requestdata['gold'])
@@ -131,6 +135,7 @@ class INVENTORY(Session):
             
             self._character.weapons
             self._data['inventory'] = self._character.get('/core/inventory', {})
+            self._data['characterobj'] = self._character
             page.add('inventory.tpl', self._data)
             self._character.save()
         return page.render()

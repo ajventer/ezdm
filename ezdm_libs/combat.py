@@ -84,7 +84,8 @@ def attack_roll(player, target, attack_modifiers, custom_tohit):
     if target_roll <= 0:
         frontend.campaign.error('%s is guaranteed to hit %s - no need to roll' % (player.displayname(), target_roll, target.displayname()))
     else:
-        frontend.campaign.error('%s needs to roll %s to hit %s' % (player.displayname(), target_roll, target.displayname()))    
+        frontend.campaign.error('%s needs to roll %s to hit %s' % (player.displayname(), target_roll, target.displayname()))
+    return target_roll    
 
 
 

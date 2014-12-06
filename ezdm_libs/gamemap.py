@@ -1,4 +1,5 @@
 from .objects import EzdmObject, event
+from .item import Item
 from .util import save_json, load_json, readkey, debug
 from .frontend import mode
 from . import frontend
@@ -143,7 +144,8 @@ class GameMap(EzdmObject):
         for thingy in tile.get('/conditional/items', []):
             json = load_json('items', thingy)
             if json:
-                out.append((thingy.replace('.json', ''), readkey('/core/icon', json, ''), 'items'))
+                i = Item(json)
+                out.append((i.displayname(), readkey('/core/icon', json, ''), 'items'))
         money = self.getmoney(x, y)
         if money[0] or money[1] or money[2]:
             out.append(('money', 'icons/money.png', 'money'))

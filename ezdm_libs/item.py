@@ -7,7 +7,10 @@ from . import frontend
 class Item(EzdmObject):
 
     def displayname(self):
-        return self.get('/core/name', '') or self.get('/name', '')
+        name = self.get('/core/name', '') or self.get('/name', '')
+        if not self.identified():
+            name = name.split('of')[0]
+        return name
 
     def save(self):
         if 'temp' in self():
@@ -43,7 +46,7 @@ class Item(EzdmObject):
             out = {}
             out['core'] = {}
             out['core']['icon'] = self.get('/core/icon', '')
-            out['core']['name'] = self.get('/core/name', '')
+            out['core']['name'] = self.displayname()
             out['core']['identified'] = self.get('/core/identified', False)
         return out
 

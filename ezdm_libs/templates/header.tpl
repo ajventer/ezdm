@@ -72,7 +72,7 @@
                         <form method=post action="/newchar">
                         <select name="newchar">
                         {% for character in characters %}
-                            <option value="{{characters.index(character)}}">{{character.name()}} ({{characters.index(character)}})</option>
+                            <option value="{{characters.index(character)}}">{{character.displayname()}}</option>
                         {% endfor %}
                         </select>
                         <input type=submit value="End round and continue casting">
@@ -103,7 +103,7 @@
                 <form method=post action="/newchar">
                 <select name="newchar">
                 {% for character in characters %}
-                    <option value="{{characters.index(character)}}">{{character.name()}} ({{characters.index(character)}})</option>
+                    <option value="{{characters.index(character)}}">{{character.displayname()}}</option>
                 {% endfor %}
                 </select>
                 <input type=submit value="Switch Character">

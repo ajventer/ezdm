@@ -6,6 +6,7 @@ from .character import Character
 from .item import Item
 from .combat import attack_roll
 from json import loads
+import copy
 
 
 class MAPS(Session):
@@ -28,6 +29,20 @@ class MAPS(Session):
                 page.message('Map saved as:' + self._map.save())
                 frontend.campaign.addmap(self._map.name())
         if requestdata:
+            if 'combatgrid' in requestdata:
+                enemies = copy.copy(frontend.campaign.characterlist)
+                combatgrid = {}
+                for character in frontend.campaign.characterlist:
+                    combatgrid[character.displayname()] = {}
+                    for enemy in enemies:
+                        roll = attack_roll(character, enemy, [], 0)
+                        combatgrid[character.displayname()][enemy.displayname()] = roll
+                frontend.campaign.messages = []
+                data = {'combatgrid': combatgrid}
+                page = Page()
+                html = page.tplrender('combatgrid.tpl', data)
+                frontend.campaign.message(html)
+                
             if "clicked_x" in requestdata:
                 self._data['zoom_x'] = int(requestdata['clicked_x'])
                 self._data['zoom_y'] = int(requestdata['clicked_y'])
@@ -122,6 +137,23 @@ class MAPS(Session):
                 self._data['detailview'] = target.render()
                 self._data['detailindex'] = requestdata['iconindex']
                 self._data['detailicon'] = target.get('/core/icon', None)
+            if 'pickupall' in requestdata:
+                pickedup = []
+                for item, icon, section in self._map.tile_icons(self._data['zoom_x'], self._data['zoom_y']):
+                    if item != 'money':
+                        i = Item(load_json('items', item))
+                        self._character.acquire_item(i)
+                        self._map.removefromtile(self._data['zoom_x'], self._data['zoom_y'], item, 'items')
+                        pickedup.append(item)
+                    else:
+                        moneytuple = self._map.getmoney(self._data['zoom_x'], self._data['zoom_y'])
+                        self._character.gain_money(*moneytuple)
+                        self._map.putmoney(self._data['zoom_x'], self._data['zoom_y'], 0, 0, 0)
+                        pickedup.append('some money')
+                self._map.save()
+                self._map = GameMap(load_json('maps', self._map.name()))
+                self._character.autosave()
+                page.message('You picked up %s' % ','.join(pickedup))
             if 'itemdetail' in requestdata:
                 del(self._data['detailtype'])
                 if requestdata['detailname'] == 'money':
@@ -197,8 +229,6 @@ class MAPS(Session):
         self._data['editmode'] = frontend.mode() == 'dm'
         self._data['campaign'] = frontend.campaign
         self._character = frontend.campaign.current_char()
-        if not self._data['editmode']:
-            self._data['packitems'] = self._character.for_sale()
 
         if requestdata:
             self.inputhandler(requestdata, page)

@@ -25,13 +25,8 @@ class XPTOOL(Session):
                 page.add('load_defaults_from.tpl', loadform)
                 return page.render()
             else:
-                if self._data['character'] == 'frontend.campaign':
-                    debug('XP for whole campaign')
-                    for character in frontend.campaign.players():
-                        self.characters.append(character)
-                else:
-                    debug('XP For %s' % self._data['character'])
-                    self.characters.append(requestdata['character'])
+                debug('XP For %s' % self._data['character'])
+                self.characters.append(requestdata['character'])
 
         if self.characters and not 'xp_ammount' in self._data:
             page.message('Adding experience points for %s' % self.characters)

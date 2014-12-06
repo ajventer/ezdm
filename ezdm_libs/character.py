@@ -59,6 +59,8 @@ class Character(EzdmObject):
             for char in list(frontend.campaign.characterlist):
                 if char.character_type() == 'player':
                     frontend.campaign.message(char.give_xp(self.xp_worth()))
+                    char.autosave()
+            frontend.campaign.chars_in_round()
         gamemap = GameMap(load_json('maps', loc['map']))
         if todel != -1:
             gamemap.removefromtile(loc['x'], loc['y'], todel, chartype)
@@ -122,9 +124,11 @@ class Character(EzdmObject):
     @property
     def lightradius(self):
         base_radius = self.get('/core/lightradius', 0)
-        for item in self.inventory_generator():
+        for item in self.inventory_generator(['equiped']):
+            base_radius += int(item[1].get('/core/lightradius', 0))
+        for item in self.inventory_generator(['pack']):
             if item[1].get('/core/in_use', False):
-                base_radius += item[1].get('/core/lightradius', 0)
+                base_radius += int(item[1].get('/core/lightradius', 0))
         return base_radius
 
     def memorized_spells(self):
@@ -348,9 +352,10 @@ class Character(EzdmObject):
         strength = self.get('/core/abilities/str', 1)
         base = int(readkey('/str/%s/hit' % strength, ability_mods, 0))
         bonus = 0
-        if len(self.weapons) > 0:
-            for weapon in self.weapons:
-                bonus += int(readkey('/conditionals/to_hit', weapon(), 0))
+        for weapon in self.weapons:
+            w = int(readkey('/conditional/to_hit', weapon(), 0))
+            bonus += w
+            debug('Adding to_hit bonus %s' % w)
         return base + bonus
 
     def ppd_mod(self):
@@ -731,7 +736,7 @@ class Character(EzdmObject):
             cha = int(self.get('/core/abilities/cha', 1))
             price = (price / 2) + ((price / 100) * cha)
             money = convert_money(price)
-            return (money['gold'], money['silver'], money['copper'])
+            return (int(money['gold']), int(money['silver']), int(money['copper']))
 
     def sell_item(self, itemname, buyer='shop', gold=0, silver=0, copper=0):
         if isinstance(itemname, int):
@@ -941,12 +946,12 @@ class Character(EzdmObject):
 
     def displayname(self):
         out = "%s %s" % (self.get('/core/personal/name/first', ''), self.get('/core/personal/name/last', ''))
-        try:
-            index = frontend.campaign.characters.index(self)
-        except:
-            index = -1
-        if index > -1 and self.character_type() == 'npc':
-            out = "%s (%s)" % (out, frontend.campaign.characters.index(self))
+        index = frontend.campaign.characterlist.index(self)
+        if self.character_type() == 'npc':
+            loc = self.location()
+            if index > -1:
+                out = "%s (%s)" % (out, index)
+            out = '%s @%sx%s' % (out, loc['x'], loc['y'])
         out = "[%s]" % out
         return out
 
@@ -989,18 +994,9 @@ class Character(EzdmObject):
             out['core']['combat']['thac0'] = self.thac0
             del(out['core']['inventory'])
             del(out['conditional']['armor_types'])
-            out['to_hit_mod'] = {}
+            out['to_hit_mod'] = self.to_hit_mod()
             done = False
-            if self.weapons:
-                for I in range(0, len(self.weapons)):
-                    self.next_weapon()
-                    name = self.weapons[self.weapon].get('/core/name', '')
-                    writekey('/to_hit_mod/%s' % name, self.to_hit_mod(), out)
-                    if self.weapon == 0:
-                        if done:
-                            break
-                        else:
-                            done = True
+
             if 'index' in out:
                 del (out['index'])
             xp = self.get('/core/personal/xp', 0)

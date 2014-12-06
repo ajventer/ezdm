@@ -120,7 +120,9 @@ def save_json(source, name, dic):
     if not name.endswith('.json'):
         name = '%s.json' % name
     filename = os.path.join(get_user_data(source), name).replace(' ', '_')
-    open(filename, 'w').write(dumps(d, indent=4))
+    handle = open(filename, 'w')
+    handle.write(dumps(d, indent=4))
+    handle.close()
     return filename
 
 
@@ -207,13 +209,17 @@ def readfile(source='', name='', filename='', json=False, default=None):
         filenames = find_files(source, name)
         if filenames:
             filename = filenames[0]
+    handle=open(filename, 'r')
+    s = handle.read()
+    handle.close()
     if not json:
         try:
-            return open(filename, 'r').read()
+            return s
         except:
             return default
     try:
-        return loads(open(filename, 'r').read())
+
+        return loads(s)
     except:
         return default
 
@@ -225,7 +231,10 @@ def load_json(source='', name='', filename='', default=None):
 
 
 def attack_mods():
-    return loads(open(os.path.join(get_user_data('adnd2e'), "attack_mods.json")).read())
+    handle = open(os.path.join(get_user_data('adnd2e'), "attack_mods.json"))
+    s = handle.read()
+    handle.close()
+    return loads(s)
 
 
 def price_in_copper(gold, silver, copper):

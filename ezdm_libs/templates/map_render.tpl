@@ -65,8 +65,9 @@
             </div>
         </div>
     {% else %}
+        <form method=post>
         <lable><strong>{{map.name}}
-        </strong></lable>
+        </strong></lable><input type=submit value="Attack Roll Grid" name="combatgrid"></form>
     {%endif %}
     <div style="vertical-align: top; background-color: #ADD6FF; border: 3px solid; display: table-row">            
         <div style="background-color:#ccffcc; border: 1px solid; display: table-cell"></div>
@@ -216,19 +217,15 @@
                             <br>
                             <input type=submit name="moveallhere" value="Party Move Here">
                             <br>
+                            {% if mapobj.tile_icons(zoom_x,zoom_y) and not mapobj.tile(zoom_x, zoom_y).tiletype() == 'shop' %}
+                                <input type=submit name="pickupall" value="Pick up all">
+                                <br>
+                            {% endif %}
                        {% endif %}
                        {% if mapobj.tile(zoom_x,zoom_y).tiletype() == 'link' %}
                             <input type=submit name="followlink" value="Go to next map"><br>
                        {% endif %}
                        {% if mapobj.tile(zoom_x, zoom_y).tiletype() == 'shop' %}
-                       {% if packitems %}
-                            <select name="itemtosell">
-                                {% for item, name, price in packitems %}
-                                    <option value={{item}}>{{name}} - {{price}}</option>
-                                {% endfor %}
-                            </select>
-                            <input type=submit name="sellitem" value="Sell Item"><br>
-                        {% endif %}
                        {% endif %}
                     {% endif %}
                     </form>
