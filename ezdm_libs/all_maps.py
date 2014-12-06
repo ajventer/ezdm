@@ -38,7 +38,8 @@ class MAPS(Session):
                         roll = attack_roll(character, enemy, [], 0)
                         combatgrid[character.displayname()][enemy.displayname()] = roll
                 frontend.campaign.messages = []
-                data = {'combatgrid': combatgrid}
+                attack_mods = load_json('adnd2e', 'attack_mods')
+                data = {'combatgrid': combatgrid, 'mods': attack_mods}
                 page = Page()
                 html = page.tplrender('combatgrid.tpl', data)
                 frontend.campaign.message(html)
