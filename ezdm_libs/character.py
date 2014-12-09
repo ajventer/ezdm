@@ -353,7 +353,10 @@ class Character(EzdmObject):
         base = int(readkey('/str/%s/hit' % strength, ability_mods, 0))
         bonus = 0
         for weapon in self.weapons:
-            w = int(readkey('/conditional/to_hit', weapon(), 0))
+            try:
+                w = int(readkey('/conditional/to_hit', weapon(), 0))
+            except ValueError:
+                w = 0
             bonus += w
             debug('Adding to_hit bonus %s' % w)
         return base + bonus
