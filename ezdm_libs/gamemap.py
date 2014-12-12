@@ -6,7 +6,6 @@ from . import frontend
 
 
 class Tile(EzdmObject):
-    json = {}
 
     def revealed(self):
         if mode() == 'dm':
@@ -29,10 +28,6 @@ class Tile(EzdmObject):
         if new is None:
             return self.get('/conditional/canenter', False)
         self.put('/conditional/canenter', new)
-
-    def save(self):
-        name = '%s.json' % self.get('/core/name', '')
-        return save_json('tiles', name.lower().replace(' ', '_'), self.json)
 
     def add(self, name, objtype):
         if isinstance(name, str) and not name.endswith('.json'):
@@ -74,16 +69,15 @@ class Tile(EzdmObject):
 
 class GameMap(EzdmObject):
 
-    def __init__(self, json={}, name='', max_x=25, max_y=15, lightradius=1):
-        if not json:
+    def __init__(self, key, name='', max_x=25, max_y=15, lightradius=1):
+        EzdmObject.__init__(key)
+        if not self.key:
             self.new(name=name, max_x=max_x, max_y=max_y, lightradius=lightradius)
-        else:
-            self.json = json
 
-        if not 'lightradius' in self.json:
-            self.json['lightradius'] = lightradius
-        for y in range(0, self.json['max_y']):
-            for x in range(0, self.json['max_x']):
+        if not 'lightradius' in self():
+            self()['lightradius'] = lightradius
+        for y in range(0, self()['max_y']):
+            for x in range(0, self()['max_x']):
                 tile = self.tile(x, y)
                 players = tile.get('/conditional/players', [])
                 if players:
@@ -98,10 +92,11 @@ class GameMap(EzdmObject):
                             self.removefromtile(x, y, player, 'players')
 
     def new(self, name='', max_x=25, max_y=15, lightradius=1):
-        self.json = {'name': name}
-        self.json['max_x'] = max_x
-        self.json['max_y'] = max_y
-        self.json['tiles'] = [[{}] * max_x for _ in range(max_y)]
+        json = {'name': name}
+        json['max_x'] = max_x
+        json['max_y'] = max_y
+        json['tiles'] = [[{}] * max_x for _ in range(max_y)]
+        self.put(self.key, json)
 
     def load_tile(self, x, y, tile):
         tjson = load_json('tiles', tile)
@@ -157,9 +152,6 @@ class GameMap(EzdmObject):
     def name(self):
         name = '%s.json' % self.get('name', '').lower().replace(' ', '_')
         return name
-
-    def save(self):
-        return save_json('maps', self.name(), self())
 
     def reveal(self, x, y, xtraradius=0):
         radius = int(self.get('lightradius', 1)) + xtraradius

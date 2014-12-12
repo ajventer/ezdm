@@ -7,29 +7,47 @@ from . import frontend
 class Item(EzdmObject):
 
     def displayname(self):
+        """
+        >>> x = Item('items/health_potion')
+        >>> x.displayname()
+        'Health Potion'
+        """
         name = self.get('/core/name', '') or self.get('/name', '')
         if not self.identified():
             name = name.split('of')[0]
-        return name
-
-    def save(self):
-        if 'temp' in self():
-            del self()['temp']
-        return save_json('items', self.name(), self.json)
+        return name      
 
     def name(self):
+        """
+        >>> x = Item('items/health_potion')
+        >>> x.name()
+        'health_potion.json'
+        """
         name = '%s.json' % self.get('/core/name', '')
         return name.lower().replace(' ', '_').replace("'", "")
 
     def slot(self):
+        """
+        >>> x = Item('items/health_potion')
+        >>> x.slot()
+        ''
+        >>> x = Item('items/halberd.json')
+        >>> x.slot()
+        'twohand'
+        """
         return self.get('/conditional/slot', '')
 
     def identified(self):
+        """
+        >>> x = Item('items/halberd.json')
+        >>> x.identified()
+        False
+        """
         return self.get('/core/identified', '')
 
     def render(self):
         """
-        >>> item = Item({})
+        >>> item = Item('items/health_potion')
         >>> item.render()
         {...}
         """

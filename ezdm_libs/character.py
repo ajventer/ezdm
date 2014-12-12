@@ -11,29 +11,15 @@ import json as simplejson
 
 class Character(EzdmObject):
     """
-    >>> char = Character(load_json('characters', 'bardic_rogue.json'))
+    >>> char = Character('/characters/bardic_rogue')
     >>> char.displayname()
     '[BARDIC ROGUE]'
     """
-    json = {}
     weapon = 0
-
-    def __init__(self, json):
-        """
-        >>> json = load_json('characters', 'bardic_rogue.json')
-        >>> char = Character(json)
-        >>> char.json == json
-        True
-
-        """
-        self.json = json
-        if self.json:
-            self.reset_weapon()
 
     def roll_hit_dice(self):
         """
-        >>> json = load_json('characters', 'bardic_rogue.json')
-        >>> char = Character(json)
+        >>> char = Character('/characters/bardic_rogue')
         >>> hitdice = int(char()['core']['combat']['level-hitdice'])
         >>> max = int(hitdice * 8)
         >>> char.roll_hit_dice()
@@ -114,8 +100,7 @@ class Character(EzdmObject):
 
     def location(self):
         """
-        >>> json = load_json('characters', 'bardic_rogue.json')
-        >>> char = Character(json)
+        >>> char = Character('characters/bardic_rogue')
         >>> char.location()['map'] == 'simple_room.json'
         True
         """
@@ -202,10 +187,9 @@ class Character(EzdmObject):
 
     def interrupt_cast(self):
         """
-        >>> json = load_json('characters', 'bardic_rogue.json')
-        >>> char = Character(json)
-        >>> tar = Character(load_json('characters', 'tiny_tim.json'))
-        >>> spell = Item(load_json('items', 'magic_misile.json'))
+        >>> char = Character('/characters/bardic_rogue')
+        >>> tar = Character('characters/tiny_tim')
+        >>> spell = Item('items/magic_misile'))
         >>> char.acquire_item(spell)
         >>> spell = Item(char.get('/core/inventory/pack', [])[0])
         >>> spell.onuse(char, tar)
@@ -229,10 +213,10 @@ class Character(EzdmObject):
 
     def character_type(self):
         """
-        >>> char = Character(load_json('characters', 'tiny_tim.json'))
+        >>> char = Character(characters/tiny_tim'))
         >>> char.character_type()
         'player'
-        >>> char = Character(load_json('characters', 'random_monster.json'))
+        >>> char = Character(load_json('characters/random_monster'))
         >>> char.character_type()
         'npc'
         """
@@ -270,7 +254,7 @@ class Character(EzdmObject):
 
     def heal(self, amount):
         """
-        >>> char = Character(load_json('characters', 'tiny_tim.json'))
+        >>> char = Character('characters/tiny_tim'))
         >>> start = char.get('/core/combat/hitpoints', 1)
         >>> max = char.get('/core/combat/max_hp', 1)
         >>> if max - start < 1:
@@ -294,7 +278,7 @@ class Character(EzdmObject):
 
     def take_damage(self, damage):
         """
-        >>> char = Character(load_json('characters', 'tiny_tim.json'))
+        >>> char = Character('characters/tiny_tim))
         >>> start = 30
         >>> char.put('/core/combat/hitpoints', start)
         >>> char.take_damage(1)
@@ -323,18 +307,12 @@ class Character(EzdmObject):
 
     def name(self):
         """
-        >>> char = Character(load_json('characters', 'tiny_tim.json'))
+        >>> char = Character('characters/tiny_tim'))
         >>> char.name()
         'tiny_tim.json'
         """
         name = '%s_%s.json' % (self.get('/core/personal/name/first', ''), self.get('/core/personal/name/last', ''))
         return name.lower().replace(' ', '_').replace("'", "")
-
-    def save(self):
-        self.json = inflate(flatten(self.json))
-        if 'temp' in self():
-            del self()['temp']
-        return save_json('characters', self.name(), self.json)
 
     def autosave(self):
         if self.character_type() == 'player':
@@ -344,7 +322,7 @@ class Character(EzdmObject):
 
     def to_hit_mod(self):
         """
-        >>> char = Character(load_json('characters', 'tiny_tim.json'))
+        >>> char = Character('characters/tiny_tim')
         >>> isinstance(char.to_hit_mod(), int)
         True
         """
@@ -363,7 +341,7 @@ class Character(EzdmObject):
 
     def ppd_mod(self):
         """
-        >>> char = Character(load_json('characters', 'tiny_tim.json'))
+        >>> char = Character('characters/tiny_tim.json)
         >>> isinstance(char.ppd_mod(), int)
         True
         """
@@ -373,7 +351,7 @@ class Character(EzdmObject):
 
     def dmg_mod(self):
         """
-        >>> char = Character(load_json('characters', 'tiny_tim.json'))
+        >>> char = Character('characters/tiny_tim'))
         >>> isinstance(char.dmg_mod(), int)
         True
         """
@@ -383,7 +361,7 @@ class Character(EzdmObject):
 
     def def_mod(self):
         """
-        >>> char = Character(load_json('characters', 'tiny_tim.json'))
+        >>> char = Character('characters/tiny_tim.json')
         >>> isinstance(char.def_mod(), int)
         True
         """
@@ -394,7 +372,7 @@ class Character(EzdmObject):
     @property
     def saving_throws(self):
         """
-        >>> char = Character(load_json('characters', 'tiny_tim.json'))
+        >>> char = Character('characters/tiny_tim')
         >>> isinstance(char.saving_throws, dict)
         True
         """
@@ -432,7 +410,7 @@ class Character(EzdmObject):
 
     def current_weapon(self):
         """
-        >>> char = Character(load_json('characters', 'tiny_tim.json'))
+        >>> char = Character('characters/tiny_tim.json)
         >>> isinstance(char.current_weapon(), Item)
         True
         """
@@ -448,7 +426,7 @@ class Character(EzdmObject):
 
     def level_up(self):
         """
-        >>> char = Character(load_json('characters', 'tiny_tim.json'))
+        >>> char = Character('characters/tiny_tim)
         >>> level = char.get('/core/combat/level-hitdice', 1)
         >>> hp = char.get('/core/combat/hitpoints', 1)
         >>> max = char.get('/core/combat/max_hp', 1)
@@ -494,7 +472,7 @@ class Character(EzdmObject):
 
     def give_xp(self, xp):
         """
-        >>> char = Character(load_json('characters', 'tiny_tim.json'))
+        >>> char = Character('characters/tiny_tim.json')
         >>> level = char.get('/core/combat/level-hitdice', 1)
         >>> nl = char.next_level()
         >>> debug(char.give_xp(nl + 10))
@@ -612,7 +590,7 @@ class Character(EzdmObject):
 
     def acquire_item(self, item):
         """
-        >>> char = Character({})
+        >>> char = Character('')
         >>> item = Item(load_json('items', 'health_potion.json'))
         >>> char.acquire_item(item)
         >>> Item(char()['core']['inventory']['pack'][0]).displayname() == 'Health Potion'
@@ -626,7 +604,7 @@ class Character(EzdmObject):
 
     def equip_item(self, itemname):
         """
-        >>> char = Character({})
+        >>> char = Character('')
         >>> mhand = Item(load_json('items', 'mainhand_dagger.json'))
         >>> ohand = Item(load_json('items', 'offhand_dagger.json'))
         >>> twohand = Item(load_json('items', 'halberd.json'))
@@ -704,7 +682,7 @@ class Character(EzdmObject):
 
     def unequip_item(self, slot):
         """
-        >>> char = Character({})
+        >>> char = Character('')
         >>> twohand = Item(load_json('items', 'halberd.json'))
         >>> char.acquire_item(twohand)
         >>> char.equip_item(twohand)
@@ -761,7 +739,7 @@ class Character(EzdmObject):
 
     def for_sale(self):
         """
-        >>> char = Character({})
+        >>> char = Character('')
         >>> char.for_sale()
         []
         >>> char.acquire_item(Item(load_json('items', 'health_potion.json')))
@@ -783,7 +761,7 @@ class Character(EzdmObject):
 
     def drop_item(self, itemname, section='pack'):
         """
-        >>> char = Character({})
+        >>> char = Character('')
         >>> char.acquire_item(Item(load_json('items','health_potion')))
         >>> char.drop_item('Health Potion')
         >>> len(char.get('/core/inventory/pack', []))
@@ -803,10 +781,10 @@ class Character(EzdmObject):
             todrop = itemname
         if todrop is None:
             return
-        item = Item(self.json['core']['inventory']['pack'][todrop])
+        item = Item(self()['core']['inventory']['pack'][todrop])
         if self.character_type() == 'player':
             item.ondrop(player=self)
-        del(self.json['core']['inventory']['pack'][todrop])
+        del(self()['core']['inventory']['pack'][todrop])
 
     def money_tuple(self):
         gold = self.get('/core/inventory/money/gold', 0)
@@ -861,7 +839,7 @@ class Character(EzdmObject):
     @property
     def weapons(self):
         """
-        >>> char = Character({})
+        >>> char = Character('')
         >>> char.weapons[0].name()
         'fist.json'
         >>> char.acquire_item(Item(load_json('items','halberd.json')))
@@ -971,10 +949,10 @@ class Character(EzdmObject):
 
     def render(self):
         """
-        >>> char = Character(load_json('characters','tiny_tim.json'))
+        >>> char = Character('characters/tiny_tim)
         >>> char.render()
         {...}
-        >>> char = Character({})
+        >>> char = Character('')
         >>> char.render()
         {}
         """

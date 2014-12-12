@@ -123,6 +123,7 @@ def save_json(source, name, dic):
     handle = open(filename, 'w')
     handle.write(dumps(d, indent=4))
     handle.close()
+    debug('Saving %s' % filename)
     return filename
 
 

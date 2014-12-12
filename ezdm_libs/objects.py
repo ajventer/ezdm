@@ -1,6 +1,7 @@
+import os
 from .util import readkey, writekey, debug
 from json import dumps
-from .frontend import mode
+from .frontend import mode, datastore
 
 
 def event(obj, key, localvars):
@@ -17,44 +18,35 @@ def event(obj, key, localvars):
 class EzdmObject(object):
     json = {}
 
-    def __init__(self, json):
-        self.json = json
+    def __init__(self, key):
+        self.key = key
+        datastore.readkey(self.key)
+        
 
     def __call__(self):
         """
-        >>> o = EzdmObject({'test': 0})
-        >>> o() == {'test': 0}
+        >>> o = EzdmObject('characters/bardic_rogue')
+        >>> o()['core']['type'] == 'player'
         True
         """
-        return self.json
+        return datastore.readkey(self.key)
 
     def __str__(self):
         """
-        >>> o = EzdmObject({'test': 0})
-        >>> str(o) == dumps({'test': 0}, indent=4)
+        >>> o = EzdmObject('characters/bardic_rogue')
+        >>> from .util import load_json
+        >>> b_r = load_json('characters', 'bardic_rogue')
+        >>> str(o) == dumps(b_r, indent=4)
         True
         """
         return dumps(self(), indent=4)
 
-    def update(self, json):
-        """
-        >>> j1 = {'test': 0}
-        >>> j2 = {'foo': 'bar'}
-        >>> o = EzdmObject(j1)
-        >>> o.update(j2)
-        >>> o() == j2
-        True
-
-        """
-        self.__init__(json)
 
     def get(self, key, default):
         """
-        >>> o = EzdmObject({'a': {'b': 1, 'c': 2}})
-        >>> o.get('/a', '') == {'b': 1, 'c': 2}
+        >>> o = EzdmObject('characters/bardic_rogue')
+        >>> o.get('/core/type', '') == 'player'
         True
-        >>> o.get('/a/b', '')
-        1
         >>> o.get('/f/g', 5)
         5
         """
@@ -64,12 +56,15 @@ class EzdmObject(object):
 
     def put(self, key, value):
         """
-        >>> o = EzdmObject({'a': {'b': 1, 'c': 2}})
+        >>> o = EzdmObject('characters/bardic_rogue')
         >>> o.put('/f/g', 16)
         >>> o()['f']['g']
         16
         """
-        return writekey(key, value, self.json)
+        while key.startswith('/'):
+            key = key[1:]
+        key = os.path.join(self.key, key)
+        datastore.writekey(key, value)
 
     def save(self):
-        pass
+        datastore.save()
