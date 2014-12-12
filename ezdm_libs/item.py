@@ -1,8 +1,8 @@
-from .util import save_json, debug
+from .util import debug
 from .objects import EzdmObject, event
 import copy
-from .frontend import mode
 from . import frontend
+
 
 class Item(EzdmObject):
 
@@ -15,7 +15,7 @@ class Item(EzdmObject):
         name = self.get('/core/name', '') or self.get('/name', '')
         if not self.identified():
             name = name.split('of')[0]
-        return name      
+        return name
 
     def name(self):
         """

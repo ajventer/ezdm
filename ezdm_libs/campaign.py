@@ -1,4 +1,5 @@
-from .util import save_json, load_json, rolldice, debug
+import os
+from .util import rolldice, debug
 from .character import Character
 from .gamemap import GameMap
 from .objects import EzdmObject
@@ -14,75 +15,33 @@ class CharacterList(object):
 
     def __init__(self):
         self.characters = []
-        self.initiative = []
-
-    def __charitem(self, character):
-        """
-        >>> char = Character(load_json('characters', 'tiny_tim.json'))
-        >>> CharacterList()._CharacterList__charitem(char)
-        ('player', 'tiny_tim.json')
-        """
-        if not character:
-            return
-        if character.character_type() == 'player':
-            load_tuple = ('player', character.name())
-        else:
-            loc = character.location()
-            load_tuple = ('npc', loc, character.get_hash())
-        character.autosave()
-        return load_tuple
 
     def append(self, character):
         """
-        >>> char = Character(load_json('characters', 'tiny_tim.json'))
+        >>> char = Character('characters/tiny_tim')
         >>> c = CharacterList()
         >>> i = len(c)
         >>> c.append(char) == i
         True
         """
         newindex = len(self.characters)
-        self.characters.append(self.__charitem(character))
+        self.characters.append(character.key)
         return newindex
-
-    def __loaditem(self, load_tuple):
-        """
-        >>> char = Character(load_json('characters', 'tiny_tim.json'))
-        >>> c = CharacterList()
-        >>> c.append(char)
-        0
-        >>> c._CharacterList__loaditem(('player','tiny_tim.json')).displayname()
-        '[TINY TIM]'
-        """
-        if load_tuple[0] == 'player':
-            return Character(load_json('characters', load_tuple[1]))
-        else:
-            loc = load_tuple[1]
-            mapname = loc['map']
-            x = loc['x']
-            y = loc['y']
-            gamemap = GameMap(load_json('maps', mapname))
-            tile = gamemap.tile(x, y)
-            npcs_here = tile.get('/conditional/npcs', {})
-            for npc in npcs_here:
-                npcjson = npcs_here[npc]
-                npc = Character(npcjson)
-                if npc.get_hash() == load_tuple[2]:
-                    return npc
 
     def __list__(self):
         """
         >>> c = CharacterList()
-        >>> c.append(Character(load_json('characters','tiny_tim.json')))
+        >>> c.append(Character('characters/tiny_tim'))
         0
-        >>> c.append(Character(load_json('characters','bardic_rogue.json')))
+        >>> c.append(Character('characters/bardic_rogue'))
         1
         >>> list(c)
         [<ezdm_libs.character.Character object at ...>, <ezdm_libs.character.Character object at ...>]
 
         """
         tempchars = []
-        for load_tuple in self.characters:
-            tempchars.append(self.__loaditem(load_tuple))
+        for key in self.characters:
+            tempchars.append(Character(key))
         return tempchars
 
     def __len__(self):
@@ -95,46 +54,52 @@ class CharacterList(object):
     def __getitem__(self, key):
         """
         >>> c = CharacterList()
-        >>> c.append(Character(load_json('characters', 'tiny_tim.json')))
+        >>> c.append(Character('characters/tiny_tim'))
         0
         >>> c[0]
         <ezdm_libs.character.Character object at ...>
-        >>> c[0].displayname() == Character(load_json('characters', 'tiny_tim.json')).displayname()
+        >>> c[0].displayname() == Character('characters/tiny_tim').displayname()
         True
 
         """
         if not isinstance(key, int):
             raise TypeError('Index must be integer')
-        load_tuple = self.characters[key]
-        try:        
-            return self.__loaditem(load_tuple)
-        except:
-            return None
+        return Character(self.characters[key])
 
     def index(self, key):
+        """
+        >>> c = CharacterList()
+        >>> x = Character('characters/tiny_time')
+        >>> i = c.append(x)
+        >>> i == c.index(x)
+        True
+        >>> i == c.index(x.key)
+        True
+        """
+        if not isinstance(key, str):
+            key = key.key
         try:
-            return self.characters.index(self.__charitem(key))
+            return self.characters.index(key)
         except:
             return -1
-        
 
     def __setitem__(self, key, value):
         """
         >>> c = CharacterList()
-        >>> c.append(Character(load_json('characters','bardic_rogue.json')))
+        >>> c.append(Character('characters/bardic_rogue'))
         0
-        >>> c[0] = Character(load_json('characters', 'tiny_tim.json'))
+        >>> c[0] = Character('characters/tiny_tim')
         >>> c[0].displayname()
         '[TINY TIM]'
         """
-        self.characters[key] = self.__charitem(value)
+        self.characters[key] = value.key
 
     def __delitem__(self, key):
         """
         >>> c = CharacterList()
         >>> len(c)
         0
-        >>> i = c.append(Character(load_json('characters', 'bardic_rogue.json')))
+        >>> i = c.append(Character('characters/bardic_rogue'))
         >>> i
         0
         >>> len(c)
@@ -152,37 +117,34 @@ class CharacterList(object):
     def __contains__(self, item):
         """
         >>> c = CharacterList()
-        >>> ch = Character(load_json('characters','tiny_tim.json'))
+        >>> ch = Character('characters/tiny_tim')
         >>> c.append(ch)
         0
         >>> ch in c
         True
-        >>> ch = Character(load_json('characters','bardic_rogue.json'))
+        >>> ch = Character('characters/bardic_rogue')
         >>> ch in c
         False
         """
-        tocheck = self.__charitem(item)
+        tocheck = item.key
         return tocheck in self.characters
 
 
 class Campaign(EzdmObject):
     """
-    >>> json = load_json('campaigns','test_campaign.json')
-    >>> campaign = Campaign(json)
+    >>> campaign = Campaign('campaigns/test_campaign')
     >>> campaign()['core']['name']
     'Test Campaign'
     """
 
-    def __init__(self, json):
+    def __init__(self, key):
         """
-        >>> json = load_json('campaigns','test_campaign.json')
-        >>> campaign = Campaign(json)
+        >>> campaign = Campaign('campaigns/test_campaign')
         >>> campaign.messages == []
         True
         """
-
+        EzdmObject.__init__(key)
         self.characterlist = CharacterList()
-        self.json = json
         self.initiative = []
         self.current = self.get('/core/current_char', -1)
         self.messages = []
@@ -201,8 +163,7 @@ class Campaign(EzdmObject):
 
     def players(self):
         """
-        >>> json = load_json('campaigns','test_campaign.json')
-        >>> campaign = Campaign(json)
+        >>> campaign = Campaign('campaigns/test_campaign')
         >>> campaign.players()
         ['wizard_mage.json', 'tiny_tim.json', 'bardic_rogue.json']
         """
@@ -210,8 +171,7 @@ class Campaign(EzdmObject):
 
     def chars_in_round(self, editmode=False):
         """
-        >>> json = load_json('campaigns','test_campaign.json')
-        >>> campaign = Campaign(json)
+        >>> campaign = Campaign('campaigns/test_campaign')
         >>> isinstance(campaign.chars_in_round(), dict)
         True
         """
@@ -221,9 +181,7 @@ class Campaign(EzdmObject):
         self.characterlist = CharacterList()
         players = self.players()
         for player in sorted(players):
-            if not player.endswith('.json'):
-                player = '%s.json' % player
-            p = Character(load_json('characters', player))
+            p = Character(os.path.join('characters', player))
             p_idx = self.characterlist.append(p)
             loc = p.location()
             if 'map' in loc:
@@ -235,11 +193,14 @@ class Campaign(EzdmObject):
                 icons[mapname][(loc['x'], loc['y'])].append(p_idx)
                 self.playermaps.append(mapname)
         for mapname in self.playermaps:
+            npckey = mapname
             if not mapname in npcmaps:
                 npcmaps.append(mapname)
-                gamemap = GameMap(load_json('maps', mapname))
+                gamemap = GameMap(os.path.join('maps', mapname))
                 for y in range(0, gamemap.get('/max_y', 1)):
+                    npckey = os.path.join(npckey, str(y))
                     for x in range(0, gamemap.get('/max_x', 1)):
+                        npckey = os.path.join(npckey, x)
                         tile = gamemap.tile(x, y)
                         if not (x, y) in icons[mapname]:
                             icons[mapname][(x, y)] = []
@@ -248,7 +209,8 @@ class Campaign(EzdmObject):
                             if isinstance(npcs_here, list):
                                 continue
                             for npc in npcs_here:
-                                n = Character(npcs_here[npc])
+                                npckey = os.path.join(npckey, npc)
+                                n = Character(npckey)
                                 if n.get('/core/combat/hitpoints', 1) > 0 and not n in self.characterlist:
                                     n.put('/core/location', {"map": mapname, "x": x, "y": y})
                                     n_idx = self.characterlist.append(n)
@@ -276,19 +238,10 @@ class Campaign(EzdmObject):
 
     def current_char(self):
         """
-        >>> json = load_json('campaigns','test_campaign.json')
-        >>> campaign = Campaign(json)
+        >>> campaign = Campaign('campaigns/test_campaign')
         >>> campaign.current_char()
         <ezdm_libs.character.Character object at ...>
         """
-        # if len(self.characterlist) == 0:
-        #     self.error('All players are dead !')
-        #     self.error('Here comes the resurrection fairy !')
-        #     for player in self.players():
-        #         char = Character('characters', player)
-        #         char.put('/core/combat/hitpoints', 1)
-        #         char.save()
-        #     self.chars_in_round()
         c = self.characterlist[self.current]
         if not c:
             self.chars_in_round()
@@ -299,10 +252,6 @@ class Campaign(EzdmObject):
 
     def endround(self):
         pass
-
-    def save(self):
-        name = '%s.json' % self.get('/core/name', '')
-        return save_json('campaigns', name.lower().replace(' ', '_'), self.json)
 
     def message(self, s):
         self.messages.append((s, 'messages'))
@@ -325,4 +274,3 @@ class Campaign(EzdmObject):
                 else:
                     debug("[DEBUG] Campaign.onround: pack update: %s, %s" % (item[0], item[1]))
                     character()['core']['inventory'][item[0]][item[2]] = item[1]()
-
