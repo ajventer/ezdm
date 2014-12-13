@@ -136,29 +136,52 @@ def realkey(key):
             ret.append(k)
     return '/'.join(ret).strip('/')
 
+def indexkey(k):
+    if len(k) >= 2 and k.startswith('i') and k[1].isdigit():
+        return int(k[1:])
+    return '"%s"' % k
+
 
 def readkey(key, json, default=None):
+    """
+    >>> readkey('/x', {'x':1})
+    1
+    >>> readkey('/x/y', {'x': {'y': 1}})
+    1
+    >>> readkey('/x/i1', {'x': [1,2,3]})
+    2
+    >>> readkey('/x/i10', {'x': [0,1,2,3,4,5,6,7,8,9,10,11]})
+    10
+    """
     if not isinstance(json, dict):
         raise ValueError("%s must be a dict" % repr(json))
     key = key.strip('/')
     keylist = key.split('/')
+    keystring = 'json'
     for k in keylist:
-        k = k.replace('/', '')
-        if not k in json:
-            return default
-        if keylist.index(k) == len(keylist) - 1:
-            return json[k]
-        else:
-            ks = '/'.join(keylist[keylist.index(k) + 1:])
-            return readkey(ks, json[k], default)
-
+        k = indexkey(k)
+        keystring = '%s[%s]' % (keystring, k)
+    try:
+        return eval(keystring)
+    except:
+        return default
 
 def writekey(key, value, json):
+    """
+    >>> x = {'y':1, 'z':[{'a':1},{'b':2}]}
+    >>> writekey('/y', 2, x)
+    >>> x['y']
+    2
+    >>> writekey('/z/i0/a', 2, x)
+    >>> x['z'][0]['a']
+    2
+    """
     parse = 'json'
     for k in key.strip('/').split('/'):
         k = k.replace('/', '')
-        new_parse = '%s["%s"]' % (parse, k)
-        exec ('if not "%s" in %s: %s = {}' % (k, parse, new_parse))
+        k = indexkey(k)
+        new_parse = '%s[%s]' % (parse, k)
+        exec ('if %s is not None and not %s in %s: %s = {}' % (parse, k, parse, new_parse))
         parse = new_parse
     parse = '%s = value' % (parse)
     exec (parse)
@@ -185,14 +208,17 @@ def load_icon(icon='icons/blank.png'):
 
 
 def find_files(source, needle='', basename=False, strip=''):
+    debug('Searching for %s in %s' % (needle, source))
     matches = []
     for path in data_paths(source):
+        debug('Checking path %s' % path)
         if path:
-            matches += glob(os.path.join(path, needle))
+            matches += glob(os.path.join(path, '%s*' % needle))
     if basename:
         matches = [os.path.basename(match) for match in matches]
     if strip:
         matches = [match.replace(strip, '') for match in matches]
+    debug('Found matches:', matches)
     unique = {}
     for m in matches:
         bname = os.path.basename(m)
@@ -212,6 +238,7 @@ def readfile(source='', name='', filename='', json=False, default=None):
             filename = filenames[0]
     handle=open(filename, 'r')
     s = handle.read()
+    debug(s)
     handle.close()
     if not json:
         try:
@@ -219,9 +246,10 @@ def readfile(source='', name='', filename='', json=False, default=None):
         except:
             return default
     try:
-
+        debug('Attempting json load')
         return loads(s)
-    except:
+    except Exception as E:
+        debug(E)
         return default
 
 

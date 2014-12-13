@@ -19,8 +19,10 @@ class EzdmObject(object):
     json = {}
 
     def __init__(self, key):
+        if key.endswith('.json'):
+            key = key.replace('.json', '')
         self.key = key
-        datastore.readkey(self.key)
+        datastore.readkey(self.key, {})
         
 
     def __call__(self):
@@ -32,17 +34,10 @@ class EzdmObject(object):
         return datastore.readkey(self.key)
 
     def __str__(self):
-        """
-        >>> o = EzdmObject('characters/bardic_rogue')
-        >>> from .util import load_json
-        >>> b_r = load_json('characters', 'bardic_rogue')
-        >>> str(o) == dumps(b_r, indent=4)
-        True
-        """
-        return dumps(self(), indent=4)
+        return dumps(self(), indent=4, sort_keys=True).strip()
 
 
-    def get(self, key, default):
+    def get(self, key, default=None):
         """
         >>> o = EzdmObject('characters/bardic_rogue')
         >>> o.get('/core/type', '') == 'player'
@@ -54,10 +49,11 @@ class EzdmObject(object):
             return default
         return readkey(key, self(), default)
 
+
     def put(self, key, value):
         """
         >>> o = EzdmObject('characters/bardic_rogue')
-        >>> o.put('/f/g', 16)
+        >>> o.put('f/g', 16)
         >>> o()['f']['g']
         16
         """

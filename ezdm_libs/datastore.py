@@ -1,5 +1,5 @@
 import json
-from .util import load_json, save_json, debug
+from .util import load_json, save_json, debug, find_files
 from .util import readkey as json_readkey
 from .util import writekey as json_writekey
 from multiprocessing import Pool
@@ -20,17 +20,22 @@ class Datastore(dict):
         >>> x.readkey('characters/bardic_rogue/core/type')
         'player'
         """
-        key = key.replace('//', '/')
+        key = key.replace('//', '/').strip('/')
         keylist = key.split('/')
-        try:
-            if len(keylist) >= 2:
-                directory, filename = keylist[:2]
-                if not directory in self:
-                    self[directory] = {}
-                if not filename in self[directory]:
-                    self[directory][filename] = load_json(directory, filename)
-        finally:
-            return json_readkey(key, self, default)
+        debug('DATASTORE: Got key', key)
+        if len(keylist) >= 2:
+            directory, filename = keylist[:2]
+            debug('DATASTORE: Trying %s/%s' % (directory, filename))
+            if not directory in self:
+                self[directory] = {}
+            if filename.endswith('.json'):
+                filename = filename.replace('.json','')
+            if not filename in self[directory]:
+                paths = find_files(directory, filename)
+                if paths:
+                    debug('DATASTORE: loading %s' % paths[0])
+                    self[directory][filename] = load_json(filename=paths[0])
+        return json_readkey(key, self, default)
 
 
 
@@ -41,7 +46,6 @@ class Datastore(dict):
         >>> x.readkey('/x/y')
         9
         """
-        key=key.replace('/','//')
         keylist = key.split('/')
         if len(keylist) >= 2:
             if keylist[1].endswith('.json'):
@@ -58,6 +62,7 @@ class Datastore(dict):
         >>> x.save()
         [...]
         """
+        return
         workload = []
         pool = Pool()
         for directory in self.keys():
