@@ -628,20 +628,19 @@ class Character(EzdmObject):
         1
         >>> char.acquire_item(mhand)
         >>> char.equip_item(0)
-        (True, '[ ] has equiped Mainhand Dagger')
-        [<ezdm_libs.item.Item object at ...>]
+        (True, '[BARDIC ROGUE] has equiped Mainhand Dagger')
         >>> char.weapons[0].displayname() == 'Mainhand Dagger'
         True
         >>> char.acquire_item(ohand)
         >>> char.equip_item(0)
-        (True, '[ ] has equiped Offhand_Dagger')
+        (True, '[BARDIC ROGUE] has equiped Offhand_Dagger')
         >>> char.weapons
         [<ezdm_libs.item.Item object at ...>, <ezdm_libs.item.Item object at ...>]
         >>> len(char.weapons)
         2
         >>> char.acquire_item(twohand)
         >>> char.equip_item(0)
-        (True, '[ ] has equiped Halberd')
+        (True, '[BARDIC ROGUE] has equiped Halberd')
         >>> char.weapons[0].name()
         'halberd.json'
         >>> len(char.weapons)
@@ -667,15 +666,17 @@ class Character(EzdmObject):
             if not done:
                 debug('Error no item %s in pack' % itemname)
                 return
+
         if not item.identified():
-            print (item.key)
             item.identify()
+
         if self.character_type() == 'player':
             item.onequip(self)
+
         if item:
             if item.armortype() == 'shield' and not shields:
                 return (False, "%s cannot wear %s shields like %s" % (self.displayname(), item.armortype(), item.displayname()))
-            elif item.armortype() != 'shield' and item.itemtype() == 'armor' and canwear < armor_types[item.armortype()]:
+            elif item.armortype() != 'shield' and item.itemtype() == 'armor' and canwear <= armor_types[item.armortype()]:
                 return (False, "%s cannot wear %s armor like %s" % (self.displayname(), item.armortype(), item.displayname()))
             if item.slot() == 'twohand':
                 slots = ['lefthand', 'righthand']
@@ -696,7 +697,7 @@ class Character(EzdmObject):
                 #Prevent equipping over a twohander from duplicatng it
                 self.put('/core/inventory/equiped/%s' % slot.strip(), item())
             self.drop_item(item.displayname())
-        return (True, "%s has equiped %s" % (self.displayname(), item.displayname()))
+            return (True, "%s has equiped %s" % (self.displayname(), itemname))
 
     def unequip_item(self, slot):
         """
@@ -869,7 +870,7 @@ class Character(EzdmObject):
         >>> char = Character('characters/tiny_tim')
         >>> char.acquire_item(Item('items/halberd'))
         >>> char.equip_item(0)
-        (True, '[ ] has equiped Halberd')
+        (True, '[TINY TIM] has equiped Halberd')
         >>> char.weapons[0].name()
         'halberd.json'
         >>> len(char.weapons)

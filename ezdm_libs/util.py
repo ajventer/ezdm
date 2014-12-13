@@ -213,7 +213,7 @@ def find_files(source, needle='', basename=False, strip=''):
     for path in data_paths(source):
         debug('Checking path %s' % path)
         if path:
-            matches += glob(os.path.join(path, '%s*' % needle))
+            matches += glob(os.path.join(path, '%s.*' % needle))
     if basename:
         matches = [os.path.basename(match) for match in matches]
     if strip:
