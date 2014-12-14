@@ -69,7 +69,7 @@ class Item(EzdmObject):
         return out
 
     def identify(self):
-        self.put('/core/identified', True)
+        self.put('core/identified', True)
 
     def price_tuple(self):
         gold = self.get('/core/price/gold', 0)

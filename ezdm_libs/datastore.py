@@ -22,10 +22,8 @@ class Datastore(dict):
         """
         key = key.replace('//', '/').strip('/')
         keylist = key.split('/')
-        debug('DATASTORE: Got key', key)
         if len(keylist) >= 2:
             directory, filename = keylist[:2]
-            debug('DATASTORE: Trying %s/%s' % (directory, filename))
             if not directory in self:
                 self[directory] = {}
             if filename.endswith('.json'):
@@ -33,7 +31,6 @@ class Datastore(dict):
             if not filename in self[directory]:
                 paths = find_files(directory, filename)
                 if paths:
-                    debug('DATASTORE: loading %s' % paths[0])
                     self[directory][filename] = load_json(filename=paths[0])
         return json_readkey(key, self, default)
 

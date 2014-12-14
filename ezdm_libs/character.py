@@ -666,13 +666,10 @@ class Character(EzdmObject):
             if not done:
                 debug('Error no item %s in pack' % itemname)
                 return
-
         if not item.identified():
             item.identify()
-
         if self.character_type() == 'player':
             item.onequip(self)
-
         if item:
             if item.armortype() == 'shield' and not shields:
                 return (False, "%s cannot wear %s shields like %s" % (self.displayname(), item.armortype(), item.displayname()))
@@ -696,7 +693,8 @@ class Character(EzdmObject):
                 self.unequip_item(slot)
                 #Prevent equipping over a twohander from duplicatng it
                 self.put('/core/inventory/equiped/%s' % slot.strip(), item())
-            self.drop_item(item.displayname())
+            debug(item())
+            self.drop_item(itemname)
             return (True, "%s has equiped %s" % (self.displayname(), itemname))
 
     def unequip_item(self, slot):
