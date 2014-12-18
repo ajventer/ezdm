@@ -89,8 +89,8 @@ class CharacterList(object):
         >>> c.append(Character('characters/bardic_rogue'))
         0
         >>> c[0] = Character('characters/tiny_tim')
-        >>> c[0].displayname()
-        '[TINY TIM]'
+        >>> c[0].displayname() == '[TINY TIM]'
+        True
         """
         self.characters[key] = value.key
 

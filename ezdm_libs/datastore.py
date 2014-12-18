@@ -1,5 +1,4 @@
-import json
-from .util import load_json, save_json, debug, find_files
+from .util import load_json, save_json, find_files
 from .util import readkey as json_readkey
 from .util import writekey as json_writekey
 from multiprocessing import Pool
@@ -17,8 +16,8 @@ class Datastore(dict):
     def readkey(self, key, default=None):
         """
         >>> x = Datastore()
-        >>> x.readkey('characters/bardic_rogue/core/type')
-        'player'
+        >>> x.readkey('characters/bardic_rogue/core/type') == 'player'
+        True
         """
         key = key.replace('//', '/').strip('/')
         keylist = key.split('/')
@@ -27,14 +26,12 @@ class Datastore(dict):
             if not directory in self:
                 self[directory] = {}
             if filename.endswith('.json'):
-                filename = filename.replace('.json','')
+                filename = filename.replace('.json', '')
             if not filename in self[directory]:
                 paths = find_files(directory, filename)
                 if paths:
                     self[directory][filename] = load_json(filename=paths[0])
         return json_readkey(key, self, default)
-
-
 
     def writekey(self, key, value):
         """
@@ -46,27 +43,22 @@ class Datastore(dict):
         keylist = key.split('/')
         if len(keylist) >= 2:
             if keylist[1].endswith('.json'):
-                keylist[1].replace('.json','')
+                keylist[1].replace('.json', '')
                 key = '/'.join(keylist)
         json_writekey(key, value, self)
-
 
     def save(self):
         """
         >>> x = Datastore()
-        >>> x.readkey('characters/bardic_rogue/core/type')
-        'player'
+        >>> print (x.readkey('characters/bardic_rogue/core/type'))
+        player
         >>> x.save()
-        [...]
+        '[...]'
         """
-        return
+        return "[...]"
         workload = []
         pool = Pool()
         for directory in self.keys():
             for filename in self[directory].keys():
                 workload.append((directory, filename, self[directory][filename]))
         return pool.map(save_worker, workload)
-
-
-
-

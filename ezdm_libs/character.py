@@ -1,4 +1,4 @@
-from .util import npc_hash, inflate, flatten, rolldice, inrange, price_in_copper, convert_money, save_json, readkey, writekey, debug
+from .util import npc_hash, rolldice, inrange, price_in_copper, convert_money, readkey, writekey, debug
 from .item import Item
 from .objects import EzdmObject, event
 from .gamemap import GameMap
@@ -13,8 +13,8 @@ import json as simplejson
 class Character(EzdmObject):
     """
     >>> char = Character('/characters/bardic_rogue')
-    >>> char.displayname()
-    '[BARDIC ROGUE]'
+    >>> char.displayname() == '[BARDIC ROGUE]'
+    True
     """
     weapon = 0
 
@@ -48,7 +48,7 @@ class Character(EzdmObject):
                     frontend.campaign.message(char.give_xp(self.xp_worth()))
                     char.autosave()
             frontend.campaign.chars_in_round()
-        gamemap = GameMap(os.path.join('maps',loc['map']))
+        gamemap = GameMap(os.path.join('maps', loc['map']))
         if todel != -1:
             gamemap.removefromtile(loc['x'], loc['y'], todel, chartype)
         debug(chartype)
@@ -65,7 +65,7 @@ class Character(EzdmObject):
             copper = rolldice(1, max_copper, 0)[0]
             if isinstance(loot_items, str):
                 try:
-                    debug ('Trying to convert loot_items from string')
+                    debug('Trying to convert loot_items from string')
                     loot_items = simplejson.loads(loot_items)
                 except:
                     loot_items = []
@@ -172,7 +172,7 @@ class Character(EzdmObject):
                     key = '%s/core/inventory/%s/i%s' % (self.key, section, idx)
                     yield (section, Item(key), idx)
             elif isinstance(items, dict):
-                for k  in list(items.keys()):
+                for k in list(items.keys()):
                     key = '%s/core/inventory/%s/%s' % (self.key, section, k)
                     yield (k, Item(key), 0)
             else:
@@ -190,15 +190,13 @@ class Character(EzdmObject):
 
     def interrupt_cast(self):
         """
-        >>> char = Character('/characters/bardic_rogue')
+        >>> char = Character('characters/bardic_rogue')
         >>> tar = Character('characters/tiny_tim')
-        >>> spell = Item('items/magic_misile'))
+        >>> spell = Item('items/magic_misile')
         >>> char.acquire_item(spell)
-        >>> spell = Item(char.get('/core/inventory/pack', [])[0])
+        >>> spell = Item('characters/bardic_rogue/core/inventory/pack/i0')
         >>> spell.onuse(char, tar)
         >>> char()['core']['inventory']['pack'][0] = spell()
-        >>> print (char.get('/core/inventory/pack', []))
-        [...]
         >>> char.is_casting
         True
         >>> char.interrupt_cast()
@@ -217,11 +215,11 @@ class Character(EzdmObject):
     def character_type(self):
         """
         >>> char = Character('characters/tiny_tim')
-        >>> char.character_type()
-        'player'
+        >>> char.character_type() == 'player'
+        True
         >>> char = Character('characters/random_monster')
-        >>> char.character_type()
-        'npc'
+        >>> char.character_type() == 'npc'
+        True
         """
         return self.get('/core/type', 'player')
 
@@ -231,7 +229,7 @@ class Character(EzdmObject):
     def xp_worth(self):
         xpkey = self.get('core/combat/level-hitdice', 1)
         debug(xpkey)
-        xpvalues = datastore.readkey('adnd2e/creature_xp')
+        xpvalues = frontend.datastore.readkey('adnd2e/creature_xp')
         debug(xpvalues)
         if str(xpkey) in list(xpvalues.keys()):
             xp = xpvalues[str(xpkey)]
@@ -250,7 +248,7 @@ class Character(EzdmObject):
     def save_to_tile(self):
         loc = self.location()
         gamemap = GameMap(os.path.join('maps', loc['map']))
-        if isinstance(gamemap.tile(loc['x'], loc['y'])().get('conditional',{}).get('npcs'), list):
+        if isinstance(gamemap.tile(loc['x'], loc['y'])().get('conditional', {}).get('npcs'), list):
             gamemap.tile(loc['x'], loc['y'])()['conditional']['npcs'] = {}
         gamemap.tile(loc['x'], loc['y'])()['conditional']['npcs'][self.get_hash()] = self()
         return gamemap.save()
@@ -310,9 +308,9 @@ class Character(EzdmObject):
 
     def name(self):
         """
-        >>> char = Character('characters/tiny_tim'))
-        >>> char.name()
-        'tiny_tim.json'
+        >>> char = Character('characters/tiny_tim')
+        >>> char.name() == 'tiny_tim.json'
+        True
         """
         name = '%s_%s.json' % (self.get('/core/personal/name/first', ''), self.get('/core/personal/name/last', ''))
         return name.lower().replace(' ', '_').replace("'", "")
@@ -344,7 +342,7 @@ class Character(EzdmObject):
 
     def ppd_mod(self):
         """
-        >>> char = Character('characters/tiny_tim.json)
+        >>> char = Character('characters/tiny_tim.json')
         >>> isinstance(char.ppd_mod(), int)
         True
         """
@@ -429,7 +427,7 @@ class Character(EzdmObject):
 
     def level_up(self):
         """
-        >>> char = Character('characters/tiny_tim)
+        >>> char = Character('characters/tiny_tim')
         >>> level = char.get('/core/combat/level-hitdice', 1)
         >>> hp = char.get('/core/combat/hitpoints', 1)
         >>> max = char.get('/core/combat/max_hp', 1)
@@ -470,7 +468,6 @@ class Character(EzdmObject):
         new_hp = current_hp + more_hp
         out += '<br>Character hitpoints now %s' % new_hp
         self.put('/core/combat/hitpoints', new_hp)
-        self.__init__(self())
         return out
 
     def give_xp(self, xp):
@@ -520,10 +517,9 @@ class Character(EzdmObject):
         self.next_weapon()
         frontend.campaign.message('%s has THAC0 of: %s' % (self.displayname(), self.thac0))
         target_stats = '%s has a defense modifier of %s and armor class %s' % (target.displayname(), target.def_mod(), target.armor_class())
-        
         frontend.campaign.message(target_stats)
         target_roll = self.thac0 - target.armor_class() - target.def_mod()
-        
+
         frontend.campaign.message('%s needs to roll %s to hit %s' % (self.displayname(), target_roll, target.displayname()))
         roll = rolldice(numdice=1, numsides=20, modifier=mod)
         if roll[0] == 1:
@@ -658,7 +654,7 @@ class Character(EzdmObject):
             i = 0
             packlist = self.get('/core/inventory/pack', [])
             while i < len(packlist) and not done:
-                item = Item('%s/core/inventory/pack/i%s' %(self.key, i))
+                item = Item('%s/core/inventory/pack/i%s' % (self.key, i))
                 if item.displayname() == itemname:
                     done = True
                 else:
@@ -666,18 +662,20 @@ class Character(EzdmObject):
             if not done:
                 debug('Error no item %s in pack' % itemname)
                 return
-        if not item.identified():
-            item.identify()
+        i = copy.deepcopy(item())
         if self.character_type() == 'player':
             item.onequip(self)
-        if item:
-            if item.armortype() == 'shield' and not shields:
+        if not i['core']['identified']:
+            i['core']['identified'] = True
+        if i:
+            if i.get('conditional', {}).get('armortype') == 'shield' and not shields:
                 return (False, "%s cannot wear %s shields like %s" % (self.displayname(), item.armortype(), item.displayname()))
-            elif item.armortype() != 'shield' and item.itemtype() == 'armor' and canwear <= armor_types[item.armortype()]:
+            elif i.get('conditional', {}).get('armortype') != 'shield' and item.itemtype() == 'armor' and canwear <= armor_types[item.armortype()]:
                 return (False, "%s cannot wear %s armor like %s" % (self.displayname(), item.armortype(), item.displayname()))
-            if item.slot() == 'twohand':
+            itemslot = i.get('conditional', {}).get('slot', '')
+            if itemslot == 'twohand':
                 slots = ['lefthand', 'righthand']
-            elif item.slot() == 'finger':
+            elif itemslot == 'finger':
                 left = self.get('/core/inventory/leftfinger', {})
                 right = self.get('/core/inventory/rightfinger', {})
                 #Hint for best results - drop a ring before equiping another
@@ -688,32 +686,31 @@ class Character(EzdmObject):
                 if not slots:
                     slots = ['leftfinger']
             else:
-                slots = [item.slot()]
+                slots = [itemslot]
             for slot in slots:
                 self.unequip_item(slot)
                 #Prevent equipping over a twohander from duplicatng it
-                self.put('/core/inventory/equiped/%s' % slot.strip(), item())
-            debug(item())
-            self.drop_item(itemname)
-            return (True, "%s has equiped %s" % (self.displayname(), itemname))
+                self.put('/core/inventory/equiped/%s' % slot.strip(), i)
+            self.drop_item(i.get('core', {}).get('name'))
+            return (True, "%s has equiped %s" % (self.displayname(), i.get('core', {}).get('name')))
+        return (False, 'Could not find item %s' % itemname)
 
     def unequip_item(self, slot):
         """
-        >>> char = Character('')
+        >>> char = Character('characters/tiny_tim')
         >>> twohand = Item('items/halberd')
         >>> char.acquire_item(twohand)
         >>> char.equip_item(twohand)
-        (True, '[ ] has equiped Halberd')
         >>> char.unequip_item('lefthand')
         >>> char.get('/core/inventory/equiped/lefthand', {})
         {}
         >>> char.get('/core/inventory/equiped/lefthand', {})
         {}
-        >>> char.weapons[0].name()
-        'fist.json'
+        >>> char.weapons[0].name() == 'fist.json'
+        True
         """
         slot = slot.strip()
-        current = Item('%s/core/inventory/equiped/%s' % (self.key,slot))
+        current = Item('%s/core/inventory/equiped/%s' % (self.key, slot))
         debug(current)
         if current():
             if current.name() != 'fist.json':
@@ -790,7 +787,7 @@ class Character(EzdmObject):
         True
         """
         todrop = None
-        if isinstance(itemname, str):
+        if not isinstance(itemname, int):
             ilist = self.get('/core/inventory/%s' % section, [])
             i = 0
             done = False
@@ -867,10 +864,10 @@ class Character(EzdmObject):
         """
         >>> char = Character('characters/tiny_tim')
         >>> char.acquire_item(Item('items/halberd'))
-        >>> char.equip_item(0)
-        (True, '[TINY TIM] has equiped Halberd')
-        >>> char.weapons[0].name()
-        'halberd.json'
+        >>> char.equip_item(0) == (True, '[TINY TIM] has equiped Halberd')
+        True
+        >>> char.weapons[0].name() == 'halberd.json'
+        True
         >>> len(char.weapons)
         1
         """
@@ -1003,7 +1000,6 @@ class Character(EzdmObject):
             del(out['core']['inventory'])
             del(out['conditional']['armor_types'])
             out['to_hit_mod'] = self.to_hit_mod()
-            done = False
 
             if 'index' in out:
                 del (out['index'])

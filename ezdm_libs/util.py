@@ -15,7 +15,6 @@ def user_hash():
     return hashlib.sha224(user_string).hexdigest()
 
 
-
 def debug(*args):
     out = '[DEBUG]:'
     for arg in args:
@@ -136,6 +135,7 @@ def realkey(key):
             ret.append(k)
     return '/'.join(ret).strip('/')
 
+
 def indexkey(k):
     if len(k) >= 2 and k.startswith('i') and k[1].isdigit():
         return int(k[1:])
@@ -165,6 +165,7 @@ def readkey(key, json, default=None):
         return eval(keystring)
     except:
         return default
+
 
 def writekey(key, value, json):
     """
@@ -208,6 +209,10 @@ def load_icon(icon='icons/blank.png'):
 
 
 def find_files(source, needle='', basename=False, strip=''):
+    """
+    >>> 'halberd.json' in find_files('items','halberd')[0]
+    True
+    """
     debug('Searching for %s in %s' % (needle, source))
     matches = []
     for path in data_paths(source):
@@ -225,7 +230,7 @@ def find_files(source, needle='', basename=False, strip=''):
         if not bname in unique:
             unique[bname] = m
     result = []
-    for k,v in list(unique.items()):
+    for k, v in list(unique.items()):
         result.append(v)
     return result
 
@@ -236,7 +241,7 @@ def readfile(source='', name='', filename='', json=False, default=None):
         filenames = find_files(source, name)
         if filenames:
             filename = filenames[0]
-    handle=open(filename, 'r')
+    handle = open(filename, 'r')
     s = handle.read()
     debug(s)
     handle.close()

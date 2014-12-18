@@ -9,8 +9,8 @@ class Item(EzdmObject):
     def displayname(self):
         """
         >>> x = Item('items/health_potion')
-        >>> x.displayname()
-        'Health Potion'
+        >>> x.displayname() == 'Health Potion'
+        True
         """
         name = self.get('/core/name', '') or self.get('/name', '')
         if not self.identified():
@@ -20,8 +20,8 @@ class Item(EzdmObject):
     def name(self):
         """
         >>> x = Item('items/health_potion')
-        >>> x.name()
-        'health_potion.json'
+        >>> x.name() == 'health_potion.json'
+        True
         """
         name = '%s.json' % self.get('/core/name', '')
         return name.lower().replace(' ', '_').replace("'", "")
@@ -29,17 +29,17 @@ class Item(EzdmObject):
     def slot(self):
         """
         >>> x = Item('items/health_potion')
-        >>> x.slot()
-        ''
+        >>> x.slot() == ''
+        True
         >>> x = Item('items/halberd.json')
-        >>> x.slot()
-        'twohand'
+        >>> x.slot() == 'twohand'
+        True
         """
         return self.get('/conditional/slot', '')
 
     def identified(self):
         """
-        >>> x = Item('items/halberd.json')
+        >>> x = Item('items/halberd')
         >>> x.identified()
         False
         """
@@ -69,6 +69,14 @@ class Item(EzdmObject):
         return out
 
     def identify(self):
+        """
+        >>> i = Item('items/halberd')
+        >>> json = copy.deepcopy(i())
+        >>> i.identify()
+        >>> json['core']['identified'] = True
+        >>> i() == json
+        True
+        """
         self.put('core/identified', True)
 
     def price_tuple(self):
@@ -111,7 +119,7 @@ class Item(EzdmObject):
 
     def onuse(self, player, target):
         debug("[DEBUG] Item.onuse: player %s, target %s" % (player.displayname(), target.displayname()))
-        charges = self.get('/core/charges', 0)
+        charges = self.get('core/charges', 0)
         if charges == 0:
             return
         if self.itemtype() == 'spell':
@@ -119,9 +127,9 @@ class Item(EzdmObject):
             frontend.campaign.message(success[1])
             if not success[0]:
                 return
-        self.put('/core/in_use', True)
-        self.put('/core/target', frontend.campaign.characterlist.index(target))
-        event(self, "/events/onuse", {'item': self, 'player': player, 'target': target, 'campaign': frontend.campaign})
+        self.put('core/in_use', True)
+        self.put('core/target', frontend.campaign.characterlist.index(target))
+        event(self, "events/onuse", {'item': self, 'player': player, 'target': target, 'campaign': frontend.campaign})
         try:
             target = frontend.campaign.characterlist[target.index]
             debug("Item.onround save: %s" % target.autosave())
