@@ -65,7 +65,7 @@
             </div>
         </div>
     {% else %}
-        <form method=post>
+        <form target=_blank method=post>
         <lable><strong>{{map.name}}
         </strong></lable><input type=submit value="Attack Roll Grid" name="combatgrid"></form>
     {%endif %}

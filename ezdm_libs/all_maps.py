@@ -15,6 +15,30 @@ class MAPS(Session):
         Session.__init__(self)
         self._map = None
 
+    def combatgrid(self):
+        enemies = []
+        for enemy in copy.copy(frontend.campaign.characterlist):
+            addme = True
+            for cmp_enemy in enemies:
+                if cmp_enemy.name() == enemy.name():
+                    addme = False
+                    break
+            if addme:
+                enemies.append(enemy)
+        chars = copy.copy(enemies)
+        combatgrid = {}
+        for character in chars:
+            combatgrid[character.displayname()] = {}
+            for enemy in enemies:
+                roll = attack_roll(character, enemy, [], 0)
+                combatgrid[character.displayname()][enemy.displayname()] = roll
+        frontend.campaign.messages = []
+        attack_mods = load_json('adnd2e', 'attack_mods')
+        data = {'combatgrid': combatgrid, 'mods': attack_mods}
+        page = Page()
+        html = page.tplrender('combatgrid.tpl', data)
+        return '<html><head></head><body>%s</body></html>' % html
+
     def inputhandler(self, requestdata, page):
         if 'loadmap' in requestdata and requestdata['loadmap'] == 'New Map':
             self._data['charicons'] = {}
@@ -28,31 +52,6 @@ class MAPS(Session):
                     self._map = GameMap(name=requestdata['mapname'], max_x=int(requestdata['max_x']), max_y=int(requestdata['max_y']), lightradius=int(requestdata['lightradius']))
                 page.message('Map saved as:' + self._map.save())
                 frontend.campaign.addmap(self._map.name())
-        if requestdata:
-            if 'combatgrid' in requestdata:
-                enemies = []
-                for enemy in copy.copy(frontend.campaign.characterlist):
-                    addme = True
-                    for cmp_enemy in enemies:
-                        if cmp_enemy.name() == enemy.name():
-                            addme = False
-                            break
-                    if addme:
-                        enemies.append(enemy)
-                chars = copy.copy(enemies)
-                combatgrid = {}
-                for character in chars:
-                    combatgrid[character.displayname()] = {}
-                    for enemy in enemies:
-                        roll = attack_roll(character, enemy, [], 0)
-                        combatgrid[character.displayname()][enemy.displayname()] = roll
-                frontend.campaign.messages = []
-                attack_mods = load_json('adnd2e', 'attack_mods')
-                data = {'combatgrid': combatgrid, 'mods': attack_mods}
-                page = Page()
-                html = page.tplrender('combatgrid.tpl', data)
-                frontend.campaign.message(html)
-
             if "clicked_x" in requestdata:
                 self._data['zoom_x'] = int(requestdata['clicked_x'])
                 self._data['zoom_y'] = int(requestdata['clicked_y'])
@@ -239,6 +238,8 @@ class MAPS(Session):
         self._character = frontend.campaign.current_char()
 
         if requestdata:
+            if 'combatgrid' in requestdata:
+                return self.combatgrid()
             self.inputhandler(requestdata, page)
 
         if not self._data['editmode']:
