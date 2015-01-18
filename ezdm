@@ -29,7 +29,7 @@ sessions = {'MAPS': MAPS(),
             'ITEMS': ITEMS(),
             'TILES': TILES(),
             'XPTOOL': XPTOOL()
-           }
+            }
 
 
 def action_name(action):
@@ -84,7 +84,6 @@ def switch_campaign():
 
 @route('/newchar', method='post')
 def switch_character():
-    newchar = request.POST['newchar']
     frontend.campaign.current = int(request.POST['newchar'])
     frontend.campaign.onround(frontend.campaign.current_char())
     frontend.campaign.chars_in_round()
