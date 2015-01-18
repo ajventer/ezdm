@@ -186,7 +186,7 @@ class Campaign(EzdmObject):
             loc = p.location()
             if 'map' in loc:
                 mapname = loc['map']
-                if not mapname in icons:
+                if mapname not in icons:
                     icons[mapname] = {}
                 if not (loc['x'], loc['y']) in icons[mapname]:
                     icons[mapname][(loc['x'], loc['y'])] = []
@@ -194,7 +194,7 @@ class Campaign(EzdmObject):
                 self.playermaps.append(mapname)
         for mapname in self.playermaps:
             npckey = mapname
-            if not mapname in npcmaps:
+            if mapname not in npcmaps:
                 npcmaps.append(mapname)
                 gamemap = GameMap(os.path.join('maps', mapname))
                 for y in range(0, gamemap.get('/max_y', 1)):
@@ -211,7 +211,7 @@ class Campaign(EzdmObject):
                             for npc in npcs_here:
                                 npckey = os.path.join(npckey, npc)
                                 n = Character(npckey)
-                                if n.get('/core/combat/hitpoints', 1) > 0 and not n in self.characterlist:
+                                if n.get('/core/combat/hitpoints', 1) > 0 and n not in self.characterlist:
                                     n.put('/core/location', {"map": mapname, "x": x, "y": y})
                                     n_idx = self.characterlist.append(n)
                                     if not (x, y) in icons[mapname]:
@@ -234,7 +234,6 @@ class Campaign(EzdmObject):
     def endturn(self):
         self.error('End of turn. Starting new turn.')
         self.chars_in_round()
-        #self.roll_for_initiative()
 
     def current_char(self):
         """
