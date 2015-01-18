@@ -2,7 +2,6 @@ from jinja2 import Template
 from .util import readfile, find_files, template_dict, json_editor, list_icons, inflate, load_json, user_hash, debug
 from json import dumps, loads
 from .mockclasses import MockCampaign
-import glob
 
 modevar = {}
 campaign = MockCampaign()

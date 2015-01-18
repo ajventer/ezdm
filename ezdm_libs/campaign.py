@@ -106,7 +106,7 @@ class CharacterList(object):
         if not isinstance(key, int):
             raise TypeError('Index must be integer')
         load_tuple = self.characters[key]
-        try:        
+        try:
             return self.__loaditem(load_tuple)
         except:
             return None
@@ -116,7 +116,6 @@ class CharacterList(object):
             return self.characters.index(self.__charitem(key))
         except:
             return -1
-        
 
     def __setitem__(self, key, value):
         """
@@ -228,14 +227,14 @@ class Campaign(EzdmObject):
             loc = p.location()
             if 'map' in loc:
                 mapname = loc['map']
-                if not mapname in icons:
+                if mapname not in icons:
                     icons[mapname] = {}
                 if not (loc['x'], loc['y']) in icons[mapname]:
                     icons[mapname][(loc['x'], loc['y'])] = []
                 icons[mapname][(loc['x'], loc['y'])].append(p_idx)
                 self.playermaps.append(mapname)
         for mapname in self.playermaps:
-            if not mapname in npcmaps:
+            if mapname not in npcmaps:
                 npcmaps.append(mapname)
                 gamemap = GameMap(load_json('maps', mapname))
                 for y in range(0, gamemap.get('/max_y', 1)):
@@ -249,7 +248,7 @@ class Campaign(EzdmObject):
                                 continue
                             for npc in npcs_here:
                                 n = Character(npcs_here[npc])
-                                if n.get('/core/combat/hitpoints', 1) > 0 and not n in self.characterlist:
+                                if n.get('/core/combat/hitpoints', 1) > 0 and n not in self.characterlist:
                                     n.put('/core/location', {"map": mapname, "x": x, "y": y})
                                     n_idx = self.characterlist.append(n)
                                     if not (x, y) in icons[mapname]:
@@ -272,7 +271,6 @@ class Campaign(EzdmObject):
     def endturn(self):
         self.error('End of turn. Starting new turn.')
         self.chars_in_round()
-        #self.roll_for_initiative()
 
     def current_char(self):
         """
@@ -281,14 +279,6 @@ class Campaign(EzdmObject):
         >>> campaign.current_char()
         <ezdm_libs.character.Character object at ...>
         """
-        # if len(self.characterlist) == 0:
-        #     self.error('All players are dead !')
-        #     self.error('Here comes the resurrection fairy !')
-        #     for player in self.players():
-        #         char = Character('characters', player)
-        #         char.put('/core/combat/hitpoints', 1)
-        #         char.save()
-        #     self.chars_in_round()
         c = self.characterlist[self.current]
         if not c:
             self.chars_in_round()
@@ -325,4 +315,3 @@ class Campaign(EzdmObject):
                 else:
                     debug("[DEBUG] Campaign.onround: pack update: %s, %s" % (item[0], item[1]))
                     character()['core']['inventory'][item[0]][item[2]] = item[1]()
-

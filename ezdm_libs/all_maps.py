@@ -30,9 +30,18 @@ class MAPS(Session):
                 frontend.campaign.addmap(self._map.name())
         if requestdata:
             if 'combatgrid' in requestdata:
-                enemies = copy.copy(frontend.campaign.characterlist)
+                enemies = []
+                for enemy in copy.copy(frontend.campaign.characterlist):
+                    addme = True
+                    for cmp_enemy in enemies:
+                        if cmp_enemy.name() == enemy.name():
+                            addme = False
+                            break
+                    if addme:
+                        enemies.append(enemy)
+                chars = copy.copy(enemies)
                 combatgrid = {}
-                for character in frontend.campaign.characterlist:
+                for character in chars:
                     combatgrid[character.displayname()] = {}
                     for enemy in enemies:
                         roll = attack_roll(character, enemy, [], 0)
@@ -43,14 +52,14 @@ class MAPS(Session):
                 page = Page()
                 html = page.tplrender('combatgrid.tpl', data)
                 frontend.campaign.message(html)
-                
+
             if "clicked_x" in requestdata:
                 self._data['zoom_x'] = int(requestdata['clicked_x'])
                 self._data['zoom_y'] = int(requestdata['clicked_y'])
             if "loadtilefromfile" in requestdata:
                 self._map.load_tile(self._data['zoom_x'], self._data['zoom_y'], '%s.json' % requestdata["load_tile_from_file"])
             if 'pythonconsole' in requestdata:
-                exec (requestdata['pythonconsole'], {'map': self._map})
+                exec(requestdata['pythonconsole'], {'map': self._map})
             if 'addchartotile' in requestdata:
                 cname = requestdata['charactername']
                 character = Character(load_json('characters', cname))
@@ -183,8 +192,6 @@ class MAPS(Session):
                 attackmods = requestdata.getall('attackmods')
                 target = frontend.campaign.characterlist[int(requestdata['detailindex'])]
                 attack_roll(self._character, target, attackmods, int(requestdata['custom_tohit']))
-                #attack(self._character, target, attackmods, int(requestdata['custom_tohit']), int(requestdata['custom_dmg']))
-                #self._map = GameMap(load_json('maps', self._map.name()))
             if 'combatresult' in requestdata:
                 target = frontend.campaign.characterlist[int(requestdata['detailindex'])]
                 damage = int(requestdata['damage_amt'])
@@ -213,7 +220,7 @@ class MAPS(Session):
                 self._character.autosave()
                 self._map = GameMap(load_json('maps', self._map.name()))
 
-            if not 'savemap' in requestdata and not 'loadmap' in requestdata and self._data['editmode']:
+            if 'savemap' not in requestdata and 'loadmap' not in requestdata and self._data['editmode']:
                 page.warning('WARNING: Changes are not yet saved')
 
     def render(self, requestdata):
@@ -224,7 +231,7 @@ class MAPS(Session):
         if 'detailview' in self._data:
             del(self._data['detailview'])
         if 'detailicon' in self._data:
-            del(self._data['detailicon'])            
+            del(self._data['detailicon'])
 
         self._data['attackmods'] = load_json('adnd2e', 'attack_mods')
         self._data['editmode'] = frontend.mode() == 'dm'

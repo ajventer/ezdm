@@ -1,7 +1,5 @@
 from .util import rolldice, load_json, debug
 from math import hypot
-from .character import Character
-from .frontend import mode
 from . import frontend
 
 
@@ -58,10 +56,11 @@ def calc_damage(player, target, custom_dmg):
     frontend.campaign.message(taken[1])
     return taken[0]
 
+
 def attack_roll(player, target, attack_modifiers, custom_tohit):
     custom_tohit = custom_tohit or 0
     if custom_tohit:
-        frontend.campaign.message('Applying custom to-hit modifier of %s' % custom_tohit)    
+        frontend.campaign.message('Applying custom to-hit modifier of %s' % custom_tohit)
     if player.is_casting:
         player.interrupt_cast()
         frontend.campaign.message('%s is casting. Cast will be interrupted if you attack %s' % (player.displayname(), target.displayname))
@@ -70,10 +69,10 @@ def attack_roll(player, target, attack_modifiers, custom_tohit):
     for mod in attack_modifiers:
         total_modifier += int(attack_mods[mod])
         frontend.campaign.message('Applying modifier %s: %s' % (mod, attack_mods[mod]))
-    range_modifier = range_mod(player, target, player.current_weapon())
+    range_modifier = 0
     if range_modifier:
         frontend.campaign.message('Applying range modifier %s' % range_modifier)
-        total_modifier += range_modifier        
+        total_modifier += range_modifier
     weaponmod = player.to_hit_mod()
     frontend.campaign.message('Applying weapon modifier %s' % weaponmod)
     total_modifier += weaponmod
@@ -85,9 +84,7 @@ def attack_roll(player, target, attack_modifiers, custom_tohit):
         frontend.campaign.error('%s is guaranteed to hit %s - no need to roll' % (player.displayname(), target_roll, target.displayname()))
     else:
         frontend.campaign.error('%s needs to roll %s to hit %s' % (player.displayname(), target_roll, target.displayname()))
-    return target_roll    
-
-
+    return target_roll
 
 
 def attack(player, target, attack_modifiers, custom_tohit, custom_dmg):
@@ -133,7 +130,6 @@ def attack(player, target, attack_modifiers, custom_tohit, custom_dmg):
                 target.interrupt_cast()
                 frontend.campaign.message('%s was casting but it was interrupted by a successfull hit' % target.displayname)
             player.current_weapon().onstrike(player, target)
-            #target = Character(load_json('characters', target.name()))
             damage_result = calc_damage(player, target, custom_dmg)
             target_alive = damage_result is True
             for char in [player, target]:
