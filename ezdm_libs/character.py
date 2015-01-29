@@ -78,7 +78,7 @@ class Character(EzdmObject):
             copper = rolldice(1, max_copper, 0)[0]
             if isinstance(loot_items, str):
                 try:
-                    debug ('Trying to convert loot_items from string')
+                    debug('Trying to convert loot_items from string')
                     loot_items = simplejson.loads(loot_items)
                 except:
                     loot_items = []
@@ -138,12 +138,10 @@ class Character(EzdmObject):
             try:
                 item = spells[idx]
                 level = item.get('/conditional/spell_level', 1)
-                if not level in result:
+                if level not in result:
                     result[level] = []
                 result[level].append(idx)
             except:
-            # This exception can happen if the DM removes a spell from the spellbook while memorized
-            # safest to just skip over.
                 pass
         return result
 
@@ -263,7 +261,7 @@ class Character(EzdmObject):
     def save_to_tile(self):
         loc = self.location()
         gamemap = GameMap(load_json('maps', loc['map']))
-        if isinstance(gamemap.tile(loc['x'], loc['y'])().get('conditional',{}).get('npcs'), list):
+        if isinstance(gamemap.tile(loc['x'], loc['y'])().get('conditional', {}).get('npcs'), list):
             gamemap.tile(loc['x'], loc['y'])()['conditional']['npcs'] = {}
         gamemap.tile(loc['x'], loc['y'])()['conditional']['npcs'][self.get_hash()] = self()
         return gamemap.save()
@@ -474,7 +472,7 @@ class Character(EzdmObject):
         xp_levels = readkey('%s' % (pclass), xp_levels)
         hitdice = str(readkey('/%s/hit_dice' % (level), xp_levels, 1))
         debug("Read hitdice as ", hitdice)
-        if not '+' in hitdice:
+        if '+' not in hitdice:
             hitdice = hitdice + '+0'
         hitdice, bonus = hitdice.split('+')
         dice = int(readkey('/dice', xp_levels, 1))
@@ -539,10 +537,10 @@ class Character(EzdmObject):
         self.next_weapon()
         frontend.campaign.message('%s has THAC0 of: %s' % (self.displayname(), self.thac0))
         target_stats = '%s has a defense modifier of %s and armor class %s' % (target.displayname(), target.def_mod(), target.armor_class())
-        
+
         frontend.campaign.message(target_stats)
         target_roll = self.thac0 - target.armor_class() - target.def_mod()
-        
+
         frontend.campaign.message('%s needs to roll %s to hit %s' % (self.displayname(), target_roll, target.displayname()))
         roll = rolldice(numdice=1, numsides=20, modifier=mod)
         if roll[0] == 1:
@@ -591,7 +589,7 @@ class Character(EzdmObject):
         if not found:
             return "%s cannot learn spells" % self.displayname()
         oneline = list(canlearn[key].keys())[0]
-        if not spelltype in canlearn[key][oneline]:
+        if spelltype not in canlearn[key][oneline]:
             return "%s cannot learn %s, failed to learn spell %s" % (self.displayname(), spelltype, spellitem.displayname())
         intelect = str(self.get('/core/abilities/int', 1))
         chance = load_json('adnd2e', 'ability_scores.json')
@@ -686,7 +684,6 @@ class Character(EzdmObject):
             elif item.slot() == 'finger':
                 left = self.get('/core/inventory/leftfinger', {})
                 right = self.get('/core/inventory/rightfinger', {})
-                #Hint for best results - drop a ring before equiping another
                 if not left:
                     slots = ['leftfinger']
                 if not right:
@@ -697,7 +694,6 @@ class Character(EzdmObject):
                 slots = [item.slot()]
             for slot in slots:
                 self.unequip_item(slot)
-                #Prevent equipping over a twohander from duplicatng it
                 self.put('/core/inventory/equiped/%s' % slot.strip(), item())
             self.drop_item(item.displayname())
         return (True, "%s has equiped %s" % (self.displayname(), item.displayname()))
@@ -840,10 +836,10 @@ class Character(EzdmObject):
         self.put('/core/inventory/money', convert_money(my_total))
 
     def armor_class(self):
-        AC = 10.0
-        for item in self.equiped_by_type('armor'):
-            AC -= float(readkey('/conditional/ac', item(), 0.0))
-        return AC
+        ac = 10.0
+        for item in self.inventory_generator(['equiped']):
+            ac -= float(readkey('/conditional/ac', item(), 0.0))
+        return ac
 
     def equiped_by_type(self, itemtype):
         arm = []
@@ -891,13 +887,13 @@ class Character(EzdmObject):
         atr_json = load_json('adnd2e', 'various')
         atr = readkey('/various/attacks_per_round', atr_json)
         parentclass = self.get('/core/class/parent', '')
-        if not parentclass in atr:
-            ATR = 1
+        if parentclass not in atr:
+            myatr = 1
         else:
             for key in list(atr[parentclass].keys()):
                 if inrange(self.get('/core/combat/level-hitdice', 1), key):
-                    ATR = int(atr[parentclass][key])
-        return self.num_weapons() * int(ATR)
+                    myatr = int(atr[parentclass][key])
+        return self.num_weapons() * int(myatr)
 
     def current_xp(self):
         return int(self.get('/core/personal/xp', 0))
@@ -998,7 +994,6 @@ class Character(EzdmObject):
             del(out['core']['inventory'])
             del(out['conditional']['armor_types'])
             out['to_hit_mod'] = self.to_hit_mod()
-            done = False
 
             if 'index' in out:
                 del (out['index'])
