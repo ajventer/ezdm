@@ -151,7 +151,7 @@ class MAPS(Session):
                 pickedup = []
                 for item, icon, section in self._map.tile_icons(self._data['zoom_x'], self._data['zoom_y']):
                     if item != 'money':
-                        i = Item(load_json('items', item))
+                        i = Item(load_json('items', filename_parser(item)))
                         self._character.acquire_item(i)
                         self._map.removefromtile(self._data['zoom_x'], self._data['zoom_y'], item, 'items')
                         pickedup.append(item)
