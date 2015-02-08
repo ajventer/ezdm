@@ -135,14 +135,14 @@ class Character(EzdmObject):
         result = {}
         spells = self.get('/core/inventory/spells', [])
         for idx in self.get('/core/inventory/spells_memorized', []):
-            try:
-                item = spells[idx]
-                level = item.get('/conditional/spell_level', 1)
-                if level not in result:
-                    result[level] = []
-                result[level].append(idx)
-            except:
-                pass
+            item = Item(spells[idx])
+            print(item())
+            level = item.get('/conditional/spell_level', 1)
+            print (level)
+            if level not in result:
+                result[level] = []
+            result[level].append(idx)
+        debug(result)
         return result
 
     def moveto(self, mapname, x, y, page=None):

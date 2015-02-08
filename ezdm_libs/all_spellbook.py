@@ -64,7 +64,7 @@ class SPELLBOOK(Session):
                 target = Character(load_json('characters', requestdata['cast_spell_target']))
                 if 'stopcasting' in requestdata:
                     item.interrupt()
-                elif 'stopcasting' in requestdata:
+                elif 'cast_spell' in requestdata:
                     item.onuse(self._character, target)
                     idx = self._character()['core']['inventory']['spells_memorized'].index(int(requestdata['pack_index']))
                     del (self._character()['core']['inventory']['spells_memorized'][idx])

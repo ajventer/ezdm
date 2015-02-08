@@ -322,7 +322,6 @@
                                         <option value="{{idx}}">{{spell.displayname()}}
                                      {% endfor %}   
                                      <select>
-                                    <input type=submit name="castspell" value="Cast Spell">
                                 </fieldset>
 
                             {% endif %}

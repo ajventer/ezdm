@@ -153,7 +153,7 @@ class MAPS(Session):
                     if item != 'money':
                         i = Item(load_json('items', filename_parser(item)))
                         self._character.acquire_item(i)
-                        self._map.removefromtile(self._data['zoom_x'], self._data['zoom_y'], item, 'items')
+                        self._map.removefromtile(self._data['zoom_x'], self._data['zoom_y'], filename_parser(item), 'items')
                         pickedup.append(item)
                     else:
                         moneytuple = self._map.getmoney(self._data['zoom_x'], self._data['zoom_y'])
