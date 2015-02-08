@@ -838,7 +838,7 @@ class Character(EzdmObject):
     def armor_class(self):
         ac = 10.0
         for item in self.inventory_generator(['equiped']):
-            ac -= float(readkey('/conditional/ac', item(), 0.0))
+            ac -= float(item[1].get('/conditional/ac', 0.0))
         return ac
 
     def equiped_by_type(self, itemtype):

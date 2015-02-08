@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 from bottle import route, run, request, static_file, redirect
 from ezdm_libs.util import load_icon, find_files, load_json, debug, user_hash
 from ezdm_libs import get_sys_data

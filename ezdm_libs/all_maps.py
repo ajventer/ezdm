@@ -1,7 +1,7 @@
 from .frontend import Session, Page
 from . import frontend
 from .gamemap import GameMap
-from .util import find_files, load_json, debug
+from .util import find_files, load_json, debug, filename_parser
 from .character import Character
 from .item import Item
 from .combat import attack_roll
@@ -125,6 +125,7 @@ class MAPS(Session):
                 debug("Processing icon click")
                 iconsection = requestdata['iconsection']
                 self._data['detailname'] = requestdata['iconname']
+                filename = filename_parser(requestdata['iconname'])
                 if iconsection == 'money':
                     self._data['detailview'] = {}
                     self._data['detailview']['gold'] = self._map.tile(self._data['zoom_x'], self._data['zoom_y']).get('/conditional/gold', 0)
@@ -133,7 +134,7 @@ class MAPS(Session):
                     self._data['detailtype'] = 'item'
                     self._data['detailicon'] = 'icons/money.png'
                 elif iconsection == 'items':
-                    i = Item(load_json('items', requestdata['iconname']))
+                    i = Item(load_json('items', filename))
                     if self._map.tile(self._data['zoom_x'], self._data['zoom_y']).tiletype() == 'shop':
                         debug("Pre-identifying item from shop")
                         i.identify()
@@ -175,11 +176,11 @@ class MAPS(Session):
                     self._character.autosave()
                 elif requestdata['detailtype'] == 'item':
                     debug("Processing item selection")
-                    i = Item(load_json('items', requestdata['detailname']))
+                    i = Item(load_json('items', filename_parser(requestdata['detailname'])))
                     if requestdata['itemdetail'] == 'Pick up':
                         debug("Pickin up item")
                         self._character.acquire_item(i)
-                        self._map.removefromtile(self._data['zoom_x'], self._data['zoom_y'], requestdata['detailname'], 'items')
+                        self._map.removefromtile(self._data['zoom_x'], self._data['zoom_y'], filename_parser(requestdata['detailname']), 'items')
                         page.message('You picked up a %s' % requestdata['detailname'])
                     else:
                         debug("Buying item")

@@ -15,6 +15,12 @@ def user_hash():
     return hashlib.sha224(user_string).hexdigest()
 
 
+def filename_parser(displayname):
+    name = displayname
+    if not name.endswith('json'):
+        name = '%s.json' % name
+    return name.lower().replace(' ', '_').replace("'", "")
+
 
 def debug(*args):
     out = '[DEBUG]:'
